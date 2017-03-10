@@ -1,87 +1,39 @@
 #ifndef TESTSUITE_TESTCASE_HPP_
 #define TESTSUITE_TESTCASE_HPP_
 
-#include <memory>
+#include <cstdint>
 #include <string>
+#include <vector>
 
-#include "../comparator/Comparators.h"
-#include "../comparator/ComparatorStrategy.hpp"
-#include "TestStatistic.hpp"
-
-class AbstractReporter;
-
-class TestCase: public std::enable_shared_from_this<TestCase>
+class TestCase
 {
 
 public:
-    TestCase(const TestCase&) = delete;
-    TestCase& operator=(const TestCase&) = delete;
-
-    inline static std::shared_ptr<TestCase> create(std::shared_ptr<AbstractReporter> rep)
+    inline TestCase(const std::string& name, const std::string& value,
+                    const std::string& expected,
+                    const std::vector<const std::string>& args)
+            : name(name),
+              value(value),
+              expected(expected),
+              args(args)
     {
-        return std::shared_ptr<TestCase>(new TestCase(rep));
     }
 
     inline virtual ~TestCase()
     {
     }
 
-    template<typename T, typename ...Args>
-    inline std::shared_ptr<TestCase> assert(const std::string& descr, const T& value,
-                                            const T& expected,
-                                            comparator::Comparator comp,
-                                            const Args&... args)
+    inline void pass(bool fail)
     {
-        teststatistic::num_of_tests++;
-        // report
-        if (comp->compare(value, expected))
-        {
-            pass(descr);
-        }
-        else
-        {
-            fail(descr, expected);
-        }
-        return shared_from_this();
+        failed = fail;
     }
 
-    template<typename T>
-    inline std::shared_ptr<TestCase> assert(const std::string& descr, const T& value,
-                                            const T& expected,
-                                            comparator::Comparator comp)
-    {
-        teststatistic::num_of_tests++;
-        // report
-        if (comp->compare(value, expected))
-        {
-            pass(descr);
-        }
-        else
-        {
-            fail(descr, expected);
-        }
-        return shared_from_this();
-    }
-
-private:
-    inline TestCase(std::shared_ptr<AbstractReporter> rep)
-            : reporter(rep)
-    {
-    }
-
-    std::shared_ptr<AbstractReporter> reporter;
-
-    inline void pass(const std::string& descr)
-    {
-        //report
-    }
-
-    template<typename T>
-    inline void fail(const std::string& descr, const T& expected)
-    {
-        //report
-        teststatistic::num_of_fails++;
-    }
+    bool failed = true;
+    std::uint64_t time = 0;
+    std::string name;
+    std::string value;
+    std::string expected;
+    std::vector<const std::string> args;
 };
 
 #endif /* TESTSUITE_TESTCASE_HPP_ */

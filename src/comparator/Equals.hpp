@@ -1,6 +1,11 @@
 #ifndef COMPARATOR_EQUALS_HPP_
 #define COMPARATOR_EQUALS_HPP_
 
+#include <algorithm>
+#include <cmath>
+#include <limits>
+#include <string>
+
 #include "ComparatorStrategy.hpp"
 
 namespace comparator
@@ -26,7 +31,8 @@ public:
     }
     inline bool compare(double a, double b)
     {
-        return a == b;
+        return a == b || std::abs(a - b)
+                < std::abs(std::min(a, b)) * std::numeric_limits<double>::epsilon();
     }
     inline bool compare(bool a, bool b)
     {

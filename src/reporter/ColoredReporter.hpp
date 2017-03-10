@@ -8,8 +8,30 @@
 #ifndef REPORTER_COLOREDREPORTER_HPP_
 #define REPORTER_COLOREDREPORTER_HPP_
 
+#include <iostream>
+#include <string>
 
-enum class ANSI_COLORS
+#include "AbstractReporter.hpp"
+
+class PlainTextReporter: public AbstractReporter
+{
+public:
+    inline PlainTextReporter(std::ostream& stream)
+            : AbstractReporter(stream)
+    {
+    }
+
+    inline virtual ~PlainTextReporter() throw ()
+    {
+    }
+
+    inline virtual void generate()
+    {
+
+    }
+
+private:
+    enum class ANSI_COLORS
         : std::string
         {
             RED = "\x1b[31m",
@@ -20,6 +42,6 @@ enum class ANSI_COLORS
         CYAN = "\x1b[36m",
         RESET = "\x1b[0m"
     };
-
+};
 
 #endif /* REPORTER_COLOREDREPORTER_HPP_ */

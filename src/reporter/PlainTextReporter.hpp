@@ -22,7 +22,8 @@ public:
     {
     }
 
-    inline virtual void generate() {
+    inline virtual void generate()
+    {
 
     }
 };

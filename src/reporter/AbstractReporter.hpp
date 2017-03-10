@@ -8,8 +8,13 @@
 #ifndef REPORTER_ABSTRACTREPORTER_HPP_
 #define REPORTER_ABSTRACTREPORTER_HPP_
 
-#include <iostream>
 #include <sstream>
+#include <string>
+#include <vector>
+
+#include "../testsuite/TestSuite_shared.h"
+
+#define LF "\n"
 
 class AbstractReporter
 {
@@ -37,10 +42,15 @@ public:
         out_stream << _report.str();
     }
 
+    inline void registerTestSuite(testsuite::TestSuite_shared ts)
+    {
+        suites.push_back(ts);
+    }
+
 protected:
     std::ostream& out_stream;
     std::stringstream _report;
-
+    std::vector<testsuite::TestSuite_shared> suites;
     virtual void generate() = 0;
 };
 
