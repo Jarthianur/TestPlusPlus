@@ -11,7 +11,7 @@ class TestCase
 public:
     inline TestCase(const std::string& name, const std::string& value,
                     const std::string& expected,
-                    const std::vector<const std::string>& args)
+                    const std::vector<std::string>& args)
             : name(name),
               value(value),
               expected(expected),
@@ -33,7 +33,7 @@ public:
     std::string name;
     std::string value;
     std::string expected;
-    std::vector<const std::string> args;
+    std::vector<std::string> args;
 };
 
 #endif /* TESTSUITE_TESTCASE_HPP_ */

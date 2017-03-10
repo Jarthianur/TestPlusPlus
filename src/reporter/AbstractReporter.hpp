@@ -12,9 +12,11 @@
 #include <string>
 #include <vector>
 
-#include "../testsuite/TestSuite_shared.h"
+#include "../testsuite/TestSuite.hpp"
 
 #define LF "\n"
+
+#define SPACE "  "
 
 class AbstractReporter
 {

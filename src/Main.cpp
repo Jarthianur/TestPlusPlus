@@ -6,6 +6,7 @@
 #include "reporter/AbstractReporter.hpp"
 #include "reporter/PlainTextReporter.hpp"
 #include "testsuite/TestSuite.hpp"
+#include "testsuite/TestSuiteFactory.hpp"
 
 using namespace testsuite;
 

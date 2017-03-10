@@ -18,6 +18,22 @@
 namespace testsuite
 {
 
+inline std::string serialize(const char*& arg) {
+    return std::string(arg);
+}
+
+inline std::string serialize(const int& arg) {
+    return std::to_string(arg);
+}
+
+inline std::string serialize(const double& arg) {
+    return std::to_string(arg);
+}
+
+inline std::string serialize(const std::string& arg) {
+    return arg;
+}
+
 class TestSuite: public std::enable_shared_from_this<TestSuite>
 {
 public:
@@ -39,15 +55,12 @@ public:
                                    const Args&... args)
     {
         auto list = { args... };
-        std::vector<const std::string> str_args;
-        std::stringstream ss;
-        for (auto arg : list)
+        std::vector<std::string> str_args;
+        for (auto arg = list.begin(); arg != list.end(); arg++)
         {
-            ss << arg;
-            str_args.push_back(ss.str());
-            ss.clear();
+            str_args.push_back(serialize(*arg));
         }
-        TestCase tc(descr, std::string(value), std::string(expected), str_args);
+        TestCase tc(descr, serialize(value), serialize(expected), str_args);
         stats.num_of_tests++;
         //eval duration add to time
         // value as method?
@@ -76,14 +89,6 @@ private:
     }
 
 };
-
-inline TestSuite_shared test(const std::string& test,
-                             std::shared_ptr<AbstractReporter> reporter)
-{
-    TestSuite_shared ts = TestSuite::create(test);
-    reporter->registerTestSuite(ts);
-    return ts;
-}
 
 } // testsuite
 
