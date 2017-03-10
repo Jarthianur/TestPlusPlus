@@ -1,10 +1,3 @@
-/*
- * PlainTextReporter.hpp
- *
- *  Created on: 10.03.2017
- *      Author: julian
- */
-
 #ifndef REPORTER_PLAINTEXTREPORTER_HPP_
 #define REPORTER_PLAINTEXTREPORTER_HPP_
 
@@ -34,11 +27,13 @@ public:
     {
         std::uint32_t abs_tests = 0;
         std::uint32_t abs_fails = 0;
+        std::uint64_t abs_time = 0;
         for (auto ts : suites)
         {
             abs_tests += ts->stats.num_of_tests;
             abs_fails += ts->stats.num_of_fails;
-            *this << "Run Testsuite [" << ts->name << "]; time = " << ts->time << LF;
+            abs_time += ts->time;
+            *this << "Run Testsuite [" << ts->name << "]; time = " << ts->time << "ns" << LF;
             for (auto tc : ts->testcases)
             {
                 *this << SPACE << "Run Testcase [" << tc.name << "](" << tc.value
@@ -51,7 +46,7 @@ public:
                         *this << " , ";
                     }
                 }
-                *this << " ); time = " << tc.time << LF;
+                *this << " ); time = " << tc.time << "ns" << LF;
                 *this << SPACE << SPACE << "[" << tc.name << "] ";
                 if (!tc.passed)
                 {
@@ -64,7 +59,7 @@ public:
             }
         }
         *this << "Result:: passed: " << abs_tests - abs_fails << "/" << abs_tests
-              << " ; failed: " << abs_fails << "/" << abs_tests << LF;
+              << " ; failed: " << abs_fails << "/" << abs_tests << " ; time = " << abs_time << "ns" << LF;
     }
 };
 

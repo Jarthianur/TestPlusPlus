@@ -13,29 +13,10 @@
 #include "TestCase.hpp"
 #include "TestStats.hpp"
 #include "TestSuite_shared.h"
+#include "../util/serialize.hpp"
 
 namespace testsuite
 {
-
-inline std::string serialize(const char*& arg)
-{
-    return std::string(arg);
-}
-
-inline std::string serialize(const int& arg)
-{
-    return std::to_string(arg);
-}
-
-inline std::string serialize(const double& arg)
-{
-    return std::to_string(arg);
-}
-
-inline std::string serialize(const std::string& arg)
-{
-    return arg;
-}
 
 class TestSuite: public std::enable_shared_from_this<TestSuite>
 {
@@ -52,6 +33,14 @@ public:
     {
     }
 
+    /**
+     * Create a TestCase for given
+     * descr: TestCase name
+     * func: functor (method to test)
+     * expected: expected return value
+     * comp: Comparator for return value
+     * args...: Argument list for func
+     */
     template<typename T, typename F, typename ...Args>
     inline TestSuite_shared assert(const std::string& descr, F func, const T& expected,
                                    comparator::Comparator comp, const Args&... args)
@@ -60,15 +49,15 @@ public:
         std::vector<std::string> str_args;
         for (auto arg = list.begin(); arg != list.end(); arg++)
         {
-            str_args.push_back(serialize(*arg));
+            str_args.push_back(serialize::serialize(*arg));
         }
-        TestCase tc(descr, serialize(func(args...)), serialize(expected), str_args);
+        TestCase tc(descr, serialize::serialize(func(args...)),
+                    serialize::serialize(expected), str_args);
 
         stats.num_of_tests++;
 
-        auto start = std::chrono::system_clock::now();
+        auto start = std::chrono::high_resolution_clock::now();
 
-        // value as method?
         if (comp->compare(func(args...), expected))
         {
             tc.pass(true);
@@ -79,24 +68,30 @@ public:
             tc.pass(false);
         }
 
-        tc.time = std::chrono::duration_cast<std::chrono::milliseconds>(
-                std::chrono::system_clock::now() - start).count();
+        tc.time = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                std::chrono::high_resolution_clock::now() - start).count();
         time += tc.time;
 
         testcases.push_back(tc);
         return shared_from_this();
     }
 
+    /**
+     * Create a TestCase for given
+     * descr: TestCase name
+     * func: functor (method to test)
+     * expected: expected return value
+     * comp: Comparator for return value
+     */
     template<typename T, typename F>
     inline TestSuite_shared assert(const std::string& descr, F func, const T& expected,
                                    comparator::Comparator comp)
     {
-        TestCase tc(descr, "", serialize(expected), {});
+        TestCase tc(descr, "", serialize::serialize(expected), {});
         stats.num_of_tests++;
 
-        auto start = std::chrono::system_clock::now();
+        auto start = std::chrono::high_resolution_clock::now();
 
-        // value as method?
         if (comp->compare(func(), expected))
         {
             tc.pass(true);
@@ -107,8 +102,8 @@ public:
             tc.pass(false);
         }
 
-        tc.time = std::chrono::duration_cast<std::chrono::milliseconds>(
-                std::chrono::system_clock::now() - start).count();
+        tc.time = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                std::chrono::high_resolution_clock::now() - start).count();
         time += tc.time;
 
         testcases.push_back(tc);

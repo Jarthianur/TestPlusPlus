@@ -1,10 +1,3 @@
-/*
- * TestSuite_shared.h
- *
- *  Created on: 10.03.2017
- *      Author: julian
- */
-
 #ifndef TESTSUITE_TESTSUITE_SHARED_H_
 #define TESTSUITE_TESTSUITE_SHARED_H_
 

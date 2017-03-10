@@ -1,10 +1,3 @@
-/*
- * TestSuiteFactory.hpp
- *
- *  Created on: 10.03.2017
- *      Author: julian
- */
-
 #ifndef TESTSUITE_TESTSUITEFACTORY_HPP_
 #define TESTSUITE_TESTSUITEFACTORY_HPP_
 
@@ -17,7 +10,10 @@
 
 namespace testsuite {
 
-
+/**
+ * Create a TestSuite specializing a reporter.
+ * test: TestSuite name
+ */
 inline TestSuite_shared test(const std::string& test,
                              std::shared_ptr<AbstractReporter> reporter)
 {

@@ -1,10 +1,3 @@
-/*
- * TestStats.hpp
- *
- *  Created on: 10.03.2017
- *      Author: julian
- */
-
 #ifndef TESTSUITE_TESTSTATS_HPP_
 #define TESTSUITE_TESTSTATS_HPP_
 
