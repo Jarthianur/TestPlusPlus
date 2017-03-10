@@ -25,10 +25,10 @@ public:
 
     inline void pass(bool fail)
     {
-        failed = fail;
+        passed = fail;
     }
 
-    bool failed = true;
+    bool passed = true;
     std::uint64_t time = 0;
     std::string name;
     std::string value;

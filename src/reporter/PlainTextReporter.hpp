@@ -38,11 +38,29 @@ public:
         {
             abs_tests += ts->stats.num_of_tests;
             abs_fails += ts->stats.num_of_fails;
-            *this << "Run Testsuite [" << ts->name << "]" << LF;
+            *this << "Run Testsuite [" << ts->name << "]; time = " << ts->time << LF;
             for (auto tc : ts->testcases)
             {
-                *this << SPACE << "Run Testcase [" << tc.name << "] : "
-                      << (tc.failed ? "failed" : "passed") << LF;
+                *this << SPACE << "Run Testcase [" << tc.name << "](" << tc.value
+                      << ") with ( ";
+                for (auto arg = tc.args.begin(); arg != tc.args.end(); arg++)
+                {
+                    *this << *arg;
+                    if (arg < tc.args.end()-1)
+                    {
+                        *this << " , ";
+                    }
+                }
+                *this << " ); time = " << tc.time << LF;
+                *this << SPACE << SPACE << "[" << tc.name << "] ";
+                if (!tc.passed)
+                {
+                    *this << "failed!; expected = \"" << tc.expected << "\"" << LF;
+                }
+                else
+                {
+                    *this << "passed!" << LF;
+                }
             }
         }
         *this << "Result:: passed: " << abs_tests - abs_fails << "/" << abs_tests

@@ -10,14 +10,25 @@
 
 using namespace testsuite;
 
+int dothat(int i)
+{
+    while (++i < 10000000)
+    {
+    }
+    return i;
+}
+
+std::string doit(const char* a, const char* b)
+{
+    return a < b ? "less" : "more";
+}
+
 int main(int argc, char** argv)
 {
     auto reporter = std::shared_ptr<AbstractReporter>(new PlainTextReporter(std::cout));
 
-    test("test", reporter)->assert("dothat", 1, 1, comparator::EQUALS(), 1)->assert(
-            "dothat", "value...", "expected", comparator::EQUALS(), 1)->assert(
-            "dothat", "expected", "expected", comparator::EQUALS(), "someinput",
-            "somemoreinput");
+    test("test", reporter)->assert("dothat", dothat, 1, comparator::EQUALS(), 1)->assert(
+            "doit", doit, "less", comparator::EQUALS(), "1", "2");
 
     reporter->report();
     return 0;
