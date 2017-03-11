@@ -27,9 +27,9 @@ int main(int argc, char** argv)
 
     test("test", reporter)
         ->assert("dothat", dothat, 1, comparator::EQUALS(), 1)
-        ->assert("doit", doit, "more", comparator::EQUALS(), "1", "2")
-        ->assert("doit", doit, "more", comparator::EQUALS(), "1", "2")
-        ->assert("doit", doit, "less", comparator::EQUALS(), "1", "2")
+        ->assert("doit", doit, std::string("more"), comparator::EQUALS(), "1", "2")
+        ->assert("doit", doit, std::string("more"), comparator::EQUALS(), "1", "2")
+        ->assert("doit", doit, std::string("less"), comparator::EQUALS(), "1", "2")
         ->assert("doit", [](){return 0;}, 0, comparator::EQUALS());
 
     reporter->report();

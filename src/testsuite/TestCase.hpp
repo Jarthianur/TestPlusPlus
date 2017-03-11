@@ -9,13 +9,12 @@ class TestCase
 {
 
 public:
-    inline TestCase(const std::string& name, const std::string& value,
-                    const std::string& expected,
-                    const std::vector<std::string>& args)
+    inline TestCase(const std::string& name, const std::string& expected,
+            const std::vector<std::string>& args, const std::string& assert)
             : name(name),
-              value(value),
               expected(expected),
-              args(args)
+              args(args),
+              assertion(assert)
     {
     }
 
@@ -28,12 +27,20 @@ public:
         passed = fail;
     }
 
+    inline void erroneous(const std::string& err) {
+        passed = false;
+        error = true;
+        value = err;
+    }
+
     bool passed = true;
+    bool error = false;
     std::uint64_t time = 0;
     std::string name;
     std::string value;
     std::string expected;
     std::vector<std::string> args;
+    const std::string assertion;
 };
 
 #endif /* TESTSUITE_TESTCASE_HPP_ */

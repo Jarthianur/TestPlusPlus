@@ -9,7 +9,8 @@ namespace comparator
 class ComparatorStrategy
 {
 public:
-    inline ComparatorStrategy()
+    inline ComparatorStrategy(const std::string& assert)
+            : assertion(assert)
     {
     }
     virtual ~ComparatorStrategy() throw ()
@@ -22,6 +23,7 @@ public:
     virtual bool compare(bool, bool) = 0;
     virtual bool compare(const char*, const char*) = 0;
     virtual bool compare(char, char) = 0;
+    const std::string assertion;
 };
 
 }

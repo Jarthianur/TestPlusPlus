@@ -15,6 +15,7 @@ public:
 
     std::uint32_t num_of_tests = 0;
     std::uint32_t num_of_fails = 0;
+    std::uint32_t num_of_errs = 0;
 };
 
 #endif /* TESTSUITE_TESTSTATS_HPP_ */

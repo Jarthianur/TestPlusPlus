@@ -14,8 +14,8 @@ namespace comparator
 class Equals: public ComparatorStrategy
 {
 public:
-    inline Equals()
-            : ComparatorStrategy()
+    inline Equals(const std::string& a)
+            : ComparatorStrategy(a)
     {
     }
     inline virtual ~Equals() throw ()

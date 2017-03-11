@@ -11,7 +11,7 @@ using Comparator = std::shared_ptr<ComparatorStrategy>;
 
 inline Comparator EQUALS()
 {
-    return Comparator(new Equals());
+    return Comparator(new Equals("to be equal"));
 }
 
 }
