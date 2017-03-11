@@ -8,15 +8,14 @@
 #ifndef REPORTER_ABSTRACTREPORTER_HPP_
 #define REPORTER_ABSTRACTREPORTER_HPP_
 
-#include <sstream>
 #include <string>
 #include <vector>
-
+#include <iostream>
 #include "../testsuite/TestSuite.hpp"
 
 #define LF "\n"
-
 #define SPACE "  "
+#define XSPACE "    "
 
 class AbstractReporter
 {
@@ -32,16 +31,15 @@ public:
     }
 
     template<typename T>
-    inline std::stringstream& operator<<(const T& rep)
+    inline std::ostream& operator<<(const T& rep)
     {
-        _report << rep;
-        return _report;
+        out_stream << rep;
+        return out_stream;
     }
 
     inline void report()
     {
         generate();
-        out_stream << _report.str();
     }
 
     inline void registerTestSuite(testsuite::TestSuite_shared ts)
@@ -51,7 +49,6 @@ public:
 
 protected:
     std::ostream& out_stream;
-    std::stringstream _report;
     std::vector<testsuite::TestSuite_shared> suites;
     virtual void generate() = 0;
 };

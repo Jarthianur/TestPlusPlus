@@ -33,7 +33,7 @@ public:
             abs_tests += ts->stats.num_of_tests;
             abs_fails += ts->stats.num_of_fails;
             abs_time += ts->time;
-            *this << "Run Testsuite [" << ts->name << "]; time = " << ts->time << "ns" << LF;
+            *this << "Run Testsuite [" << ts->name << "]; time = " << (double)ts->time/1000.0 << "ms" << LF;
             for (auto tc : ts->testcases)
             {
                 *this << SPACE << "Run Testcase [" << tc.name << "](" << tc.value
@@ -46,7 +46,7 @@ public:
                         *this << " , ";
                     }
                 }
-                *this << " ); time = " << tc.time << "ns" << LF;
+                *this << " ); time = " << (double)tc.time/1000.0 << "ms" << LF;
                 *this << SPACE << SPACE << "[" << tc.name << "] ";
                 if (!tc.passed)
                 {
@@ -59,7 +59,7 @@ public:
             }
         }
         *this << "Result:: passed: " << abs_tests - abs_fails << "/" << abs_tests
-              << " ; failed: " << abs_fails << "/" << abs_tests << " ; time = " << abs_time << "ns" << LF;
+              << " ; failed: " << abs_fails << "/" << abs_tests << " ; time = " << (double)abs_time/1000.0 << "ms" << LF;
     }
 };
 

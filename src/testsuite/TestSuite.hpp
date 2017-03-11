@@ -90,7 +90,7 @@ public:
         TestCase tc(descr, "", serialize::serialize(expected), {});
         stats.num_of_tests++;
 
-        auto start = std::chrono::high_resolution_clock::now();
+        timestamp = std::chrono::high_resolution_clock::now();
 
         if (comp->compare(func(), expected))
         {
@@ -103,7 +103,7 @@ public:
         }
 
         tc.time = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                std::chrono::high_resolution_clock::now() - start).count();
+                std::chrono::high_resolution_clock::now() - timestamp).count();
         time += tc.time;
 
         testcases.push_back(tc);
@@ -114,6 +114,7 @@ public:
     std::uint64_t time = 0;
     TestStats stats;
     std::vector<TestCase> testcases;
+    std::chrono::time_point<std::chrono::high_resolution_clock> timestamp;
 
 private:
     inline TestSuite(const std::string& name)
