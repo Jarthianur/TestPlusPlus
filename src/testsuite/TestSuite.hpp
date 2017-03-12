@@ -1,3 +1,24 @@
+/*
+ Copyright_License {
+
+ Copyright (C) 2017 Julian P. Becht
+ Author: Julian P. Becht
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License version 3
+ as published by the Free Software Foundation.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ }
+ */
+
 #ifndef TESTSUITE_TESTSUITE_HPP_
 #define TESTSUITE_TESTSUITE_HPP_
 
@@ -9,7 +30,6 @@
 #include <string>
 #include <vector>
 
-#include "../comparator/Comparators.h"
 #include "../comparator/ComparatorStrategy.hpp"
 #include "TestCase.hpp"
 #include "TestStats.hpp"
@@ -19,17 +39,27 @@
 namespace testsuite
 {
 
+/**
+ * Testsuite class, providing some assertion methods.
+ * Non-copyable
+ */
 class TestSuite: public std::enable_shared_from_this<TestSuite>
 {
 public:
     TestSuite(const TestSuite&) = delete;
     TestSuite& operator=(const TestSuite&) = delete;
 
+    /**
+     * Create a TestSuite
+     */
     inline static TestSuite_shared create(const std::string& name)
     {
         return TestSuite_shared(new TestSuite(name));
     }
 
+    /**
+     * d'tor
+     */
     inline virtual ~TestSuite() throw ()
     {
     }
@@ -40,16 +70,25 @@ public:
      */
 
     /**
-     * assertPerformance
+     * Assertion of performance of a given method.
+     * Does not check expected return value.
+     * Runtime of given method must be less
+     * the given number of milliseconds.
+     * Chainable
+     * descr: representative name/description
+     * func: method to test
+     * maxTime: max allowed runtime (ms)
+     * args: arguments fo given method to test
      */
     template<typename F, typename ... Args>
     inline TestSuite_shared assertPerformance(const std::string& descr, F func,
-                                              std::chrono::milliseconds maxTime,
+                                              std::uint64_t maxTime,
                                               const Args&... args)
     {
-        TestCase_shared tc = TestCase::create(descr, std::to_string(maxTime.count()), {},
+        stats.num_of_tests++;
+        TestCase_shared tc = TestCase::create(descr, std::to_string(maxTime), {},
                                               "ms runtime less then");
-        timestamp = std::chrono::high_resolution_clock::now();
+        auto start = std::chrono::high_resolution_clock::now();
 
         try
         {
@@ -62,12 +101,12 @@ public:
         }
 
         tc->time = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                std::chrono::high_resolution_clock::now() - timestamp).count();
+                std::chrono::high_resolution_clock::now() - start).count();
         time += tc->time;
         double runtime = (double) tc->time / 1000.0;
         tc->value = std::to_string(runtime);
 
-        if ((std::uint64_t) runtime < maxTime.count())
+        if ((std::uint64_t) runtime < maxTime)
         {
             tc->pass(true);
         }
@@ -82,7 +121,8 @@ public:
     }
 
     /**
-     * Create a TestCase for given
+     * Assertion for correct return value of given method.
+     * Chainable
      * descr: TestCase name
      * func: functor (method to test)
      * expected: expected return value
@@ -91,9 +131,9 @@ public:
      */
     template<typename T, typename F, typename ...Args>
     inline TestSuite_shared assert(const std::string& descr, F func, const T& expected,
-                                   comparator::Comparator comp, const Args&... args)
+                                   comparator::Comparator<T> comp, const Args&... args)
     {
-        timestamp = std::chrono::high_resolution_clock::now();
+        auto start = std::chrono::high_resolution_clock::now();
 
         auto list = { args... };
         std::vector<std::string> str_args;
@@ -101,20 +141,21 @@ public:
         {
             str_args.push_back(util::serialize(*arg));
         }
-        TestCase_shared tc = TestCase::create(descr, util::serialize(expected),
-                                              str_args, comp->assertion);
+        TestCase_shared tc = TestCase::create(descr, util::serialize(expected), str_args,
+                                              comp->assertion);
 
         _assert(func, expected, comp, tc, args...);
 
         tc->time = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                std::chrono::high_resolution_clock::now() - timestamp).count();
+                std::chrono::high_resolution_clock::now() - start).count();
         time += tc->time;
 
         return shared_from_this();
     }
 
     /**
-     * Create a TestCase for given
+     * Assertion for correct return value of given method.
+     * Chainable
      * descr: TestCase name
      * func: functor (method to test)
      * expected: expected return value
@@ -122,9 +163,9 @@ public:
      */
     template<typename T, typename F>
     inline TestSuite_shared assert(const std::string& descr, F func, const T& expected,
-                                   comparator::Comparator comp)
+                                   comparator::Comparator<T> comp)
     {
-        timestamp = std::chrono::high_resolution_clock::now();
+        auto start = std::chrono::high_resolution_clock::now();
 
         TestCase_shared tc = TestCase::create(descr, util::serialize(expected), {},
                                               comp->assertion);
@@ -132,27 +173,53 @@ public:
         _assert(func, expected, comp, tc);
 
         tc->time = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                std::chrono::high_resolution_clock::now() - timestamp).count();
+                std::chrono::high_resolution_clock::now() - start).count();
         time += tc->time;
 
         return shared_from_this();
     }
 
+    /**
+     * name/description
+     */
     std::string name;
+
+    /**
+     * runtime in nanoseconds
+     */
     std::uint64_t time = 0;
+
+    /**
+     * statistics
+     */
     TestStats stats;
+
+    /**
+     * registered testcases
+     */
     std::vector<TestCase_shared> testcases;
-    std::chrono::time_point<std::chrono::high_resolution_clock> timestamp;
+
+    /**
+     * timestamp, the testsuite was started
+     */
+    const std::chrono::time_point<std::chrono::system_clock> timestamp;
 
 private:
+    /**
+     * c'tor with name, setting timestamp.
+     */
     inline TestSuite(const std::string& name)
-            : name(name)
+            : name(name),
+              timestamp(std::chrono::system_clock::now())
     {
     }
 
+    /**
+     * Internal assert method to prevent code duplication.
+     */
     template<typename T, typename F, typename ...Args>
-    inline void _assert(F func, const T& e, comparator::Comparator c, TestCase_shared tc,
-                        const Args&... args)
+    inline void _assert(F func, const T& e, comparator::Comparator<T> c,
+                        TestCase_shared tc, const Args&... args)
     {
         stats.num_of_tests++;
 

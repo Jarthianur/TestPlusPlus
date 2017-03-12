@@ -19,20 +19,56 @@
  }
  */
 
-#ifndef TESTSUITE_TESTSUITE_SHARED_H_
-#define TESTSUITE_TESTSUITE_SHARED_H_
+#ifndef COMPARATOR_GREATER_HPP_
+#define COMPARATOR_GREATER_HPP_
 
-#include <memory>
+#include <string>
+
+#include "ComparatorStrategy.hpp"
 
 namespace testsuite
 {
+namespace comparator
+{
 
 /**
- * Typedef for shared ptr to TestSuite
+ * Concrete comparator strategy
+ * for greater-than comparison.
+ * Non-copyable
  */
-class TestSuite;
-using TestSuite_shared = std::shared_ptr<TestSuite>;
+template<typename T>
+class Greater: public ComparatorStrategy<T>
+{
+public:
+    Greater(const Greater&) = delete;
+    Greater& operator=(const Greater&) = delete;
 
+    /**
+     * c'tor
+     */
+    inline Greater(const std::string& a)
+            : ComparatorStrategy<T>(a)
+    {
+    }
+
+    /**
+     * d'tor
+     */
+    inline virtual ~Greater() throw ()
+    {
+    }
+
+    /**
+     * Template - compare
+     */
+    inline bool compare(const T& a, const T& b)
+    {
+        return a > b;
+    }
+
+};
+
+} // comparator
 } // testsuite
 
-#endif /* TESTSUITE_TESTSUITE_SHARED_H_ */
+#endif /* COMPARATOR_GREATER_HPP_ */

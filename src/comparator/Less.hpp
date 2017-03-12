@@ -19,20 +19,56 @@
  }
  */
 
-#ifndef TESTSUITE_TESTSUITE_SHARED_H_
-#define TESTSUITE_TESTSUITE_SHARED_H_
+#ifndef COMPARATOR_LESS_HPP_
+#define COMPARATOR_LESS_HPP_
 
-#include <memory>
+#include <string>
+
+#include "ComparatorStrategy.hpp"
 
 namespace testsuite
 {
+namespace comparator
+{
 
 /**
- * Typedef for shared ptr to TestSuite
+ * Concrete comparator strategy
+ * for less-than comparison.
+ * Non-copyable
  */
-class TestSuite;
-using TestSuite_shared = std::shared_ptr<TestSuite>;
+template<typename T>
+class Less: public ComparatorStrategy<T>
+{
+public:
+    Less(const Less&) = delete;
+    Less& operator=(const Less&) = delete;
 
+    /**
+     * c'tor
+     */
+    inline Less(const std::string& a)
+            : ComparatorStrategy<T>(a)
+    {
+    }
+
+    /**
+     * d'tor
+     */
+    inline virtual ~Less() throw ()
+    {
+    }
+
+    /**
+     * Template - compare
+     */
+    inline bool compare(const T& a, const T& b)
+    {
+        return a < b;
+    }
+
+};
+
+} // comparator
 } // testsuite
 
-#endif /* TESTSUITE_TESTSUITE_SHARED_H_ */
+#endif /* COMPARATOR_LESS_HPP_ */
