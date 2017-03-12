@@ -11,6 +11,11 @@
 #include "../testsuite/TestSuite.hpp"
 #include "AbstractReporter.hpp"
 
+namespace testsuite
+{
+namespace reporter
+{
+
 class PlainTextReporter: public AbstractReporter
 {
 public:
@@ -23,7 +28,7 @@ public:
     {
     }
 
-    inline virtual void generate()
+    inline virtual std::int32_t generate()
     {
         std::uint32_t abs_tests = 0;
         std::uint32_t abs_fails = 0;
@@ -33,24 +38,25 @@ public:
             abs_tests += ts->stats.num_of_tests;
             abs_fails += ts->stats.num_of_fails;
             abs_time += ts->time;
-            *this << "Run Testsuite [" << ts->name << "]; time = " << (double)ts->time/1000.0 << "ms" << LF;
+            *this << "Run Testsuite [" << ts->name << "]; time = "
+                  << (double) ts->time / 1000.0 << "ms" << LF;
             for (auto tc : ts->testcases)
             {
-                *this << SPACE << "Run Testcase [" << tc.name << "](" << tc.value
+                *this << SPACE << "Run Testcase [" << tc->name << "](" << tc->value
                       << ") with ( ";
-                for (auto arg = tc.args.begin(); arg != tc.args.end(); arg++)
+                for (auto arg = tc->args.begin(); arg != tc->args.end(); arg++)
                 {
                     *this << *arg;
-                    if (arg < tc.args.end()-1)
+                    if (arg < tc->args.end() - 1)
                     {
                         *this << " , ";
                     }
                 }
-                *this << " ); time = " << (double)tc.time/1000.0 << "ms" << LF;
-                *this << SPACE << SPACE << "[" << tc.name << "] ";
-                if (!tc.passed)
+                *this << " ); time = " << (double) tc->time / 1000.0 << "ms" << LF;
+                *this << SPACE << SPACE << "[" << tc->name << "] ";
+                if (!tc->passed)
                 {
-                    *this << "failed!; expected = \"" << tc.expected << "\"" << LF;
+                    *this << "failed!; expected = \"" << tc->expected << "\"" << LF;
                 }
                 else
                 {
@@ -59,8 +65,13 @@ public:
             }
         }
         *this << "Result:: passed: " << abs_tests - abs_fails << "/" << abs_tests
-              << " ; failed: " << abs_fails << "/" << abs_tests << " ; time = " << (double)abs_time/1000.0 << "ms" << LF;
+              << " ; failed: " << abs_fails << "/" << abs_tests << " ; time = "
+              << (double) abs_time / 1000.0 << "ms" << LF;
+        return abs_fails;
     }
 };
+
+} // reporter
+} // testsuite
 
 #endif /* REPORTER_PLAINTEXTREPORTER_HPP_ */

@@ -5,7 +5,10 @@
 #include "Equals.hpp"
 #include <memory>
 
-namespace comparator {
+namespace testsuite
+{
+namespace comparator
+{
 
 using Comparator = std::shared_ptr<ComparatorStrategy>;
 
@@ -14,6 +17,7 @@ inline Comparator EQUALS()
     return Comparator(new Equals("to be equal"));
 }
 
-}
+} // comparator
+} // testsuite
 
 #endif /* COMPARATOR_COMPARATORS_H_ */

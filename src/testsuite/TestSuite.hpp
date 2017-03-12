@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <cstdint>
+#include <exception>
 #include <initializer_list>
 #include <memory>
 #include <string>
@@ -34,6 +35,53 @@ public:
     }
 
     /**
+     * TODO
+     * add assertException
+     */
+
+    /**
+     * assertPerformance
+     */
+    template<typename F, typename ... Args>
+    inline TestSuite_shared assertPerformance(const std::string& descr, F func,
+                                              std::chrono::milliseconds maxTime,
+                                              const Args&... args)
+    {
+        TestCase_shared tc = TestCase::create(descr, std::to_string(maxTime.count()), {},
+                                              "ms runtime less then");
+        timestamp = std::chrono::high_resolution_clock::now();
+
+        try
+        {
+            func(args...);
+        }
+        catch (const std::exception& e)
+        {
+            stats.num_of_errs++;
+            tc->erroneous(e.what());
+        }
+
+        tc->time = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                std::chrono::high_resolution_clock::now() - timestamp).count();
+        time += tc->time;
+        double runtime = (double) tc->time / 1000.0;
+        tc->value = std::to_string(runtime);
+
+        if ((std::uint64_t) runtime < maxTime.count())
+        {
+            tc->pass(true);
+        }
+        else
+        {
+            tc->pass(false);
+            stats.num_of_fails++;
+        }
+
+        testcases.push_back(tc);
+        return shared_from_this();
+    }
+
+    /**
      * Create a TestCase for given
      * descr: TestCase name
      * func: functor (method to test)
@@ -43,45 +91,25 @@ public:
      */
     template<typename T, typename F, typename ...Args>
     inline TestSuite_shared assert(const std::string& descr, F func, const T& expected,
-            comparator::Comparator comp, const Args&... args)
+                                   comparator::Comparator comp, const Args&... args)
     {
-        auto list =
-        { args... };
+        timestamp = std::chrono::high_resolution_clock::now();
+
+        auto list = { args... };
         std::vector<std::string> str_args;
         for (auto arg = list.begin(); arg != list.end(); arg++)
         {
-            str_args.push_back(serialize::serialize(*arg));
+            str_args.push_back(util::serialize(*arg));
         }
-        TestCase tc(descr, serialize::serialize(expected), str_args, comp->assertion);
+        TestCase_shared tc = TestCase::create(descr, util::serialize(expected),
+                                              str_args, comp->assertion);
 
-        stats.num_of_tests++;
-        auto start = std::chrono::high_resolution_clock::now();
-        T result;
+        _assert(func, expected, comp, tc, args...);
 
-        try
-        {
-            if (comp->compare(result = func(args...), expected))
-            {
-                tc.pass(true);
-            }
-            else
-            {
-                stats.num_of_fails++;
-                tc.pass(false);
-            }
-            tc.value = serialize::serialize(result);
-        }
-        catch (const std::exception& e)
-        {
-            stats.num_of_errs++;
-            tc.erroneous(e.what());
-        }
+        tc->time = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                std::chrono::high_resolution_clock::now() - timestamp).count();
+        time += tc->time;
 
-        tc.time = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                std::chrono::high_resolution_clock::now() - start).count();
-        time += tc.time;
-
-        testcases.push_back(tc);
         return shared_from_this();
     }
 
@@ -94,52 +122,62 @@ public:
      */
     template<typename T, typename F>
     inline TestSuite_shared assert(const std::string& descr, F func, const T& expected,
-            comparator::Comparator comp)
+                                   comparator::Comparator comp)
     {
-        TestCase tc(descr, serialize::serialize(expected),
-        { },
-                    comp->assertion);
-        stats.num_of_tests++;
         timestamp = std::chrono::high_resolution_clock::now();
-        T result;
 
-        try
-        {
-            if (comp->compare(result = func(), expected))
-            {
-                tc.pass(true);
-            }
-            else
-            {
-                stats.num_of_fails++;
-                tc.pass(false);
-            }
-            tc.value = serialize::serialize(result);
-        }
-        catch (const std::exception& e)
-        {
-            stats.num_of_errs++;
-            tc.erroneous(e.what());
-        }
+        TestCase_shared tc = TestCase::create(descr, util::serialize(expected), {},
+                                              comp->assertion);
 
-        tc.time = std::chrono::duration_cast<std::chrono::nanoseconds>(
+        _assert(func, expected, comp, tc);
+
+        tc->time = std::chrono::duration_cast<std::chrono::nanoseconds>(
                 std::chrono::high_resolution_clock::now() - timestamp).count();
-        time += tc.time;
+        time += tc->time;
 
-        testcases.push_back(tc);
-        return shared_from_this();;
+        return shared_from_this();
     }
 
     std::string name;
     std::uint64_t time = 0;
     TestStats stats;
-    std::vector<TestCase> testcases;
+    std::vector<TestCase_shared> testcases;
     std::chrono::time_point<std::chrono::high_resolution_clock> timestamp;
 
 private:
     inline TestSuite(const std::string& name)
             : name(name)
     {
+    }
+
+    template<typename T, typename F, typename ...Args>
+    inline void _assert(F func, const T& e, comparator::Comparator c, TestCase_shared tc,
+                        const Args&... args)
+    {
+        stats.num_of_tests++;
+
+        try
+        {
+            const T result = func(args...);
+
+            if (c->compare(result, e))
+            {
+                tc->pass(true);
+            }
+            else
+            {
+                stats.num_of_fails++;
+                tc->pass(false);
+            }
+            tc->value = util::serialize(result);
+        }
+        catch (const std::exception& e)
+        {
+            stats.num_of_errs++;
+            tc->erroneous(e.what());
+        }
+
+        testcases.push_back(tc);
     }
 
 };

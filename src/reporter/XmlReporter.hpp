@@ -15,6 +15,11 @@
 #include "../testsuite/TestSuite.hpp"
 #include "AbstractReporter.hpp"
 
+namespace testsuite
+{
+namespace reporter
+{
+
 class XmlReporter: public AbstractReporter
 {
 public:
@@ -27,41 +32,42 @@ public:
     {
     }
 
-    inline virtual void generate()
+    inline virtual std::int32_t generate()
     {
+        std::int32_t ret_val = 0;
         *this << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << LF << "<testsuites>"
-                << LF;
+              << LF;
 
         for (auto ts : suites)
         {
+            ret_val += (ts->stats.num_of_errs + ts->stats.num_of_fails);
             std::time_t stamp = std::chrono::high_resolution_clock::to_time_t(
                     ts->timestamp);
             char buff[128];
             std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
 
             *this << SPACE << "<testsuite name=\"" << ts->name << "\" errors=\""
-                    << ts->stats.num_of_errs << "\" tests=\"" << ts->stats.num_of_tests
-                    << "\" failures=\"" << ts->stats.num_of_fails << "\" time=\""
-                    << (double) ts->time / 1000 << "\" timestamp=\"" << buff << "\">"
-                    << LF;
+                  << ts->stats.num_of_errs << "\" tests=\"" << ts->stats.num_of_tests
+                  << "\" failures=\"" << ts->stats.num_of_fails << "\" time=\""
+                  << (double) ts->time / 1000 << "\" timestamp=\"" << buff << "\">" << LF;
 
             for (auto tc : ts->testcases)
             {
-                *this << XSPACE << "<testcase name=\"" << tc.name << "\" classname=\""
-                        << ts->name << "\" time=\"" << (double) tc.time / 1000 << "\">"
-                        << LF;
+                *this << XSPACE << "<testcase name=\"" << tc->name << "\" classname=\""
+                      << ts->name << "\" time=\"" << (double) tc->time / 1000 << "\">"
+                      << LF;
 
-                if (tc.error)
+                if (tc->error)
                 {
-                    *this << XSPACE << XSPACE << "<error message=\"" << tc.value
-                            << "\"></error>" << LF;
+                    *this << XSPACE << XSPACE << "<error message=\"" << tc->value
+                          << "\"></error>" << LF;
                 }
-                else if (!tc.passed)
+                else if (!tc->passed)
                 {
                     *this << XSPACE << XSPACE
-                            << "<failure message=\"Assertion failed, expected ("
-                            << tc.value << ") " << tc.assertion << " (" << tc.expected
-                            << ")\"></failure>" << LF;
+                          << "<failure message=\"Assertion failed, expected ("
+                          << tc->value << ") " << tc->assertion << " (" << tc->expected
+                          << ")\"></failure>" << LF;
                 }
 
                 *this << XSPACE << "</testcase>" << LF;
@@ -69,7 +75,11 @@ public:
             *this << SPACE << "</testsuite>" << LF;
         }
         *this << "</testsuites>" << LF;
+        return ret_val;
     }
 };
+
+} // reporter
+} // testsuite
 
 #endif /* REPORTER_XMLREPORTER_HPP_ */

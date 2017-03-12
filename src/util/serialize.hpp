@@ -3,7 +3,9 @@
 
 #include <string>
 
-namespace serialize
+namespace testsuite
+{
+namespace util
 {
 
 inline std::string serialize(const char*& arg)
@@ -26,6 +28,7 @@ inline std::string serialize(const std::string& arg)
     return arg;
 }
 
-}
+} // util
+} // testsuite
 
 #endif /* UTIL_SERIALIZE_HPP_ */

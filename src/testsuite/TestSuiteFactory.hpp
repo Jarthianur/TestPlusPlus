@@ -15,13 +15,13 @@ namespace testsuite {
  * test: TestSuite name
  */
 inline TestSuite_shared test(const std::string& test,
-                             std::shared_ptr<AbstractReporter> reporter)
+                             std::shared_ptr<reporter::AbstractReporter> reporter)
 {
     TestSuite_shared ts = TestSuite::create(test);
     reporter->registerTestSuite(ts);
     return ts;
 }
 
-}
+} // testsuite
 
 #endif /* TESTSUITE_TESTSUITEFACTORY_HPP_ */

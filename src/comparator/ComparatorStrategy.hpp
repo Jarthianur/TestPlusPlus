@@ -3,6 +3,8 @@
 
 #include <string>
 
+namespace testsuite
+{
 namespace comparator
 {
 
@@ -26,6 +28,7 @@ public:
     const std::string assertion;
 };
 
-}
+} // comparator
+} // testsuite
 
 #endif /* COMPARATOR_COMPARATORSTRATEGY_HPP_ */

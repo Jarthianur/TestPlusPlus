@@ -8,6 +8,8 @@
 
 #include "ComparatorStrategy.hpp"
 
+namespace testsuite
+{
 namespace comparator
 {
 
@@ -21,7 +23,7 @@ public:
     inline virtual ~Equals() throw ()
     {
     }
-    inline bool compare(int a, int b)
+    inline bool compare(const int a, const int b)
     {
         return a == b;
     }
@@ -52,6 +54,7 @@ public:
     }
 };
 
-}
+} // comparator
+} // testsuite
 
 #endif /* COMPARATOR_EQUALS_HPP_ */

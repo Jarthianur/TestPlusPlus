@@ -8,10 +8,16 @@
 #ifndef REPORTER_ABSTRACTREPORTER_HPP_
 #define REPORTER_ABSTRACTREPORTER_HPP_
 
-#include <string>
-#include <vector>
+#include <cstdint>
 #include <iostream>
-#include "../testsuite/TestSuite.hpp"
+#include <vector>
+
+#include "../testsuite/TestSuite_shared.h"
+
+namespace testsuite
+{
+namespace reporter
+{
 
 #define LF "\n"
 #define SPACE "  "
@@ -30,27 +36,31 @@ public:
     {
     }
 
-    template<typename T>
-    inline std::ostream& operator<<(const T& rep)
+    inline std::int32_t report()
     {
-        out_stream << rep;
-        return out_stream;
+        return generate();
     }
 
-    inline void report()
-    {
-        generate();
-    }
-
-    inline void registerTestSuite(testsuite::TestSuite_shared ts)
+    inline void registerTestSuite(TestSuite_shared ts)
     {
         suites.push_back(ts);
     }
 
 protected:
     std::ostream& out_stream;
-    std::vector<testsuite::TestSuite_shared> suites;
-    virtual void generate() = 0;
+    std::vector<TestSuite_shared> suites;
+
+    virtual std::int32_t generate() = 0;
+
+    template<typename T>
+    inline std::ostream& operator<<(const T& rep)
+    {
+        out_stream << rep;
+        return out_stream;
+    }
 };
+
+} // reporter
+} // testsuite
 
 #endif /* REPORTER_ABSTRACTREPORTER_HPP_ */

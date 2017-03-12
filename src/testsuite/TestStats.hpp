@@ -3,6 +3,9 @@
 
 #include <cstdint>
 
+namespace testsuite
+{
+
 class TestStats
 {
 public:
@@ -17,5 +20,7 @@ public:
     std::uint32_t num_of_fails = 0;
     std::uint32_t num_of_errs = 0;
 };
+
+} // testsuite
 
 #endif /* TESTSUITE_TESTSTATS_HPP_ */
