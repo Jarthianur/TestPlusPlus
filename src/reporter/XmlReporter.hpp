@@ -67,42 +67,46 @@ public:
     inline virtual std::int32_t generate()
     {
         std::int32_t ret_val = 0;
-        *this << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << LF << "<testsuites>"
+        std::uint32_t id = 0;
+        *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << LF << "<testsuites>"
               << LF;
 
         for (auto ts : suites)
         {
             ret_val += (ts->stats.num_of_errs + ts->stats.num_of_fails);
-            std::time_t stamp = std::chrono::system_clock::to_time_t(
-                    ts->timestamp);
+            std::time_t stamp = std::chrono::system_clock::to_time_t(ts->timestamp);
             char buff[128];
             std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
 
-            *this << SPACE << "<testsuite name=\"" << ts->name << "\" errors=\""
-                  << ts->stats.num_of_errs << "\" tests=\"" << ts->stats.num_of_tests
-                  << "\" failures=\"" << ts->stats.num_of_fails << "\" time=\""
-                  << (double) ts->time / 1000 << "\" timestamp=\"" << buff << "\">" << LF;
+            *this << SPACE << "<testsuite id=\"" << id++ << "\" name=\"" << ts->name
+                  << "\" errors=\"" << ts->stats.num_of_errs << "\" tests=\""
+                  << ts->stats.num_of_tests << "\" failures=\"" << ts->stats.num_of_fails
+                  << "\" skipped=\"0\" time=\"" << (double) ts->time / 1000
+                  << "\" timestamp=\"" << buff << "\">" << LF;
 
             for (auto tc : ts->testcases)
             {
                 *this << XSPACE << "<testcase name=\"" << tc->name << "\" classname=\""
-                      << tc->classname << "\" time=\"" << (double) tc->time / 1000 << "\">"
-                      << LF;
+                      << tc->classname << "\" time=\"" << (double) tc->time / 1000
+                      << "\"";
 
                 if (tc->error)
                 {
-                    *this << XSPACE << XSPACE << "<error message=\"" << tc->value
-                          << "\"></error>" << LF;
+                    *this << ">" << LF << XSPACE << XSPACE << "<error message=\""
+                          << tc->value << "\"></error>" << LF << XSPACE << "</testcase>"
+                          << LF;
                 }
                 else if (!tc->passed)
                 {
-                    *this << XSPACE << XSPACE
+                    *this << ">" << LF << XSPACE << XSPACE
                           << "<failure message=\"Assertion failed, expected ("
                           << tc->value << ") " << tc->assertion << " (" << tc->expected
-                          << ")\"></failure>" << LF;
+                          << ")\"></failure>" << LF << XSPACE << "</testcase>" << LF;
                 }
-
-                *this << XSPACE << "</testcase>" << LF;
+                else
+                {
+                    *this << "/>" << LF;
+                }
             }
             *this << SPACE << "</testsuite>" << LF;
         }
