@@ -86,7 +86,7 @@ public:
             for (auto tc : ts->testcases)
             {
                 *this << XSPACE << "<testcase name=\"" << tc->name << "\" classname=\""
-                      << ts->name << "\" time=\"" << (double) tc->time / 1000 << "\">"
+                      << tc->classname << "\" time=\"" << (double) tc->time / 1000 << "\">"
                       << LF;
 
                 if (tc->error)

@@ -54,11 +54,12 @@ public:
      * assert: comparators assertion
      */
     inline static TestCase_shared create(const std::string& name,
+                                         const std::string& classn,
                                          const std::string& expected,
                                          const std::vector<std::string>& args,
                                          const std::string& assert)
     {
-        return TestCase_shared(new TestCase(name, expected, args, assert));
+        return TestCase_shared(new TestCase(name, classn, expected, args, assert));
     }
 
     /**
@@ -102,7 +103,14 @@ public:
     /**
      * name/description
      */
-    std::string name;
+    const std::string name;
+
+    /**
+     * classname
+     * if tested method is member -> instance classname
+     * else testsuite name
+     */
+    const std::string classname;
 
     /**
      * Test value as string, holds
@@ -114,12 +122,12 @@ public:
     /**
      * Expected value as string
      */
-    std::string expected;
+    const std::string expected;
 
     /**
      * Arguments given to method to test, as string
      */
-    std::vector<std::string> args;
+    const std::vector<std::string> args;
 
     /**
      * Assertion representation
@@ -130,9 +138,10 @@ private:
     /**
      * c'tor
      */
-    inline TestCase(const std::string& name, const std::string& expected,
+    inline TestCase(const std::string& name, const std::string& classn, const std::string& expected,
                     const std::vector<std::string>& args, const std::string& assert)
             : name(name),
+              classname(classn),
               expected(expected),
               args(args),
               assertion(assert)

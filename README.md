@@ -23,25 +23,57 @@ To add any comparator, or reporter You like, just implement the respective inter
 ## Usage example
 
 ```c++
+#include <iostream>
+#include "framework.h"
 using namespace testsuite;
-//...
-int doThat(int i) { return i; }
-std::string doIt(const char* a, const char* b) {
-    return std::string(a).append(b);
+// prevent name conflict in case assert is defined
+#ifdef assert
+#undef assert
+#endif
+
+int static_func()
+{
+    return 0;
 }
-//...
-auto report = reporter::createXmlReporter(std::cout);
+int static_f(int i, int b)
+{
+    return i + b;
+}
+class dummy
+{
+public:
+    inline dummy()
+    {
+    }
+    inline virtual ~dummy() throw ()
+    {
+    }
+    inline int member_func(int i, int a)
+    {
+        return i + a;
+    }
+    inline int memf()
+    {
+        return 0;
+    }
+};
 
-test("Any testsuite", report)
-    ->assert("A first testcase", doThat, 1, comparator::EQUALS<int>(), 1)
-    ->assert("A failing testcase", doIt, std::string("hello"),
-             comparator::EQUALS<std::string>(), "a", "b");
-
-test("Another testsuite", report)
-    ->assert("A test with lambda", [](){ return 1; }, 1, comparator::EQUALS<int>())
-    ->assertPerformance("test runtime", doThat, 6, 123);
-//...
-return report->report();
+int main(int argc, char** argv)
+{
+    auto rep = reporter::createXmlReporter(std::cout);
+    dummy d;
+    test("testsuite 1", rep)
+        ->assert("static func", static_func, 0, comparator::EQUALS<int>())
+        ->assert("static_f", static_f, 2, comparator::EQUALS<int>(), 1, 1);
+    TestSuite_shared ts2 =
+            test("testsuite 2", rep)
+                ->assert("memf", &dummy::memf, d, 0, comparator::EQUALS<int>())
+                ->assert("member_func", &dummy::member_func, d, 2,
+                        comparator::EQUALS<int>(), 1, 1);
+    ts2->assertPerformance("static_f", static_f, (std::uint64_t) 5, 2, 2)
+       ->assertPerformance("memf", &dummy::memf, d, (std::uint64_t) 5);
+    return rep->report();
+}
 ```
 
 ### TODO
