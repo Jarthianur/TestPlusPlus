@@ -30,10 +30,6 @@ namespace util
 {
 
 /**
- * Utilities
- */
-
-/**
  * Serialize number types.
  */
 template<typename T>

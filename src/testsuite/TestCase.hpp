@@ -26,7 +26,7 @@
 #include <string>
 
 #include "../util/AssertionFailure.hpp"
-#include "../util/timing.hpp"
+#include "../util/duration.hpp"
 #include "../util/types.h"
 
 namespace testsuite
@@ -68,7 +68,7 @@ public:
 
     inline States execute() noexcept
     {
-        util::timing::duration dur;
+        util::duration dur;
         try
         {
             func();
@@ -97,9 +97,9 @@ public:
 
     /**
      * Test runtime in
-     * nanoseconds
+     * milliseconds
      */
-    std::uint64_t duration = 0;
+    double duration = 0.0;
 
     /**
      * name/description

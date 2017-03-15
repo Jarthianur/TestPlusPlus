@@ -63,7 +63,7 @@ protected:
     inline virtual void reportTestSuite(TestSuite_shared ts)
     {
         *this << "Run Testsuite [" << ts->name << "]; time = "
-              << (double) ts->time / 1000.0 << "ms" << LF;
+              <<  ts->time << "ms" << LF;
         abs_tests += ts->stats.num_of_tests;
         abs_fails += ts->stats.num_of_fails;
         abs_errs += ts->stats.num_of_errs;
@@ -74,7 +74,7 @@ protected:
     virtual void reportTestCase(TestCase& tc)
     {
         *this << SPACE << "Run Testcase [" << tc.name << "](" << tc.classname
-              << "); time = " << (double) tc.duration / 1000.0 << "ms" << LF << XSPACE;
+              << "); time = " <<  tc.duration << "ms" << LF << XSPACE;
         switch (tc.state)
         {
             case TestCase::ERROR:
@@ -101,11 +101,11 @@ protected:
         *this << "Result:: passed: " << abs_tests - abs_fails - abs_errs << "/"
               << abs_tests << " ; failed: " << abs_fails << "/" << abs_tests
               << " ; errors: " << abs_errs << "/" << abs_tests << " ; time = "
-              << (double) abs_time / 1000.0 << "ms" << LF;
+              <<  abs_time << "ms" << LF;
     }
 
 private:
-    std::uint64_t abs_time = 0;
+    double abs_time = 0;
     std::uint32_t abs_tests = 0;
     std::uint32_t abs_fails = 0;
     std::uint32_t abs_errs = 0;

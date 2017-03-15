@@ -22,12 +22,14 @@
 #ifndef TESTSUITE_TESTSUITE_HPP_
 #define TESTSUITE_TESTSUITE_HPP_
 
+#include <omp.h>
 #include <chrono>
-#include <cstdint>
+#include <iostream>
+#include <iterator>
 #include <memory>
 #include <string>
 #include <vector>
-#include <omp.h>
+
 #include "../util/types.h"
 #include "TestCase.hpp"
 #include "TestStats.hpp"
@@ -67,9 +69,9 @@ public:
 
     inline void execute()
     {
+        stats.num_of_tests = testcases.size();
         for (auto& tc : testcases)
         {
-            stats.num_of_tests++;
             switch (tc.execute())
             {
                 case TestCase::FAILED:
@@ -87,10 +89,10 @@ public:
 
     inline void executeParallel()
     {
+        stats.num_of_tests = testcases.size();
 #pragma omp parallel for
         for (auto tc = testcases.begin(); tc < testcases.end(); tc++)
         {
-            stats.num_of_tests++;
             switch (tc->execute())
             {
                 case TestCase::FAILED:
@@ -119,9 +121,9 @@ public:
     std::string name;
 
     /**
-     * runtime in nanoseconds
+     * runtime in milliseconds
      */
-    std::uint64_t time = 0;
+    double time = 0.0;
 
     /**
      * statistics

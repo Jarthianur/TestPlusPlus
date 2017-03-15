@@ -13,7 +13,7 @@
 
 #include "../comparator/ComparatorStrategy.hpp"
 #include "AssertionFailure.hpp"
-#include "timing.hpp"
+#include "duration.hpp"
 #include "types.h"
 #include "serialize.hpp"
 
@@ -63,9 +63,9 @@ inline void assertPerformance(test_function func, double maxTime)
 {
     try
     {
-        timing::duration dur;
+        duration dur;
         func();
-        double dur_ms = (double) dur.get() / 1000.0;
+        double dur_ms = dur.get();
         if (dur_ms > maxTime)
         {
             throw AssertionFailure(std::string("runtime > ") + serialize(maxTime));

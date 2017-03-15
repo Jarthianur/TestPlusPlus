@@ -25,6 +25,7 @@
 #include "reporter/Reporters.hpp"
 #include "comparator/Comparators.h"
 #include "testsuite/TestSuite.hpp"
-#include "testsuite/TestSuite_shared.h"
+#include "util/types.h"
+#include "util/assert.hpp"
 
 #endif /* SRC_FRAMEWORK_H_ */

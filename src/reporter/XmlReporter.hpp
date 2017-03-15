@@ -71,7 +71,7 @@ protected:
         *this << SPACE << "<testsuite id=\"" << id++ << "\" name=\"" << ts->name
               << "\" errors=\"" << ts->stats.num_of_errs << "\" tests=\""
               << ts->stats.num_of_tests << "\" failures=\"" << ts->stats.num_of_fails
-              << "\" skipped=\"0\" time=\"" << (double) ts->time / 1000
+              << "\" skipped=\"0\" time=\"" << ts->time
               << "\" timestamp=\"" << buff << "\">" << LF;
 
         AbstractReporter::reportTestSuite(ts);
@@ -82,7 +82,7 @@ protected:
     virtual void reportTestCase(TestCase& tc)
     {
         *this << XSPACE << "<testcase name=\"" << tc.name << "\" classname=\""
-              << tc.classname << "\" time=\"" << (double) tc.duration / 1000 << "\"";
+              << tc.classname << "\" time=\"" << tc.duration << "\"";
         switch (tc.state)
         {
             case TestCase::ERROR:
