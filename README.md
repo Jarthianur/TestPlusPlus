@@ -1,4 +1,4 @@
-# simple-cpp-testsuite
+# simple-cpp-test-framework
 
 A simple C++11, plain STL, header-only Testsuite.  
 Featuring great extendability and an easy, but powerful less-typing optimized API.
