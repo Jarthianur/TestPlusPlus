@@ -39,18 +39,18 @@ class ComparatorStrategy
 {
 public:
     /**
-     * Construct a comparator with an 'assertion'
+     * Construct a comparator with an 'comparison'
      * string, used by reporters.
      */
-    inline ComparatorStrategy(const std::string& assert)
-            : assertion(assert)
+    inline ComparatorStrategy(const std::string& comp)
+            : comparison(comp)
     {
     }
 
     /**
      * d'tor
      */
-    virtual ~ComparatorStrategy() throw ()
+    virtual ~ComparatorStrategy() noexcept
     {
     }
 
@@ -58,13 +58,13 @@ public:
      * The compare method to implement
      * in concrete comparators.
      */
-    virtual bool compare(const T&, const T&) = 0;
+    virtual bool compare(const T&, const T&) noexcept = 0;
 
     /**
      * String that represents the assertion.
      * E.g. "to be equal"
      */
-    const std::string assertion;
+    const std::string comparison;
 };
 
 /**

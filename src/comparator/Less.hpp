@@ -46,27 +46,33 @@ public:
     /**
      * c'tor
      */
-    inline Less(const std::string& a)
-            : ComparatorStrategy<T>(a)
+    inline Less(const std::string& comp)
+            : ComparatorStrategy<T>(comp)
     {
     }
 
     /**
      * d'tor
      */
-    inline virtual ~Less() throw ()
+    inline virtual ~Less() noexcept
     {
     }
 
     /**
      * Template - compare
      */
-    inline bool compare(const T& a, const T& b)
+    inline bool compare(const T& val, const T& expect) noexcept
     {
-        return a < b;
+        return val < expect;
     }
 
 };
+
+template<>
+inline bool Less<bool>::compare(const bool& val, const bool& expect) noexcept
+{
+    return val == false;
+}
 
 } // comparator
 } // testsuite
