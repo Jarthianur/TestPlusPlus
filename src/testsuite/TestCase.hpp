@@ -23,82 +23,102 @@
 #define TESTSUITE_TESTCASE_HPP_
 
 #include <cstdint>
-#include <memory>
 #include <string>
-#include <vector>
+
+#include "../util/AssertionFailure.hpp"
+#include "../util/duration.hpp"
+#include "../util/types.h"
 
 namespace testsuite
 {
 
-class TestCase;
-/**
- * Typedef for shared ptr to TestCase.
- */
-using TestCase_shared = std::shared_ptr<TestCase>;
-
 /**
  * Data-class representing a TestCase.
- * Non-copyable
  */
 class TestCase
 {
 public:
-    TestCase(const TestCase&) = delete;
-    TestCase& operator=(const TestCase&) = delete;
-
     /**
-     * Factory method for TestCase.
-     * name: representative name
-     * expected: expected value as string
-     * args: arguments given to a method to test as strings
-     * assert: comparators assertion
+     * c'tor
+     * name: name/descr of test case
+     * classn: classname/context of test function
+     * f: test function, exec ops and asserts
      */
-    inline static TestCase_shared create(const std::string& name,
-                                         const std::string& classn,
-                                         const std::string& expected,
-                                         const std::vector<std::string>& args,
-                                         const std::string& assert)
+    inline TestCase(const std::string& name, const std::string& classn, test_function f)
+            : name(name),
+              classname(classn),
+              func(f)
     {
-        return TestCase_shared(new TestCase(name, classn, expected, args, assert));
     }
 
     /**
      * d'tor
      */
-    inline virtual ~TestCase() throw ()
+    inline virtual ~TestCase() noexcept
     {
     }
 
     /**
-     * Test passed or failed
+     * Test case state
      */
-    inline void pass(bool pass)
+    enum States
+        : std::uint32_t
+        {
+            /**
+             * not yet executed
+             */
+            NONE,
+        /**
+         * executed and passed
+         */
+        PASSED,
+        /**
+         * executed and failed
+         */
+        FAILED,
+        /**
+         * executed with error
+         */
+        ERROR
+    };
+
+    /**
+     * Execute test function, store results.
+     */
+    inline States execute() noexcept
     {
-        passed = pass;
+        util::duration dur;
+        try
+        {
+            func();
+            pass();
+        }
+        catch (const AssertionFailure& e)
+        {
+            fail(e.what());
+        }
+        catch (const std::exception& e)
+        {
+            erroneous(e.what());
+        }
+        catch (...)
+        {
+            erroneous();
+        }
+        duration = dur.get();
+        return state;
     }
 
     /**
-     * Any error occurred while test run.
-     * err: error msg
+     * Test state
      */
-    inline void erroneous(const std::string& err)
-    {
-        passed = false;
-        error = true;
-        value = err;
-    }
+    States state = NONE;
 
     /**
-     * Test results
+     * Test duration in
+     * milliseconds
      */
-    bool passed = true;
-    bool error = false;
-
-    /**
-     * Test runtime in
-     * nanoseconds
-     */
-    std::uint64_t time = 0;
+    double duration = 0.0;
 
     /**
      * name/description
@@ -107,46 +127,57 @@ public:
 
     /**
      * classname
-     * if tested method is member -> instance classname
-     * else testsuite name
+     * if tested member functions -> instance classname
+     * else context name
      */
     const std::string classname;
 
     /**
-     * Test value as string, holds
-     * - error msg, in case of error
-     * - return value from method to test
+     * error msg, in case of error
      */
-    std::string value;
-
-    /**
-     * Expected value as string
-     */
-    const std::string expected;
-
-    /**
-     * Arguments given to method to test, as string
-     */
-    const std::vector<std::string> args;
-
-    /**
-     * Assertion representation
-     */
-    const std::string assertion;
+    std::string errmsg;
 
 private:
     /**
-     * c'tor
+     * Test passed
      */
-    inline TestCase(const std::string& name, const std::string& classn, const std::string& expected,
-                    const std::vector<std::string>& args, const std::string& assert)
-            : name(name),
-              classname(classn),
-              expected(expected),
-              args(args),
-              assertion(assert)
+    inline void pass()
     {
+        state = PASSED;
     }
+
+    /**
+     * Failed due to what.
+     * msg: reason
+     */
+    inline void fail(const char* msg)
+    {
+        state = FAILED;
+        errmsg = msg;
+    }
+
+    /**
+     * Any error occurred while test run.
+     * err: error msg
+     */
+    inline void erroneous(const std::string& err)
+    {
+        state = ERROR;
+        errmsg = err;
+    }
+
+    /**
+     * Same but without specified err msg.
+     */
+    inline void erroneous()
+    {
+        erroneous("");
+    }
+
+    /**
+     * test function
+     */
+    test_function func;
 };
 
 } // testsuite

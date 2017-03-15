@@ -19,20 +19,53 @@
  }
  */
 
-#ifndef TESTSUITE_TESTSUITE_SHARED_H_
-#define TESTSUITE_TESTSUITE_SHARED_H_
 
-#include <memory>
+#ifndef SRC_UTIL_ASSERTIONFAILURE_HPP_
+#define SRC_UTIL_ASSERTIONFAILURE_HPP_
+
+#include <exception>
+#include <string>
 
 namespace testsuite
 {
 
 /**
- * Typedef for shared ptr to TestSuite
+ * Exception indicating an assertion has failed.
  */
-class TestSuite;
-using TestSuite_shared = std::shared_ptr<TestSuite>;
+class AssertionFailure: public std::exception
+{
+public:
+    /**
+     * c'tor with error msg.
+     */
+    inline AssertionFailure(const std::string& msg)
+            : std::exception(),
+              msg(msg)
+    {
+    }
 
-} // testsuite
+    /**
+     * d'tor
+     */
+    inline ~AssertionFailure() noexcept
+    {
+    }
 
-#endif /* TESTSUITE_TESTSUITE_SHARED_H_ */
+    /**
+     * Return err msg.
+     */
+    inline virtual const char* what() const noexcept override
+    {
+        return msg.c_str();
+    }
+
+private:
+    /**
+     * Error msg
+     */
+    const std::string msg;
+};
+
+}  // namespace testsuite
+
+#endif /* SRC_UTIL_ASSERTIONFAILURE_HPP_ */

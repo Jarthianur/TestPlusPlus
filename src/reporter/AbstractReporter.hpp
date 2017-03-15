@@ -25,9 +25,12 @@
 #include <cstdint>
 #include <iostream>
 #include <memory>
-#include <vector>
+#include <utility>
 
-#include "../testsuite/TestSuite_shared.h"
+#include "../testsuite/TestStats.hpp"
+#include "../testsuite/TestSuite.hpp"
+#include "../testsuite/TestSuitesRunner.hpp"
+#include "../util/types.h"
 
 namespace testsuite
 {
@@ -58,25 +61,50 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~AbstractReporter() throw ()
+    inline virtual ~AbstractReporter() noexcept
     {
     }
 
     /**
      * Generate report and return sum
      * of failed tests and errors.
+     * Executes runners test suites, if not done yet.
      */
-    inline std::int32_t report()
+    inline std::int32_t report(TestSuitesRunner& runner)
     {
-        return generate();
-    }
-
-    /**
-     * Register a testsuite.
-     */
-    inline void registerTestSuite(TestSuite_shared ts)
-    {
-        suites.push_back(ts);
+        if (runner.getStatus() == TestSuitesRunner::ALL)
+        {
+            std::int32_t ret_val = 0;
+            beginReport();
+            auto ts_pair = runner.getTestSuites();
+            for (auto ts : ts_pair.first)
+            {
+                reportTestSuite(ts);
+                ret_val += ts->stats.num_of_fails + ts->stats.num_of_errs;
+            }
+            for (auto ts : ts_pair.second)
+            {
+                reportTestSuite(ts);
+                ret_val += ts->stats.num_of_fails + ts->stats.num_of_errs;
+            }
+            endReport();
+            return ret_val;
+        }
+        else if (runner.getStatus() == TestSuitesRunner::SEQUENTIAL)
+        {
+            runner.executeParallel();
+            return report(runner);
+        }
+        else if (runner.getStatus() == TestSuitesRunner::PARALLEL)
+        {
+            runner.executeSequential();
+            return report(runner);
+        }
+        else
+        {
+            runner.executeAll();
+            return report(runner);
+        }
     }
 
 protected:
@@ -86,15 +114,32 @@ protected:
     std::ostream& out_stream;
 
     /**
-     * Registered testsuites
+     * Generate report format for given test suite.
+     * This parent method may be overridden and called from
+     * derived class to generate report for each contained test case.
      */
-    std::vector<TestSuite_shared> suites;
+    inline virtual void reportTestSuite(TestSuite_shared ts)
+    {
+        for (auto& tc : ts->testcases)
+        {
+            reportTestCase(tc);
+        }
+    }
 
     /**
-     * Generate report in concrete type.
-     * Return sum of failed and erroneous tests.
+     * Generate report format for given test case.
      */
-    virtual std::int32_t generate() = 0;
+    virtual void reportTestCase(TestCase& tc) = 0;
+
+    /**
+     * Generate intro report format.
+     */
+    virtual void beginReport() = 0;
+
+    /**
+     * Generate outro report format.
+     */
+    virtual void endReport() = 0;
 
     /**
      * Write to stream.
@@ -107,11 +152,6 @@ protected:
         return out_stream;
     }
 };
-
-/**
- * Typedef for shared ptr
- */
-using AbstractReporter_shared = std::shared_ptr<AbstractReporter>;
 
 } // reporter
 } // testsuite

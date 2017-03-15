@@ -24,14 +24,12 @@
 
 #include <cstdint>
 #include <iostream>
-#include <iterator>
-#include <memory>
 #include <string>
-#include <vector>
 
 #include "../testsuite/TestCase.hpp"
 #include "../testsuite/TestStats.hpp"
 #include "../testsuite/TestSuite.hpp"
+#include "../util/types.h"
 #include "AbstractReporter.hpp"
 
 namespace testsuite
@@ -57,54 +55,72 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~PlainTextReporter() throw ()
+    inline virtual ~PlainTextReporter() noexcept
+    {
+    }
+
+protected:
+    /**
+     * impl
+     */
+    inline virtual void reportTestSuite(TestSuite_shared ts)
+    {
+        *this << "Run Testsuite [" << ts->name << "]; time = " << ts->time << "ms" << LF;
+        abs_tests += ts->stats.num_of_tests;
+        abs_fails += ts->stats.num_of_fails;
+        abs_errs += ts->stats.num_of_errs;
+        abs_time += ts->time;
+        AbstractReporter::reportTestSuite(ts);
+    }
+
+    /**
+     * impl
+     */
+    virtual void reportTestCase(TestCase& tc)
+    {
+        *this << SPACE << "Run Testcase [" << tc.name << "](" << tc.classname
+              << "); time = " << tc.duration << "ms" << LF << XSPACE;
+        switch (tc.state)
+        {
+            case TestCase::ERROR:
+                *this << "ERROR! " << tc.errmsg;
+                break;
+            case TestCase::FAILED:
+                *this << "FAILED! " << tc.errmsg;
+                break;
+            case TestCase::PASSED:
+                *this << "PASSED!";
+                break;
+            default:
+                break;
+        }
+        *this << LF;
+    }
+
+    /**
+     * impl
+     */
+    virtual void beginReport()
     {
     }
 
     /**
-     * Implementation of generate().
+     * impl
      */
-    inline virtual std::int32_t generate()
+    virtual void endReport()
     {
-        std::uint32_t abs_tests = 0;
-        std::uint32_t abs_fails = 0;
-        std::uint64_t abs_time = 0;
-        for (auto ts : suites)
-        {
-            abs_tests += ts->stats.num_of_tests;
-            abs_fails += ts->stats.num_of_fails;
-            abs_time += ts->time;
-            *this << "Run Testsuite [" << ts->name << "]; time = "
-                  << (double) ts->time / 1000.0 << "ms" << LF;
-            for (auto tc : ts->testcases)
-            {
-                *this << SPACE << "Run Testcase [" << tc->name << "](" << tc->value
-                      << ") with ( ";
-                for (auto arg = tc->args.begin(); arg != tc->args.end(); arg++)
-                {
-                    *this << *arg;
-                    if (arg < tc->args.end() - 1)
-                    {
-                        *this << " , ";
-                    }
-                }
-                *this << " ); time = " << (double) tc->time / 1000.0 << "ms" << LF;
-                *this << SPACE << SPACE << "[" << tc->name << "] ";
-                if (!tc->passed)
-                {
-                    *this << "failed!; expected = \"" << tc->expected << "\"" << LF;
-                }
-                else
-                {
-                    *this << "passed!" << LF;
-                }
-            }
-        }
-        *this << "Result:: passed: " << abs_tests - abs_fails << "/" << abs_tests
-              << " ; failed: " << abs_fails << "/" << abs_tests << " ; time = "
-              << (double) abs_time / 1000.0 << "ms" << LF;
-        return abs_fails;
+        *this << "Result:: passed: " << abs_tests - abs_fails - abs_errs << "/"
+              << abs_tests << " ; failed: " << abs_fails << "/" << abs_tests
+              << " ; errors: " << abs_errs << "/" << abs_tests << " ; time = " << abs_time
+              << "ms" << LF;
     }
+
+private:
+    double abs_time = 0;
+    std::uint32_t abs_tests = 0;
+    std::uint32_t abs_fails = 0;
+    std::uint32_t abs_errs = 0;
+
 };
 
 } // reporter

@@ -19,13 +19,36 @@
  }
  */
 
-#ifndef SRC_FRAMEWORK_H_
-#define SRC_FRAMEWORK_H_
+#ifndef SRC_UTIL_TYPES_H_
+#define SRC_UTIL_TYPES_H_
 
-#include "reporter/Reporters.hpp"
-#include "comparator/Comparators.h"
-#include "testsuite/TestSuite.hpp"
-#include "util/types.h"
-#include "util/assert.hpp"
+#include <functional>
 
-#endif /* SRC_FRAMEWORK_H_ */
+namespace testsuite
+{
+
+/**
+ * test function
+ */
+using test_function = std::function<void()>;
+
+/**
+ * Typedef for shared ptr to TestSuite
+ */
+class TestSuite;
+using TestSuite_shared = std::shared_ptr<TestSuite>;
+
+namespace reporter
+{
+
+/**
+ * Typedef for shared ptr to AbstractReporter
+ */
+class AbstractReporter;
+using AbstractReporter_shared = std::shared_ptr<AbstractReporter>;
+
+}  // namespace reporter
+
+}  // namespace testsuite
+
+#endif /* SRC_UTIL_TYPES_H_ */

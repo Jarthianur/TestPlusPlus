@@ -49,24 +49,24 @@ public:
     /**
      * c'tor
      */
-    inline Equals(const std::string& a)
-            : ComparatorStrategy<T>(a)
+    inline Equals(const std::string& comp)
+            : ComparatorStrategy<T>(comp)
     {
     }
 
     /**
      * d'tor
      */
-    inline virtual ~Equals() throw ()
+    inline virtual ~Equals() noexcept
     {
     }
 
     /**
      * Template - compare
      */
-    inline bool compare(const T& a, const T& b)
+    inline bool compare(const T& val, const T& expect) noexcept
     {
-        return a == b;
+        return val == expect;
     }
 
 };
@@ -76,10 +76,10 @@ public:
  * Takes care about floating point precision.
  */
 template<>
-inline bool Equals<double>::compare(const double& a, const double& b)
+inline bool Equals<double>::compare(const double& val, const double& expect) noexcept
 {
-    return a == b || std::abs(a - b)
-            < std::abs(std::min(a, b)) * std::numeric_limits<double>::epsilon();
+    return val == expect || std::abs(val - expect)
+            < std::abs(std::min(val, expect)) * std::numeric_limits<double>::epsilon();
 }
 
 } // comparator

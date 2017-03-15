@@ -19,44 +19,49 @@
  }
  */
 
-#ifndef UTIL_SERIALIZE_HPP_
-#define UTIL_SERIALIZE_HPP_
+#ifndef SRC_UTIL_DURATION_HPP_
+#define SRC_UTIL_DURATION_HPP_
 
-#include <string>
+#include <chrono>
+#include <cstdint>
 
 namespace testsuite
 {
+
 namespace util
 {
 
 /**
- * Serialize number types.
+ * Struct to measure runtime in milliseconds.
  */
-template<typename T>
-inline std::string serialize(const T& arg)
+struct duration final
 {
-    return std::to_string(arg);
-}
+    /**
+     * c'tor setting start time
+     */
+    inline duration()
+            : start(std::chrono::steady_clock::now())
+    {
+    }
 
-/**
- * Serialize strings.
- */
-template<>
-inline std::string serialize(const std::string& arg)
-{
-    return arg;
-}
+    /**
+     * Get duration since start time (construction)
+     * in millis.
+     */
+    inline double get()
+    {
+        return std::chrono::duration<double, std::milli>(
+                std::chrono::steady_clock::now() - start).count();
+    }
 
-/**
- * Serialize const char ptr's
- */
-template<>
-inline std::string serialize(const char* const& arg)
-{
-    return std::string(arg);
-}
+    /**
+     * Start time
+     */
+    const std::chrono::steady_clock::time_point start;
+};
 
-} // util
-} // testsuite
+}  // namespace util
 
-#endif /* UTIL_SERIALIZE_HPP_ */
+}  // namespace testsuite
+
+#endif /* SRC_UTIL_DURATION_HPP_ */
