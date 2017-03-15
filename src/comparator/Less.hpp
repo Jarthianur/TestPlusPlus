@@ -68,6 +68,12 @@ public:
 
 };
 
+template<>
+inline bool Less<bool>::compare(const bool& a, const bool& b)
+{
+    return a == false;
+}
+
 } // comparator
 } // testsuite
 

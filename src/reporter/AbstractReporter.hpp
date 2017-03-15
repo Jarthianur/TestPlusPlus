@@ -25,9 +25,12 @@
 #include <cstdint>
 #include <iostream>
 #include <memory>
-#include <vector>
+#include <utility>
 
-#include "../testsuite/TestSuite_shared.h"
+#include "../testsuite/TestStats.hpp"
+#include "../testsuite/TestSuite.hpp"
+#include "../testsuite/TestSuitesRunner.hpp"
+#include "../util/types.h"
 
 namespace testsuite
 {
@@ -66,17 +69,31 @@ public:
      * Generate report and return sum
      * of failed tests and errors.
      */
-    inline std::int32_t report()
+    inline std::int32_t report(TestSuitesRunner& runner)
     {
-        return generate();
-    }
-
-    /**
-     * Register a testsuite.
-     */
-    inline void registerTestSuite(TestSuite_shared ts)
-    {
-        suites.push_back(ts);
+        if (runner.getStatus() == TestSuitesRunner::ALL)
+        {
+            std::int32_t ret_val = 0;
+            beginReport();
+            auto ts_pair = runner.getTestSuites();
+            for (auto ts : ts_pair.first)
+            {
+                reportTestSuite(ts);
+                ret_val += ts->stats.num_of_fails + ts->stats.num_of_errs;
+            }
+            for (auto ts : ts_pair.second)
+            {
+                reportTestSuite(ts);
+                ret_val += ts->stats.num_of_fails + ts->stats.num_of_errs;
+            }
+            endReport();
+            return ret_val;
+        }
+        else
+        {
+            out_stream << "TRIED TO REPORT WITHOUT EXECUTING ALL TESTS!" << LF;
+            return -1;
+        }
     }
 
 protected:
@@ -85,16 +102,19 @@ protected:
      */
     std::ostream& out_stream;
 
-    /**
-     * Registered testsuites
-     */
-    std::vector<TestSuite_shared> suites;
+    inline virtual void reportTestSuite(TestSuite_shared ts)
+    {
+        for (auto& tc : ts->testcases)
+        {
+            reportTestCase(tc);
+        }
+    }
 
-    /**
-     * Generate report in concrete type.
-     * Return sum of failed and erroneous tests.
-     */
-    virtual std::int32_t generate() = 0;
+    virtual void reportTestCase(TestCase& tc) = 0;
+
+    virtual void beginReport()=0;
+
+    virtual void endReport()=0;
 
     /**
      * Write to stream.
@@ -107,11 +127,6 @@ protected:
         return out_stream;
     }
 };
-
-/**
- * Typedef for shared ptr
- */
-using AbstractReporter_shared = std::shared_ptr<AbstractReporter>;
 
 } // reporter
 } // testsuite

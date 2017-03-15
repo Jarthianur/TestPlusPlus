@@ -24,14 +24,12 @@
 
 #include <cstdint>
 #include <iostream>
-#include <iterator>
-#include <memory>
 #include <string>
-#include <vector>
 
 #include "../testsuite/TestCase.hpp"
 #include "../testsuite/TestStats.hpp"
 #include "../testsuite/TestSuite.hpp"
+#include "../util/types.h"
 #include "AbstractReporter.hpp"
 
 namespace testsuite
@@ -71,47 +69,45 @@ public:
     {
     }
 
-    /**
-     * Implementation of generate()
-     */
-    inline virtual std::int32_t generate()
+protected:
+    inline virtual void reportTestSuite(TestSuite_shared ts)
     {
-        std::uint32_t abs_tests = 0;
-        std::uint32_t abs_fails = 0;
-        std::uint64_t abs_time = 0;
-        for (auto ts : suites)
+        *this << "Run Testsuite [" << ts->name << "]; time = "
+              << (double) ts->time / 1000.0 << "ms" << LF;
+        abs_tests += ts->stats.num_of_tests;
+        abs_fails += ts->stats.num_of_fails;
+        abs_errs += ts->stats.num_of_errs;
+        abs_time += ts->time;
+        AbstractReporter::reportTestSuite(ts);
+    }
+
+    virtual void reportTestCase(TestCase& tc)
+    {
+        *this << SPACE << "Run Testcase [" << tc.name << "](" << tc.classname
+              << "); time = " << (double) tc.duration / 1000.0 << "ms" << LF << XSPACE;
+        switch (tc.state)
         {
-            abs_tests += ts->stats.num_of_tests;
-            abs_fails += ts->stats.num_of_fails;
-            abs_time += ts->time;
-            *this << "Run Testsuite [" << ts->name << "]; time = "
-                  << (double) ts->time / 1000.0 << "ms" << LF;
-            for (auto tc : ts->testcases)
-            {
-                *this << SPACE << "Run Testcase [" << tc->name << "](" << tc->value
-                      << ") with ( ";
-                for (auto arg = tc->args.begin(); arg != tc->args.end(); arg++)
-                {
-                    *this << *arg;
-                    if (arg < tc->args.end() - 1)
-                    {
-                        *this << " , ";
-                    }
-                }
-                *this << " ); time = " << (double) tc->time / 1000.0 << "ms" << LF;
-                if (!tc->passed)
-                {
-                    *this << SPACE << SPACE << ANSI_RED << "[" << tc->name << "] "
-                          << "failed!; expected = \"" << tc->expected << "\""
-                          << ANSI_RESET << LF;
-                }
-                else
-                {
-                    *this << SPACE << SPACE << ANSI_GREEN << "[" << tc->name << "] "
-                          << "passed!" << ANSI_RESET << LF;
-                }
-            }
+            case TestCase::ERROR:
+                *this << ANSI_MAGENTA << "ERROR! " << tc.errmsg;
+                break;
+            case TestCase::FAILED:
+                *this << ANSI_RED << "FAILED! " << tc.errmsg;
+                break;
+            case TestCase::PASSED:
+                *this << ANSI_GREEN << "PASSED!";
+                break;
+            default:
+                break;
         }
+        *this << ANSI_RESET << LF;
+    }
+
+    virtual void beginReport()
+    {
+    }
+
+    virtual void endReport()
+    {
         if (abs_fails >= (abs_tests + 1) / 2)
         {
             *this << ANSI_YELLOW;
@@ -120,11 +116,17 @@ public:
         {
             *this << ANSI_CYAN;
         }
-        *this << "Result:: passed: " << abs_tests - abs_fails << "/" << abs_tests
-              << " ; failed: " << abs_fails << "/" << abs_tests << " ; time = "
+        *this << "Result:: passed: " << abs_tests - abs_fails - abs_errs << "/"
+              << abs_tests << " ; failed: " << abs_fails << "/" << abs_tests
+              << " ; errors: " << abs_errs << "/" << abs_tests << " ; time = "
               << (double) abs_time / 1000.0 << "ms" << ANSI_RESET << LF;
-        return abs_fails;
     }
+
+private:
+    std::uint64_t abs_time = 0;
+    std::uint32_t abs_tests = 0;
+    std::uint32_t abs_fails = 0;
+    std::uint32_t abs_errs = 0;
 
 };
 

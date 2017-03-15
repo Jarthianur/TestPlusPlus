@@ -23,18 +23,14 @@
 #define TESTSUITE_TESTCASE_HPP_
 
 #include <cstdint>
-#include <memory>
 #include <string>
-#include <vector>
+
+#include "../util/AssertionFailure.hpp"
+#include "../util/timing.hpp"
+#include "../util/types.h"
 
 namespace testsuite
 {
-
-class TestCase;
-/**
- * Typedef for shared ptr to TestCase.
- */
-using TestCase_shared = std::shared_ptr<TestCase>;
 
 /**
  * Data-class representing a TestCase.
@@ -43,23 +39,15 @@ using TestCase_shared = std::shared_ptr<TestCase>;
 class TestCase
 {
 public:
-    TestCase(const TestCase&) = delete;
-    TestCase& operator=(const TestCase&) = delete;
-
     /**
-     * Factory method for TestCase.
-     * name: representative name
-     * expected: expected value as string
-     * args: arguments given to a method to test as strings
-     * assert: comparators assertion
+     * c'tor
      */
-    inline static TestCase_shared create(const std::string& name,
-                                         const std::string& classn,
-                                         const std::string& expected,
-                                         const std::vector<std::string>& args,
-                                         const std::string& assert)
+    inline TestCase(const std::string& name, const std::string& classn,
+                    test_function f)
+            : name(name),
+              classname(classn),
+              func(f)
     {
-        return TestCase_shared(new TestCase(name, classn, expected, args, assert));
     }
 
     /**
@@ -69,36 +57,49 @@ public:
     {
     }
 
-    /**
-     * Test passed or failed
-     */
-    inline void pass(bool pass)
-    {
-        passed = pass;
-    }
+    enum States
+        : std::uint32_t
+        {
+            NONE,
+        PASSED,
+        FAILED,
+        ERROR
+    };
 
-    /**
-     * Any error occurred while test run.
-     * err: error msg
-     */
-    inline void erroneous(const std::string& err)
+    inline States execute() noexcept
     {
-        passed = false;
-        error = true;
-        value = err;
+        util::timing::duration dur;
+        try
+        {
+            func();
+            pass();
+        }
+        catch (const AssertionFailure& e)
+        {
+            fail(e.what());
+        }
+        catch (const std::exception& e)
+        {
+            erroneous(e.what());
+        }
+        catch (...)
+        {
+            erroneous();
+        }
+        duration = dur.get();
+        return state;
     }
 
     /**
      * Test results
      */
-    bool passed = true;
-    bool error = false;
+    States state = NONE;
 
     /**
      * Test runtime in
      * nanoseconds
      */
-    std::uint64_t time = 0;
+    std::uint64_t duration = 0;
 
     /**
      * name/description
@@ -115,37 +116,39 @@ public:
     /**
      * Test value as string, holds
      * - error msg, in case of error
-     * - return value from method to test
      */
-    std::string value;
+    std::string errmsg;
 
-    /**
-     * Expected value as string
-     */
-    const std::string expected;
-
-    /**
-     * Arguments given to method to test, as string
-     */
-    const std::vector<std::string> args;
-
-    /**
-     * Assertion representation
-     */
-    const std::string assertion;
+    test_function func;
 
 private:
     /**
-     * c'tor
+     * Test passed or failed
      */
-    inline TestCase(const std::string& name, const std::string& classn, const std::string& expected,
-                    const std::vector<std::string>& args, const std::string& assert)
-            : name(name),
-              classname(classn),
-              expected(expected),
-              args(args),
-              assertion(assert)
+    inline void pass()
     {
+        state = PASSED;
+    }
+
+    inline void fail(const char* msg)
+    {
+        state = FAILED;
+        errmsg = msg;
+    }
+
+    /**
+     * Any error occurred while test run.
+     * err: error msg
+     */
+    inline void erroneous(const std::string& err)
+    {
+        state = ERROR;
+        errmsg = err;
+    }
+
+    inline void erroneous()
+    {
+        erroneous("");
     }
 };
 

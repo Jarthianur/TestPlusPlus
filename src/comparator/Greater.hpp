@@ -68,6 +68,12 @@ public:
 
 };
 
+template<>
+inline bool Greater<bool>::compare(const bool& a, const bool& b)
+{
+    return a == true;
+}
+
 } // comparator
 } // testsuite
 

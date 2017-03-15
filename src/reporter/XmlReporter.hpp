@@ -26,12 +26,12 @@
 #include <cstdint>
 #include <ctime>
 #include <iostream>
-#include <memory>
 #include <string>
 
 #include "../testsuite/TestCase.hpp"
 #include "../testsuite/TestStats.hpp"
 #include "../testsuite/TestSuite.hpp"
+#include "../util/types.h"
 #include "AbstractReporter.hpp"
 
 namespace testsuite
@@ -61,58 +61,61 @@ public:
     {
     }
 
-    /**
-     * Implementation of generate()
-     */
-    inline virtual std::int32_t generate()
+protected:
+    inline virtual void reportTestSuite(TestSuite_shared ts)
     {
-        std::int32_t ret_val = 0;
-        std::uint32_t id = 0;
+        std::time_t stamp = std::chrono::system_clock::to_time_t(ts->timestamp);
+        char buff[128];
+        std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
+
+        *this << SPACE << "<testsuite id=\"" << id++ << "\" name=\"" << ts->name
+              << "\" errors=\"" << ts->stats.num_of_errs << "\" tests=\""
+              << ts->stats.num_of_tests << "\" failures=\"" << ts->stats.num_of_fails
+              << "\" skipped=\"0\" time=\"" << (double) ts->time / 1000
+              << "\" timestamp=\"" << buff << "\">" << LF;
+
+        AbstractReporter::reportTestSuite(ts);
+
+        *this << SPACE << "</testsuite>" << LF;
+    }
+
+    virtual void reportTestCase(TestCase& tc)
+    {
+        *this << XSPACE << "<testcase name=\"" << tc.name << "\" classname=\""
+              << tc.classname << "\" time=\"" << (double) tc.duration / 1000 << "\"";
+        switch (tc.state)
+        {
+            case TestCase::ERROR:
+                *this << ">" << LF << XSPACE << SPACE << "<error message=\"" << tc.errmsg
+                      << "\"></error>" << LF << XSPACE << "</testcase>";
+                break;
+            case TestCase::FAILED:
+                *this << ">" << LF << XSPACE << SPACE << "<failure message=\""
+                      << tc.errmsg << "\"></failure>" << LF << XSPACE << "</testcase>";
+                break;
+            case TestCase::PASSED:
+                *this << "/>";
+                break;
+            default:
+                break;
+        }
+        *this << LF;
+    }
+
+    virtual void beginReport()
+    {
         *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << LF << "<testsuites>"
               << LF;
-
-        for (auto ts : suites)
-        {
-            ret_val += (ts->stats.num_of_errs + ts->stats.num_of_fails);
-            std::time_t stamp = std::chrono::system_clock::to_time_t(ts->timestamp);
-            char buff[128];
-            std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
-
-            *this << SPACE << "<testsuite id=\"" << id++ << "\" name=\"" << ts->name
-                  << "\" errors=\"" << ts->stats.num_of_errs << "\" tests=\""
-                  << ts->stats.num_of_tests << "\" failures=\"" << ts->stats.num_of_fails
-                  << "\" skipped=\"0\" time=\"" << (double) ts->time / 1000
-                  << "\" timestamp=\"" << buff << "\">" << LF;
-
-            for (auto tc : ts->testcases)
-            {
-                *this << XSPACE << "<testcase name=\"" << tc->name << "\" classname=\""
-                      << tc->classname << "\" time=\"" << (double) tc->time / 1000
-                      << "\"";
-
-                if (tc->error)
-                {
-                    *this << ">" << LF << XSPACE << XSPACE << "<error message=\""
-                          << tc->value << "\"></error>" << LF << XSPACE << "</testcase>"
-                          << LF;
-                }
-                else if (!tc->passed)
-                {
-                    *this << ">" << LF << XSPACE << XSPACE
-                          << "<failure message=\"Assertion failed, expected ("
-                          << tc->value << ") " << tc->assertion << " (" << tc->expected
-                          << ")\"></failure>" << LF << XSPACE << "</testcase>" << LF;
-                }
-                else
-                {
-                    *this << "/>" << LF;
-                }
-            }
-            *this << SPACE << "</testsuite>" << LF;
-        }
-        *this << "</testsuites>" << LF;
-        return ret_val;
     }
+
+    virtual void endReport()
+    {
+        *this << "</testsuites>" << LF;
+    }
+
+private:
+    std::uint32_t id = 0;
+
 };
 
 } // reporter
