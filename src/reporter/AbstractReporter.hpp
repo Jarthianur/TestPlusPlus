@@ -68,6 +68,7 @@ public:
     /**
      * Generate report and return sum
      * of failed tests and errors.
+     * Executes runners test suites, if not done yet.
      */
     inline std::int32_t report(TestSuitesRunner& runner)
     {
@@ -89,10 +90,20 @@ public:
             endReport();
             return ret_val;
         }
+        else if (runner.getStatus() == TestSuitesRunner::SEQUENTIAL)
+        {
+            runner.executeParallel();
+            return report(runner);
+        }
+        else if (runner.getStatus() == TestSuitesRunner::PARALLEL)
+        {
+            runner.executeSequential();
+            return report(runner);
+        }
         else
         {
-            out_stream << "TRIED TO REPORT WITHOUT EXECUTING ALL TESTS!" << LF;
-            return -1;
+            runner.executeAll();
+            return report(runner);
         }
     }
 

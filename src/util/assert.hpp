@@ -91,7 +91,7 @@ inline void assertException(test_function func)
 
 /**
  * Assert a given test function to run under given time.
- * func: test function
+ * func: test function wrapper
  * maxMillis: max duration in milliseconds
  */
 inline void assertPerformance(test_function func, double maxMillis)

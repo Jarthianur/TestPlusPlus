@@ -17,8 +17,10 @@ Currently preimplemented:
 + assertions
   + normal assert with comparator
   + performance assert (analysing method runtime)
+  + assert exception
++ parallel execution with openmp
 
-To add any comparator, or reporter You like, just implement the respective interface and add the factory method to the particular header-file. Like the EQUALS comparator, or the serialze method, templated functions may be specialized to handle specific types their own way.
+To add any comparator, or reporter You like, just implement the respective interface and add the factory method to the particular header-file. Like the EQUALS comparator, or the serialze method, templated functions may be specialized to handle specific types their own way. To enable parallel execution support, compile and link with `-fopenmp`.
 
 ## Usage example
 
@@ -26,6 +28,7 @@ To add any comparator, or reporter You like, just implement the respective inter
 #include <iostream>
 #include "framework.h"
 using namespace testsuite;
+using namespace comparator;
 // prevent name conflict in case assert is defined
 #ifdef assert
 #undef assert
@@ -39,6 +42,11 @@ int static_f(int i, int b)
 {
     return i + b;
 }
+int throwal()
+{
+    throw std::logic_error("Hallo Welt!");
+}
+
 class dummy
 {
 public:
@@ -61,24 +69,25 @@ public:
 int main(int argc, char** argv)
 {
     auto rep = reporter::createXmlReporter(std::cout);
-    dummy d;
-    test("testsuite 1", rep)
-        ->assert("static func", static_func, 0, comparator::EQUALS<int>())
-        ->assert("static_f", static_f, 2, comparator::EQUALS<int>(), 1, 1);
-    TestSuite_shared ts2 =
-            test("testsuite 2", rep)
-                ->assert("memf", &dummy::memf, d, 0, comparator::EQUALS<int>())
-                ->assert("member_func", &dummy::member_func, d, 2,
-                        comparator::EQUALS<int>(), 1, 1);
-    ts2->assertPerformance("static_f", static_f, (std::uint64_t) 5, 2, 2)
-       ->assertPerformance("memf", &dummy::memf, d, (std::uint64_t) 5);
-    return rep->report();
+    TestSuitesRunner runner;
+
+    describe("a testsuite", runner)
+        ->test("a testcase", "main", [](){
+            assert(static_f(1,2), 3, EQUALS<int>());
+            assertException<std::logic_error>(throwal());
+        })
+        ->test("another testcase", "dummy", [](){
+            dummy d;
+            assertPerformance([](){
+                d.memf();
+            }, 2.0);
+        });
+
+    runner.executeAll(); //explicit call, or ..
+
+    return rep->report(runner); // ... implicit
 }
 ```
-
-### TODO
-
-+ assert exceptions
 
 #### Footnote
 
