@@ -57,11 +57,14 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~XmlReporter() throw ()
+    inline virtual ~XmlReporter() noexcept
     {
     }
 
 protected:
+    /**
+     * impl
+     */
     inline virtual void reportTestSuite(TestSuite_shared ts)
     {
         std::time_t stamp = std::chrono::system_clock::to_time_t(ts->timestamp);
@@ -71,14 +74,17 @@ protected:
         *this << SPACE << "<testsuite id=\"" << id++ << "\" name=\"" << ts->name
               << "\" errors=\"" << ts->stats.num_of_errs << "\" tests=\""
               << ts->stats.num_of_tests << "\" failures=\"" << ts->stats.num_of_fails
-              << "\" skipped=\"0\" time=\"" << ts->time
-              << "\" timestamp=\"" << buff << "\">" << LF;
+              << "\" skipped=\"0\" time=\"" << ts->time << "\" timestamp=\"" << buff
+              << "\">" << LF;
 
         AbstractReporter::reportTestSuite(ts);
 
         *this << SPACE << "</testsuite>" << LF;
     }
 
+    /**
+     * impl
+     */
     virtual void reportTestCase(TestCase& tc)
     {
         *this << XSPACE << "<testcase name=\"" << tc.name << "\" classname=\""
@@ -102,12 +108,18 @@ protected:
         *this << LF;
     }
 
+    /**
+     * impl
+     */
     virtual void beginReport()
     {
         *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << LF << "<testsuites>"
               << LF;
     }
 
+    /**
+     * impl
+     */
     virtual void endReport()
     {
         *this << "</testsuites>" << LF;

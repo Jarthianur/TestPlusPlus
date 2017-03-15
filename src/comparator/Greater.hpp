@@ -46,32 +46,32 @@ public:
     /**
      * c'tor
      */
-    inline Greater(const std::string& a)
-            : ComparatorStrategy<T>(a)
+    inline Greater(const std::string& comp)
+            : ComparatorStrategy<T>(comp)
     {
     }
 
     /**
      * d'tor
      */
-    inline virtual ~Greater() throw ()
+    inline virtual ~Greater() noexcept
     {
     }
 
     /**
      * Template - compare
      */
-    inline bool compare(const T& a, const T& b)
+    inline bool compare(const T& val, const T& expect) noexcept
     {
-        return a > b;
+        return val > expect;
     }
 
 };
 
 template<>
-inline bool Greater<bool>::compare(const bool& a, const bool& b)
+inline bool Greater<bool>::compare(const bool& val, const bool& expect) noexcept
 {
-    return a == true;
+    return val == true;
 }
 
 } // comparator

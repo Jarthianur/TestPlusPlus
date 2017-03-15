@@ -55,15 +55,17 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~PlainTextReporter() throw ()
+    inline virtual ~PlainTextReporter() noexcept
     {
     }
 
 protected:
+    /**
+     * impl
+     */
     inline virtual void reportTestSuite(TestSuite_shared ts)
     {
-        *this << "Run Testsuite [" << ts->name << "]; time = "
-              <<  ts->time << "ms" << LF;
+        *this << "Run Testsuite [" << ts->name << "]; time = " << ts->time << "ms" << LF;
         abs_tests += ts->stats.num_of_tests;
         abs_fails += ts->stats.num_of_fails;
         abs_errs += ts->stats.num_of_errs;
@@ -71,10 +73,13 @@ protected:
         AbstractReporter::reportTestSuite(ts);
     }
 
+    /**
+     * impl
+     */
     virtual void reportTestCase(TestCase& tc)
     {
         *this << SPACE << "Run Testcase [" << tc.name << "](" << tc.classname
-              << "); time = " <<  tc.duration << "ms" << LF << XSPACE;
+              << "); time = " << tc.duration << "ms" << LF << XSPACE;
         switch (tc.state)
         {
             case TestCase::ERROR:
@@ -92,16 +97,22 @@ protected:
         *this << LF;
     }
 
+    /**
+     * impl
+     */
     virtual void beginReport()
     {
     }
 
+    /**
+     * impl
+     */
     virtual void endReport()
     {
         *this << "Result:: passed: " << abs_tests - abs_fails - abs_errs << "/"
               << abs_tests << " ; failed: " << abs_fails << "/" << abs_tests
-              << " ; errors: " << abs_errs << "/" << abs_tests << " ; time = "
-              <<  abs_time << "ms" << LF;
+              << " ; errors: " << abs_errs << "/" << abs_tests << " ; time = " << abs_time
+              << "ms" << LF;
     }
 
 private:

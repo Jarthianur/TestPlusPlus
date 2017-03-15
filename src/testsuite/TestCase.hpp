@@ -34,16 +34,17 @@ namespace testsuite
 
 /**
  * Data-class representing a TestCase.
- * Non-copyable
  */
 class TestCase
 {
 public:
     /**
      * c'tor
+     * name: name/descr of test case
+     * classn: classname/context of test function
+     * f: test function, exec ops and asserts
      */
-    inline TestCase(const std::string& name, const std::string& classn,
-                    test_function f)
+    inline TestCase(const std::string& name, const std::string& classn, test_function f)
             : name(name),
               classname(classn),
               func(f)
@@ -53,19 +54,37 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~TestCase() throw ()
+    inline virtual ~TestCase() noexcept
     {
     }
 
+    /**
+     * Test case state
+     */
     enum States
         : std::uint32_t
         {
+            /**
+             * not yet executed
+             */
             NONE,
+        /**
+         * executed and passed
+         */
         PASSED,
+        /**
+         * executed and failed
+         */
         FAILED,
+        /**
+         * executed with error
+         */
         ERROR
     };
 
+    /**
+     * Execute test function, store results.
+     */
     inline States execute() noexcept
     {
         util::duration dur;
@@ -91,12 +110,12 @@ public:
     }
 
     /**
-     * Test results
+     * Test state
      */
     States state = NONE;
 
     /**
-     * Test runtime in
+     * Test duration in
      * milliseconds
      */
     double duration = 0.0;
@@ -108,28 +127,29 @@ public:
 
     /**
      * classname
-     * if tested method is member -> instance classname
-     * else testsuite name
+     * if tested member functions -> instance classname
+     * else context name
      */
     const std::string classname;
 
     /**
-     * Test value as string, holds
-     * - error msg, in case of error
+     * error msg, in case of error
      */
     std::string errmsg;
 
-    test_function func;
-
 private:
     /**
-     * Test passed or failed
+     * Test passed
      */
     inline void pass()
     {
         state = PASSED;
     }
 
+    /**
+     * Failed due to what.
+     * msg: reason
+     */
     inline void fail(const char* msg)
     {
         state = FAILED;
@@ -146,10 +166,18 @@ private:
         errmsg = err;
     }
 
+    /**
+     * Same but without specified err msg.
+     */
     inline void erroneous()
     {
         erroneous("");
     }
+
+    /**
+     * test function
+     */
+    test_function func;
 };
 
 } // testsuite

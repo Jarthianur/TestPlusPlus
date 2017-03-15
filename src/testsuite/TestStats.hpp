@@ -43,7 +43,7 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~TestStats() throw ()
+    inline virtual ~TestStats() noexcept
     {
     }
 

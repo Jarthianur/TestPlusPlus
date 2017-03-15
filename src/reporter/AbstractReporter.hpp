@@ -61,7 +61,7 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~AbstractReporter() throw ()
+    inline virtual ~AbstractReporter() noexcept
     {
     }
 
@@ -102,6 +102,11 @@ protected:
      */
     std::ostream& out_stream;
 
+    /**
+     * Generate report format for given test suite.
+     * This parent method may be overridden and called from
+     * derived class to generate report for each contained test case.
+     */
     inline virtual void reportTestSuite(TestSuite_shared ts)
     {
         for (auto& tc : ts->testcases)
@@ -110,11 +115,20 @@ protected:
         }
     }
 
+    /**
+     * Generate report format for given test case.
+     */
     virtual void reportTestCase(TestCase& tc) = 0;
 
-    virtual void beginReport()=0;
+    /**
+     * Generate intro report format.
+     */
+    virtual void beginReport() = 0;
 
-    virtual void endReport()=0;
+    /**
+     * Generate outro report format.
+     */
+    virtual void endReport() = 0;
 
     /**
      * Write to stream.

@@ -65,11 +65,14 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~ColoredReporter() throw ()
+    inline virtual ~ColoredReporter() noexcept
     {
     }
 
 protected:
+    /**
+     * impl
+     */
     inline virtual void reportTestSuite(TestSuite_shared ts)
     {
         *this << "Run Testsuite [" << ts->name << "]; time = "
@@ -81,6 +84,9 @@ protected:
         AbstractReporter::reportTestSuite(ts);
     }
 
+    /**
+     * impl
+     */
     virtual void reportTestCase(TestCase& tc)
     {
         *this << SPACE << "Run Testcase [" << tc.name << "](" << tc.classname
@@ -102,10 +108,16 @@ protected:
         *this << ANSI_RESET << LF;
     }
 
+    /**
+     * impl
+     */
     virtual void beginReport()
     {
     }
 
+    /**
+     * impl
+     */
     virtual void endReport()
     {
         if (abs_fails >= (abs_tests + 1) / 2)

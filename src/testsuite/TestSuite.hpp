@@ -49,6 +49,7 @@ public:
 
     /**
      * Create a TestSuite
+     * name: name/description
      */
     inline static TestSuite_shared create(const std::string& name)
     {
@@ -58,16 +59,14 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~TestSuite() throw ()
+    inline virtual ~TestSuite() noexcept
     {
     }
 
     /**
-     * TODO
-     * add assertException
+     * Execute all test cases sequentially.
      */
-
-    inline void execute()
+    inline void execute() noexcept
     {
         stats.num_of_tests = testcases.size();
         for (auto& tc : testcases)
@@ -87,7 +86,10 @@ public:
         }
     }
 
-    inline void executeParallel()
+    /**
+     * Execute all test cases in parallel, using openmp.
+     */
+    inline void executeParallel() noexcept
     {
         stats.num_of_tests = testcases.size();
 #pragma omp parallel for
@@ -108,10 +110,17 @@ public:
         }
     }
 
-    inline TestSuite_shared test(const std::string& descr, const std::string& cn,
+    /**
+     * Create a test case.
+     * name: name/description
+     * classname: class/context for testing methods
+     * func: test function, exec ops and assertions
+     * Chainable
+     */
+    inline TestSuite_shared test(const std::string& name, const std::string& classname,
                                  test_function func)
     {
-        testcases.push_back(TestCase(descr, cn, func));
+        testcases.push_back(TestCase(name, classname, func));
         return shared_from_this();
     }
 
