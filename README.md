@@ -2,7 +2,7 @@
 
 A simple C++11, plain STL, header-only testing framework.  
 Featuring great **extendability** and an **easy, but powerful**, **less-typing** optimized API.  
-Test reports are generated in a specified format, according to the chosen reporter.
+**Test reports** are generated in a specified format, according to the chosen reporter.
 Additionally it serves the capability to **parallelize** testruns, using *OpenMP*.
 
 ## Contents
@@ -41,7 +41,7 @@ As well as customization may be the key to make a simple framework a powerful fr
 
 This testing framework serves the capability of parallelizing tests, using OpenMP.  
 It may reduce test durations massively. Nevertheless this feature should be used carefully.
-That means tests, running in parallel, *must* be completely independent from each other. But this fact may also be used to test components threadsafety.
+That means tests, running in parallel, *must* be completely independent from each other. But this fact may also be used to test components' threadsafety.
 Also consider, spawning threads has some overhead. Thus there is no point in running just a few, anyway fast, tests in parallel.  
 Of course, when executed in parallel, a test suites total time is the max time of all threads.
 
@@ -119,4 +119,4 @@ int main(int argc, char** argv)
 
 #### Footnote
 
-I implemented this framework, intentionally, to test my own C++ projects, with an fundamental and extendable API. Nevertheless anybody, finding this framework useful, may use, or even extend and contribute to it.
+I've implemented this framework, intentionally, to test my own C++ projects, with an fundamental and extendable API. Nevertheless anybody, finding this framework useful, may use, or even extend and contribute to it.
