@@ -89,6 +89,7 @@ public:
     /**
      * Execute all test cases in parallel, using openmp.
      */
+#ifdef _OPENMP
     inline void executeParallel() noexcept
     {
         mStats.num_of_tests = mTestCases.size();
@@ -126,6 +127,7 @@ public:
             }
         }
     }
+#endif
 
     /**
      * Create a test case.
@@ -149,7 +151,8 @@ public:
      * func: test function, exec ops and assertions
      * Chainable
      */
-    inline TestSuite_shared test(const std::string& name, const std::string& classname,
+    template<>
+    inline TestSuite_shared test<std::string>(const std::string& name, const std::string& classname,
                                  test_function func)
     {
         mTestCases.push_back(TestCase(name, classname, func));

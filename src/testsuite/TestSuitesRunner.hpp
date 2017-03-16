@@ -102,6 +102,7 @@ public:
     /**
      * Execute parallel test suites.
      */
+#ifdef _OPENMP
     inline void executeParallel() noexcept
     {
         for (auto ts : mParallelTSs)
@@ -117,6 +118,7 @@ public:
             mExec = PARALLEL;
         }
     }
+#endif
 
     /**
      * Execute sequential test suites.
@@ -142,7 +144,9 @@ public:
      */
     inline void executeAll() noexcept
     {
+#ifdef _OPENMP
         executeParallel();
+#endif
         executeSequential();
     }
 
@@ -193,11 +197,13 @@ private:
  * Describe and register a test suite to the given runner.
  * All test cases in this suite will be executed in parallel!
  */
+#ifdef _OPENMP
 inline TestSuite_shared describeParallel(const std::string& name,
-                                         TestSuitesRunner& runner)
+        TestSuitesRunner& runner)
 {
     return runner.registerTestSuite(TestSuite::create(name), true);
 }
+#endif
 
 /**
  * Describe and register a test suite to the given runner.
