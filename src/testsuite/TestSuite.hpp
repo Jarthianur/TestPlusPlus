@@ -22,7 +22,6 @@
 #ifndef TESTSUITE_TESTSUITE_HPP_
 #define TESTSUITE_TESTSUITE_HPP_
 
-#include <omp.h>
 #include <chrono>
 #include <iostream>
 #include <iterator>
@@ -92,21 +91,38 @@ public:
     inline void executeParallel() noexcept
     {
         stats.num_of_tests = testcases.size();
-#pragma omp parallel for
-        for (auto tc = testcases.begin(); tc < testcases.end(); tc++)
+#pragma omp parallel
         {
-            switch (tc->execute())
+            double tmp = 0.0;
+            std::uint32_t fails = 0;
+            std::uint32_t errs = 0;
+#pragma omp for schedule(dynamic)
+            for (auto tc = testcases.begin(); tc < testcases.end(); ++tc)
             {
-                case TestCase::FAILED:
-                    stats.num_of_fails++;
-                    break;
-                case TestCase::ERROR:
-                    stats.num_of_errs++;
-                    break;
-                default:
-                    break;
+                switch (tc->execute())
+                {
+                    case TestCase::FAILED:
+                        ++fails;
+                        break;
+                    case TestCase::ERROR:
+                        ++errs;
+                        break;
+                    default:
+                        break;
+                }
+                tmp += tc->duration;
             }
-            time += tc->duration;
+#pragma omp atomic
+            stats.num_of_fails += fails;
+#pragma omp atomic
+            stats.num_of_errs += errs;
+#pragma omp critical
+            {
+                if (time < tmp)
+                {
+                    time = tmp;
+                }
+            }
         }
     }
 
