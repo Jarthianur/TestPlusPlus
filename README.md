@@ -42,7 +42,8 @@ As well as customization may be the key to make a simple framework a powerful fr
 This testing framework serves the capability of parallelizing tests, using OpenMP.  
 It may reduce test durations massively. Nevertheless this feature should be used carefully.
 That means tests, running in parallel, *must* be completely independent from each other. But this fact may also be used to test components threadsafety.
-Also consider, spawning threads has some overhead. Thus there is no point in running just a few, anyway fast, tests in parallel.
+Also consider, spawning threads has some overhead. Thus there is no point in running just a few, anyway fast, tests in parallel.  
+Of course, when executed in parallel, a test suites total time is the max time of all threads.
 
 ## Usage
 
@@ -103,7 +104,7 @@ int main(int argc, char** argv)
             assert(static_f(1,2), 3, EQUALS<int>());
             assertException<std::logic_error>(throwal());
         })
-        ->test("another testcase", dummy, [](){
+        ->test<dummy>("another testcase", [](){
             dummy d;
             assertPerformance([](){
                 d.memf();

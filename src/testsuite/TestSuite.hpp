@@ -131,16 +131,16 @@ public:
 
     /**
      * Create a test case.
+     * template T: class for testing methods as classtype
      * name: name/description
-     * classname: class/context for testing methods as classtype
      * func: test function, exec ops and assertions
      * Chainable
      */
     template<typename T>
-    inline TestSuite_shared test(const std::string& name, const T& classtype,
+    inline TestSuite_shared test(const std::string& name,
                                  test_function func)
     {
-        mTestCases.push_back(TestCase(name, typeid(classtype).name(), func));
+        mTestCases.push_back(TestCase(name, typeid(T).name(), func));
         return shared_from_this();
     }
 
@@ -151,8 +151,7 @@ public:
      * func: test function, exec ops and assertions
      * Chainable
      */
-    template<>
-    inline TestSuite_shared test<std::string>(const std::string& name, const std::string& classname,
+    inline TestSuite_shared test(const std::string& name, const std::string& classname,
                                  test_function func)
     {
         mTestCases.push_back(TestCase(name, classname, func));
