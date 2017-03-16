@@ -23,10 +23,11 @@
 #define TESTSUITE_TESTSUITE_HPP_
 
 #include <chrono>
-#include <iostream>
+#include <cstdint>
 #include <iterator>
 #include <memory>
 #include <string>
+#include <typeinfo>
 #include <vector>
 
 #include "../util/types.h"
@@ -67,21 +68,21 @@ public:
      */
     inline void execute() noexcept
     {
-        stats.num_of_tests = testcases.size();
-        for (auto& tc : testcases)
+        mStats.num_of_tests = mTestCases.size();
+        for (auto& tc : mTestCases)
         {
             switch (tc.execute())
             {
                 case TestCase::FAILED:
-                    stats.num_of_fails++;
+                    mStats.num_of_fails++;
                     break;
                 case TestCase::ERROR:
-                    stats.num_of_errs++;
+                    mStats.num_of_errs++;
                     break;
                 default:
                     break;
             }
-            time += tc.duration;
+            mTime += tc.getDuration();
         }
     }
 
@@ -90,14 +91,14 @@ public:
      */
     inline void executeParallel() noexcept
     {
-        stats.num_of_tests = testcases.size();
+        mStats.num_of_tests = mTestCases.size();
 #pragma omp parallel
         {
             double tmp = 0.0;
             std::uint32_t fails = 0;
             std::uint32_t errs = 0;
 #pragma omp for schedule(dynamic)
-            for (auto tc = testcases.begin(); tc < testcases.end(); ++tc)
+            for (auto tc = mTestCases.begin(); tc < mTestCases.end(); ++tc)
             {
                 switch (tc->execute())
                 {
@@ -110,17 +111,17 @@ public:
                     default:
                         break;
                 }
-                tmp += tc->duration;
+                tmp += tc->getDuration();
             }
 #pragma omp atomic
-            stats.num_of_fails += fails;
+            mStats.num_of_fails += fails;
 #pragma omp atomic
-            stats.num_of_errs += errs;
+            mStats.num_of_errs += errs;
 #pragma omp critical
             {
-                if (time < tmp)
+                if (mTime < tmp)
                 {
-                    time = tmp;
+                    mTime = tmp;
                 }
             }
         }
@@ -129,51 +130,66 @@ public:
     /**
      * Create a test case.
      * name: name/description
-     * classname: class/context for testing methods
+     * classname: class/context for testing methods as classtype
+     * func: test function, exec ops and assertions
+     * Chainable
+     */
+    template<typename T>
+    inline TestSuite_shared test(const std::string& name, const T& classtype,
+                                 test_function func)
+    {
+        mTestCases.push_back(TestCase(name, typeid(classtype).name(), func));
+        return shared_from_this();
+    }
+
+    /**
+     * Create a test case.
+     * name: name/description
+     * classname: class/context for testing methods as string
      * func: test function, exec ops and assertions
      * Chainable
      */
     inline TestSuite_shared test(const std::string& name, const std::string& classname,
                                  test_function func)
     {
-        testcases.push_back(TestCase(name, classname, func));
+        mTestCases.push_back(TestCase(name, classname, func));
         return shared_from_this();
     }
 
-    /**
-     * name/description
-     */
-    std::string name;
+    inline const TestStats& getTestStats() const
+    {
+        return mStats;
+    }
 
-    /**
-     * runtime in milliseconds
-     */
-    double time = 0.0;
+    inline const double getTime() const
+    {
+        return mTime;
+    }
 
-    /**
-     * statistics
-     */
-    TestStats stats;
+    inline const std::vector<TestCase>& getTestCases() const
+    {
+        return mTestCases;
+    }
 
-    /**
-     * registered testcases
-     */
-    std::vector<TestCase> testcases;
-
-    /**
-     * timestamp, the testsuite was started
-     */
-    const std::chrono::system_clock::time_point timestamp;
+    const std::string mName;
+    const std::chrono::system_clock::time_point mTimestamp;
 
 private:
     /**
      * c'tor with name, setting timestamp.
      */
     inline TestSuite(const std::string& name)
-            : name(name),
-              timestamp(std::chrono::system_clock::now())
+            : mName(name),
+              mTimestamp(std::chrono::system_clock::now())
     {
     }
+
+    /**
+     * milliseconds
+     */
+    double mTime = 0.0;
+    TestStats mStats;
+    std::vector<TestCase> mTestCases;
 };
 
 } // testsuite

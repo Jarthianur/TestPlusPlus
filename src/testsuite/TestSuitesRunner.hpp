@@ -90,11 +90,11 @@ public:
     {
         if (parallel)
         {
-            parallelSuites.push_back(ts);
+            mParallelTSs.push_back(ts);
         }
         else
         {
-            seqSuites.push_back(ts);
+            mSequentialTSs.push_back(ts);
         }
         return ts;
     }
@@ -104,17 +104,17 @@ public:
      */
     inline void executeParallel() noexcept
     {
-        for (auto ts : parallelSuites)
+        for (auto ts : mParallelTSs)
         {
             ts->executeParallel();
         }
-        if (exec == SEQUENTIAL)
+        if (mExec == SEQUENTIAL)
         {
-            exec = ALL;
+            mExec = ALL;
         }
-        else if (exec == NONE)
+        else if (mExec == NONE)
         {
-            exec = PARALLEL;
+            mExec = PARALLEL;
         }
     }
 
@@ -123,17 +123,17 @@ public:
      */
     inline void executeSequential() noexcept
     {
-        for (auto ts : seqSuites)
+        for (auto ts : mSequentialTSs)
         {
             ts->execute();
         }
-        if (exec == PARALLEL)
+        if (mExec == PARALLEL)
         {
-            exec = ALL;
+            mExec = ALL;
         }
-        else if (exec == NONE)
+        else if (mExec == NONE)
         {
-            exec = SEQUENTIAL;
+            mExec = SEQUENTIAL;
         }
     }
 
@@ -149,9 +149,9 @@ public:
     /**
      * Get execution status.
      */
-    inline const ExecStatus getStatus()
+    inline const ExecStatus getStatus() const
     {
-        return exec;
+        return mExec;
     }
 
     /**
@@ -161,10 +161,10 @@ public:
      */
     inline const std::pair<std::vector<TestSuite_shared>&, std::vector<TestSuite_shared>&> getTestSuites()
     {
-        if (exec == ALL)
+        if (mExec == ALL)
         {
             return std::pair<std::vector<TestSuite_shared>&,
-                    std::vector<TestSuite_shared>&>(seqSuites, parallelSuites);
+                    std::vector<TestSuite_shared>&>(mSequentialTSs, mParallelTSs);
         }
         else
         {
@@ -176,17 +176,17 @@ private:
     /**
      * Sequential test suites
      */
-    std::vector<TestSuite_shared> seqSuites;
+    std::vector<TestSuite_shared> mSequentialTSs;
 
     /**
      * Parallel test suites
      */
-    std::vector<TestSuite_shared> parallelSuites;
+    std::vector<TestSuite_shared> mParallelTSs;
 
     /**
      * Execution status
      */
-    ExecStatus exec = NONE;
+    ExecStatus mExec = NONE;
 };
 
 /**

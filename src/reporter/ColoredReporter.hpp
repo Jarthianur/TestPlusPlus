@@ -75,29 +75,31 @@ protected:
      */
     inline virtual void reportTestSuite(TestSuite_shared ts)
     {
-        *this << "Run Testsuite [" << ts->name << "]; time = "
-              << ts->time << "ms" << LF;
-        abs_tests += ts->stats.num_of_tests;
-        abs_fails += ts->stats.num_of_fails;
-        abs_errs += ts->stats.num_of_errs;
-        abs_time += ts->time;
+        *this << "Run Testsuite [" << ts->mName << "]; time = " << ts->getTime()
+              << "ms" << LF;
+
+        abs_tests += ts->getTestStats().getNumTests();
+        abs_fails += ts->getTestStats().getNumFails();
+        abs_errs += ts->getTestStats().getNumErrs();
+        abs_time += ts->getTime();
+
         AbstractReporter::reportTestSuite(ts);
     }
 
     /**
      * impl
      */
-    virtual void reportTestCase(TestCase& tc)
+    virtual void reportTestCase(const TestCase& tc)
     {
-        *this << SPACE << "Run Testcase [" << tc.name << "](" << tc.classname
-              << "); time = " << tc.duration << "ms" << LF << XSPACE;
-        switch (tc.state)
+        *this << SPACE << "Run Testcase [" << tc.mName << "](" << tc.mClassname
+              << "); time = " << tc.getDuration() << "ms" << LF << XSPACE;
+        switch (tc.getState())
         {
             case TestCase::ERROR:
-                *this << ANSI_MAGENTA << "ERROR! " << tc.errmsg;
+                *this << ANSI_MAGENTA << "ERROR! " << tc.getErrMsg();
                 break;
             case TestCase::FAILED:
-                *this << ANSI_RED << "FAILED! " << tc.errmsg;
+                *this << ANSI_RED << "FAILED! " << tc.getErrMsg();
                 break;
             case TestCase::PASSED:
                 *this << ANSI_GREEN << "PASSED!";
@@ -130,8 +132,8 @@ protected:
         }
         *this << "Result:: passed: " << abs_tests - abs_fails - abs_errs << "/"
               << abs_tests << " ; failed: " << abs_fails << "/" << abs_tests
-              << " ; errors: " << abs_errs << "/" << abs_tests << " ; time = "
-              << abs_time << "ms" << ANSI_RESET << LF;
+              << " ; errors: " << abs_errs << "/" << abs_tests << " ; time = " << abs_time
+              << "ms" << ANSI_RESET << LF;
     }
 
 private:

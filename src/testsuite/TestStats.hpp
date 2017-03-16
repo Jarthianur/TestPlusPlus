@@ -47,6 +47,27 @@ public:
     {
     }
 
+    inline std::uint32_t getNumTests() const
+    {
+        return num_of_tests;
+    }
+
+    inline std::uint32_t getNumFails() const
+    {
+        return num_of_fails;
+    }
+
+    inline std::uint32_t getNumErrs() const
+    {
+        return num_of_errs;
+    }
+
+private:
+    /**
+     * Only TestSuite is allowed to write these members.
+     */
+    friend class TestSuite;
+
     /**
      * Number of tests run
      */

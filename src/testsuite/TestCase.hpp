@@ -45,9 +45,9 @@ public:
      * f: test function, exec ops and asserts
      */
     inline TestCase(const std::string& name, const std::string& classn, test_function f)
-            : name(name),
-              classname(classn),
-              func(f)
+            : mName(name),
+              mClassname(classn),
+              mTestFunc(f)
     {
     }
 
@@ -90,7 +90,7 @@ public:
         util::duration dur;
         try
         {
-            func();
+            mTestFunc();
             pass();
         }
         catch (const AssertionFailure& e)
@@ -105,37 +105,27 @@ public:
         {
             erroneous();
         }
-        duration = dur.get();
-        return state;
+        mDuration = dur.get();
+        return mState;
     }
 
-    /**
-     * Test state
-     */
-    States state = NONE;
+    inline const States getState() const
+    {
+        return mState;
+    }
 
-    /**
-     * Test duration in
-     * milliseconds
-     */
-    double duration = 0.0;
+    inline const double getDuration() const
+    {
+        return mDuration;
+    }
 
-    /**
-     * name/description
-     */
-    const std::string name;
+    inline const std::string& getErrMsg() const
+    {
+        return mErrMsg;
+    }
 
-    /**
-     * classname
-     * if tested member functions -> instance classname
-     * else context name
-     */
-    const std::string classname;
-
-    /**
-     * error msg, in case of error
-     */
-    std::string errmsg;
+    const std::string mName;
+    const std::string mClassname;
 
 private:
     /**
@@ -143,7 +133,7 @@ private:
      */
     inline void pass()
     {
-        state = PASSED;
+        mState = PASSED;
     }
 
     /**
@@ -152,8 +142,8 @@ private:
      */
     inline void fail(const char* msg)
     {
-        state = FAILED;
-        errmsg = msg;
+        mState = FAILED;
+        mErrMsg = msg;
     }
 
     /**
@@ -162,8 +152,8 @@ private:
      */
     inline void erroneous(const std::string& err)
     {
-        state = ERROR;
-        errmsg = err;
+        mState = ERROR;
+        mErrMsg = err;
     }
 
     /**
@@ -174,10 +164,13 @@ private:
         erroneous("");
     }
 
+    States mState = NONE;
     /**
-     * test function
+     * milliseconds
      */
-    test_function func;
+    double mDuration = 0.0;
+    std::string mErrMsg;
+    test_function mTestFunc;
 };
 
 } // testsuite
