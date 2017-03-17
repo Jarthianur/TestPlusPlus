@@ -67,15 +67,15 @@ protected:
      */
     inline virtual void reportTestSuite(TestSuite_shared ts)
     {
-        std::time_t stamp = std::chrono::system_clock::to_time_t(ts->timestamp);
+        std::time_t stamp = std::chrono::system_clock::to_time_t(ts->mTimestamp);
         char buff[128];
         std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
 
-        *this << SPACE << "<testsuite id=\"" << id++ << "\" name=\"" << ts->name
-              << "\" errors=\"" << ts->stats.num_of_errs << "\" tests=\""
-              << ts->stats.num_of_tests << "\" failures=\"" << ts->stats.num_of_fails
-              << "\" skipped=\"0\" time=\"" << ts->time << "\" timestamp=\"" << buff
-              << "\">" << LF;
+        *this << SPACE << "<testsuite id=\"" << id++ << "\" name=\"" << ts->mName
+              << "\" errors=\"" << ts->getTestStats().getNumErrs() << "\" tests=\""
+              << ts->getTestStats().getNumTests() << "\" failures=\""
+              << ts->getTestStats().getNumFails() << "\" skipped=\"0\" time=\""
+              << ts->getTime() << "\" timestamp=\"" << buff << "\">" << LF;
 
         AbstractReporter::reportTestSuite(ts);
 
@@ -85,19 +85,20 @@ protected:
     /**
      * impl
      */
-    virtual void reportTestCase(TestCase& tc)
+    virtual void reportTestCase(const TestCase& tc)
     {
-        *this << XSPACE << "<testcase name=\"" << tc.name << "\" classname=\""
-              << tc.classname << "\" time=\"" << tc.duration << "\"";
-        switch (tc.state)
+        *this << XSPACE << "<testcase name=\"" << tc.mName << "\" classname=\""
+              << tc.mClassname << "\" time=\"" << tc.getDuration() << "\"";
+        switch (tc.getState())
         {
             case TestCase::ERROR:
-                *this << ">" << LF << XSPACE << SPACE << "<error message=\"" << tc.errmsg
-                      << "\"></error>" << LF << XSPACE << "</testcase>";
+                *this << ">" << LF << XSPACE << SPACE << "<error message=\""
+                      << tc.getErrMsg() << "\"></error>" << LF << XSPACE << "</testcase>";
                 break;
             case TestCase::FAILED:
                 *this << ">" << LF << XSPACE << SPACE << "<failure message=\""
-                      << tc.errmsg << "\"></failure>" << LF << XSPACE << "</testcase>";
+                      << tc.getErrMsg() << "\"></failure>" << LF << XSPACE
+                      << "</testcase>";
                 break;
             case TestCase::PASSED:
                 *this << "/>";

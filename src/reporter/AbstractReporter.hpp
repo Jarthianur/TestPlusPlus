@@ -26,6 +26,7 @@
 #include <iostream>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "../testsuite/TestStats.hpp"
 #include "../testsuite/TestSuite.hpp"
@@ -76,17 +77,22 @@ public:
         {
             std::int32_t ret_val = 0;
             beginReport();
+
             auto ts_pair = runner.getTestSuites();
+
             for (auto ts : ts_pair.first)
             {
                 reportTestSuite(ts);
-                ret_val += ts->stats.num_of_fails + ts->stats.num_of_errs;
+                ret_val += ts->getTestStats().getNumFails()
+                        + ts->getTestStats().getNumErrs();
             }
             for (auto ts : ts_pair.second)
             {
                 reportTestSuite(ts);
-                ret_val += ts->stats.num_of_fails + ts->stats.num_of_errs;
+                ret_val += ts->getTestStats().getNumFails()
+                        + ts->getTestStats().getNumErrs();
             }
+
             endReport();
             return ret_val;
         }
@@ -120,7 +126,7 @@ protected:
      */
     inline virtual void reportTestSuite(TestSuite_shared ts)
     {
-        for (auto& tc : ts->testcases)
+        for (auto& tc : ts->getTestCases())
         {
             reportTestCase(tc);
         }
@@ -129,7 +135,7 @@ protected:
     /**
      * Generate report format for given test case.
      */
-    virtual void reportTestCase(TestCase& tc) = 0;
+    virtual void reportTestCase(const TestCase& tc) = 0;
 
     /**
      * Generate intro report format.

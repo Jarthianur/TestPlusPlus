@@ -90,11 +90,11 @@ public:
     {
         if (parallel)
         {
-            parallelSuites.push_back(ts);
+            mParallelTSs.push_back(ts);
         }
         else
         {
-            seqSuites.push_back(ts);
+            mSequentialTSs.push_back(ts);
         }
         return ts;
     }
@@ -102,38 +102,40 @@ public:
     /**
      * Execute parallel test suites.
      */
+#ifdef _OPENMP
     inline void executeParallel() noexcept
     {
-        for (auto ts : parallelSuites)
+        for (auto ts : mParallelTSs)
         {
             ts->executeParallel();
         }
-        if (exec == SEQUENTIAL)
+        if (mExec == SEQUENTIAL)
         {
-            exec = ALL;
+            mExec = ALL;
         }
-        else if (exec == NONE)
+        else if (mExec == NONE)
         {
-            exec = PARALLEL;
+            mExec = PARALLEL;
         }
     }
+#endif
 
     /**
      * Execute sequential test suites.
      */
     inline void executeSequential() noexcept
     {
-        for (auto ts : seqSuites)
+        for (auto ts : mSequentialTSs)
         {
             ts->execute();
         }
-        if (exec == PARALLEL)
+        if (mExec == PARALLEL)
         {
-            exec = ALL;
+            mExec = ALL;
         }
-        else if (exec == NONE)
+        else if (mExec == NONE)
         {
-            exec = SEQUENTIAL;
+            mExec = SEQUENTIAL;
         }
     }
 
@@ -142,16 +144,18 @@ public:
      */
     inline void executeAll() noexcept
     {
+#ifdef _OPENMP
         executeParallel();
+#endif
         executeSequential();
     }
 
     /**
      * Get execution status.
      */
-    inline const ExecStatus getStatus()
+    inline const ExecStatus getStatus() const
     {
-        return exec;
+        return mExec;
     }
 
     /**
@@ -161,10 +165,10 @@ public:
      */
     inline const std::pair<std::vector<TestSuite_shared>&, std::vector<TestSuite_shared>&> getTestSuites()
     {
-        if (exec == ALL)
+        if (mExec == ALL)
         {
             return std::pair<std::vector<TestSuite_shared>&,
-                    std::vector<TestSuite_shared>&>(seqSuites, parallelSuites);
+                    std::vector<TestSuite_shared>&>(mSequentialTSs, mParallelTSs);
         }
         else
         {
@@ -176,28 +180,30 @@ private:
     /**
      * Sequential test suites
      */
-    std::vector<TestSuite_shared> seqSuites;
+    std::vector<TestSuite_shared> mSequentialTSs;
 
     /**
      * Parallel test suites
      */
-    std::vector<TestSuite_shared> parallelSuites;
+    std::vector<TestSuite_shared> mParallelTSs;
 
     /**
      * Execution status
      */
-    ExecStatus exec = NONE;
+    ExecStatus mExec = NONE;
 };
 
 /**
  * Describe and register a test suite to the given runner.
  * All test cases in this suite will be executed in parallel!
  */
+#ifdef _OPENMP
 inline TestSuite_shared describeParallel(const std::string& name,
-                                         TestSuitesRunner& runner)
+        TestSuitesRunner& runner)
 {
     return runner.registerTestSuite(TestSuite::create(name), true);
 }
+#endif
 
 /**
  * Describe and register a test suite to the given runner.

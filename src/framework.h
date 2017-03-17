@@ -23,7 +23,7 @@
 #define SRC_FRAMEWORK_H_
 
 #include "reporter/Reporters.hpp"
-#include "comparator/Comparators.h"
+#include "comparator/Comparators.hpp"
 #include "testsuite/TestSuite.hpp"
 #include "util/types.h"
 #include "util/assert.hpp"
