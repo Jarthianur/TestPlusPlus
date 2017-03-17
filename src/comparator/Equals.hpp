@@ -79,7 +79,9 @@ template<>
 inline bool Equals<double>::compare(const double& val, const double& expect) noexcept
 {
     return val == expect || std::abs(val - expect)
-            < std::max(std::abs(val), std::abs(expect)) * std::numeric_limits<double>::epsilon();
+            < std::max(std::abs(val), std::abs(expect)) * std::numeric_limits<double>::epsilon()
+           || std::abs(val - expect) < std::max(std::abs(val), std::abs(expect))
+                   * 0.000001;
 }
 
 } // comparator
