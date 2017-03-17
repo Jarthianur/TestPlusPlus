@@ -102,40 +102,30 @@ public:
     /**
      * Execute parallel test suites.
      */
-#ifdef _OPENMP
     inline void executeParallel() noexcept
     {
-        for (auto ts : mParallelTSs)
+        if (mExec != PARALLEL && mExec != ALL)
         {
-            ts->executeParallel();
-        }
-        if (mExec == SEQUENTIAL)
-        {
-            mExec = ALL;
-        }
-        else if (mExec == NONE)
-        {
-            mExec = PARALLEL;
+            for (auto ts : mParallelTSs)
+            {
+                ts->executeParallel();
+            }
+            mExec = mExec == NONE ? PARALLEL : ALL;
         }
     }
-#endif
 
     /**
      * Execute sequential test suites.
      */
     inline void executeSequential() noexcept
     {
-        for (auto ts : mSequentialTSs)
+        if (mExec != SEQUENTIAL && mExec != ALL)
         {
-            ts->execute();
-        }
-        if (mExec == PARALLEL)
-        {
-            mExec = ALL;
-        }
-        else if (mExec == NONE)
-        {
-            mExec = SEQUENTIAL;
+            for (auto ts : mSequentialTSs)
+            {
+                ts->execute();
+            }
+            mExec = mExec == NONE ? SEQUENTIAL : ALL;
         }
     }
 
@@ -144,9 +134,7 @@ public:
      */
     inline void executeAll() noexcept
     {
-#ifdef _OPENMP
         executeParallel();
-#endif
         executeSequential();
     }
 
@@ -197,13 +185,11 @@ private:
  * Describe and register a test suite to the given runner.
  * All test cases in this suite will be executed in parallel!
  */
-#ifdef _OPENMP
 inline TestSuite_shared describeParallel(const std::string& name,
-        TestSuitesRunner& runner)
+                                         TestSuitesRunner& runner)
 {
     return runner.registerTestSuite(TestSuite::create(name), true);
 }
-#endif
 
 /**
  * Describe and register a test suite to the given runner.

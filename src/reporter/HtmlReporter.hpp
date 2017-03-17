@@ -25,6 +25,7 @@
 #include <cstdint>
 #include <iostream>
 #include <string>
+#include <fstream>
 
 #include "../testsuite/TestCase.hpp"
 #include "../testsuite/TestStats.hpp"
@@ -37,18 +38,34 @@ namespace testsuite
 namespace reporter
 {
 
+#define TD "<td>"
+#define TD_ "</td>"
+#define TR "<tr>"
+#define TR_ "</tr>"
+#define TH "<th>"
+#define TH_ "</th>"
+
 /**
  * Concrete reporter,
- * featuring full html website format.
+ * featuring html website format.
  */
 class HtmlReporter: public AbstractReporter
 {
 public:
     /**
      * c'tor with stream
+     * Defaults to stdout.
      */
     inline HtmlReporter(std::ostream& stream)
             : AbstractReporter(stream)
+    {
+    }
+
+    /**
+     * c'tor with filename
+     */
+    inline HtmlReporter(const char* fnam)
+            : AbstractReporter(fnam)
     {
     }
 
@@ -65,15 +82,47 @@ protected:
      */
     inline virtual void reportTestSuite(TestSuite_shared ts)
     {
+        abs_tests += ts->getTestStats().getNumTests();
+        abs_fails += ts->getTestStats().getNumFails();
+        abs_errs += ts->getTestStats().getNumErrs();
+        abs_time += ts->getTime();
+
+        *this << "<h3>" << ts->mName << "</h3>" << "<p>Tests: "
+              << ts->getTestStats().getNumTests() << " Failures: "
+              << ts->getTestStats().getNumFails() << " Errors: "
+              << ts->getTestStats().getNumErrs() << " Time: " << ts->getTime()
+              << "ms</p><table><thead>" << TR << TH << "Name" << TH_ << TH << "Classname"
+              << TH_ << TH << "Time" << TH_ << TH << "Status" << TH_ << TR_
+              << "</thead><tbody>";
+
         AbstractReporter::reportTestSuite(ts);
+
+        *this << "</tbody></table>";
     }
 
     /**
      * impl
      */
-    virtual void reportTestCase(TestCase& tc)
+    virtual void reportTestCase(const TestCase& tc)
     {
-
+        std::string status;
+        switch (tc.getState())
+        {
+            case TestCase::ERROR:
+                status = "error";
+                break;
+            case TestCase::FAILED:
+                status = "failed";
+                break;
+            case TestCase::PASSED:
+                status = "passed";
+                break;
+            default:
+                break;
+        }
+        *this << "<tr class=\"" << status << "\">" << TD << tc.mName << TD_ << TD
+              << tc.mClassname << TD_ << TD << tc.getDuration() << "ms" << TD_ << TD
+              << status << TD_ << TR_;
     }
 
     /**
@@ -81,6 +130,11 @@ protected:
      */
     virtual void beginReport()
     {
+        *this << "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/>"
+              "<style>body{background-color: linen}table{border-collapse: collapse;min-width: 50%}"
+              "tr,th,td{border: 1px solid black;padding: 2px}.failed{background: lightskyblue}"
+              ".passed{background: lightgreen}.error{background: lightcoral}</style>"
+              "</head><body><header><h1>Test Report</h1></header>";
     }
 
     /**
@@ -88,11 +142,16 @@ protected:
      */
     virtual void endReport()
     {
-
+        *this << "<footer><h3>Summary</h3><p>Tests: " << abs_tests << " Failures: "
+              << abs_fails << " Errors: " << abs_errs << " Time: " << abs_time
+              << "ms</p></footer></body></html>";
     }
 
 private:
-
+    double abs_time = 0;
+    std::uint32_t abs_tests = 0;
+    std::uint32_t abs_fails = 0;
+    std::uint32_t abs_errs = 0;
 };
 
 } // reporter

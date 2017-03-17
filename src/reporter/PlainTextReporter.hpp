@@ -53,6 +53,14 @@ public:
     }
 
     /**
+     * c'tor with filename
+     */
+    inline PlainTextReporter(const char* fnam)
+            : AbstractReporter(fnam)
+    {
+    }
+
+    /**
      * d'tor
      */
     inline virtual ~PlainTextReporter() noexcept
@@ -65,8 +73,8 @@ protected:
      */
     inline virtual void reportTestSuite(TestSuite_shared ts)
     {
-        *this << "Run Testsuite [" << ts->mName << "]; time = " << ts->getTime()
-              << "ms" << LF;
+        *this << "Run Testsuite [" << ts->mName << "]; time = " << ts->getTime() << "ms"
+              << LF;
 
         abs_tests += ts->getTestStats().getNumTests();
         abs_fails += ts->getTestStats().getNumFails();
