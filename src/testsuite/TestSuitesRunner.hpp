@@ -190,8 +190,8 @@ private:
  * runner: test suites runner to register
  */
 inline TestSuite_shared describeParallel(const std::string& name,
-                                         const std::string& context = "",
-                                         TestSuitesRunner& runner)
+                                         TestSuitesRunner& runner,
+                                         const std::string& context = "")
 {
     return runner.registerTestSuite(TestSuite::create(name, context), true);
 }
@@ -217,8 +217,8 @@ inline TestSuite_shared describeParallel(const std::string& name,
  * context: component/context to test as string (default="")
  * runner: test suites runner to register
  */
-inline TestSuite_shared describe(const std::string& name, const std::string& context = "",
-                                 TestSuitesRunner& runner)
+inline TestSuite_shared describe(const std::string& name, TestSuitesRunner& runner,
+                                 const std::string& context = "")
 {
     return runner.registerTestSuite(TestSuite::create(name, context), false);
 }
