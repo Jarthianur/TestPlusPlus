@@ -51,9 +51,9 @@ public:
      * Create a TestSuite
      * name: name/description
      */
-    inline static TestSuite_shared create(const std::string& name)
+    inline static TestSuite_shared create(const std::string& name, const std::string& ctxt)
     {
-        return TestSuite_shared(new TestSuite(name));
+        return TestSuite_shared(new TestSuite(name, ctxt));
     }
 
     /**
@@ -155,6 +155,20 @@ public:
         return shared_from_this();
     }
 
+    /**
+     * Create a test case.
+     * This will use the test suites context for classname.
+     * name: name/description
+     * classname: class/context for testing methods as string
+     * func: test function, exec ops and assertions
+     * Chainable
+     */
+    inline TestSuite_shared test(const std::string& name, test_function func)
+    {
+        mTestCases.push_back(TestCase(name, mContext, func));
+        return shared_from_this();
+    }
+
     inline const TestStats& getTestStats() const
     {
         return mStats;
@@ -177,9 +191,10 @@ private:
     /**
      * c'tor with name, setting timestamp.
      */
-    inline TestSuite(const std::string& name)
+    inline TestSuite(const std::string& name, const std::string& ctxt)
             : mName(name),
-              mTimestamp(std::chrono::system_clock::now())
+              mTimestamp(std::chrono::system_clock::now()),
+              mContext(ctxt)
     {
     }
 
@@ -189,6 +204,7 @@ private:
     double mTime = 0.0;
     TestStats mStats;
     std::vector<TestCase> mTestCases;
+    const std::string mContext;
 };
 
 } // testsuite

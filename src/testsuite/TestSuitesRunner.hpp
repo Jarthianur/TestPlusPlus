@@ -25,6 +25,7 @@
 #include <cstdint>
 #include <stdexcept>
 #include <string>
+#include <typeinfo>
 #include <utility>
 #include <vector>
 
@@ -188,7 +189,19 @@ private:
 inline TestSuite_shared describeParallel(const std::string& name,
                                          TestSuitesRunner& runner)
 {
-    return runner.registerTestSuite(TestSuite::create(name), true);
+    return runner.registerTestSuite(TestSuite::create(name, ""), true);
+}
+
+/**
+ * Describe and register a test suite to the given runner.
+ * Via template, pass the classtype this suite belongs to.
+ * All test cases in this suite will be executed in parallel!
+ */
+template<typename T>
+inline TestSuite_shared describeParallel(const std::string& name,
+                                         TestSuitesRunner& runner)
+{
+    return runner.registerTestSuite(TestSuite::create(name, typeid(T).name()), true);
 }
 
 /**
@@ -197,7 +210,18 @@ inline TestSuite_shared describeParallel(const std::string& name,
  */
 inline TestSuite_shared describe(const std::string& name, TestSuitesRunner& runner)
 {
-    return runner.registerTestSuite(TestSuite::create(name), false);
+    return runner.registerTestSuite(TestSuite::create(name, ""), false);
+}
+
+/**
+ * Describe and register a test suite to the given runner.
+ * Via template, pass the classtype this suite belongs to.
+ * All test cases in this suite will be executed sequentially!
+ */
+template<typename T>
+inline TestSuite_shared describe(const std::string& name, TestSuitesRunner& runner)
+{
+    return runner.registerTestSuite(TestSuite::create(name, typeid(T).name()), false);
 }
 
 } // testsuite
