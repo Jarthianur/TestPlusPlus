@@ -23,8 +23,9 @@
 #define REPORTER_ABSTRACTREPORTER_HPP_
 
 #include <cstdint>
-#include <iostream>
+#include <fstream>
 #include <memory>
+#include <stdexcept>
 #include <utility>
 #include <vector>
 
@@ -55,8 +56,22 @@ public:
      * c'tor with target out-stream.
      */
     inline AbstractReporter(std::ostream& stream)
-            : out_stream(stream)
+            : out_file(),
+              out_stream(stream)
     {
+    }
+
+    /**
+     * c'tor with target filename
+     */
+    inline AbstractReporter(const char* fnam)
+            : out_file(fnam),
+              out_stream(this->out_file)
+    {
+        if (!out_stream)
+        {
+            throw std::runtime_error("Could not open file.");
+        }
     }
 
     /**
@@ -96,16 +111,6 @@ public:
             endReport();
             return ret_val;
         }
-        else if (runner.getStatus() == TestSuitesRunner::SEQUENTIAL)
-        {
-            runner.executeParallel();
-            return report(runner);
-        }
-        else if (runner.getStatus() == TestSuitesRunner::PARALLEL)
-        {
-            runner.executeSequential();
-            return report(runner);
-        }
         else
         {
             runner.executeAll();
@@ -117,6 +122,7 @@ protected:
     /**
      * Target out-stream
      */
+    std::ofstream out_file;
     std::ostream& out_stream;
 
     /**

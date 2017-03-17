@@ -55,6 +55,14 @@ public:
     }
 
     /**
+     * c'tor with filename
+     */
+    inline XmlReporter(const char* fnam)
+            : AbstractReporter(fnam)
+    {
+    }
+
+    /**
      * d'tor
      */
     inline virtual ~XmlReporter() noexcept

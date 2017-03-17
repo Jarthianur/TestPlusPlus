@@ -25,8 +25,9 @@
 #include <iostream>
 #include <memory>
 
-#include "AbstractReporter.hpp"
+#include "../util/types.h"
 #include "ColoredReporter.hpp"
+#include "HtmlReporter.hpp"
 #include "PlainTextReporter.hpp"
 #include "XmlReporter.hpp"
 
@@ -43,25 +44,65 @@ namespace reporter
 /**
  * Factory method for plain text reporter.
  */
-inline AbstractReporter_shared createPlainTextReporter(std::ostream& stream)
+inline AbstractReporter_shared createPlainTextReporter(std::ostream& stream = std::cout)
 {
     return AbstractReporter_shared(new PlainTextReporter(stream));
 }
 
 /**
+ * Factory method for plain text reporter.
+ */
+inline AbstractReporter_shared createPlainTextReporter(const char* file)
+{
+    return AbstractReporter_shared(new PlainTextReporter(file));
+}
+
+/**
  * Factory method for colored text reporter
  */
-inline AbstractReporter_shared createColoredReporter(std::ostream& stream)
+inline AbstractReporter_shared createColoredReporter(std::ostream& stream = std::cout)
 {
     return AbstractReporter_shared(new ColoredReporter(stream));
 }
 
 /**
+ * Factory method for colored text reporter
+ */
+inline AbstractReporter_shared createColoredReporter(const char* file)
+{
+    return AbstractReporter_shared(new ColoredReporter(file));
+}
+
+/**
  * Factory method for xml reporter
  */
-inline AbstractReporter_shared createXmlReporter(std::ostream& stream)
+inline AbstractReporter_shared createXmlReporter(std::ostream& stream = std::cout)
 {
     return AbstractReporter_shared(new XmlReporter(stream));
+}
+
+/**
+ * Factory method for xml reporter
+ */
+inline AbstractReporter_shared createXmlReporter(const char* file)
+{
+    return AbstractReporter_shared(new XmlReporter(file));
+}
+
+/**
+ * Factory method for html reporter
+ */
+inline AbstractReporter_shared createHtmlReporter(std::ostream& stream = std::cout)
+{
+    return AbstractReporter_shared(new HtmlReporter(stream));
+}
+
+/**
+ * Factory method for html reporter
+ */
+inline AbstractReporter_shared createHtmlReporter(const char* file)
+{
+    return AbstractReporter_shared(new HtmlReporter(file));
 }
 
 } // reporter

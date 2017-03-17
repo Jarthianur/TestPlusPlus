@@ -96,7 +96,7 @@ public:
 
 int main(int argc, char** argv)
 {
-    auto rep = reporter::createXmlReporter(std::cout);
+    auto rep = reporter::createXmlReporter(/*stdout*/); // could also be a filename
     TestSuitesRunner runner;
 
     describe("a testsuite", runner)
