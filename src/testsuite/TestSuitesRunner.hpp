@@ -185,17 +185,23 @@ private:
 /**
  * Describe and register a test suite to the given runner.
  * All test cases in this suite will be executed in parallel!
+ * name: name/descr
+ * context: component/context to test as string (default="")
+ * runner: test suites runner to register
  */
 inline TestSuite_shared describeParallel(const std::string& name,
+                                         const std::string& context = "",
                                          TestSuitesRunner& runner)
 {
-    return runner.registerTestSuite(TestSuite::create(name, ""), true);
+    return runner.registerTestSuite(TestSuite::create(name, context), true);
 }
 
 /**
  * Describe and register a test suite to the given runner.
  * Via template, pass the classtype this suite belongs to.
  * All test cases in this suite will be executed in parallel!
+ * name: name/descr
+ * runner: test suites runner to register
  */
 template<typename T>
 inline TestSuite_shared describeParallel(const std::string& name,
@@ -207,16 +213,22 @@ inline TestSuite_shared describeParallel(const std::string& name,
 /**
  * Describe and register a test suite to the given runner.
  * All test cases in this suite will be executed sequentially!
+ * name: name/descr
+ * context: component/context to test as string (default="")
+ * runner: test suites runner to register
  */
-inline TestSuite_shared describe(const std::string& name, TestSuitesRunner& runner)
+inline TestSuite_shared describe(const std::string& name, const std::string& context = "",
+                                 TestSuitesRunner& runner)
 {
-    return runner.registerTestSuite(TestSuite::create(name, ""), false);
+    return runner.registerTestSuite(TestSuite::create(name, context), false);
 }
 
 /**
  * Describe and register a test suite to the given runner.
  * Via template, pass the classtype this suite belongs to.
  * All test cases in this suite will be executed sequentially!
+ * name: name/descr
+ * runner: test suites runner to register
  */
 template<typename T>
 inline TestSuite_shared describe(const std::string& name, TestSuitesRunner& runner)
