@@ -46,7 +46,7 @@ public:
      */
     inline TestCase(const std::string& name, const std::string& classn, test_function f)
             : mName(name),
-              mClassname(classn),
+              mClassname("test."+classn),
               mTestFunc(f)
     {
     }
