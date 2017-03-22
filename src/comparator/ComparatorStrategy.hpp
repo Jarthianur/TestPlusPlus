@@ -42,7 +42,7 @@ public:
      * Construct a comparator with an 'comparison'
      * string, used by reporters.
      */
-    inline ComparatorStrategy(const std::string& comp)
+    ComparatorStrategy(const std::string& comp)
             : comparison(comp)
     {
     }

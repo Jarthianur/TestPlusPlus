@@ -49,7 +49,7 @@ using namespace util;
  * Throws AssertionFailure if assertion failed.
  */
 template<typename T>
-inline void assert(const T& value, const T& expected, comparator::Comparator<T> comp)
+void assert(const T& value, const T& expected, comparator::Comparator<T> comp)
 {
     if (!comp->compare(value, expected))
     {
@@ -66,7 +66,7 @@ inline void assert(const T& value, const T& expected, comparator::Comparator<T> 
  * Throws AssertionFailure if any other/no exception is caught.
  */
 template<typename T>
-inline void assertException(test_function func)
+void assertException(test_function func)
 {
     try
     {
@@ -94,7 +94,7 @@ inline void assertException(test_function func)
  * func: test function wrapper
  * maxMillis: max duration in milliseconds
  */
-inline void assertPerformance(test_function func, double maxMillis)
+void assertPerformance(test_function func, double maxMillis)
 {
     try
     {

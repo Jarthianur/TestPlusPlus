@@ -44,7 +44,7 @@ public:
      * classn: classname/context of test function
      * f: test function, exec ops and asserts
      */
-    inline TestCase(const std::string& name, const std::string& classn, test_function f)
+    TestCase(const std::string& name, const std::string& classn, test_function f)
             : mName(name),
               mClassname("test."+classn),
               mTestFunc(f)
@@ -54,7 +54,7 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~TestCase() noexcept
+    virtual ~TestCase() noexcept
     {
     }
 
@@ -85,7 +85,7 @@ public:
     /**
      * Execute test function, store results.
      */
-    inline States execute() noexcept
+    States execute() noexcept
     {
         util::duration dur;
         try
@@ -150,18 +150,10 @@ private:
      * Any error occurred while test run.
      * err: error msg
      */
-    inline void erroneous(const std::string& err)
+    inline void erroneous(const std::string& err = "")
     {
         mState = ERROR;
         mErrMsg = err;
-    }
-
-    /**
-     * Same but without specified err msg.
-     */
-    inline void erroneous()
-    {
-        erroneous("");
     }
 
     States mState = NONE;

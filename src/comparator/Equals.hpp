@@ -49,7 +49,7 @@ public:
     /**
      * c'tor
      */
-    inline Equals(const std::string& comp)
+    Equals(const std::string& comp)
             : ComparatorStrategy<T>(comp)
     {
     }
@@ -57,14 +57,14 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~Equals() noexcept
+    virtual ~Equals() noexcept
     {
     }
 
     /**
      * Template - compare
      */
-    inline bool compare(const T& val, const T& expect) noexcept
+    inline bool compare(const T& val, const T& expect) noexcept override
     {
         return val == expect;
     }

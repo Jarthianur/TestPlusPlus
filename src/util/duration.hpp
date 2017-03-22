@@ -39,8 +39,12 @@ struct duration final
     /**
      * c'tor setting start time
      */
-    inline duration()
+    duration()
             : start(std::chrono::steady_clock::now())
+    {
+    }
+
+    virtual ~duration() noexcept
     {
     }
 
@@ -48,7 +52,7 @@ struct duration final
      * Get duration since start time (construction)
      * in millis.
      */
-    inline double get()
+    double get()
     {
         return std::chrono::duration<double, std::milli>(
                 std::chrono::steady_clock::now() - start).count();

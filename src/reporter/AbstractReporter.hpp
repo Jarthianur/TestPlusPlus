@@ -55,7 +55,7 @@ public:
     /**
      * c'tor with target out-stream.
      */
-    inline AbstractReporter(std::ostream& stream)
+    AbstractReporter(std::ostream& stream)
             : out_file(),
               out_stream(stream)
     {
@@ -64,7 +64,7 @@ public:
     /**
      * c'tor with target filename
      */
-    inline AbstractReporter(const char* fnam)
+    AbstractReporter(const char* fnam)
             : out_file(fnam),
               out_stream(this->out_file)
     {
@@ -77,7 +77,7 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~AbstractReporter() noexcept
+    virtual ~AbstractReporter() noexcept
     {
     }
 
@@ -86,7 +86,7 @@ public:
      * of failed tests and errors.
      * Executes runners test suites, if not done yet.
      */
-    inline std::int32_t report(TestSuitesRunner& runner)
+    std::int32_t report(TestSuitesRunner& runner)
     {
         if (runner.getStatus() == TestSuitesRunner::ALL)
         {

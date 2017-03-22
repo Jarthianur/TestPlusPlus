@@ -59,14 +59,14 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~TestSuite() noexcept
+    virtual ~TestSuite() noexcept
     {
     }
 
     /**
      * Execute all test cases sequentially.
      */
-    inline void execute() noexcept
+    void execute() noexcept
     {
         mStats.num_of_tests = mTestCases.size();
         for (auto& tc : mTestCases)
@@ -89,7 +89,7 @@ public:
     /**
      * Execute all test cases in parallel, using openmp.
      */
-    inline void executeParallel() noexcept
+    void executeParallel() noexcept
     {
         mStats.num_of_tests = mTestCases.size();
 #pragma omp parallel
@@ -135,7 +135,7 @@ public:
      * Chainable
      */
     template<typename T>
-    inline TestSuite_shared test(const std::string& name, test_function func)
+    TestSuite_shared test(const std::string& name, test_function func)
     {
         mTestCases.push_back(TestCase(name, typeid(T).name(), func));
         return shared_from_this();
@@ -148,7 +148,7 @@ public:
      * func: test function, exec ops and assertions
      * Chainable
      */
-    inline TestSuite_shared test(const std::string& name, const std::string& classname,
+    TestSuite_shared test(const std::string& name, const std::string& classname,
                                  test_function func)
     {
         mTestCases.push_back(TestCase(name, classname, func));
@@ -163,7 +163,7 @@ public:
      * func: test function, exec ops and assertions
      * Chainable
      */
-    inline TestSuite_shared test(const std::string& name, test_function func)
+    TestSuite_shared test(const std::string& name, test_function func)
     {
         mTestCases.push_back(TestCase(name, mContext, func));
         return shared_from_this();
@@ -191,7 +191,7 @@ private:
     /**
      * c'tor with name, setting timestamp.
      */
-    inline TestSuite(const std::string& name, const std::string& ctxt)
+    TestSuite(const std::string& name, const std::string& ctxt)
             : mName(name),
               mTimestamp(std::chrono::system_clock::now()),
               mContext(ctxt)

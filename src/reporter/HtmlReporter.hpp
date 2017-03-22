@@ -56,7 +56,7 @@ public:
      * c'tor with stream
      * Defaults to stdout.
      */
-    inline HtmlReporter(std::ostream& stream)
+    HtmlReporter(std::ostream& stream)
             : AbstractReporter(stream)
     {
     }
@@ -64,7 +64,7 @@ public:
     /**
      * c'tor with filename
      */
-    inline HtmlReporter(const char* fnam)
+    HtmlReporter(const char* fnam)
             : AbstractReporter(fnam)
     {
     }
@@ -72,7 +72,7 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~HtmlReporter() noexcept
+    virtual ~HtmlReporter() noexcept
     {
     }
 
@@ -80,7 +80,7 @@ protected:
     /**
      * impl
      */
-    inline virtual void reportTestSuite(TestSuite_shared ts)
+    virtual void reportTestSuite(TestSuite_shared ts)
     {
         abs_tests += ts->getTestStats().getNumTests();
         abs_fails += ts->getTestStats().getNumFails();
@@ -103,7 +103,7 @@ protected:
     /**
      * impl
      */
-    virtual void reportTestCase(const TestCase& tc)
+    virtual void reportTestCase(const TestCase& tc) override
     {
         std::string status;
         switch (tc.getState())
@@ -128,7 +128,7 @@ protected:
     /**
      * impl
      */
-    virtual void beginReport()
+    inline virtual void beginReport() override
     {
         *this << "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/>"
               "<style>body{background-color: linen}table{border-collapse: collapse;min-width: 50%}"
@@ -140,7 +140,7 @@ protected:
     /**
      * impl
      */
-    virtual void endReport()
+    inline virtual void endReport() override
     {
         *this << "<footer><h3>Summary</h3><p>Tests: " << abs_tests << " Failures: "
               << abs_fails << " Errors: " << abs_errs << " Time: " << abs_time

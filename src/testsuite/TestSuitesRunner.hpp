@@ -46,14 +46,14 @@ public:
     /**
      * c'tor
      */
-    inline TestSuitesRunner()
+    TestSuitesRunner()
     {
     }
 
     /**
      * d'tor
      */
-    inline ~TestSuitesRunner() noexcept
+    virtual ~TestSuitesRunner() noexcept
     {
     }
 
@@ -87,7 +87,7 @@ public:
      * ts: shared ptr to test suite
      * parallel: exec as parallel or sequential
      */
-    inline TestSuite_shared registerTestSuite(TestSuite_shared ts, bool parallel)
+    TestSuite_shared registerTestSuite(TestSuite_shared ts, bool parallel)
     {
         if (parallel)
         {
@@ -103,7 +103,7 @@ public:
     /**
      * Execute parallel test suites.
      */
-    inline void executeParallel() noexcept
+    void executeParallel() noexcept
     {
         if (mExec != PARALLEL && mExec != ALL)
         {
@@ -118,7 +118,7 @@ public:
     /**
      * Execute sequential test suites.
      */
-    inline void executeSequential() noexcept
+    void executeSequential() noexcept
     {
         if (mExec != SEQUENTIAL && mExec != ALL)
         {
@@ -152,7 +152,7 @@ public:
      * All have to be executed until call,
      * logic_error is thrown if not.
      */
-    inline const std::pair<std::vector<TestSuite_shared>&, std::vector<TestSuite_shared>&> getTestSuites()
+    const std::pair<std::vector<TestSuite_shared>&, std::vector<TestSuite_shared>&> getTestSuites()
     {
         if (mExec == ALL)
         {

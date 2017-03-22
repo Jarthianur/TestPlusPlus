@@ -57,7 +57,7 @@ public:
     /**
      * c'tor with stream
      */
-    inline ColoredReporter(std::ostream& stream)
+    ColoredReporter(std::ostream& stream)
             : AbstractReporter(stream)
     {
     }
@@ -65,7 +65,7 @@ public:
     /**
      * c'tor with filename
      */
-    inline ColoredReporter(const char* fnam)
+    ColoredReporter(const char* fnam)
             : AbstractReporter(fnam)
     {
     }
@@ -73,7 +73,7 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~ColoredReporter() noexcept
+    virtual ~ColoredReporter() noexcept
     {
     }
 
@@ -81,7 +81,7 @@ protected:
     /**
      * impl
      */
-    inline virtual void reportTestSuite(TestSuite_shared ts)
+    virtual void reportTestSuite(TestSuite_shared ts)
     {
         *this << "Run Testsuite [" << ts->mName << "]; time = " << ts->getTime() << "ms"
               << LF;
@@ -97,7 +97,7 @@ protected:
     /**
      * impl
      */
-    virtual void reportTestCase(const TestCase& tc)
+    virtual void reportTestCase(const TestCase& tc) override
     {
         *this << SPACE << "Run Testcase [" << tc.mName << "](" << tc.mClassname
               << "); time = " << tc.getDuration() << "ms" << LF << XSPACE;
@@ -121,14 +121,14 @@ protected:
     /**
      * impl
      */
-    virtual void beginReport()
+    inline virtual void beginReport() override
     {
     }
 
     /**
      * impl
      */
-    virtual void endReport()
+    inline virtual void endReport() override
     {
         if (abs_fails >= (abs_tests + 1) / 2)
         {

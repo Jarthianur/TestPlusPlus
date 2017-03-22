@@ -47,7 +47,7 @@ public:
     /**
      * c'tor with stream
      */
-    inline PlainTextReporter(std::ostream& stream)
+    PlainTextReporter(std::ostream& stream)
             : AbstractReporter(stream)
     {
     }
@@ -55,7 +55,7 @@ public:
     /**
      * c'tor with filename
      */
-    inline PlainTextReporter(const char* fnam)
+    PlainTextReporter(const char* fnam)
             : AbstractReporter(fnam)
     {
     }
@@ -63,7 +63,7 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~PlainTextReporter() noexcept
+    virtual ~PlainTextReporter() noexcept
     {
     }
 
@@ -71,7 +71,7 @@ protected:
     /**
      * impl
      */
-    inline virtual void reportTestSuite(TestSuite_shared ts)
+    virtual void reportTestSuite(TestSuite_shared ts)
     {
         *this << "Run Testsuite [" << ts->mName << "]; time = " << ts->getTime() << "ms"
               << LF;
@@ -87,7 +87,7 @@ protected:
     /**
      * impl
      */
-    virtual void reportTestCase(const TestCase& tc)
+    virtual void reportTestCase(const TestCase& tc) override
     {
         *this << SPACE << "Run Testcase [" << tc.mName << "](" << tc.mClassname
               << "); time = " << tc.getDuration() << "ms" << LF << XSPACE;
@@ -111,14 +111,14 @@ protected:
     /**
      * impl
      */
-    virtual void beginReport()
+    inline virtual void beginReport() override
     {
     }
 
     /**
      * impl
      */
-    virtual void endReport()
+    inline virtual void endReport() override
     {
         *this << "Result:: passed: " << abs_tests - abs_fails - abs_errs << "/"
               << abs_tests << " ; failed: " << abs_fails << "/" << abs_tests

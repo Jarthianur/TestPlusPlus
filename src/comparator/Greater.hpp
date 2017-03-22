@@ -46,7 +46,7 @@ public:
     /**
      * c'tor
      */
-    inline Greater(const std::string& comp)
+    Greater(const std::string& comp)
             : ComparatorStrategy<T>(comp)
     {
     }
@@ -54,14 +54,14 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~Greater() noexcept
+    virtual ~Greater() noexcept
     {
     }
 
     /**
      * Template - compare
      */
-    inline bool compare(const T& val, const T& expect) noexcept
+    inline bool compare(const T& val, const T& expect) noexcept override
     {
         return val > expect;
     }

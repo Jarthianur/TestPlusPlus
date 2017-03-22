@@ -38,7 +38,7 @@ public:
     /**
      * c'tor with error msg.
      */
-    inline AssertionFailure(const std::string& msg)
+    AssertionFailure(const std::string& msg)
             : std::exception(),
               msg(msg)
     {
@@ -47,7 +47,7 @@ public:
     /**
      * d'tor
      */
-    inline ~AssertionFailure() noexcept
+    virtual ~AssertionFailure() noexcept
     {
     }
 

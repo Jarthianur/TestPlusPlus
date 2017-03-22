@@ -49,7 +49,7 @@ public:
     /**
      * c'tor with stream
      */
-    inline XmlReporter(std::ostream& stream)
+    XmlReporter(std::ostream& stream)
             : AbstractReporter(stream)
     {
     }
@@ -57,7 +57,7 @@ public:
     /**
      * c'tor with filename
      */
-    inline XmlReporter(const char* fnam)
+    XmlReporter(const char* fnam)
             : AbstractReporter(fnam)
     {
     }
@@ -65,7 +65,7 @@ public:
     /**
      * d'tor
      */
-    inline virtual ~XmlReporter() noexcept
+    virtual ~XmlReporter() noexcept
     {
     }
 
@@ -73,7 +73,7 @@ protected:
     /**
      * impl
      */
-    inline virtual void reportTestSuite(TestSuite_shared ts)
+    virtual void reportTestSuite(TestSuite_shared ts)
     {
         std::time_t stamp = std::chrono::system_clock::to_time_t(ts->mTimestamp);
         char buff[128];
@@ -93,7 +93,7 @@ protected:
     /**
      * impl
      */
-    virtual void reportTestCase(const TestCase& tc)
+    virtual void reportTestCase(const TestCase& tc) override
     {
         *this << XSPACE << "<testcase name=\"" << tc.mName << "\" classname=\""
               << tc.mClassname << "\" time=\"" << tc.getDuration() << "\"";
@@ -120,7 +120,7 @@ protected:
     /**
      * impl
      */
-    virtual void beginReport()
+    inline virtual void beginReport() override
     {
         *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << LF << "<testsuites>"
               << LF;
@@ -129,7 +129,7 @@ protected:
     /**
      * impl
      */
-    virtual void endReport()
+    inline virtual void endReport() override
     {
         *this << "</testsuites>" << LF;
     }

@@ -36,14 +36,14 @@ public:
     /**
      * c'tor
      */
-    inline TestStats()
+    TestStats()
     {
     }
 
     /**
      * d'tor
      */
-    inline virtual ~TestStats() noexcept
+    virtual ~TestStats() noexcept
     {
     }
 
