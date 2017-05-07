@@ -47,7 +47,7 @@ namespace testsuite
  * Throws AssertionFailure if assertion failed.
  */
 template<typename T>
-void assert(const T& value, const T& expected, comparator::Comparator<T> comp)
+inline void assert(const T& value, const T& expected, comparator::Comparator<T> comp)
 {
     if (!comp->compare(value, expected))
     {
@@ -64,7 +64,7 @@ void assert(const T& value, const T& expected, comparator::Comparator<T> comp)
  * Throws AssertionFailure if any other/no exception is caught.
  */
 template<typename T>
-void assertException(test_function func)
+inline void assertException(test_function func)
 {
     try
     {
@@ -89,7 +89,7 @@ void assertException(test_function func)
  * func: test function wrapper
  * maxMillis: max duration in milliseconds
  */
-void assertPerformance(test_function func, double maxMillis)
+inline void assertPerformance(test_function func, double maxMillis)
 {
     try
     {

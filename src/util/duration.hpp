@@ -52,7 +52,7 @@ struct duration final
      * Get duration since start time (construction)
      * in millis.
      */
-    double get()
+    inline double get()
     {
         return std::chrono::duration<double, std::milli>(
                 std::chrono::steady_clock::now() - start).count();
