@@ -34,7 +34,6 @@
 
 namespace testsuite
 {
-using namespace reporter;
 
 /**
  * Test suite runner,

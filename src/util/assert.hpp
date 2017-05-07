@@ -39,8 +39,6 @@
 namespace testsuite
 {
 
-using namespace util;
-
 /**
  * Assert a value to expected value.
  * value: given value
@@ -54,8 +52,8 @@ void assert(const T& value, const T& expected, comparator::Comparator<T> comp)
     if (!comp->compare(value, expected))
     {
         throw AssertionFailure(
-                std::string("Expected ") + serialize(value) + " " + comp->comparison + " "
-                + serialize(expected));
+                std::string("Expected ") + util::serialize(value) + " "
+                + comp->comparison + " " + util::serialize(expected));
     }
 }
 
@@ -71,17 +69,14 @@ void assertException(test_function func)
     try
     {
         func();
-    }
-    catch (const T&)
+    } catch (const T&)
     {
         return;
-    }
-    catch (const std::exception& e)
+    } catch (const std::exception& e)
     {
         throw AssertionFailure(
                 std::string("Wrong exception thrown, caught: ") + typeid(e).name());
-    }
-    catch (...)
+    } catch (...)
     {
         throw AssertionFailure("Wrong exception thrown, caught: Unknown");
     }
@@ -98,19 +93,18 @@ void assertPerformance(test_function func, double maxMillis)
 {
     try
     {
-        duration dur;
+        util::duration dur;
         func();
         double dur_ms = dur.get();
         if (dur_ms > maxMillis)
         {
-            throw AssertionFailure(std::string("runtime > ") + serialize(maxMillis));
+            throw AssertionFailure(
+                    std::string("runtime > ") + util::serialize(maxMillis));
         }
-    }
-    catch (const std::exception& e)
+    } catch (const std::exception& e)
     {
         throw AssertionFailure(e.what());
-    }
-    catch (...)
+    } catch (...)
     {
         throw AssertionFailure("Unknown exception thrown");
     }
