@@ -38,42 +38,36 @@ namespace testsuite
 {
 namespace reporter
 {
-
 /**
  * Concrete reporter,
  * featuring JUnit XML format.
  */
-class XmlReporter: public AbstractReporter
+class XmlReporter : public AbstractReporter
 {
 public:
     /**
      * c'tor with stream
      */
-    XmlReporter(std::ostream& stream)
-            : AbstractReporter(stream)
-    {
-    }
+    XmlReporter(std::ostream& stream) : AbstractReporter(stream)
+    {}
 
     /**
      * c'tor with filename
      */
-    XmlReporter(const char* fnam)
-            : AbstractReporter(fnam)
-    {
-    }
+    XmlReporter(const char* fnam) : AbstractReporter(fnam)
+    {}
 
     /**
      * d'tor
      */
     virtual ~XmlReporter() noexcept
-    {
-    }
+    {}
 
 protected:
     /**
      * impl
      */
-    virtual void reportTestSuite(TestSuite_shared ts)
+    virtual void reportTestSuite(TestSuite_shared ts) override
     {
         std::time_t stamp = std::chrono::system_clock::to_time_t(ts->mTimestamp);
         char buff[128];
@@ -97,7 +91,7 @@ protected:
     {
         *this << XSPACE << "<testcase name=\"" << tc.mName << "\" classname=\""
               << tc.mClassname << "\" time=\"" << tc.getDuration() << "\"";
-        switch (tc.getState())
+        switch(tc.getState())
         {
             case TestCase::ERROR:
                 *this << ">" << LF << XSPACE << SPACE << "<error message=\""
@@ -136,10 +130,25 @@ protected:
 
 private:
     std::uint32_t id = 0;
-
 };
 
-} // reporter
-} // testsuite
+/**
+ * Factory method for xml reporter
+ */
+inline AbstractReporter_shared createXmlReporter(std::ostream& stream = std::cout)
+{
+    return AbstractReporter_shared(new XmlReporter(stream));
+}
+
+/**
+ * Factory method for xml reporter
+ */
+inline AbstractReporter_shared createXmlReporter(const char* file)
+{
+    return AbstractReporter_shared(new XmlReporter(file));
+}
+
+}  // reporter
+}  // testsuite
 
 #endif /* REPORTER_XMLREPORTER_HPP_ */

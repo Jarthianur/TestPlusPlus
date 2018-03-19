@@ -28,17 +28,16 @@
 #include "../comparator/ComparatorStrategy.hpp"
 #include "AssertionFailure.hpp"
 #include "duration.hpp"
-#include "types.h"
 #include "serialize.hpp"
+#include "types.h"
 
-//disable assert macro
+// disable assert macro
 #ifdef assert
 #undef assert
 #endif
 
 namespace testsuite
 {
-
 /**
  * Assert a value to expected value.
  * value: given value
@@ -49,11 +48,11 @@ namespace testsuite
 template<typename T>
 inline void assert(const T& value, const T& expected, comparator::Comparator<T> comp)
 {
-    if (!comp->compare(value, expected))
+    if(!comp->compare(value, expected))
     {
-        throw AssertionFailure(
-                std::string("Expected ") + util::serialize(value) + " "
-                + comp->comparison + " " + util::serialize(expected));
+        throw AssertionFailure(std::string("Expected '") + util::serialize(value) + "' "
+                               + comp->comparison + " '" + util::serialize(expected)
+                               + "'");
     }
 }
 
@@ -69,19 +68,22 @@ inline void assertException(test_function func)
     try
     {
         func();
-    } catch (const T&)
+    }
+    catch(const T&)
     {
         return;
-    } catch (const std::exception& e)
+    }
+    catch(const std::exception& e)
     {
-        throw AssertionFailure(
-                std::string("Wrong exception thrown, caught: ") + typeid(e).name());
-    } catch (...)
+        throw AssertionFailure(std::string("Wrong exception thrown, caught: ")
+                               + typeid(e).name());
+    }
+    catch(...)
     {
         throw AssertionFailure("Wrong exception thrown, caught: Unknown");
     }
-    throw AssertionFailure(
-            std::string("No exception thrown, expected: ") + typeid(T).name());
+    throw AssertionFailure(std::string("No exception thrown, expected: ")
+                           + typeid(T).name());
 }
 
 /**
@@ -96,15 +98,17 @@ inline void assertPerformance(test_function func, double maxMillis)
         util::duration dur;
         func();
         double dur_ms = dur.get();
-        if (dur_ms > maxMillis)
+        if(dur_ms > maxMillis)
         {
-            throw AssertionFailure(
-                    std::string("runtime > ") + util::serialize(maxMillis));
+            throw AssertionFailure(std::string("runtime > ")
+                                   + util::serialize(maxMillis));
         }
-    } catch (const std::exception& e)
+    }
+    catch(const std::exception& e)
     {
         throw AssertionFailure(e.what());
-    } catch (...)
+    }
+    catch(...)
     {
         throw AssertionFailure("Unknown exception thrown");
     }

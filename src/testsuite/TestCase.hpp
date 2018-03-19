@@ -31,7 +31,6 @@
 
 namespace testsuite
 {
-
 /**
  * Data-class representing a TestCase.
  */
@@ -45,29 +44,24 @@ public:
      * f: test function, exec ops and asserts
      */
     TestCase(const std::string& name, const std::string& classn, test_function f)
-            : mName(name),
-              mClassname("test."+classn),
-              mTestFunc(f)
-    {
-    }
+        : mName(name), mClassname("test." + classn), mTestFunc(f)
+    {}
 
     /**
      * d'tor
      */
     virtual ~TestCase() noexcept
-    {
-    }
+    {}
 
     /**
      * Test case state
      */
-    enum States
-        : std::uint32_t
-        {
-            /**
-             * not yet executed
-             */
-            NONE,
+    enum States : std::uint32_t
+    {
+        /**
+         * not yet executed
+         */
+        NONE,
         /**
          * executed and passed
          */
@@ -93,15 +87,15 @@ public:
             mTestFunc();
             pass();
         }
-        catch (const AssertionFailure& e)
+        catch(const AssertionFailure& e)
         {
             fail(e.what());
         }
-        catch (const std::exception& e)
+        catch(const std::exception& e)
         {
             erroneous(e.what());
         }
-        catch (...)
+        catch(...)
         {
             erroneous();
         }
@@ -142,7 +136,7 @@ private:
      */
     inline void fail(const char* msg)
     {
-        mState = FAILED;
+        mState  = FAILED;
         mErrMsg = msg;
     }
 
@@ -152,7 +146,7 @@ private:
      */
     inline void erroneous(const std::string& err = "")
     {
-        mState = ERROR;
+        mState  = ERROR;
         mErrMsg = err;
     }
 
@@ -165,6 +159,6 @@ private:
     test_function mTestFunc;
 };
 
-} // testsuite
+}  // testsuite
 
 #endif /* TESTSUITE_TESTCASE_HPP_ */

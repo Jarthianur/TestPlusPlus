@@ -19,9 +19,12 @@
  }
  */
 
-#ifndef COMPARATOR_GREATER_HPP_
-#define COMPARATOR_GREATER_HPP_
+#ifndef COMPARATOR_UNEQUALS_HPP
+#define COMPARATOR_UNEQUALS_HPP
 
+#include <algorithm>
+#include <cmath>
+#include <limits>
 #include <string>
 
 #include "ComparatorStrategy.hpp"
@@ -32,26 +35,26 @@ namespace comparator
 {
 /**
  * Concrete comparator strategy
- * for greater-than comparison.
+ * for unequals comparison.
  * Non-copyable
  */
 template<typename T>
-class Greater : public ComparatorStrategy<T>
+class Unequals : public ComparatorStrategy<T>
 {
 public:
-    Greater(const Greater&) = delete;
-    Greater& operator=(const Greater&) = delete;
+    Unequals(const Unequals&) = delete;
+    Unequals& operator=(const Unequals&) = delete;
 
     /**
      * c'tor
      */
-    Greater(const std::string& comp) : ComparatorStrategy<T>(comp)
+    Unequals(const std::string& comp) : ComparatorStrategy<T>(comp)
     {}
 
     /**
      * d'tor
      */
-    virtual ~Greater() noexcept
+    virtual ~Unequals() noexcept
     {}
 
     /**
@@ -59,26 +62,34 @@ public:
      */
     inline bool compare(const T& val, const T& expect) noexcept override
     {
-        return val > expect;
+        return val != expect;
     }
 };
 
+/**
+ * Specialized compare for type 'double'.
+ * Takes care about floating point precision.
+ */
 template<>
-inline bool Greater<bool>::compare(const bool& val, const bool&) noexcept
+inline bool Unequals<double>::compare(const double& val, const double& expect) noexcept
 {
-    return val == true;
+    double diff_abs = std::abs(val - expect);
+    double max      = std::max(std::abs(val), std::abs(expect));
+
+    return !(val == expect || diff_abs < max * std::numeric_limits<double>::epsilon()
+             || diff_abs < max * 0.000001);
 }
 
 /**
- * Factory method for Greater comparator.
+ * Factory method for Unequals comparator.
  */
 template<typename T>
-inline Comparator<T> GREATER()
+inline Comparator<T> UNEQUALS()
 {
-    return Comparator<T>(new Greater<T>("to be greater than"));
+    return Comparator<T>(new Unequals<T>("to be unequal"));
 }
 
 }  // namespace comparator
 }  // namespace testsuite
 
-#endif /* COMPARATOR_GREATER_HPP_ */
+#endif  // COMPARATOR_UNEQUALS_HPP

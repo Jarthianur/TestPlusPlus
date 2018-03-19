@@ -30,14 +30,13 @@ namespace testsuite
 {
 namespace comparator
 {
-
 /**
  * Concrete comparator strategy
  * for less-than comparison.
  * Non-copyable
  */
 template<typename T>
-class Less: public ComparatorStrategy<T>
+class Less : public ComparatorStrategy<T>
 {
 public:
     Less(const Less&) = delete;
@@ -46,17 +45,14 @@ public:
     /**
      * c'tor
      */
-    Less(const std::string& comp)
-            : ComparatorStrategy<T>(comp)
-    {
-    }
+    Less(const std::string& comp) : ComparatorStrategy<T>(comp)
+    {}
 
     /**
      * d'tor
      */
     virtual ~Less() noexcept
-    {
-    }
+    {}
 
     /**
      * Template - compare
@@ -65,16 +61,24 @@ public:
     {
         return val < expect;
     }
-
 };
 
 template<>
-inline bool Less<bool>::compare(const bool& val, const bool& expect) noexcept
+inline bool Less<bool>::compare(const bool& val, const bool&) noexcept
 {
     return val == false;
 }
 
-} // comparator
-} // testsuite
+/**
+ * Factory method for Less comparator.
+ */
+template<typename T>
+inline Comparator<T> LESS()
+{
+    return Comparator<T>(new Less<T>("to be less than"));
+}
+
+}  // comparator
+}  // testsuite
 
 #endif /* COMPARATOR_LESS_HPP_ */

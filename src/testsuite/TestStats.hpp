@@ -26,7 +26,6 @@
 
 namespace testsuite
 {
-
 /**
  * Statistics class for testsuites.
  */
@@ -37,15 +36,13 @@ public:
      * c'tor
      */
     TestStats()
-    {
-    }
+    {}
 
     /**
      * d'tor
      */
     virtual ~TestStats() noexcept
-    {
-    }
+    {}
 
     inline std::uint32_t getNumTests() const
     {
@@ -84,6 +81,6 @@ private:
     std::uint32_t num_of_errs = 0;
 };
 
-} // testsuite
+}  // testsuite
 
 #endif /* TESTSUITE_TESTSTATS_HPP_ */

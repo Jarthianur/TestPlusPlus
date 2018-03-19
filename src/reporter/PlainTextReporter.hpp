@@ -36,42 +36,36 @@ namespace testsuite
 {
 namespace reporter
 {
-
 /**
  * Concrete reporter,
  * featuring simple plain text format.
  */
-class PlainTextReporter: public AbstractReporter
+class PlainTextReporter : public AbstractReporter
 {
 public:
     /**
      * c'tor with stream
      */
-    PlainTextReporter(std::ostream& stream)
-            : AbstractReporter(stream)
-    {
-    }
+    PlainTextReporter(std::ostream& stream) : AbstractReporter(stream)
+    {}
 
     /**
      * c'tor with filename
      */
-    PlainTextReporter(const char* fnam)
-            : AbstractReporter(fnam)
-    {
-    }
+    PlainTextReporter(const char* fnam) : AbstractReporter(fnam)
+    {}
 
     /**
      * d'tor
      */
     virtual ~PlainTextReporter() noexcept
-    {
-    }
+    {}
 
 protected:
     /**
      * impl
      */
-    virtual void reportTestSuite(TestSuite_shared ts)
+    virtual void reportTestSuite(TestSuite_shared ts) override
     {
         *this << "Run Testsuite [" << ts->mName << "]; time = " << ts->getTime() << "ms"
               << LF;
@@ -91,7 +85,7 @@ protected:
     {
         *this << SPACE << "Run Testcase [" << tc.mName << "](" << tc.mClassname
               << "); time = " << tc.getDuration() << "ms" << LF << XSPACE;
-        switch (tc.getState())
+        switch(tc.getState())
         {
             case TestCase::ERROR:
                 *this << "ERROR! " << tc.getErrMsg();
@@ -112,8 +106,7 @@ protected:
      * impl
      */
     inline virtual void beginReport() override
-    {
-    }
+    {}
 
     /**
      * impl
@@ -127,14 +120,29 @@ protected:
     }
 
 private:
-    double abs_time = 0;
+    double abs_time         = 0;
     std::uint32_t abs_tests = 0;
     std::uint32_t abs_fails = 0;
-    std::uint32_t abs_errs = 0;
-
+    std::uint32_t abs_errs  = 0;
 };
 
-} // reporter
-} // testsuite
+/**
+ * Factory method for plain text reporter.
+ */
+inline AbstractReporter_shared createPlainTextReporter(std::ostream& stream = std::cout)
+{
+    return AbstractReporter_shared(new PlainTextReporter(stream));
+}
+
+/**
+ * Factory method for plain text reporter.
+ */
+inline AbstractReporter_shared createPlainTextReporter(const char* file)
+{
+    return AbstractReporter_shared(new PlainTextReporter(file));
+}
+
+}  // reporter
+}  // testsuite
 
 #endif /* REPORTER_PLAINTEXTREPORTER_HPP_ */

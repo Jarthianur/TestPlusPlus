@@ -23,10 +23,10 @@
 #define SRC_UTIL_TYPES_H_
 
 #include <functional>
+#include <memory>
 
 namespace testsuite
 {
-
 /**
  * test function
  */
@@ -40,7 +40,6 @@ using TestSuite_shared = std::shared_ptr<TestSuite>;
 
 namespace reporter
 {
-
 /**
  * Typedef for shared ptr to AbstractReporter
  */

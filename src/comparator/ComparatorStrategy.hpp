@@ -29,7 +29,6 @@ namespace testsuite
 {
 namespace comparator
 {
-
 /**
  * Template interface for comparators
  * used by the testsuite.
@@ -42,17 +41,14 @@ public:
      * Construct a comparator with an 'comparison'
      * string, used by reporters.
      */
-    ComparatorStrategy(const std::string& comp)
-            : comparison(comp)
-    {
-    }
+    ComparatorStrategy(const std::string& comp) : comparison(comp)
+    {}
 
     /**
      * d'tor
      */
     virtual ~ComparatorStrategy() noexcept
-    {
-    }
+    {}
 
     /**
      * The compare method to implement
@@ -74,7 +70,7 @@ public:
 template<typename T>
 using Comparator = std::shared_ptr<ComparatorStrategy<T>>;
 
-} // comparator
-} // testsuite
+}  // namespace comparator
+}  // namespace testsuite
 
 #endif /* COMPARATOR_COMPARATORSTRATEGY_HPP_ */

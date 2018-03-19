@@ -34,7 +34,6 @@
 
 namespace testsuite
 {
-
 /**
  * Test suite runner,
  * holding all test suites.
@@ -46,26 +45,23 @@ public:
      * c'tor
      */
     TestSuitesRunner()
-    {
-    }
+    {}
 
     /**
      * d'tor
      */
     virtual ~TestSuitesRunner() noexcept
-    {
-    }
+    {}
 
     /**
      * Status of execution
      */
-    enum ExecStatus
-        : std::uint32_t
-        {
-            /**
-             * No test suites executed.
-             */
-            NONE,
+    enum ExecStatus : std::uint32_t
+    {
+        /**
+         * No test suites executed.
+         */
+        NONE,
         /**
          * Sequential test suites executed.
          */
@@ -88,7 +84,7 @@ public:
      */
     TestSuite_shared registerTestSuite(TestSuite_shared ts, bool parallel)
     {
-        if (parallel)
+        if(parallel)
         {
             mParallelTSs.push_back(ts);
         }
@@ -104,9 +100,9 @@ public:
      */
     void executeParallel() noexcept
     {
-        if (mExec != PARALLEL && mExec != ALL)
+        if(mExec != PARALLEL && mExec != ALL)
         {
-            for (auto ts : mParallelTSs)
+            for(auto ts : mParallelTSs)
             {
                 ts->executeParallel();
             }
@@ -119,9 +115,9 @@ public:
      */
     void executeSequential() noexcept
     {
-        if (mExec != SEQUENTIAL && mExec != ALL)
+        if(mExec != SEQUENTIAL && mExec != ALL)
         {
-            for (auto ts : mSequentialTSs)
+            for(auto ts : mSequentialTSs)
             {
                 ts->execute();
             }
@@ -151,12 +147,14 @@ public:
      * All have to be executed until call,
      * logic_error is thrown if not.
      */
-    const std::pair<std::vector<TestSuite_shared>&, std::vector<TestSuite_shared>&> getTestSuites()
+    const std::pair<std::vector<TestSuite_shared>&, std::vector<TestSuite_shared>&>
+    getTestSuites()
     {
-        if (mExec == ALL)
+        if(mExec == ALL)
         {
             return std::pair<std::vector<TestSuite_shared>&,
-                    std::vector<TestSuite_shared>&>(mSequentialTSs, mParallelTSs);
+                             std::vector<TestSuite_shared>&>(mSequentialTSs,
+                                                             mParallelTSs);
         }
         else
         {
@@ -235,6 +233,6 @@ inline TestSuite_shared describe(const std::string& name, TestSuitesRunner& runn
     return runner.registerTestSuite(TestSuite::create(name, typeid(T).name()), false);
 }
 
-} // testsuite
+}  // testsuite
 
 #endif /* SRC_TESTSUITE_TESTSUITESRUNNER_HPP_ */

@@ -33,14 +33,13 @@ namespace testsuite
 {
 namespace comparator
 {
-
 /**
  * Concrete comparator strategy
  * for equals comparison.
  * Non-copyable
  */
 template<typename T>
-class Equals: public ComparatorStrategy<T>
+class Equals : public ComparatorStrategy<T>
 {
 public:
     Equals(const Equals&) = delete;
@@ -49,17 +48,14 @@ public:
     /**
      * c'tor
      */
-    Equals(const std::string& comp)
-            : ComparatorStrategy<T>(comp)
-    {
-    }
+    Equals(const std::string& comp) : ComparatorStrategy<T>(comp)
+    {}
 
     /**
      * d'tor
      */
     virtual ~Equals() noexcept
-    {
-    }
+    {}
 
     /**
      * Template - compare
@@ -68,7 +64,6 @@ public:
     {
         return val == expect;
     }
-
 };
 
 /**
@@ -79,13 +74,22 @@ template<>
 inline bool Equals<double>::compare(const double& val, const double& expect) noexcept
 {
     double diff_abs = std::abs(val - expect);
-    double max = std::max(std::abs(val), std::abs(expect));
+    double max      = std::max(std::abs(val), std::abs(expect));
 
     return val == expect || diff_abs < max * std::numeric_limits<double>::epsilon()
            || diff_abs < max * 0.000001;
 }
 
-} // comparator
-} // testsuite
+/**
+ * Factory method for Equals comparator.
+ */
+template<typename T>
+inline Comparator<T> EQUALS()
+{
+    return Comparator<T>(new Equals<T>("to be equal"));
+}
+
+}  // namespace comparator
+}  // namespace testsuite
 
 #endif /* COMPARATOR_EQUALS_HPP_ */

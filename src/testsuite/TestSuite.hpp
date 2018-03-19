@@ -36,12 +36,11 @@
 
 namespace testsuite
 {
-
 /**
  * Testsuite class, providing some assertion methods.
  * Non-copyable
  */
-class TestSuite: public std::enable_shared_from_this<TestSuite>
+class TestSuite : public std::enable_shared_from_this<TestSuite>
 {
 public:
     TestSuite(const TestSuite&) = delete;
@@ -51,7 +50,8 @@ public:
      * Create a TestSuite
      * name: name/description
      */
-    inline static TestSuite_shared create(const std::string& name, const std::string& ctxt)
+    inline static TestSuite_shared create(const std::string& name,
+                                          const std::string& ctxt)
     {
         return TestSuite_shared(new TestSuite(name, ctxt));
     }
@@ -60,8 +60,7 @@ public:
      * d'tor
      */
     virtual ~TestSuite() noexcept
-    {
-    }
+    {}
 
     /**
      * Execute all test cases sequentially.
@@ -69,9 +68,9 @@ public:
     void execute() noexcept
     {
         mStats.num_of_tests = mTestCases.size();
-        for (auto& tc : mTestCases)
+        for(auto& tc : mTestCases)
         {
-            switch (tc.execute())
+            switch(tc.execute())
             {
                 case TestCase::FAILED:
                     mStats.num_of_fails++;
@@ -94,13 +93,13 @@ public:
         mStats.num_of_tests = mTestCases.size();
 #pragma omp parallel
         {
-            double tmp = 0.0;
+            double tmp          = 0.0;
             std::uint32_t fails = 0;
-            std::uint32_t errs = 0;
+            std::uint32_t errs  = 0;
 #pragma omp for schedule(dynamic)
-            for (auto tc = mTestCases.begin(); tc < mTestCases.end(); ++tc)
+            for(auto tc = mTestCases.begin(); tc < mTestCases.end(); ++tc)
             {
-                switch (tc->execute())
+                switch(tc->execute())
                 {
                     case TestCase::FAILED:
                         ++fails;
@@ -119,7 +118,7 @@ public:
             mStats.num_of_errs += errs;
 #pragma omp critical
             {
-                if (mTime < tmp)
+                if(mTime < tmp)
                 {
                     mTime = tmp;
                 }
@@ -149,7 +148,7 @@ public:
      * Chainable
      */
     TestSuite_shared test(const std::string& name, const std::string& classname,
-                                 test_function func)
+                          test_function func)
     {
         mTestCases.push_back(TestCase(name, classname, func));
         return shared_from_this();
@@ -192,11 +191,8 @@ private:
      * c'tor with name, setting timestamp.
      */
     TestSuite(const std::string& name, const std::string& ctxt)
-            : mName(name),
-              mTimestamp(std::chrono::system_clock::now()),
-              mContext(ctxt)
-    {
-    }
+        : mName(name), mTimestamp(std::chrono::system_clock::now()), mContext(ctxt)
+    {}
 
     /**
      * milliseconds
@@ -207,6 +203,6 @@ private:
     const std::string mContext;
 };
 
-} // testsuite
+}  // testsuite
 
 #endif /* TESTSUITE_TESTSUITE_HPP_ */

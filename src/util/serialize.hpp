@@ -28,7 +28,6 @@ namespace testsuite
 {
 namespace util
 {
-
 /**
  * Serialize number types.
  */
@@ -56,7 +55,7 @@ inline std::string serialize(const char* const& arg)
     return std::string(arg);
 }
 
-} // util
-} // testsuite
+}  // util
+}  // testsuite
 
 #endif /* UTIL_SERIALIZE_HPP_ */
