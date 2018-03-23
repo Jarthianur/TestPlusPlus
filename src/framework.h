@@ -36,6 +36,6 @@
 
 #define PROVIDE_COMPARATOR(TYPE, COMP, NAME)            \
     static testsuite::comparator::Comparator<TYPE> NAME \
-        = testsuite::comparator::##COMP<TYPE>();
+        = testsuite::comparator::COMP<TYPE>();
 
 #endif /* SRC_FRAMEWORK_H_ */
