@@ -34,6 +34,8 @@
 #include "util/assert.hpp"
 #include "util/types.h"
 
-#define PROVIDE_COMPARATOR(TYPE, COMP, NAME) static Comparator<TYPE> NAME = COMP<TYPE>();
+#define PROVIDE_COMPARATOR(TYPE, COMP, NAME)            \
+    static testsuite::comparator::Comparator<TYPE> NAME \
+        = testsuite::comparator::##COMP<TYPE>();
 
 #endif /* SRC_FRAMEWORK_H_ */
