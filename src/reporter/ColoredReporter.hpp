@@ -36,52 +36,46 @@ namespace testsuite
 {
 namespace reporter
 {
-
 // ANSI colors
-#define ANSI_RED     "\x1b[31m"
-#define ANSI_GREEN   "\x1b[32m"
-#define ANSI_YELLOW  "\x1b[33m"
-#define ANSI_BLUE    "\x1b[34m"
+#define ANSI_RED "\x1b[31m"
+#define ANSI_GREEN "\x1b[32m"
+#define ANSI_YELLOW "\x1b[33m"
+#define ANSI_BLUE "\x1b[34m"
 #define ANSI_MAGENTA "\x1b[35m"
-#define ANSI_CYAN    "\x1b[36m"
+#define ANSI_CYAN "\x1b[36m"
 // ANSI reset colors
-#define ANSI_RESET   "\x1b[0m"
+#define ANSI_RESET "\x1b[0m"
 
 /**
  * Concrete reporter,
  * featuring colored plain text format.
  */
-class ColoredReporter: public AbstractReporter
+class ColoredReporter : public AbstractReporter
 {
 public:
     /**
      * c'tor with stream
      */
-    ColoredReporter(std::ostream& stream)
-            : AbstractReporter(stream)
-    {
-    }
+    ColoredReporter(std::ostream& stream) : AbstractReporter(stream)
+    {}
 
     /**
      * c'tor with filename
      */
-    ColoredReporter(const char* fnam)
-            : AbstractReporter(fnam)
-    {
-    }
+    ColoredReporter(const char* fnam) : AbstractReporter(fnam)
+    {}
 
     /**
      * d'tor
      */
     virtual ~ColoredReporter() noexcept
-    {
-    }
+    {}
 
 protected:
     /**
      * impl
      */
-    virtual void reportTestSuite(TestSuite_shared ts)
+    virtual void reportTestSuite(TestSuite_shared ts) override
     {
         *this << "Run Testsuite [" << ts->mName << "]; time = " << ts->getTime() << "ms"
               << LF;
@@ -101,7 +95,7 @@ protected:
     {
         *this << SPACE << "Run Testcase [" << tc.mName << "](" << tc.mClassname
               << "); time = " << tc.getDuration() << "ms" << LF << XSPACE;
-        switch (tc.getState())
+        switch(tc.getState())
         {
             case TestCase::ERROR:
                 *this << ANSI_MAGENTA << "ERROR! " << tc.getErrMsg();
@@ -122,15 +116,14 @@ protected:
      * impl
      */
     inline virtual void beginReport() override
-    {
-    }
+    {}
 
     /**
      * impl
      */
     inline virtual void endReport() override
     {
-        if (abs_fails >= (abs_tests + 1) / 2)
+        if(abs_fails >= (abs_tests + 1) / 2)
         {
             *this << ANSI_YELLOW;
         }
@@ -145,14 +138,29 @@ protected:
     }
 
 private:
-    double abs_time = 0;
+    double abs_time         = 0;
     std::uint32_t abs_tests = 0;
     std::uint32_t abs_fails = 0;
-    std::uint32_t abs_errs = 0;
-
+    std::uint32_t abs_errs  = 0;
 };
 
-} // reporter
-} // testsuite
+/**
+ * Factory method for colored text reporter
+ */
+inline AbstractReporter_shared createColoredReporter(std::ostream& stream = std::cout)
+{
+    return AbstractReporter_shared(new ColoredReporter(stream));
+}
+
+/**
+ * Factory method for colored text reporter
+ */
+inline AbstractReporter_shared createColoredReporter(const char* file)
+{
+    return AbstractReporter_shared(new ColoredReporter(file));
+}
+
+}  // reporter
+}  // testsuite
 
 #endif /* REPORTER_COLOREDREPORTER_HPP_ */

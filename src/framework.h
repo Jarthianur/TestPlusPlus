@@ -22,10 +22,20 @@
 #ifndef SRC_FRAMEWORK_H_
 #define SRC_FRAMEWORK_H_
 
-#include "reporter/Reporters.hpp"
-#include "comparator/Comparators.hpp"
+#include "comparator/Equals.hpp"
+#include "comparator/Greater.hpp"
+#include "comparator/Less.hpp"
+#include "comparator/Unequals.hpp"
+#include "reporter/ColoredReporter.hpp"
+#include "reporter/HtmlReporter.hpp"
+#include "reporter/PlainTextReporter.hpp"
+#include "reporter/XmlReporter.hpp"
 #include "testsuite/TestSuite.hpp"
-#include "util/types.h"
 #include "util/assert.hpp"
+#include "util/types.h"
+
+#define PROVIDE_COMPARATOR(TYPE, COMP, NAME)            \
+    static testsuite::comparator::Comparator<TYPE> NAME \
+        = testsuite::comparator::COMP<TYPE>();
 
 #endif /* SRC_FRAMEWORK_H_ */

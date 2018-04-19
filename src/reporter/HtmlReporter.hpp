@@ -23,9 +23,9 @@
 #define SRC_REPORTER_HTMLREPORTER_HPP_
 
 #include <cstdint>
+#include <fstream>
 #include <iostream>
 #include <string>
-#include <fstream>
 
 #include "../testsuite/TestCase.hpp"
 #include "../testsuite/TestStats.hpp"
@@ -37,7 +37,6 @@ namespace testsuite
 {
 namespace reporter
 {
-
 #define TD "<td>"
 #define TD_ "</td>"
 #define TR "<tr>"
@@ -49,51 +48,46 @@ namespace reporter
  * Concrete reporter,
  * featuring html website format.
  */
-class HtmlReporter: public AbstractReporter
+class HtmlReporter : public AbstractReporter
 {
 public:
     /**
      * c'tor with stream
      * Defaults to stdout.
      */
-    HtmlReporter(std::ostream& stream)
-            : AbstractReporter(stream)
-    {
-    }
+    HtmlReporter(std::ostream& stream) : AbstractReporter(stream)
+    {}
 
     /**
      * c'tor with filename
      */
-    HtmlReporter(const char* fnam)
-            : AbstractReporter(fnam)
-    {
-    }
+    HtmlReporter(const char* fnam) : AbstractReporter(fnam)
+    {}
 
     /**
      * d'tor
      */
     virtual ~HtmlReporter() noexcept
-    {
-    }
+    {}
 
 protected:
     /**
      * impl
      */
-    virtual void reportTestSuite(TestSuite_shared ts)
+    virtual void reportTestSuite(TestSuite_shared ts) override
     {
         abs_tests += ts->getTestStats().getNumTests();
         abs_fails += ts->getTestStats().getNumFails();
         abs_errs += ts->getTestStats().getNumErrs();
         abs_time += ts->getTime();
 
-        *this << "<h3>" << ts->mName << "</h3>" << "<p>Tests: "
-              << ts->getTestStats().getNumTests() << " Failures: "
-              << ts->getTestStats().getNumFails() << " Errors: "
-              << ts->getTestStats().getNumErrs() << " Time: " << ts->getTime()
-              << "ms</p><table><thead>" << TR << TH << "Name" << TH_ << TH << "Classname"
-              << TH_ << TH << "Time" << TH_ << TH << "Status" << TH_ << TR_
-              << "</thead><tbody>";
+        *this << "<h3>" << ts->mName << "</h3>"
+              << "<p>Tests: " << ts->getTestStats().getNumTests()
+              << " Failures: " << ts->getTestStats().getNumFails()
+              << " Errors: " << ts->getTestStats().getNumErrs()
+              << " Time: " << ts->getTime() << "ms</p><table><thead>" << TR << TH
+              << "Name" << TH_ << TH << "Classname" << TH_ << TH << "Time" << TH_ << TH
+              << "Status" << TH_ << TR_ << "</thead><tbody>";
 
         AbstractReporter::reportTestSuite(ts);
 
@@ -106,7 +100,7 @@ protected:
     virtual void reportTestCase(const TestCase& tc) override
     {
         std::string status;
-        switch (tc.getState())
+        switch(tc.getState())
         {
             case TestCase::ERROR:
                 status = "error";
@@ -130,11 +124,12 @@ protected:
      */
     inline virtual void beginReport() override
     {
-        *this << "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/>"
-              "<style>body{background-color: linen}table{border-collapse: collapse;min-width: 50%}"
-              "tr,th,td{border: 1px solid black;padding: 2px}.failed{background: lightskyblue}"
-              ".passed{background: lightgreen}.error{background: lightcoral}</style>"
-              "</head><body><header><h1>Test Report</h1></header>";
+        *this
+            << "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/>"
+               "<style>body{background-color: linen}table{border-collapse: collapse;min-width: 50%}"
+               "tr,th,td{border: 1px solid black;padding: 2px}.failed{background: lightskyblue}"
+               ".passed{background: lightgreen}.error{background: lightcoral}</style>"
+               "</head><body><header><h1>Test Report</h1></header>";
     }
 
     /**
@@ -142,19 +137,35 @@ protected:
      */
     inline virtual void endReport() override
     {
-        *this << "<footer><h3>Summary</h3><p>Tests: " << abs_tests << " Failures: "
-              << abs_fails << " Errors: " << abs_errs << " Time: " << abs_time
-              << "ms</p></footer></body></html>";
+        *this << "<footer><h3>Summary</h3><p>Tests: " << abs_tests
+              << " Failures: " << abs_fails << " Errors: " << abs_errs
+              << " Time: " << abs_time << "ms</p></footer></body></html>";
     }
 
 private:
-    double abs_time = 0;
+    double abs_time         = 0;
     std::uint32_t abs_tests = 0;
     std::uint32_t abs_fails = 0;
-    std::uint32_t abs_errs = 0;
+    std::uint32_t abs_errs  = 0;
 };
 
-} // reporter
-} // testsuite
+/**
+ * Factory method for html reporter
+ */
+inline AbstractReporter_shared createHtmlReporter(std::ostream& stream = std::cout)
+{
+    return AbstractReporter_shared(new HtmlReporter(stream));
+}
+
+/**
+ * Factory method for html reporter
+ */
+inline AbstractReporter_shared createHtmlReporter(const char* file)
+{
+    return AbstractReporter_shared(new HtmlReporter(file));
+}
+
+}  // reporter
+}  // testsuite
 
 #endif /* SRC_REPORTER_HTMLREPORTER_HPP_ */

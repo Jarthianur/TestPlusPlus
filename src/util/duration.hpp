@@ -27,10 +27,8 @@
 
 namespace testsuite
 {
-
 namespace util
 {
-
 /**
  * Struct to measure runtime in milliseconds.
  */
@@ -39,14 +37,11 @@ struct duration final
     /**
      * c'tor setting start time
      */
-    duration()
-            : start(std::chrono::steady_clock::now())
-    {
-    }
+    duration() : start(std::chrono::steady_clock::now())
+    {}
 
     virtual ~duration() noexcept
-    {
-    }
+    {}
 
     /**
      * Get duration since start time (construction)
@@ -54,8 +49,9 @@ struct duration final
      */
     inline double get()
     {
-        return std::chrono::duration<double, std::milli>(
-                std::chrono::steady_clock::now() - start).count();
+        return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now()
+                                                         - start)
+            .count();
     }
 
     /**

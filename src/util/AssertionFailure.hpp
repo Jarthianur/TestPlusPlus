@@ -19,7 +19,6 @@
  }
  */
 
-
 #ifndef SRC_UTIL_ASSERTIONFAILURE_HPP_
 #define SRC_UTIL_ASSERTIONFAILURE_HPP_
 
@@ -28,28 +27,23 @@
 
 namespace testsuite
 {
-
 /**
  * Exception indicating an assertion has failed.
  */
-class AssertionFailure: public std::exception
+class AssertionFailure : public std::exception
 {
 public:
     /**
      * c'tor with error msg.
      */
-    AssertionFailure(const std::string& msg)
-            : std::exception(),
-              msg(msg)
-    {
-    }
+    AssertionFailure(const std::string& msg) : std::exception(), msg(msg)
+    {}
 
     /**
      * d'tor
      */
     virtual ~AssertionFailure() noexcept
-    {
-    }
+    {}
 
     /**
      * Return err msg.

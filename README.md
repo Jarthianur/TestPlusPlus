@@ -21,6 +21,7 @@ Additionally it serves the capability to **parallelize** testruns, using *OpenMP
   + JUnit style XML reporter
 + comparators
   + equal to
+  + unequal to
   + less than
   + greater than
 + assertions
@@ -32,8 +33,8 @@ Additionally it serves the capability to **parallelize** testruns, using *OpenMP
 ## Concept of Simplicity
 
 The great extendability comes from its simple structure.  
-If You need one, just implement the *Comparator* interface and add a factory method to the *Comparators.hpp*. This allows users to choose any comparator with just a few characters to type. Also everyone can add any comparator to compare any type or object, even project specific ones.  
-Want the reports in a custom format? So then implement the *Reporter* interface and add a factory method to the *Reporters.hpp*. Sounds familiar, doesn't it?  
+If You need one, just implement the *ComparatorStrategy* interface. Also everyone can add any comparator to compare any type or object, even project specific ones.  
+Want the reports in a custom format? So then implement the *AbstractReporter* interface. Sounds familiar, doesn't it?  
 Extensive testing is hard enough, so one should not struggle with too complex frameworks.  
 As well as customization may be the key to make a simple framework a powerful framework. Hence the structure is kept that simple, to make it highly customizable and extendable.
 
@@ -102,7 +103,7 @@ int main(int argc, char** argv)
     describe("a testsuite", runner)
         ->test("a testcase", "main", [](){
             assert(static_f(1,2), 3, EQUALS<int>());
-            assertException<std::logic_error>(throwal());
+            assertException<std::logic_error>(throwal);
         })
         ->test<dummy>("another testcase", [](){
             dummy d;

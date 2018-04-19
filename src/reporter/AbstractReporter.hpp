@@ -38,7 +38,6 @@ namespace testsuite
 {
 namespace reporter
 {
-
 #define LF "\n"
 #define SPACE "  "
 #define XSPACE "    "
@@ -50,25 +49,19 @@ namespace reporter
  */
 class AbstractReporter
 {
-
 public:
     /**
      * c'tor with target out-stream.
      */
-    AbstractReporter(std::ostream& stream)
-            : out_file(),
-              out_stream(stream)
-    {
-    }
+    AbstractReporter(std::ostream& stream) : out_file(), out_stream(stream)
+    {}
 
     /**
      * c'tor with target filename
      */
-    AbstractReporter(const char* fnam)
-            : out_file(fnam),
-              out_stream(this->out_file)
+    AbstractReporter(const char* fnam) : out_file(fnam), out_stream(this->out_file)
     {
-        if (!out_stream)
+        if(!out_stream)
         {
             throw std::runtime_error("Could not open file.");
         }
@@ -78,8 +71,7 @@ public:
      * d'tor
      */
     virtual ~AbstractReporter() noexcept
-    {
-    }
+    {}
 
     /**
      * Generate report and return sum
@@ -88,24 +80,24 @@ public:
      */
     std::int32_t report(TestSuitesRunner& runner)
     {
-        if (runner.getStatus() == TestSuitesRunner::ALL)
+        if(runner.getStatus() == TestSuitesRunner::ALL)
         {
             std::int32_t ret_val = 0;
             beginReport();
 
             auto ts_pair = runner.getTestSuites();
 
-            for (auto ts : ts_pair.first)
+            for(auto ts : ts_pair.first)
             {
                 reportTestSuite(ts);
-                ret_val += ts->getTestStats().getNumFails()
-                        + ts->getTestStats().getNumErrs();
+                ret_val
+                    += ts->getTestStats().getNumFails() + ts->getTestStats().getNumErrs();
             }
-            for (auto ts : ts_pair.second)
+            for(auto ts : ts_pair.second)
             {
                 reportTestSuite(ts);
-                ret_val += ts->getTestStats().getNumFails()
-                        + ts->getTestStats().getNumErrs();
+                ret_val
+                    += ts->getTestStats().getNumFails() + ts->getTestStats().getNumErrs();
             }
 
             endReport();
@@ -132,7 +124,7 @@ protected:
      */
     inline virtual void reportTestSuite(TestSuite_shared ts)
     {
-        for (auto& tc : ts->getTestCases())
+        for(auto& tc : ts->getTestCases())
         {
             reportTestCase(tc);
         }
@@ -165,7 +157,7 @@ protected:
     }
 };
 
-} // reporter
-} // testsuite
+}  // reporter
+}  // testsuite
 
 #endif /* REPORTER_ABSTRACTREPORTER_HPP_ */
