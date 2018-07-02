@@ -35,9 +35,53 @@
 #ifdef assert
 #undef assert
 #endif
+
+// provide assertion macros and wrappers
+/**
+ * Assert wrapper. Type is deduced from arguments.
+ * V: value
+ * E: expected
+ * C: comparator instance
+ */
 #define assert(V, E, C) _assertStatement(V, E, C, __FILE__, __LINE__)
+
+/**
+ * Assert wrapper. Type is specialized.
+ * V: value
+ * E: expected
+ * C: comparator instance
+ * T: specialized argument type
+ */
 #define assertT(V, E, C, T) _assertStatement<T>(V, E, C, __FILE__, __LINE__)
+
+/**
+ * Assert wrapper. Test value to be true, use default comparator.
+ * V: value
+ */
+#define assertTrue(V)                                                                   \
+    _assertStatement<bool>(V, true, testsuite::comparator::defaultEqualsBool, __FILE__, \
+                           __LINE__)
+
+/**
+ * Assert wrapper. Test value to be 0 as int.
+ * V: value
+ */
+#define assertZero(V)                                                              \
+    _assertStatement<int>(V, 0, testsuite::comparator::defaultEqualsInt, __FILE__, \
+                          __LINE__)
+
+/**
+ * Assert exception wrapper.
+ * F: function
+ * T: exception type
+ */
 #define assertException(F, T) _assertException<T>(F, __FILE__, __LINE__)
+
+/**
+ * Assert performance wrapper.
+ * F: function
+ * M: max milliseconds
+ */
 #define assertPerformance(F, M) _assertPerformance(F, M, __FILE__, __LINE__)
 
 namespace testsuite
