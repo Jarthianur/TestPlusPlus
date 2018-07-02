@@ -36,7 +36,8 @@ public:
     /**
      * c'tor with error msg.
      */
-    AssertionFailure(const std::string& msg) : std::exception(), msg(msg)
+    AssertionFailure(const std::string& msg, const char* file, int line)
+        : std::exception(), msg(msg + " at " + file + ":" + std::to_string(line))
     {}
 
     /**
