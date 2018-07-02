@@ -58,10 +58,6 @@ In order to use the parallelization capability compile and link the test code wi
 #include "framework.h"
 using namespace testsuite;
 using namespace comparator;
-// prevent name conflict in case assert is defined
-#ifdef assert
-#undef assert
-#endif
 
 int static_func()
 {
@@ -89,9 +85,9 @@ public:
     {
         return i + a;
     }
-    inline int memf()
+    inline std::string memf()
     {
-        return 0;
+        return "hello";
     }
 };
 
@@ -103,10 +99,11 @@ int main(int argc, char** argv)
     describe("a testsuite", runner)
         ->test("a testcase", "main", [](){
             assert(static_f(1,2), 3, EQUALS<int>());
-            assertException<std::logic_error>(throwal);
+            assertException(throwal, std::logic_error);
         })
         ->test<dummy>("another testcase", [](){
             dummy d;
+            assertT(d.memf(), "hello", EQUALS<std::string>(), std::string); // specify the type, so literal conversion can be used
             assertPerformance([](){
                 d.memf();
             }, 2.0);
