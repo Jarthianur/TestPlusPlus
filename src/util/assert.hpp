@@ -35,8 +35,8 @@
 #ifdef assert
 #undef assert
 #endif
-#define assert(V, E, C) _assertStatement(V, E, C, __FILE__, __LINE__)
-#define assertException(F) _assertException(F, __FILE__, __LINE__)
+#define assert(V, E, C, T) _assertStatement<T>(V, E, C, __FILE__, __LINE__)
+#define assertException(F, T) _assertException<T>(F, __FILE__, __LINE__)
 #define assertPerformance(F, M) _assertPerformance(F, M, __FILE__, __LINE__)
 
 namespace testsuite
