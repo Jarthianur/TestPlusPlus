@@ -35,6 +35,9 @@
 #ifdef assert
 #undef assert
 #endif
+#define assert(V, E, C) _assertStatement(V, E, C, __FILE__, __LINE__)
+#define assertException(F) _assertException(F, __FILE__, __LINE__)
+#define assertPerformance(F, M) _assertPerformance(F, M, __FILE__, __LINE__)
 
 namespace testsuite
 {
@@ -46,13 +49,15 @@ namespace testsuite
  * Throws AssertionFailure if assertion failed.
  */
 template<typename T>
-inline void assert(const T& value, const T& expected, comparator::Comparator<T> comp)
+inline void _assertStatement(const T& value, const T& expected,
+                             comparator::Comparator<T> comp, const char* file, int line)
 {
     if(!comp->compare(value, expected))
     {
         throw AssertionFailure(std::string("Expected '") + util::serialize(value) + "' "
-                               + comp->comparison + " '" + util::serialize(expected)
-                               + "'");
+                                   + comp->comparison + " '" + util::serialize(expected)
+                                   + "'",
+                               file, line);
     }
 }
 
@@ -63,7 +68,7 @@ inline void assert(const T& value, const T& expected, comparator::Comparator<T> 
  * Throws AssertionFailure if any other/no exception is caught.
  */
 template<typename T>
-inline void assertException(test_function func)
+inline void _assertException(test_function func, const char* file, int line)
 {
     try
     {
@@ -75,15 +80,17 @@ inline void assertException(test_function func)
     }
     catch(const std::exception& e)
     {
-        throw AssertionFailure(std::string("Wrong exception thrown, caught: ")
-                               + typeid(e).name());
+        throw AssertionFailure(std::string("Wrong exception thrown, caught '")
+                                   + typeid(e).name() + "'",
+                               file, line);
     }
     catch(...)
     {
-        throw AssertionFailure("Wrong exception thrown, caught: Unknown");
+        throw AssertionFailure("Wrong exception thrown", file, line);
     }
-    throw AssertionFailure(std::string("No exception thrown, expected: ")
-                           + typeid(T).name());
+    throw AssertionFailure(std::string("No exception thrown, expected '")
+                               + typeid(T).name() + "'",
+                           file, line);
 }
 
 /**
@@ -91,7 +98,8 @@ inline void assertException(test_function func)
  * func: test function wrapper
  * maxMillis: max duration in milliseconds
  */
-inline void assertPerformance(test_function func, double maxMillis)
+inline void _assertPerformance(test_function func, double maxMillis, const char* file,
+                               int line)
 {
     try
     {
@@ -100,17 +108,18 @@ inline void assertPerformance(test_function func, double maxMillis)
         double dur_ms = dur.get();
         if(dur_ms > maxMillis)
         {
-            throw AssertionFailure(std::string("runtime > ")
-                                   + util::serialize(maxMillis));
+            throw AssertionFailure(std::string("runtime > ") + util::serialize(maxMillis)
+                                       + "ms",
+                                   file, line);
         }
     }
     catch(const std::exception& e)
     {
-        throw AssertionFailure(e.what());
+        throw AssertionFailure(e.what(), file, line);
     }
     catch(...)
     {
-        throw AssertionFailure("Unknown exception thrown");
+        throw AssertionFailure("Unknown exception thrown", file, line);
     }
 }
 
