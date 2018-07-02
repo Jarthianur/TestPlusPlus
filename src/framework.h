@@ -38,4 +38,13 @@
     static testsuite::comparator::Comparator<TYPE> NAME \
         = testsuite::comparator::COMP<TYPE>();
 
+namespace testsuite
+{
+namespace comparator
+{
+PROVIDE_COMPARATOR(int, EQUALS, defaultEqualsInt)
+PROVIDE_COMPARATOR(bool, EQUALS, defaultEqualsBool)
+}  // namespace testsuite
+}  // namespace comparator
+
 #endif /* SRC_FRAMEWORK_H_ */
