@@ -24,53 +24,23 @@
 
 #include <string>
 
-#include "ComparatorStrategy.hpp"
+#include "../util/serialize.hpp"
+#include "comparators.hpp"
 
 namespace testsuite
 {
 namespace comparator
 {
-/**
- * Concrete comparator strategy
- * for greater-than comparison.
- * Non-copyable
- */
+constexpr const char* greater_comp = "to be greater than";
+
 template<typename T>
-class Greater : public ComparatorStrategy<T>
+inline static Comparison greater(const T& _1, const T& _2)
 {
-public:
-    Greater(const Greater&) = delete;
-    Greater& operator=(const Greater&) = delete;
-
-    /**
-     * c'tor
-     */
-    Greater(const std::string& comp) : ComparatorStrategy<T>(comp)
-    {}
-
-    /**
-     * d'tor
-     */
-    virtual ~Greater() noexcept
-    {}
-
-    /**
-     * Template - compare
-     */
-    inline bool compare(const T& val, const T& expect) noexcept override
-    {
-        return val > expect;
-    }
-};
-
-/**
- * Factory method for Greater comparator.
- */
-template<typename T>
-inline Comparator<T> GREATER()
-{
-    return Comparator<T>(new Greater<T>("to be greater than"));
+    return _1 > _2 ? success
+                   : Comparison(greater_comp, util::serialize(_1), util::serialize(_2));
 }
+
+PROVIDE_COMPARATOR(greater, GREATER)
 
 }  // namespace comparator
 }  // namespace testsuite

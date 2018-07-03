@@ -24,53 +24,23 @@
 
 #include <string>
 
-#include "ComparatorStrategy.hpp"
+#include "../util/serialize.hpp"
+#include "comparators.hpp"
 
 namespace testsuite
 {
 namespace comparator
 {
-/**
- * Concrete comparator strategy
- * for less-than comparison.
- * Non-copyable
- */
+constexpr const char* less_comp = "to be less than";
+
 template<typename T>
-class Less : public ComparatorStrategy<T>
+inline static Comparison less(const T& _1, const T& _2)
 {
-public:
-    Less(const Less&) = delete;
-    Less& operator=(const Less&) = delete;
-
-    /**
-     * c'tor
-     */
-    Less(const std::string& comp) : ComparatorStrategy<T>(comp)
-    {}
-
-    /**
-     * d'tor
-     */
-    virtual ~Less() noexcept
-    {}
-
-    /**
-     * Template - compare
-     */
-    inline bool compare(const T& val, const T& expect) noexcept override
-    {
-        return val < expect;
-    }
-};
-
-/**
- * Factory method for Less comparator.
- */
-template<typename T>
-inline Comparator<T> LESS()
-{
-    return Comparator<T>(new Less<T>("to be less than"));
+    return _1 < _2 ? success
+                   : Comparison(less_comp, util::serialize(_1), util::serialize(_2));
 }
+
+PROVIDE_COMPARATOR(less, LESS)
 
 }  // comparator
 }  // testsuite
