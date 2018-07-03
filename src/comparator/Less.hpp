@@ -63,12 +63,6 @@ public:
     }
 };
 
-template<>
-inline bool Less<bool>::compare(const bool& val, const bool&) noexcept
-{
-    return val == false;
-}
-
 /**
  * Factory method for Less comparator.
  */

@@ -76,8 +76,22 @@ inline bool Unequals<double>::compare(const double& val, const double& expect) n
     double diff_abs = std::abs(val - expect);
     double max      = std::max(std::abs(val), std::abs(expect));
 
-    return !(val == expect || diff_abs < max * std::numeric_limits<double>::epsilon()
+    return !(diff_abs < max * std::numeric_limits<double>::epsilon()
              || diff_abs < max * 0.000001);
+}
+
+/**
+ * Specialized compare for type 'float'.
+ * Takes care about floating point precision.
+ */
+template<>
+inline bool Unequals<float>::compare(const float& val, const float& expect) noexcept
+{
+    float diff_abs = std::abs(val - expect);
+    float max      = std::max(std::abs(val), std::abs(expect));
+
+    return !(diff_abs < max * std::numeric_limits<float>::epsilon()
+             || diff_abs < max * static_cast<float>(0.000001));
 }
 
 /**
