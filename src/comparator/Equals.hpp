@@ -76,7 +76,7 @@ inline bool Equals<double>::compare(const double& val, const double& expect) noe
     double diff_abs = std::abs(val - expect);
     double max      = std::max(std::abs(val), std::abs(expect));
 
-    return val == expect || diff_abs < max * std::numeric_limits<double>::epsilon()
+    return diff_abs < max * std::numeric_limits<double>::epsilon()
            || diff_abs < max * 0.000001;
 }
 
@@ -90,7 +90,7 @@ inline bool Equals<float>::compare(const float& val, const float& expect) noexce
     float diff_abs = std::abs(val - expect);
     float max      = std::max(std::abs(val), std::abs(expect));
 
-    return val == expect || diff_abs < max * std::numeric_limits<float>::epsilon()
+    return diff_abs < max * std::numeric_limits<float>::epsilon()
            || diff_abs < max * static_cast<float>(0.000001);
 }
 

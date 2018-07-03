@@ -63,12 +63,6 @@ public:
     }
 };
 
-template<>
-inline bool Greater<bool>::compare(const bool& val, const bool&) noexcept
-{
-    return val == true;
-}
-
 /**
  * Factory method for Greater comparator.
  */
