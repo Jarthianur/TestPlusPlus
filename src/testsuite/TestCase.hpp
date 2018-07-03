@@ -103,12 +103,12 @@ public:
         return mState;
     }
 
-    inline const States getState() const
+    inline States getState() const
     {
         return mState;
     }
 
-    inline const double getDuration() const
+    inline double getDuration() const
     {
         return mDuration;
     }

@@ -173,7 +173,7 @@ public:
         return mStats;
     }
 
-    inline const double getTime() const
+    inline double getTime() const
     {
         return mTime;
     }

@@ -22,7 +22,7 @@
 #ifndef TESTSUITE_TESTSTATS_HPP_
 #define TESTSUITE_TESTSTATS_HPP_
 
-#include <cstdint>
+#include <cstddef>
 
 namespace testsuite
 {
@@ -44,17 +44,17 @@ public:
     virtual ~TestStats() noexcept
     {}
 
-    inline std::uint32_t getNumTests() const
+    inline std::size_t getNumTests() const
     {
         return num_of_tests;
     }
 
-    inline std::uint32_t getNumFails() const
+    inline std::size_t getNumFails() const
     {
         return num_of_fails;
     }
 
-    inline std::uint32_t getNumErrs() const
+    inline std::size_t getNumErrs() const
     {
         return num_of_errs;
     }
@@ -68,17 +68,17 @@ private:
     /**
      * Number of tests run
      */
-    std::uint32_t num_of_tests = 0;
+    std::size_t num_of_tests = 0;
 
     /**
      * Number of failed tests.
      */
-    std::uint32_t num_of_fails = 0;
+    std::size_t num_of_fails = 0;
 
     /**
      * Number of erroneous tests.
      */
-    std::uint32_t num_of_errs = 0;
+    std::size_t num_of_errs = 0;
 };
 
 }  // testsuite

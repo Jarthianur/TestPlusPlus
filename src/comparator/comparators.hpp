@@ -25,8 +25,10 @@
 #include <memory>
 #include <string>
 
+/// @namespace testsuite
 namespace testsuite
 {
+/// @namespace comparator
 namespace comparator
 {
 /**
