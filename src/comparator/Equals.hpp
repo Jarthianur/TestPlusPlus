@@ -27,57 +27,37 @@
 #include <limits>
 #include <string>
 
-#include "ComparatorStrategy.hpp"
+#include "../util/serialize.hpp"
+#include "comparators.hpp"
 
 namespace testsuite
 {
 namespace comparator
 {
-/**
- * Concrete comparator strategy
- * for equals comparison.
- * Non-copyable
- */
+constexpr const char* equals_comp = "to be equal";
+
 template<typename T>
-class Equals : public ComparatorStrategy<T>
+inline static Comparison equals(const T& _1, const T& _2)
 {
-public:
-    Equals(const Equals&) = delete;
-    Equals& operator=(const Equals&) = delete;
-
-    /**
-     * c'tor
-     */
-    Equals(const std::string& comp) : ComparatorStrategy<T>(comp)
-    {}
-
-    /**
-     * d'tor
-     */
-    virtual ~Equals() noexcept
-    {}
-
-    /**
-     * Template - compare
-     */
-    inline bool compare(const T& val, const T& expect) noexcept override
-    {
-        return val == expect;
-    }
-};
+    return _1 == _2 ? success
+                    : Comparison(equals_comp, util::serialize(_1), util::serialize(_2));
+}
 
 /**
  * Specialized compare for type 'double'.
  * Takes care about floating point precision.
  */
 template<>
-inline bool Equals<double>::compare(const double& val, const double& expect) noexcept
+inline Comparison equals<double>(const double& val, const double& expect)
 {
     double diff_abs = std::abs(val - expect);
     double max      = std::max(std::abs(val), std::abs(expect));
 
-    return diff_abs < max * std::numeric_limits<double>::epsilon()
-           || diff_abs < max * 0.000001;
+    return (diff_abs < max * std::numeric_limits<double>::epsilon()
+            || diff_abs < max * 0.000001)
+               ? success
+               : Comparison(equals_comp, util::serialize<double>(val),
+                            util::serialize<double>(expect));
 }
 
 /**
@@ -85,23 +65,19 @@ inline bool Equals<double>::compare(const double& val, const double& expect) noe
  * Takes care about floating point precision.
  */
 template<>
-inline bool Equals<float>::compare(const float& val, const float& expect) noexcept
+inline Comparison equals<float>(const float& val, const float& expect)
 {
     float diff_abs = std::abs(val - expect);
     float max      = std::max(std::abs(val), std::abs(expect));
 
-    return diff_abs < max * std::numeric_limits<float>::epsilon()
-           || diff_abs < max * static_cast<float>(0.000001);
+    return (diff_abs < max * std::numeric_limits<float>::epsilon()
+            || diff_abs < max * static_cast<float>(0.000001))
+               ? success
+               : Comparison(equals_comp, util::serialize<float>(val),
+                            util::serialize<float>(expect));
 }
 
-/**
- * Factory method for Equals comparator.
- */
-template<typename T>
-inline Comparator<T> EQUALS()
-{
-    return Comparator<T>(new Equals<T>("to be equal"));
-}
+PROVIDE_COMPARATOR(equals, EQUALS)
 
 }  // namespace comparator
 }  // namespace testsuite

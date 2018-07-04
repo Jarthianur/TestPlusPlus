@@ -25,7 +25,7 @@
 #include <string>
 #include <typeinfo>
 
-#include "../comparator/ComparatorStrategy.hpp"
+#include "../comparator/comparators.hpp"
 #include "AssertionFailure.hpp"
 #include "duration.hpp"
 #include "serialize.hpp"
@@ -58,17 +58,16 @@
  * Assert wrapper. Test value to be true, use default comparator.
  * V: value
  */
-#define assertTrue(V)                                                                   \
-    _assertStatement<bool>(V, true, testsuite::comparator::defaultEqualsBool, __FILE__, \
+#define assertTrue(V)                                                                \
+    _assertStatement<bool>(V, true, testsuite::comparator::EQUALS<bool>(), __FILE__, \
                            __LINE__)
 
 /**
  * Assert wrapper. Test value to be 0 as int.
  * V: value
  */
-#define assertZero(V)                                                              \
-    _assertStatement<int>(V, 0, testsuite::comparator::defaultEqualsInt, __FILE__, \
-                          __LINE__)
+#define assertZero(V) \
+    _assertStatement<int>(V, 0, testsuite::comparator::EQUALS<int>(), __FILE__, __LINE__)
 
 /**
  * Assert exception wrapper.
@@ -97,12 +96,10 @@ template<typename T>
 inline void _assertStatement(const T& value, const T& expected,
                              comparator::Comparator<T> comp, const char* file, int line)
 {
-    if(!comp->compare(value, expected))
+    comparator::Comparison res = (*comp)(value, expected);
+    if(!res)
     {
-        throw AssertionFailure(std::string("Expected '") + util::serialize(value) + "' "
-                                   + comp->comparison + " '" + util::serialize(expected)
-                                   + "'",
-                               file, line);
+        throw AssertionFailure(*res, file, line);
     }
 }
 

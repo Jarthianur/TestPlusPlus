@@ -43,13 +43,13 @@ public:
     /**
      * d'tor
      */
-    virtual ~AssertionFailure() noexcept
+    ~AssertionFailure() noexcept
     {}
 
     /**
      * Return err msg.
      */
-    inline virtual const char* what() const noexcept override
+    inline const char* what() const noexcept override
     {
         return msg.c_str();
     }
