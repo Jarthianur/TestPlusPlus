@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef REPORTER_ABSTRACTREPORTER_HPP_
-#define REPORTER_ABSTRACTREPORTER_HPP_
+#ifndef SRC_REPORTER_ABSTRACTREPORTER_HPP_
+#define SRC_REPORTER_ABSTRACTREPORTER_HPP_
 
 #include <cstdint>
 #include <fstream>
@@ -32,12 +32,10 @@
 #include "../testsuite/TestStats.hpp"
 #include "../testsuite/TestSuite.hpp"
 #include "../testsuite/TestSuitesRunner.hpp"
-#include "../util/types.h"
+#include "../types.h"
 
-/// @namespace sctf
 namespace sctf
 {
-/// @namespace rep
 namespace rep
 {
 /**
@@ -59,8 +57,6 @@ namespace rep
 #define XSPACE "    "
 
 /**
- * The AbstractReporter type.
- *
  * @brief Report testsuites in a format specified by concrete reporter types.
  */
 class AbstractReporter
@@ -74,7 +70,7 @@ public:
      */
     std::int32_t report(test::TestSuitesRunner& runner)
     {
-        if(runner.getStatus() == test::TestSuitesRunner::ALL)
+        if(runner.getStatus() == test::TestSuitesRunner::ExecState::ALL)
         {
             std::int32_t ret_val = 0;
             beginReport();
@@ -188,4 +184,4 @@ protected:
 }  // namespace rep
 }  // namespace sctf
 
-#endif /* REPORTER_ABSTRACTREPORTER_HPP_ */
+#endif  // SRC_REPORTER_ABSTRACTREPORTER_HPP_

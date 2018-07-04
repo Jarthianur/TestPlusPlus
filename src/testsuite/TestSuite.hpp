@@ -19,18 +19,18 @@
  }
  */
 
-#ifndef TESTSUITE_TESTSUITE_HPP_
-#define TESTSUITE_TESTSUITE_HPP_
+#ifndef SRC_TESTSUITE_TESTSUITE_HPP_
+#define SRC_TESTSUITE_TESTSUITE_HPP_
 
 #include <chrono>
-#include <cstdint>
+#include <cstddef>
 #include <iterator>
 #include <memory>
 #include <string>
 #include <typeinfo>
 #include <vector>
 
-#include "../util/types.h"
+#include "../types.h"
 #include "TestCase.hpp"
 #include "TestStats.hpp"
 
@@ -49,64 +49,65 @@ public:
     TestSuite& operator=(const TestSuite&) = delete;
 
     /**
-     * Create a TestSuite
-     * name: name/description
+     * @brief Create a TestSuite.
+     * @param name The name/description
+     * @param context The context
+     * @return a shared pointer to the created TestSuite
      */
-    inline static TestSuite_shared create(const std::string& name,
-                                          const std::string& ctxt)
+    static TestSuite_shared create(const std::string& name, const std::string& context)
     {
-        return TestSuite_shared(new TestSuite(name, ctxt));
+        return TestSuite_shared(new TestSuite(name, context));
     }
 
     /**
-     * d'tor
+     * @brief Destructor
      */
-    virtual ~TestSuite() noexcept
+    ~TestSuite() noexcept
     {}
 
     /**
-     * Execute all test cases sequentially.
+     * @brief Execute all TestCases sequentially.
      */
     void execute() noexcept
     {
-        mStats.num_of_tests = mTestCases.size();
-        for(auto& tc : mTestCases)
+        m_stats.m_num_of_tests = m_testcases.size();
+        for(auto& tc : m_testcases)
         {
             switch(tc.execute())
             {
-                case TestCase::FAILED:
-                    mStats.num_of_fails++;
+                case TestCase::TestState::FAILED:
+                    ++m_stats.m_num_of_fails;
                     break;
-                case TestCase::ERROR:
-                    mStats.num_of_errs++;
+                case TestCase::TestState::ERROR:
+                    ++m_stats.m_num_of_errs;
                     break;
                 default:
                     break;
             }
-            mTime += tc.getDuration();
+            m_time += tc.getDuration();
         }
     }
 
     /**
-     * Execute all test cases in parallel, using openmp.
+     * @brief Execute all TestCases in parallel.
      */
     void executeParallel() noexcept
     {
-        mStats.num_of_tests = mTestCases.size();
+        m_stats.m_num_of_tests = m_testcases.size();
 #pragma omp parallel
         {
-            double tmp          = 0.0;
-            std::uint32_t fails = 0;
-            std::uint32_t errs  = 0;
+            double tmp        = 0.0;
+            std::size_t fails = 0;
+            std::size_t errs  = 0;
 #pragma omp for schedule(dynamic)
-            for(auto tc = mTestCases.begin(); tc < mTestCases.end(); ++tc)
+            for(auto tc = m_testcases.begin(); tc < m_testcases.end(); ++tc)
             {
                 switch(tc->execute())
                 {
-                    case TestCase::FAILED:
+                    case TestCase::TestState::FAILED:
                         ++fails;
                         break;
-                    case TestCase::ERROR:
+                    case TestCase::TestState::ERROR:
                         ++errs;
                         break;
                     default:
@@ -115,97 +116,117 @@ public:
                 tmp += tc->getDuration();
             }
 #pragma omp atomic
-            mStats.num_of_fails += fails;
+            m_stats.m_num_of_fails += fails;
 #pragma omp atomic
-            mStats.num_of_errs += errs;
+            m_stats.m_num_of_errs += errs;
 #pragma omp critical
             {
-                if(mTime < tmp)
+                if(m_time < tmp)
                 {
-                    mTime = tmp;
+                    m_time = tmp;
                 }
             }
         }
     }
 
     /**
-     * Create a test case.
-     * template T: class for testing methods as classtype
-     * name: name/description
-     * func: test function, exec ops and assertions
-     * Chainable
+     * @brief Add a TestCase to this TestSuite.
+     * @tparam T The class context for testing methods
+     * @param name The name/description
+     * @param t_func The test function
+     * @return this as shared pointer
      */
     template<typename T>
-    TestSuite_shared test(const std::string& name, test_function func)
+    TestSuite_shared test(const std::string& name, test_function t_func)
     {
-        mTestCases.push_back(TestCase(name, typeid(T).name(), func));
+        m_testcases.push_back(TestCase(name, typeid(T).name(), t_func));
         return shared_from_this();
     }
 
     /**
-     * Create a test case.
-     * name: name/description
-     * classname: class/context for testing methods as string
-     * func: test function, exec ops and assertions
-     * Chainable
+     * @brief Add a TestCase to this TestSuite.
+     * @param name The name/description
+     * @param context The testing context
+     * @param t_func The test function
+     * @return this as shared pointer
      */
-    TestSuite_shared test(const std::string& name, const std::string& classname,
-                          test_function func)
+    TestSuite_shared test(const std::string& name, const std::string& context,
+                          test_function t_func)
     {
-        mTestCases.push_back(TestCase(name, classname, func));
+        m_testcases.push_back(TestCase(name, context, t_func));
         return shared_from_this();
     }
 
     /**
-     * Create a test case.
-     * This will use the test suites context for classname.
-     * name: name/description
-     * classname: class/context for testing methods as string
-     * func: test function, exec ops and assertions
-     * Chainable
+     * @brief Add a TestCase to this TestSuite.
+     * @note The test context is inherited from the test suite.
+     * @param name The name/description
+     * @param t_func The test function
+     * @return this as shared pointer
      */
     TestSuite_shared test(const std::string& name, test_function func)
     {
-        mTestCases.push_back(TestCase(name, mContext, func));
+        m_testcases.push_back(TestCase(name, m_context, func));
         return shared_from_this();
     }
 
+    /**
+     * @brief Get the test statistics.
+     * @return the TestStats
+     */
     inline const TestStats& getTestStats() const
     {
-        return mStats;
+        return m_stats;
     }
 
+    /**
+     * @brief Get the accumulated time.
+     * @return the time
+     */
     inline double getTime() const
     {
-        return mTime;
+        return m_time;
     }
 
+    /**
+     * @brief Get the TestCases.
+     * @return the test cases
+     */
     inline const std::vector<TestCase>& getTestCases() const
     {
-        return mTestCases;
+        return m_testcases;
     }
 
-    const std::string mName;
-    const std::chrono::system_clock::time_point mTimestamp;
+    /// @brief The name/description
+    const std::string name;
+
+    /// @brief The start timestamp
+    const std::chrono::system_clock::time_point timestamp;
 
 private:
     /**
-     * c'tor with name, setting timestamp.
+     *@brief Constructor
+     * @param name The name/description
+     * @param context The context description
      */
-    TestSuite(const std::string& name, const std::string& ctxt)
-        : mName(name), mTimestamp(std::chrono::system_clock::now()), mContext(ctxt)
+    TestSuite(const std::string& name, const std::string& context)
+        : name(name), timestamp(std::chrono::system_clock::now()), m_context(context)
     {}
 
-    /**
-     * milliseconds
-     */
-    double mTime = 0.0;
-    TestStats mStats;
-    std::vector<TestCase> mTestCases;
-    const std::string mContext;
+    /// @brief The accumulated runtime of all tests.
+    double m_time = 0.0;
+
+    /// @brief The test statistics.
+    TestStats m_stats;
+
+    /// @brief The testcases.
+    std::vector<TestCase> m_testcases;
+
+    /// @brief The context description.
+    const std::string m_context;
 };
 
-}  // testsuite
-}
+}  // namespace test
+}  // namespace sctf
 
-#endif /* TESTSUITE_TESTSUITE_HPP_ */
+#endif  // SRC_TESTSUITE_TESTSUITE_HPP_

@@ -19,71 +19,68 @@
  }
  */
 
-#ifndef TESTSUITE_TESTCASE_HPP_
-#define TESTSUITE_TESTCASE_HPP_
+#ifndef SRC_TESTSUITE_TESTCASE_HPP_
+#define SRC_TESTSUITE_TESTCASE_HPP_
 
 #include <cstdint>
 #include <string>
 
 #include "../AssertionFailure.hpp"
 #include "../types.h"
-#include "../util/duration.hpp"
+#include "../util/Duration.hpp"
 
 namespace sctf
 {
 namespace test
 {
 /**
- * Data-class representing a TestCase.
+ * @brief Represent a testcase.
+ *
+ * A TestCase has a test function with assertions inside, which failes if any assertion
+ * fails and respectively passes if not. The state is stored with an error message in case
+ * of failure.
  */
 class TestCase
 {
 public:
     /**
-     * c'tor
-     * name: name/descr of test case
-     * classn: classname/context of test function
-     * f: test function, exec ops and asserts
+     * @brief Constructor
+     * @param name The name/description of the test case
+     * @param context The context of the test function
+     * @param t_func The test function
      */
-    TestCase(const std::string& name, const std::string& classn, test_function f)
-        : mName(name), mClassname("test." + classn), mTestFunc(f)
+    TestCase(const std::string& name, const std::string& context, test_function t_func)
+        : name(name), context("test." + context), mTestFunc(t_func)
     {}
 
     /**
-     * d'tor
+     * @brief Destructor
      */
-    virtual ~TestCase() noexcept
+    ~TestCase() noexcept
     {}
 
     /**
-     * Test case state
+     * @brief The test state.
      */
-    enum States : std::uint32_t
+    enum class TestState : std::uint32_t
     {
-        /**
-         * not yet executed
-         */
+        /// not yet executed
         NONE,
-        /**
-         * executed and passed
-         */
+        /// passed
         PASSED,
-        /**
-         * executed and failed
-         */
+        /// failed
         FAILED,
-        /**
-         * executed with error
-         */
+        /// erroneous
         ERROR
     };
 
     /**
-     * Execute test function, store results.
+     * @brief Execute the test function and store results.
+     * @return the resulting TestState
      */
-    States execute() noexcept
+    TestState execute() noexcept
     {
-        util::duration dur;
+        util::Duration dur;
         try
         {
             mTestFunc();
@@ -101,67 +98,83 @@ public:
         {
             erroneous();
         }
-        mDuration = dur.get();
-        return mState;
+        m_duration = dur.get();
+        return m_state;
     }
 
-    inline States getState() const
+    /**
+     * @brief Get the TestState.
+     * @return the test state
+     */
+    inline TestState getState() const
     {
-        return mState;
+        return m_state;
     }
 
+    /**
+     * @brief Get the Duration.
+     * @return the duration
+     */
     inline double getDuration() const
     {
-        return mDuration;
+        return m_duration;
     }
 
+    /**
+     * @brief Get the error message.
+     * @return the error message
+     */
     inline const std::string& getErrMsg() const
     {
-        return mErrMsg;
+        return m_err_msg;
     }
 
-    const std::string mName;
-    const std::string mClassname;
+    const std::string name;
+    const std::string context;
 
 private:
     /**
-     * Test passed
+     * @brief Pass this test.
      */
     inline void pass()
     {
-        mState = PASSED;
+        m_state = TestState::PASSED;
     }
 
     /**
-     * Failed due to what.
-     * msg: reason
+     * @brief Fail this test.
+     * @param msg The failure reason
      */
     inline void fail(const char* msg)
     {
-        mState  = FAILED;
-        mErrMsg = msg;
+        m_state   = TestState::FAILED;
+        m_err_msg = msg;
     }
 
     /**
-     * Any error occurred while test run.
-     * err: error msg
+     * @brief Fail this test with an error.
+     * @param error The error msg
      */
-    inline void erroneous(const std::string& err = "")
+    inline void erroneous(const std::string& error = "")
     {
-        mState  = ERROR;
-        mErrMsg = err;
+        m_state   = TestState::ERROR;
+        m_err_msg = error;
     }
 
-    States mState = NONE;
-    /**
-     * milliseconds
-     */
-    double mDuration = 0.0;
-    std::string mErrMsg;
+    /// @brief The test state.
+    TestState m_state = TestState::NONE;
+
+    /// @brief The duration in milliseconds.
+    double m_duration = 0.0;
+
+    /// @brief The error message.
+    std::string m_err_msg;
+
+    /// @brief The test function.
     test_function mTestFunc;
 };
 
 }  // namespace test
 }  // namespace sctf
 
-#endif /* TESTSUITE_TESTCASE_HPP_ */
+#endif  // SRC_TESTSUITE_TESTCASE_HPP_

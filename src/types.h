@@ -25,10 +25,8 @@
 #include <functional>
 #include <memory>
 
-/// @namespace sctf
 namespace sctf
 {
-/// @namespace test
 namespace test
 {
 /**
@@ -45,7 +43,6 @@ class TestSuite;
 using TestSuite_shared = std::shared_ptr<TestSuite>;
 }  // namespace test
 
-/// @namespace rep
 namespace rep
 {
 /**

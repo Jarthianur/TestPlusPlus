@@ -19,16 +19,16 @@
  }
  */
 
-#ifndef SRC_UTIL_ASSERT_HPP_
-#define SRC_UTIL_ASSERT_HPP_
+#ifndef SRC_ASSERT_HPP_
+#define SRC_ASSERT_HPP_
 
 #include <string>
 #include <typeinfo>
 
-#include "../comparator/comparators.hpp"
+#include "comparator/comparators.hpp"
+#include "util/Duration.hpp"
+#include "util/serialize.hpp"
 #include "AssertionFailure.hpp"
-#include "duration.hpp"
-#include "serialize.hpp"
 #include "types.h"
 
 // disable assert macro
@@ -38,65 +38,90 @@
 
 // provide assertion macros and wrappers
 /**
- * Assert wrapper. Type is deduced from arguments.
- * V: value
- * E: expected
- * C: comparator instance
+ * @def assert(VALUE, EXPECT, COMP)
+ * @brief Assert wrapper. Test for successful comparison.
+ *
+ * Type is deduced from arguments.
+ *
+ * @param VALUE The actual value
+ * @param EXPECT The expected value
+ * @param COMP The Comparator
  */
-#define assert(V, E, C) _assertStatement(V, E, C, __FILE__, __LINE__)
+#define assert(VALUE, EXPECT, COMP) \
+    _assertStatement(VALUE, EXPECT, COMP, __FILE__, __LINE__)
 
 /**
- * Assert wrapper. Type is specialized.
- * V: value
- * E: expected
- * C: comparator instance
- * T: specialized argument type
+ * @def assertT(VALUE, EXPECT, COMP, TYPE)
+ * @brief Assert wrapper. Test for successful comparison.
+ *
+ * Type is specialized.
+ *
+ * @param VALUE The actual value
+ * @param EXPECT The expected value
+ * @param COMP The Comparator
+ * @param TYPE The value type
  */
-#define assertT(V, E, C, T) _assertStatement<T>(V, E, C, __FILE__, __LINE__)
+#define assertT(VALUE, EXPECT, COMP, TYPE) \
+    _assertStatement<TYPE>(VALUE, EXPECT, COMP, __FILE__, __LINE__)
 
 /**
- * Assert wrapper. Test value to be true, use default comparator.
- * V: value
+ * @def assertTrue(VALUE)
+ * @brief Assert wrapper. Test value to be true.
+ * @param VALUE The value
  */
-#define assertTrue(V)                                                                \
-    _assertStatement<bool>(V, true, testsuite::comparator::EQUALS<bool>(), __FILE__, \
-                           __LINE__)
+#define assertTrue(VALUE) \
+    _assertStatement<bool>(VALUE, true, sctf::comp::EQUALS<bool>(), __FILE__, __LINE__)
 
 /**
- * Assert wrapper. Test value to be 0 as int.
- * V: value
+ * @def assertFalse(VALUE)
+ * @brief Assert wrapper. Test value to be false.
+ * @param VALUE The value
  */
-#define assertZero(V) \
-    _assertStatement<int>(V, 0, testsuite::comparator::EQUALS<int>(), __FILE__, __LINE__)
+#define assertFalse(VALUE) \
+    _assertStatement<bool>(VALUE, false, sctf::comp::EQUALS<bool>(), __FILE__, __LINE__)
 
 /**
- * Assert exception wrapper.
- * F: function
- * T: exception type
+ * @def assertZero(VALUE, TYPE)
+ * @brief Assert wrapper. Test value to be 0 as specified type.
+ * @param VALUE The value
+ * @param TYPE The type of value
  */
-#define assertException(F, T) _assertException<T>(F, __FILE__, __LINE__)
+#define assertZero(VALUE, TYPE)                                                     \
+    _assertStatement<TYPE>(VALUE, static_cast<TYPE>(0), sctf::comp::EQUALS<TYPE>(), \
+                           __FILE__, __LINE__)
 
 /**
- * Assert performance wrapper.
- * F: function
- * M: max milliseconds
+ * @def assertException(FUNC, EXCEPT)
+ * @brief Assert exception wrapper. Test for FUNC to throw EXCEPT.
+ * @param FUNC The function
+ * @param EXCEPT The exception type
  */
-#define assertPerformance(F, M) _assertPerformance(F, M, __FILE__, __LINE__)
+#define assertException(FUNC, EXCEPT) _assertException<EXCEPT>(FUNC, __FILE__, __LINE__)
 
-namespace testsuite
+/**
+ * @def assertPerformance(FUNC, MILLIS)
+ * @brief Assert performance wrapper. Test for FUNC to run shorter than MILLIS.
+ * @param FUNC The function
+ * @param MILLIS The max amount of milliseconds
+ */
+#define assertPerformance(FUNC, MILLIS) \
+    _assertPerformance(FUNC, MILLIS, __FILE__, __LINE__)
+
+namespace sctf
 {
 /**
- * Assert a value to expected value.
- * value: given value
- * expected: what value should be according to
- * comp: comparator
- * Throws AssertionFailure if assertion failed.
+ * @brief Assert a value to be compared successfully to expected value.
+ * @tparam T The type of value and expected
+ * @param value The actual value
+ * @param expect The expected value
+ * @param comp The Comparator
+ * @throw AssertionFailure if the assertion failed.
  */
 template<typename T>
-inline void _assertStatement(const T& value, const T& expected,
-                             comparator::Comparator<T> comp, const char* file, int line)
+static void _assertStatement(const T& value, const T& expect, comp::Comparator<T> comp,
+                             const char* file, int line)
 {
-    comparator::Comparison res = (*comp)(value, expected);
+    comp::Comparison res = (*comp)(value, expect);
     if(!res)
     {
         throw AssertionFailure(*res, file, line);
@@ -104,13 +129,15 @@ inline void _assertStatement(const T& value, const T& expected,
 }
 
 /**
- * Assert a function to throw a specific exception.
- * func: test function
- * Exception given in template.
- * Throws AssertionFailure if any other/no exception is caught.
+ * @brief Assert a function to throw a specific exception.
+ * @tparam T The exception type
+ * @param func The test function
+ * @param file The source file
+ * @param line The source line in file
+ * @throw AssertionFailure if any other or no exception is caught at all.
  */
 template<typename T>
-inline void _assertException(test_function func, const char* file, int line)
+static void _assertException(test::test_function func, const char* file, int line)
 {
     try
     {
@@ -136,21 +163,21 @@ inline void _assertException(test_function func, const char* file, int line)
 }
 
 /**
- * Assert a given test function to run under given time.
- * func: test function wrapper
- * maxMillis: max duration in milliseconds
+ * @brief Assert a given test function to run under given time.
+ * @param func The test function
+ * @param max_millis The max duration in milliseconds
  */
-inline void _assertPerformance(test_function func, double maxMillis, const char* file,
-                               int line)
+static void _assertPerformance(test::test_function func, double max_millis,
+                               const char* file, int line)
 {
     try
     {
-        util::duration dur;
+        util::Duration dur;
         func();
         double dur_ms = dur.get();
-        if(dur_ms > maxMillis)
+        if(dur_ms > max_millis)
         {
-            throw AssertionFailure(std::string("runtime > ") + util::serialize(maxMillis)
+            throw AssertionFailure(std::string("runtime > ") + util::serialize(max_millis)
                                        + "ms",
                                    file, line);
         }
@@ -165,6 +192,6 @@ inline void _assertPerformance(test_function func, double maxMillis, const char*
     }
 }
 
-}  // namespace testsuite
+}  // namespace sctf
 
-#endif /* SRC_UTIL_ASSERT_HPP_ */
+#endif  // SRC_ASSERT_HPP_

@@ -19,11 +19,11 @@
  }
  */
 
-#ifndef REPORTER_XMLREPORTER_HPP_
-#define REPORTER_XMLREPORTER_HPP_
+#ifndef SRC_REPORTER_XMLREPORTER_HPP_
+#define SRC_REPORTER_XMLREPORTER_HPP_
 
 #include <chrono>
-#include <cstdint>
+#include <cstddef>
 #include <ctime>
 #include <iostream>
 #include <string>
@@ -31,49 +31,50 @@
 #include "../testsuite/TestCase.hpp"
 #include "../testsuite/TestStats.hpp"
 #include "../testsuite/TestSuite.hpp"
-#include "../util/types.h"
+#include "../types.h"
 #include "AbstractReporter.hpp"
 
-namespace testsuite
+namespace sctf
 {
-namespace reporter
+namespace rep
 {
 /**
- * Concrete reporter,
- * featuring JUnit XML format.
+ * @brief Concrete reporter featuring JUnit like XML format.
  */
 class XmlReporter : public AbstractReporter
 {
 public:
     /**
-     * c'tor with stream
+     * @brief Constructor
+     * @param stream The stream to write to
      */
     XmlReporter(std::ostream& stream) : AbstractReporter(stream)
     {}
 
     /**
-     * c'tor with filename
+     * @brief Constructor
+     * @param fname The file to write to
      */
     XmlReporter(const char* fnam) : AbstractReporter(fnam)
     {}
 
     /**
-     * d'tor
+     * @brief Destructor
      */
     virtual ~XmlReporter() noexcept
     {}
 
-protected:
+private:
     /**
-     * impl
+     * @brief Implement AbstractReporter#reportTestSuite
      */
-    virtual void reportTestSuite(TestSuite_shared ts) override
+    virtual void reportTestSuite(test::TestSuite_shared ts) override
     {
-        std::time_t stamp = std::chrono::system_clock::to_time_t(ts->mTimestamp);
+        std::time_t stamp = std::chrono::system_clock::to_time_t(ts->timestamp);
         char buff[128];
         std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
 
-        *this << SPACE << "<testsuite id=\"" << id++ << "\" name=\"" << ts->mName
+        *this << SPACE << "<testsuite id=\"" << id++ << "\" name=\"" << ts->name
               << "\" errors=\"" << ts->getTestStats().getNumErrs() << "\" tests=\""
               << ts->getTestStats().getNumTests() << "\" failures=\""
               << ts->getTestStats().getNumFails() << "\" skipped=\"0\" time=\""
@@ -85,24 +86,24 @@ protected:
     }
 
     /**
-     * impl
+     * @brief Implement AbstractReporter#reportTestCase
      */
-    virtual void reportTestCase(const TestCase& tc) override
+    virtual void reportTestCase(const test::TestCase& tc) override
     {
-        *this << XSPACE << "<testcase name=\"" << tc.mName << "\" classname=\""
-              << tc.mClassname << "\" time=\"" << tc.getDuration() << "\"";
+        *this << XSPACE << "<testcase name=\"" << tc.name << "\" classname=\""
+              << tc.context << "\" time=\"" << tc.getDuration() << "\"";
         switch(tc.getState())
         {
-            case TestCase::ERROR:
+            case test::TestCase::TestState::ERROR:
                 *this << ">" << LF << XSPACE << SPACE << "<error message=\""
                       << tc.getErrMsg() << "\"></error>" << LF << XSPACE << "</testcase>";
                 break;
-            case TestCase::FAILED:
+            case test::TestCase::TestState::FAILED:
                 *this << ">" << LF << XSPACE << SPACE << "<failure message=\""
                       << tc.getErrMsg() << "\"></failure>" << LF << XSPACE
                       << "</testcase>";
                 break;
-            case TestCase::PASSED:
+            case test::TestCase::TestState::PASSED:
                 *this << "/>";
                 break;
             default:
@@ -112,7 +113,7 @@ protected:
     }
 
     /**
-     * impl
+     * @brief Implement AbstractReporter#beginReport
      */
     inline virtual void beginReport() override
     {
@@ -121,34 +122,38 @@ protected:
     }
 
     /**
-     * impl
+     * @brief Implement AbstractReporter#endReport
      */
     inline virtual void endReport() override
     {
         *this << "</testsuites>" << LF;
     }
 
-private:
-    std::uint32_t id = 0;
+    /// @brief The incremental testsuite id
+    std::size_t id = 0;
 };
 
 /**
- * Factory method for xml reporter
+ * @brief Create a XmlReporter
+ * @param stream The stream to use, defaults to stdout
+ * @return a shared pointer to the reporter
  */
-inline AbstractReporter_shared createXmlReporter(std::ostream& stream = std::cout)
+static AbstractReporter_shared createXmlReporter(std::ostream& stream = std::cout)
 {
     return AbstractReporter_shared(new XmlReporter(stream));
 }
 
 /**
- * Factory method for xml reporter
+ * @brief Create a XmlReporter
+ * @param file The filename to use
+ * @return a shared pointer to the reporter
  */
-inline AbstractReporter_shared createXmlReporter(const char* file)
+static AbstractReporter_shared createXmlReporter(const char* file)
 {
     return AbstractReporter_shared(new XmlReporter(file));
 }
 
-}  // reporter
-}  // testsuite
+}  // namespace rep
+}  // namespace sctf
 
-#endif /* REPORTER_XMLREPORTER_HPP_ */
+#endif  // SRC_REPORTER_XMLREPORTER_HPP_

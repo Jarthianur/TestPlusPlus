@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef COMPARATOR_EQUALS_HPP_
-#define COMPARATOR_EQUALS_HPP_
+#ifndef SRC_COMPARATOR_EQUALS_HPP_
+#define SRC_COMPARATOR_EQUALS_HPP_
 
 #include <algorithm>
 #include <cmath>
@@ -38,10 +38,8 @@ COMPARATOR(equals, "to be equals", value == expect)
  */
 PROVIDE_COMPARATOR(equals, EQUALS)
 
-/// @namespace sctf
 namespace sctf
 {
-/// @namespace comp
 namespace comp
 {
 /**
@@ -77,7 +75,7 @@ inline Comparison equals<float>(const float& value, const float& expect)
                             util::serialize<float>(expect));
 }
 
-}  // namespace comparator
-}  // namespace testsuite
+}  // namespace comp
+}  // namespace sctf
 
-#endif /* COMPARATOR_EQUALS_HPP_ */
+#endif  // SRC_COMPARATOR_EQUALS_HPP_

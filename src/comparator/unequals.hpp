@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef COMPARATOR_UNEQUALS_HPP
-#define COMPARATOR_UNEQUALS_HPP
+#ifndef SRC_COMPARATOR_UNEQUALS_HPP
+#define SRC_COMPARATOR_UNEQUALS_HPP
 
 #include <algorithm>
 #include <cmath>
@@ -38,10 +38,8 @@ COMPARATOR(unequals, "to be unequals", value != expect)
  */
 PROVIDE_COMPARATOR(unequals, UNEQUALS)
 
-/// @namespace sctf
 namespace sctf
 {
-/// @namespace comp
 namespace comp
 {
 /**
@@ -80,4 +78,4 @@ inline Comparison unequals<float>(const float& value, const float& expect)
 }  // namespace comp
 }  // namespace sctf
 
-#endif  // COMPARATOR_UNEQUALS_HPP
+#endif  // SRC_COMPARATOR_UNEQUALS_HPP

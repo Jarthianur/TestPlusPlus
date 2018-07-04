@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef COMPARATOR_COMPARATORS_HPP_
-#define COMPARATOR_COMPARATORS_HPP_
+#ifndef SRC_COMPARATOR_COMPARATORS_HPP_
+#define SRC_COMPARATOR_COMPARATORS_HPP_
 
 #include <memory>
 #include <string>
@@ -41,21 +41,19 @@
 
 #endif
 
-/// @namespace sctf
 namespace sctf
 {
-/// @namespace comp
 namespace comp
 {
 /**
- * The Comparison struct.
+ * @brief Result of an actual comparison performed by any comparator.
+ *
  * Boolean convertible, thus checkable in conditions.
  * Dereferencing operator for access of the error message.
  *
  * !!! The error message may only be accessed, if the Comparison returns false to
  * conditions !!!
  *
- * @brief Result of an actual comparison performed by any comparator.
  * @note As of C++17/14 optionals are available in the STL, so they are used
  * conditionally.
  */
@@ -192,4 +190,4 @@ constexpr Comparison success = Comparison();
     }                                                                       \
     }
 
-#endif /* COMPARATOR_COMPARATORS_HPP_ */
+#endif  // SRC_COMPARATOR_COMPARATORS_HPP_

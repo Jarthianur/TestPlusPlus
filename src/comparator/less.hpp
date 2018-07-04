@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef COMPARATOR_LESS_HPP_
-#define COMPARATOR_LESS_HPP_
+#ifndef SRC_COMPARATOR_LESS_HPP_
+#define SRC_COMPARATOR_LESS_HPP_
 
 #include "comparators.hpp"
 
@@ -34,4 +34,4 @@ COMPARATOR(less, "to be less than", value < expect)
  */
 PROVIDE_COMPARATOR(less, LESS)
 
-#endif /* COMPARATOR_LESS_HPP_ */
+#endif  // SRC_COMPARATOR_LESS_HPP_

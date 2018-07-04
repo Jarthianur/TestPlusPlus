@@ -22,7 +22,7 @@
 #ifndef SRC_REPORTER_HTMLREPORTER_HPP_
 #define SRC_REPORTER_HTMLREPORTER_HPP_
 
-#include <cstdint>
+#include <cstddef>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -30,63 +30,92 @@
 #include "../testsuite/TestCase.hpp"
 #include "../testsuite/TestStats.hpp"
 #include "../testsuite/TestSuite.hpp"
-#include "../util/types.h"
+#include "../types.h"
 #include "AbstractReporter.hpp"
 
-namespace testsuite
+namespace sctf
 {
-namespace reporter
+namespace rep
 {
+/**
+ * @def TD
+ * @brief HTML table column start tag
+ */
 #define TD "<td>"
+
+/**
+ * @def TD_
+ * @brief HTML table column end tag
+ */
 #define TD_ "</td>"
+
+/**
+ * @def TR
+ * @brief HTML table row start tag
+ */
 #define TR "<tr>"
+
+/**
+ * @def TR_
+ * @brief HTML table row end tag
+ */
 #define TR_ "</tr>"
+
+/**
+ * @def TH
+ * @brief HTML table head start tag
+ */
 #define TH "<th>"
+
+/**
+ * @def TH_
+ * @brief HTML table head end tag
+ */
 #define TH_ "</th>"
 
 /**
- * Concrete reporter,
- * featuring html website format.
+ * @brief Concrete reporter featuring HTML format.
  */
 class HtmlReporter : public AbstractReporter
 {
 public:
     /**
-     * c'tor with stream
-     * Defaults to stdout.
+     * @brief Constructor
+     * @param stream The stream to write to
      */
     HtmlReporter(std::ostream& stream) : AbstractReporter(stream)
     {}
 
     /**
-     * c'tor with filename
+     * @brief Constructor
+     * @param fname The file to write to
      */
-    HtmlReporter(const char* fnam) : AbstractReporter(fnam)
+    HtmlReporter(const char* fname) : AbstractReporter(fname)
     {}
 
     /**
-     * d'tor
+     * @brief Destructor
      */
     virtual ~HtmlReporter() noexcept
     {}
 
-protected:
+private:
     /**
-     * impl
+     * @brief Implement AbstractReporter#reportTestSuite
      */
-    virtual void reportTestSuite(TestSuite_shared ts) override
+    virtual void reportTestSuite(test::TestSuite_shared ts) override
     {
-        abs_tests += ts->getTestStats().getNumTests();
-        abs_fails += ts->getTestStats().getNumFails();
-        abs_errs += ts->getTestStats().getNumErrs();
-        abs_time += ts->getTime();
+        m_abs_tests += ts->getTestStats().getNumTests();
+        m_abs_fails += ts->getTestStats().getNumFails();
+        m_abs_errs += ts->getTestStats().getNumErrs();
+        m_abs_time += ts->getTime();
 
-        *this << "<h3>" << ts->mName << "</h3>"
+        *this << "<h3>" << ts->name << "</h3>"
               << "<p>Tests: " << ts->getTestStats().getNumTests()
               << " Failures: " << ts->getTestStats().getNumFails()
               << " Errors: " << ts->getTestStats().getNumErrs()
               << " Time: " << ts->getTime() << "ms</p><table><thead>" << TR << TH
-              << "Name" << TH_ << TH << "Classname" << TH_ << TH << "Time" << TH_ << TH
+              << "Name" << TH_ << TH << "Context" << TH_ << TH << "Time" << TH_ << TH
               << "Status" << TH_ << TR_ << "</thead><tbody>";
 
         AbstractReporter::reportTestSuite(ts);
@@ -95,77 +124,87 @@ protected:
     }
 
     /**
-     * impl
+     * @brief Implement AbstractReporter#reportTestCase
      */
-    virtual void reportTestCase(const TestCase& tc) override
+    virtual void reportTestCase(const test::TestCase& tc) override
     {
         std::string status;
         switch(tc.getState())
         {
-            case TestCase::ERROR:
+            case test::TestCase::TestState::ERROR:
                 status = "error";
                 break;
-            case TestCase::FAILED:
+            case test::TestCase::TestState::FAILED:
                 status = "failed";
                 break;
-            case TestCase::PASSED:
+            case test::TestCase::TestState::PASSED:
                 status = "passed";
                 break;
             default:
                 break;
         }
-        *this << "<tr class=\"" << status << "\">" << TD << tc.mName << TD_ << TD
-              << tc.mClassname << TD_ << TD << tc.getDuration() << "ms" << TD_ << TD
+        *this << "<tr class=\"" << status << "\">" << TD << tc.name << TD_ << TD
+              << tc.context << TD_ << TD << tc.getDuration() << "ms" << TD_ << TD
               << status << TD_ << TR_;
     }
 
     /**
-     * impl
+     * @brief Implement AbstractReporter#beginReport
      */
     inline virtual void beginReport() override
     {
         *this
             << "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/>"
-               "<style>body{background-color: linen}table{border-collapse: collapse;min-width: 50%}"
+               "<style>table{border-collapse: collapse;min-width: 50%}"
                "tr,th,td{border: 1px solid black;padding: 2px}.failed{background: lightskyblue}"
                ".passed{background: lightgreen}.error{background: lightcoral}</style>"
                "</head><body><header><h1>Test Report</h1></header>";
     }
 
     /**
-     * impl
+     * @brief Implement AbstractReporter#endReport
      */
     inline virtual void endReport() override
     {
-        *this << "<footer><h3>Summary</h3><p>Tests: " << abs_tests
-              << " Failures: " << abs_fails << " Errors: " << abs_errs
-              << " Time: " << abs_time << "ms</p></footer></body></html>";
+        *this << "<footer><h3>Summary</h3><p>Tests: " << m_abs_tests
+              << " Failures: " << m_abs_fails << " Errors: " << m_abs_errs
+              << " Time: " << m_abs_time << "ms</p></footer></body></html>";
     }
 
-private:
-    double abs_time         = 0;
-    std::uint32_t abs_tests = 0;
-    std::uint32_t abs_fails = 0;
-    std::uint32_t abs_errs  = 0;
+    /// @brief The amount of tests.
+    std::size_t m_abs_tests = 0;
+
+    /// @brief The amount of failed tests.
+    std::size_t m_abs_fails = 0;
+
+    /// @brief The amount of erroneous tests.
+    std::size_t m_abs_errs = 0;
+
+    /// @brief The accumulated runtime.
+    double m_abs_time = 0;
 };
 
 /**
- * Factory method for html reporter
+ * @brief Create a HtmlReporter
+ * @param stream The stream to use, defaults to stdout
+ * @return a shared pointer to the reporter
  */
-inline AbstractReporter_shared createHtmlReporter(std::ostream& stream = std::cout)
+static AbstractReporter_shared createHtmlReporter(std::ostream& stream = std::cout)
 {
     return AbstractReporter_shared(new HtmlReporter(stream));
 }
 
 /**
- * Factory method for html reporter
+ * @brief Create a HtmlReporter
+ * @param file The filename to use
+ * @return a shared pointer to the reporter
  */
-inline AbstractReporter_shared createHtmlReporter(const char* file)
+static AbstractReporter_shared createHtmlReporter(const char* file)
 {
     return AbstractReporter_shared(new HtmlReporter(file));
 }
 
-}  // reporter
-}  // testsuite
+}  // namespace rep
+}  // namespace sctf
 
-#endif /* SRC_REPORTER_HTMLREPORTER_HPP_ */
+#endif  // SRC_REPORTER_HTMLREPORTER_HPP_

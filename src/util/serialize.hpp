@@ -19,19 +19,20 @@
  }
  */
 
-#ifndef UTIL_SERIALIZE_HPP_
-#define UTIL_SERIALIZE_HPP_
+#ifndef SRC_UTIL_SERIALIZE_HPP_
+#define SRC_UTIL_SERIALIZE_HPP_
 
 #include <string>
 
-/// @namespace sctf
 namespace sctf
 {
-/// @namespace util
 namespace util
 {
 /**
- * Serialize number types.
+ * @brief Serialize generic types.
+ * @tparam T The type
+ * @param arg The element to serialize
+ * @return the element as string
  */
 template<typename T>
 inline std::string serialize(const T& arg)
@@ -40,7 +41,7 @@ inline std::string serialize(const T& arg)
 }
 
 /**
- * Serialize strings.
+ * @brief Specialized serialize for strings (dummy).
  */
 template<>
 inline std::string serialize(const std::string& arg)
@@ -49,7 +50,7 @@ inline std::string serialize(const std::string& arg)
 }
 
 /**
- * Serialize const char ptr's
+ * @brief Specialized serialize for C-strings.
  */
 template<>
 inline std::string serialize(const char* const& arg)
@@ -60,4 +61,4 @@ inline std::string serialize(const char* const& arg)
 }  // namespace util
 }  // namespace sctf
 
-#endif  // UTIL_SERIALIZE_HPP_
+#endif  // SRC_UTIL_SERIALIZE_HPP_
