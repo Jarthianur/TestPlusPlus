@@ -25,7 +25,7 @@
 #include <functional>
 #include <memory>
 
-namespace testsuite
+namespace sctf
 {
 /**
  * test function
@@ -38,7 +38,7 @@ using test_function = std::function<void()>;
 class TestSuite;
 using TestSuite_shared = std::shared_ptr<TestSuite>;
 
-namespace reporter
+namespace rep
 {
 /**
  * Typedef for shared ptr to AbstractReporter

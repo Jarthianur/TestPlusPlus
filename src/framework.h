@@ -22,10 +22,10 @@
 #ifndef SRC_FRAMEWORK_H_
 #define SRC_FRAMEWORK_H_
 
-#include "comparator/Equals.hpp"
-#include "comparator/Greater.hpp"
-#include "comparator/Less.hpp"
-#include "comparator/Unequals.hpp"
+#include "comparator/equals.hpp"
+#include "comparator/greater.hpp"
+#include "comparator/less.hpp"
+#include "comparator/unequals.hpp"
 #include "reporter/ColoredReporter.hpp"
 #include "reporter/HtmlReporter.hpp"
 #include "reporter/PlainTextReporter.hpp"

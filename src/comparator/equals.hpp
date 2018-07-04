@@ -25,59 +25,57 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
-#include <string>
 
-#include "../util/serialize.hpp"
 #include "comparators.hpp"
 
-namespace testsuite
-{
-namespace comparator
-{
-constexpr const char* equals_comp = "to be equal";
-
-template<typename T>
-inline static Comparison equals(const T& _1, const T& _2)
-{
-    return _1 == _2 ? success
-                    : Comparison(equals_comp, util::serialize(_1), util::serialize(_2));
-}
+/**
+ * Define an equals comparator.
+ */
+COMPARATOR(equals, "to be equals", value == expect)
 
 /**
- * Specialized compare for type 'double'.
+ * Provide a Comparator shortwrite.
+ */
+PROVIDE_COMPARATOR(equals, EQUALS)
+
+/// @namespace sctf
+namespace sctf
+{
+/// @namespace comp
+namespace comp
+{
+/**
+ * Specialized equals for type 'double'.
  * Takes care about floating point precision.
  */
 template<>
-inline Comparison equals<double>(const double& val, const double& expect)
+inline Comparison equals<double>(const double& value, const double& expect)
 {
-    double diff_abs = std::abs(val - expect);
-    double max      = std::max(std::abs(val), std::abs(expect));
+    double diff_abs = std::abs(value - expect);
+    double max      = std::max(std::abs(value), std::abs(expect));
 
     return (diff_abs < max * std::numeric_limits<double>::epsilon()
             || diff_abs < max * 0.000001)
                ? success
-               : Comparison(equals_comp, util::serialize<double>(val),
+               : Comparison(equals_comp_str, util::serialize<double>(value),
                             util::serialize<double>(expect));
 }
 
 /**
- * Specialized compare for type 'float'.
+ * Specialized equals for type 'float'.
  * Takes care about floating point precision.
  */
 template<>
-inline Comparison equals<float>(const float& val, const float& expect)
+inline Comparison equals<float>(const float& value, const float& expect)
 {
-    float diff_abs = std::abs(val - expect);
-    float max      = std::max(std::abs(val), std::abs(expect));
+    float diff_abs = std::abs(value - expect);
+    float max      = std::max(std::abs(value), std::abs(expect));
 
-    return (diff_abs < max * std::numeric_limits<float>::epsilon()
-            || diff_abs < max * static_cast<float>(0.000001))
+    return (diff_abs < max * std::numeric_limits<float>::epsilon())
                ? success
-               : Comparison(equals_comp, util::serialize<float>(val),
+               : Comparison(equals_comp_str, util::serialize<float>(value),
                             util::serialize<float>(expect));
 }
-
-PROVIDE_COMPARATOR(equals, EQUALS)
 
 }  // namespace comparator
 }  // namespace testsuite

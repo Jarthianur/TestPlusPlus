@@ -22,27 +22,16 @@
 #ifndef COMPARATOR_LESS_HPP_
 #define COMPARATOR_LESS_HPP_
 
-#include <string>
-
-#include "../util/serialize.hpp"
 #include "comparators.hpp"
 
-namespace testsuite
-{
-namespace comparator
-{
-constexpr const char* less_comp = "to be less than";
+/**
+ * Define a less comparator.
+ */
+COMPARATOR(less, "to be less than", value < expect)
 
-template<typename T>
-inline static Comparison less(const T& _1, const T& _2)
-{
-    return _1 < _2 ? success
-                   : Comparison(less_comp, util::serialize(_1), util::serialize(_2));
-}
-
+/**
+ * Provide a Comparator shortwrite.
+ */
 PROVIDE_COMPARATOR(less, LESS)
-
-}  // comparator
-}  // testsuite
 
 #endif /* COMPARATOR_LESS_HPP_ */

@@ -24,7 +24,7 @@
 
 #include <string>
 
-namespace testsuite
+namespace sctf
 {
 namespace util
 {

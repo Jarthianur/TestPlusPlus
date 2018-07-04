@@ -22,27 +22,16 @@
 #ifndef COMPARATOR_GREATER_HPP_
 #define COMPARATOR_GREATER_HPP_
 
-#include <string>
-
-#include "../util/serialize.hpp"
 #include "comparators.hpp"
 
-namespace testsuite
-{
-namespace comparator
-{
-constexpr const char* greater_comp = "to be greater than";
+/**
+ * Define a greater comparator
+ */
+COMPARATOR(greater, "to be greater than", value > expect)
 
-template<typename T>
-inline static Comparison greater(const T& _1, const T& _2)
-{
-    return _1 > _2 ? success
-                   : Comparison(greater_comp, util::serialize(_1), util::serialize(_2));
-}
-
+/**
+ * Provide a Comparator shortwrite.
+ */
 PROVIDE_COMPARATOR(greater, GREATER)
-
-}  // namespace comparator
-}  // namespace testsuite
 
 #endif /* COMPARATOR_GREATER_HPP_ */
