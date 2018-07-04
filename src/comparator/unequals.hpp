@@ -51,9 +51,8 @@ inline Comparison unequals<double>(const double& value, const double& expect)
 {
     double diff_abs = std::abs(value - expect);
     double max      = std::max(std::abs(value), std::abs(expect));
-
-    return (diff_abs < max * std::numeric_limits<double>::epsilon()
-            || diff_abs < max * 0.000001)
+    return (diff_abs <= max * std::numeric_limits<double>::epsilon()
+            || diff_abs <= max * 0.000001)
                ? Comparison(unequals_comp_str, util::serialize<double>(value),
                             util::serialize<double>(expect))
                : success;
@@ -68,8 +67,7 @@ inline Comparison unequals<float>(const float& value, const float& expect)
 {
     float diff_abs = std::abs(value - expect);
     float max      = std::max(std::abs(value), std::abs(expect));
-
-    return (diff_abs < max * std::numeric_limits<float>::epsilon())
+    return (diff_abs <= max * std::numeric_limits<float>::epsilon())
                ? Comparison(unequals_comp_str, util::serialize<float>(value),
                             util::serialize<float>(expect))
                : success;
