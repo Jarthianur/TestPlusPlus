@@ -24,7 +24,9 @@
 
 #include <cstddef>
 
-namespace testsuite
+namespace sctf
+{
+namespace test
 {
 /**
  * Statistics class for testsuites.
@@ -80,7 +82,7 @@ private:
      */
     std::size_t num_of_errs = 0;
 };
-
+}
 }  // testsuite
 
 #endif /* TESTSUITE_TESTSTATS_HPP_ */

@@ -32,6 +32,6 @@
 #include "reporter/XmlReporter.hpp"
 #include "testsuite/TestSuite.hpp"
 #include "util/assert.hpp"
-#include "util/types.h"
+#include "types.h"
 
 #endif /* SRC_FRAMEWORK_H_ */

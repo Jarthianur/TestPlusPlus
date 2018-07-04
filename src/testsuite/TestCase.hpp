@@ -25,11 +25,13 @@
 #include <cstdint>
 #include <string>
 
-#include "../util/AssertionFailure.hpp"
+#include "../AssertionFailure.hpp"
+#include "../types.h"
 #include "../util/duration.hpp"
-#include "../util/types.h"
 
-namespace testsuite
+namespace sctf
+{
+namespace test
 {
 /**
  * Data-class representing a TestCase.
@@ -159,6 +161,7 @@ private:
     test_function mTestFunc;
 };
 
-}  // testsuite
+}  // namespace test
+}  // namespace sctf
 
 #endif /* TESTSUITE_TESTCASE_HPP_ */

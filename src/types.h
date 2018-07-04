@@ -19,45 +19,43 @@
  }
  */
 
-#ifndef UTIL_SERIALIZE_HPP_
-#define UTIL_SERIALIZE_HPP_
+#ifndef SRC_TYPES_H_
+#define SRC_TYPES_H_
 
-#include <string>
+#include <functional>
+#include <memory>
 
 /// @namespace sctf
 namespace sctf
 {
-/// @namespace util
-namespace util
+/// @namespace test
+namespace test
 {
 /**
- * Serialize number types.
+ * @typedef test_function
+ * @brief Function schema passed to tests.
  */
-template<typename T>
-inline std::string serialize(const T& arg)
-{
-    return std::to_string(arg);
-}
+using test_function = std::function<void()>;
 
 /**
- * Serialize strings.
+ * @typedef TestSuite_shared
+ * @brief Shared ptr to TestSuite.
  */
-template<>
-inline std::string serialize(const std::string& arg)
-{
-    return arg;
-}
+class TestSuite;
+using TestSuite_shared = std::shared_ptr<TestSuite>;
+}  // namespace test
 
+/// @namespace rep
+namespace rep
+{
 /**
- * Serialize const char ptr's
+ * @typedef AbstractReporter_shared
+ * @brief Shared ptr to AbstractReporter
  */
-template<>
-inline std::string serialize(const char* const& arg)
-{
-    return std::string(arg);
-}
+class AbstractReporter;
+using AbstractReporter_shared = std::shared_ptr<AbstractReporter>;
 
-}  // namespace util
+}  // namespace rep
 }  // namespace sctf
 
-#endif  // UTIL_SERIALIZE_HPP_
+#endif  // SRC_TYPES_H_

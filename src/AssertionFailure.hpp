@@ -19,35 +19,48 @@
  }
  */
 
-#ifndef SRC_UTIL_TYPES_H_
-#define SRC_UTIL_TYPES_H_
+#ifndef SRC_UTIL_ASSERTIONFAILURE_HPP_
+#define SRC_UTIL_ASSERTIONFAILURE_HPP_
 
-#include <functional>
-#include <memory>
+#include <exception>
+#include <string>
 
 namespace sctf
 {
 /**
- * test function
+ * Exception indicating an assertion has failed.
  */
-using test_function = std::function<void()>;
-
-/**
- * Typedef for shared ptr to TestSuite
- */
-class TestSuite;
-using TestSuite_shared = std::shared_ptr<TestSuite>;
-
-namespace rep
+class AssertionFailure : public std::exception
 {
-/**
- * Typedef for shared ptr to AbstractReporter
- */
-class AbstractReporter;
-using AbstractReporter_shared = std::shared_ptr<AbstractReporter>;
+public:
+    /**
+     * c'tor with error msg.
+     */
+    AssertionFailure(const std::string& msg, const char* file, int line)
+        : std::exception(), msg(msg + " at " + file + ":" + std::to_string(line))
+    {}
 
-}  // namespace reporter
+    /**
+     * d'tor
+     */
+    ~AssertionFailure() noexcept
+    {}
+
+    /**
+     * Return err msg.
+     */
+    inline const char* what() const noexcept override
+    {
+        return msg.c_str();
+    }
+
+private:
+    /**
+     * Error msg
+     */
+    const std::string msg;
+};
 
 }  // namespace testsuite
 
-#endif /* SRC_UTIL_TYPES_H_ */
+#endif /* SRC_UTIL_ASSERTIONFAILURE_HPP_ */

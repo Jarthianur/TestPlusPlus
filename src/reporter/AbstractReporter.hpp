@@ -34,53 +34,47 @@
 #include "../testsuite/TestSuitesRunner.hpp"
 #include "../util/types.h"
 
-namespace testsuite
+/// @namespace sctf
+namespace sctf
 {
-namespace reporter
+/// @namespace rep
+namespace rep
 {
+/**
+ * @def LF
+ * @brief Unix line feed
+ */
 #define LF "\n"
+
+/**
+ * @def SPACE
+ * @brief Spacing with two spaces
+ */
 #define SPACE "  "
+
+/**
+ * @def XSPACE
+ * @brief Spacing with four spaces
+ */
 #define XSPACE "    "
 
 /**
- * Abstract reporter type.
- * Reports tests to given out-stream,
- * in format specified by concrete types generate method.
+ * The AbstractReporter type.
+ *
+ * @brief Report testsuites in a format specified by concrete reporter types.
  */
 class AbstractReporter
 {
 public:
     /**
-     * c'tor with target out-stream.
+     * @brief Generate report.
+     * @param runner The TestSuitesRunner to generate reports for
+     * @note Executes runner's pending TestSuite.
+     * @return the sum of failed tests and errors
      */
-    AbstractReporter(std::ostream& stream) : out_file(), out_stream(stream)
-    {}
-
-    /**
-     * c'tor with target filename
-     */
-    AbstractReporter(const char* fnam) : out_file(fnam), out_stream(this->out_file)
+    std::int32_t report(test::TestSuitesRunner& runner)
     {
-        if(!out_stream)
-        {
-            throw std::runtime_error("Could not open file.");
-        }
-    }
-
-    /**
-     * d'tor
-     */
-    virtual ~AbstractReporter() noexcept
-    {}
-
-    /**
-     * Generate report and return sum
-     * of failed tests and errors.
-     * Executes runners test suites, if not done yet.
-     */
-    std::int32_t report(TestSuitesRunner& runner)
-    {
-        if(runner.getStatus() == TestSuitesRunner::ALL)
+        if(runner.getStatus() == test::TestSuitesRunner::ALL)
         {
             std::int32_t ret_val = 0;
             beginReport();
@@ -112,17 +106,49 @@ public:
 
 protected:
     /**
-     * Target out-stream
+     * @var m_out_file
+     * @brief The output file stream
      */
-    std::ofstream out_file;
-    std::ostream& out_stream;
+    std::ofstream m_out_file;
 
     /**
-     * Generate report format for given test suite.
-     * This parent method may be overridden and called from
-     * derived class to generate report for each contained test case.
+     * @var mr_out_stream
+     * @brief The output stream reference
      */
-    inline virtual void reportTestSuite(TestSuite_shared ts)
+    std::ostream& mr_out_stream;
+
+    /**
+     * @brief Constructor
+     * @param stream The out-stream to report to
+     */
+    explicit AbstractReporter(std::ostream& stream) : mr_out_stream(stream)
+    {}
+
+    /**
+     * @brief Constructor
+     * @param fname The filename where to report to
+     * @throw std::runtime_error if the file cannot be opened for writing
+     */
+    explicit AbstractReporter(const char* fname)
+        : m_out_file(fname), mr_out_stream(m_out_file)
+    {
+        if(!mr_out_stream)
+        {
+            throw std::runtime_error("Could not open file.");
+        }
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~AbstractReporter() noexcept
+    {}
+
+    /**
+     * @brief Generate report for a given TestSuite.
+     * @param ts The TestSuite
+     */
+    inline virtual void reportTestSuite(test::TestSuite_shared ts)
     {
         for(auto& tc : ts->getTestCases())
         {
@@ -131,33 +157,35 @@ protected:
     }
 
     /**
-     * Generate report format for given test case.
+     * @brief Generate report for a given TestCase.
+     * @param tc The TestCase
      */
-    virtual void reportTestCase(const TestCase& tc) = 0;
+    virtual void reportTestCase(const test::TestCase& tc) = 0;
 
     /**
-     * Generate intro report format.
+     * @brief Generate the intro of a report.
      */
     virtual void beginReport() = 0;
 
     /**
-     * Generate outro report format.
+     * @brief Generate the outro of a report.
      */
     virtual void endReport() = 0;
 
     /**
-     * Write to stream.
-     * Chainable
+     * @brief Write to stream.
+     * @tparam Type of what to write to stream
+     * @param _1 The element to write
      */
     template<typename T>
-    inline std::ostream& operator<<(const T& rep)
+    inline std::ostream& operator<<(const T& _1)
     {
-        out_stream << rep;
-        return out_stream;
+        mr_out_stream << _1;
+        return mr_out_stream;
     }
 };
 
-}  // reporter
-}  // testsuite
+}  // namespace rep
+}  // namespace sctf
 
 #endif /* REPORTER_ABSTRACTREPORTER_HPP_ */

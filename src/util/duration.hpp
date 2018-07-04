@@ -25,7 +25,7 @@
 #include <chrono>
 #include <cstdint>
 
-namespace testsuite
+namespace sctf
 {
 namespace util
 {

@@ -34,7 +34,9 @@
 #include "TestCase.hpp"
 #include "TestStats.hpp"
 
-namespace testsuite
+namespace sctf
+{
+namespace test
 {
 /**
  * Testsuite class, providing some assertion methods.
@@ -204,5 +206,6 @@ private:
 };
 
 }  // testsuite
+}
 
 #endif /* TESTSUITE_TESTSUITE_HPP_ */
