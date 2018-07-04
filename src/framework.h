@@ -22,16 +22,16 @@
 #ifndef SRC_FRAMEWORK_H_
 #define SRC_FRAMEWORK_H_
 
-#include "comparator/Equals.hpp"
-#include "comparator/Greater.hpp"
-#include "comparator/Less.hpp"
-#include "comparator/Unequals.hpp"
-#include "reporter/ColoredReporter.hpp"
+#include "comparator/equals.hpp"
+#include "comparator/greater.hpp"
+#include "comparator/less.hpp"
+#include "comparator/unequals.hpp"
+#include "reporter/PlainTextReporter.hpp"
 #include "reporter/HtmlReporter.hpp"
 #include "reporter/PlainTextReporter.hpp"
 #include "reporter/XmlReporter.hpp"
 #include "testsuite/TestSuite.hpp"
-#include "util/assert.hpp"
-#include "util/types.h"
+#include "assert.hpp"
+#include "types.h"
 
-#endif /* SRC_FRAMEWORK_H_ */
+#endif  // SRC_FRAMEWORK_H_

@@ -25,43 +25,46 @@
 #include <chrono>
 #include <cstdint>
 
-namespace testsuite
+namespace sctf
 {
 namespace util
 {
 /**
- * Struct to measure runtime in milliseconds.
+ * @brief Measure time in milliseconds.
+ * @note The start timepoint is fixed upon construction.
  */
-struct duration final
+struct Duration final
 {
     /**
-     * c'tor setting start time
+     * @brief Constructor
      */
-    duration() : start(std::chrono::steady_clock::now())
-    {}
-
-    virtual ~duration() noexcept
+    Duration() : _start(std::chrono::steady_clock::now())
     {}
 
     /**
-     * Get duration since start time (construction)
-     * in millis.
+     * @brief Destructor
+     */
+    ~Duration() noexcept
+    {}
+
+    /**
+     * @brief Get duration since start time in milliseconds.
+     * @return the milliseconds
      */
     inline double get()
     {
         return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now()
-                                                         - start)
+                                                         - _start)
             .count();
     }
 
-    /**
-     * Start time
-     */
-    const std::chrono::steady_clock::time_point start;
+private:
+    /// @brief start timepoint
+    const std::chrono::steady_clock::time_point _start;
 };
 
 }  // namespace util
 
-}  // namespace testsuite
+}  // namespace sctf
 
-#endif /* SRC_UTIL_DURATION_HPP_ */
+#endif  // SRC_UTIL_DURATION_HPP_

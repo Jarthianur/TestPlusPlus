@@ -19,30 +19,40 @@
  }
  */
 
-#ifndef COMPARATOR_LESS_HPP_
-#define COMPARATOR_LESS_HPP_
+#ifndef SRC_TYPES_H_
+#define SRC_TYPES_H_
 
-#include <string>
+#include <functional>
+#include <memory>
 
-#include "../util/serialize.hpp"
-#include "comparators.hpp"
-
-namespace testsuite
+namespace sctf
 {
-namespace comparator
+namespace test
 {
-constexpr const char* less_comp = "to be less than";
+/**
+ * @typedef test_function
+ * @brief Function schema passed to tests.
+ */
+using test_function = std::function<void()>;
 
-template<typename T>
-inline static Comparison less(const T& _1, const T& _2)
+/**
+ * @typedef TestSuite_shared
+ * @brief Shared ptr to TestSuite.
+ */
+class TestSuite;
+using TestSuite_shared = std::shared_ptr<TestSuite>;
+}  // namespace test
+
+namespace rep
 {
-    return _1 < _2 ? success
-                   : Comparison(less_comp, util::serialize(_1), util::serialize(_2));
-}
+/**
+ * @typedef AbstractReporter_shared
+ * @brief Shared ptr to AbstractReporter
+ */
+class AbstractReporter;
+using AbstractReporter_shared = std::shared_ptr<AbstractReporter>;
 
-PROVIDE_COMPARATOR(less, LESS)
+}  // namespace rep
+}  // namespace sctf
 
-}  // comparator
-}  // testsuite
-
-#endif /* COMPARATOR_LESS_HPP_ */
+#endif  // SRC_TYPES_H_

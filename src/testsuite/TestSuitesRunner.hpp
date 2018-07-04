@@ -29,132 +29,130 @@
 #include <utility>
 #include <vector>
 
-#include "../util/types.h"
+#include "../types.h"
 #include "TestSuite.hpp"
 
-namespace testsuite
+namespace sctf
+{
+namespace test
 {
 /**
- * Test suite runner,
- * holding all test suites.
+ * @brief A runner to manage and run TestSuites.
  */
 class TestSuitesRunner
 {
 public:
     /**
-     * c'tor
+     * @brief Constructor
      */
     TestSuitesRunner()
     {}
 
     /**
-     * d'tor
+     * @brief Destructor
      */
-    virtual ~TestSuitesRunner() noexcept
+    ~TestSuitesRunner() noexcept
     {}
 
     /**
-     * Status of execution
+     * @brief The execution state.
      */
-    enum ExecStatus : std::uint32_t
+    enum class ExecState : std::uint32_t
     {
-        /**
-         * No test suites executed.
-         */
+        /// No TestSuites executed yet
         NONE,
-        /**
-         * Sequential test suites executed.
-         */
+        /// All sequential TestSuites executed
         SEQUENTIAL,
-        /**
-         * Parallel test suites executed.
-         */
+        /// All parallel TestSuites executed
         PARALLEL,
-        /**
-         * All test suites executed.
-         * State must be set to this to be able to report.
-         */
+        /// All TestSuites executed
         ALL
     };
 
     /**
-     * Register a test suite.
-     * ts: shared ptr to test suite
-     * parallel: exec as parallel or sequential
+     * @brief Register a TestSuite.
+     * @param ts A shared ptr to the TestSuite
+     * @param parallel Whether to execute in parallel or sequential
+     * @return a shared pointer to the TestSuite
      */
     TestSuite_shared registerTestSuite(TestSuite_shared ts, bool parallel)
     {
         if(parallel)
         {
-            mParallelTSs.push_back(ts);
+            m_parallel_suites.push_back(ts);
         }
         else
         {
-            mSequentialTSs.push_back(ts);
+            m_sequential_suites.push_back(ts);
         }
         return ts;
     }
 
     /**
-     * Execute parallel test suites.
+     * @brief Execute parallel TestSuites.
      */
     void executeParallel() noexcept
     {
-        if(mExec != PARALLEL && mExec != ALL)
+        if(m_exec_state != ExecState::PARALLEL && m_exec_state != ExecState::ALL)
         {
-            for(auto ts : mParallelTSs)
+            for(auto ts : m_parallel_suites)
             {
                 ts->executeParallel();
             }
-            mExec = mExec == NONE ? PARALLEL : ALL;
+            m_exec_state
+                = m_exec_state == ExecState::NONE ? ExecState::PARALLEL : ExecState::ALL;
         }
     }
 
     /**
-     * Execute sequential test suites.
+     * @brief Execute sequential TestSuites.
      */
     void executeSequential() noexcept
     {
-        if(mExec != SEQUENTIAL && mExec != ALL)
+        if(m_exec_state != ExecState::SEQUENTIAL && m_exec_state != ExecState::ALL)
         {
-            for(auto ts : mSequentialTSs)
+            for(auto ts : m_sequential_suites)
             {
                 ts->execute();
             }
-            mExec = mExec == NONE ? SEQUENTIAL : ALL;
+            m_exec_state = m_exec_state == ExecState::NONE ? ExecState::SEQUENTIAL
+                                                           : ExecState::ALL;
         }
     }
 
     /**
-     * Execute all test suites.
+     * @brief Execute both parallel and sequential TestSuites.
      */
-    inline void executeAll() noexcept
+    void executeAll() noexcept
     {
         executeParallel();
         executeSequential();
     }
 
     /**
-     * Get execution status.
+     *@brief Get the execution state.
+     * @return the ExecState
      */
-    inline const ExecStatus getStatus() const
+    inline ExecState getStatus() const
     {
-        return mExec;
+        return m_exec_state;
     }
 
     /**
-     * Get parallel and sequential test suites as pair.
-     * All have to be executed until call,
-     * logic_error is thrown if not.
+     * @brief Get parallel and sequential test suites.
+     * @note All have to be executed until call.
+     * @return a pair with all testsuites, where first are the sequential ones and second
+     * are the parallel ones
+     * @throw std::logic_error if not all TestSuites were executed yet
      */
     const std::pair<std::vector<TestSuite_shared>&, std::vector<TestSuite_shared>&>
     getTestSuites()
     {
-        if(mExec == ALL)
+        if(m_exec_state == ExecState::ALL)
         {
             return std::pair<std::vector<TestSuite_shared>&,
-                             std::vector<TestSuite_shared>&>(mSequentialTSs,
-                                                             mParallelTSs);
+                             std::vector<TestSuite_shared>&>(m_sequential_suites,
+                                                             m_parallel_suites);
         }
         else
         {
@@ -163,30 +161,25 @@ public:
     }
 
 private:
-    /**
-     * Sequential test suites
-     */
-    std::vector<TestSuite_shared> mSequentialTSs;
+    /// @brief The registered sequential TestSuites.
+    std::vector<TestSuite_shared> m_sequential_suites;
 
-    /**
-     * Parallel test suites
-     */
-    std::vector<TestSuite_shared> mParallelTSs;
+    /// @brief The registered parallel TestSuites.
+    std::vector<TestSuite_shared> m_parallel_suites;
 
-    /**
-     * Execution status
-     */
-    ExecStatus mExec = NONE;
+    /// @brief The execution state.
+    ExecState m_exec_state = ExecState::NONE;
 };
 
 /**
- * Describe and register a test suite to the given runner.
- * All test cases in this suite will be executed in parallel!
- * name: name/descr
- * context: component/context to test as string (default="")
- * runner: test suites runner to register
+ * @brief Describe and register a TestSuite to the given runner.
+ * @note All test cases in this suite will be executed in parallel.
+ * @param name The name/description
+ * @param context The component/context to test as string (default="")
+ * @param runner The TestSuitesRunner to register
+ * @return a shared pointer to the created TestSuite
  */
-inline TestSuite_shared describeParallel(const std::string& name,
+static TestSuite_shared describeParallel(const std::string& name,
                                          TestSuitesRunner& runner,
                                          const std::string& context = "")
 {
@@ -194,45 +187,49 @@ inline TestSuite_shared describeParallel(const std::string& name,
 }
 
 /**
- * Describe and register a test suite to the given runner.
- * Via template, pass the classtype this suite belongs to.
- * All test cases in this suite will be executed in parallel!
- * name: name/descr
- * runner: test suites runner to register
+ * @brief Describe and register a TestSuite to the given runner.
+ * @note All test cases in this suite will be executed in parallel.
+ * @tparam T The component/context classname where this suite belongs to
+ * @param  name The name/description
+ * @param runner  The TestSuitesRunner to register
+ * @return a shared pointer to the created TestSuite
  */
 template<typename T>
-inline TestSuite_shared describeParallel(const std::string& name,
+static TestSuite_shared describeParallel(const std::string& name,
                                          TestSuitesRunner& runner)
 {
     return runner.registerTestSuite(TestSuite::create(name, typeid(T).name()), true);
 }
 
 /**
- * Describe and register a test suite to the given runner.
- * All test cases in this suite will be executed sequentially!
- * name: name/descr
- * context: component/context to test as string (default="")
- * runner: test suites runner to register
+ * @brief Describe and register a TestSuite to the given runner.
+ * @note All test cases in this suite will be executed sequentially.
+ * @param name The name/description
+ * @param context The component/context to test as string (default="")
+ * @param runner The TestSuitesRunner to register
+ * @return a shared pointer to the created TestSuite
  */
-inline TestSuite_shared describe(const std::string& name, TestSuitesRunner& runner,
+static TestSuite_shared describe(const std::string& name, TestSuitesRunner& runner,
                                  const std::string& context = "")
 {
     return runner.registerTestSuite(TestSuite::create(name, context), false);
 }
 
 /**
- * Describe and register a test suite to the given runner.
- * Via template, pass the classtype this suite belongs to.
- * All test cases in this suite will be executed sequentially!
- * name: name/descr
- * runner: test suites runner to register
+ * @brief Describe and register a TestSuite to the given runner.
+ * @note All test cases in this suite will be executed sequentially.
+ * @tparam T The component/context classname where this suite belongs to
+ * @param  name The name/description
+ * @param runner  The TestSuitesRunner to register
+ * @return a shared pointer to the created TestSuite
  */
 template<typename T>
-inline TestSuite_shared describe(const std::string& name, TestSuitesRunner& runner)
+static TestSuite_shared describe(const std::string& name, TestSuitesRunner& runner)
 {
     return runner.registerTestSuite(TestSuite::create(name, typeid(T).name()), false);
 }
 
-}  // testsuite
+}  // namespace test
+}  // namespace sctf
 
-#endif /* SRC_TESTSUITE_TESTSUITESRUNNER_HPP_ */
+#endif  // SRC_TESTSUITE_TESTSUITESRUNNER_HPP_

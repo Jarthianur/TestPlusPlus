@@ -19,35 +19,19 @@
  }
  */
 
-#ifndef SRC_UTIL_TYPES_H_
-#define SRC_UTIL_TYPES_H_
+#ifndef SRC_COMPARATOR_GREATER_HPP_
+#define SRC_COMPARATOR_GREATER_HPP_
 
-#include <functional>
-#include <memory>
-
-namespace testsuite
-{
-/**
- * test function
- */
-using test_function = std::function<void()>;
+#include "comparators.hpp"
 
 /**
- * Typedef for shared ptr to TestSuite
+ * Define a greater comparator
  */
-class TestSuite;
-using TestSuite_shared = std::shared_ptr<TestSuite>;
+COMPARATOR(greater, "to be greater than", value > expect)
 
-namespace reporter
-{
 /**
- * Typedef for shared ptr to AbstractReporter
+ * Provide a Comparator shortwrite.
  */
-class AbstractReporter;
-using AbstractReporter_shared = std::shared_ptr<AbstractReporter>;
+PROVIDE_COMPARATOR(greater, GREATER)
 
-}  // namespace reporter
-
-}  // namespace testsuite
-
-#endif /* SRC_UTIL_TYPES_H_ */
+#endif  // SRC_COMPARATOR_GREATER_HPP_
