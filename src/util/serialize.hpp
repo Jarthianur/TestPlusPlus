@@ -22,26 +22,50 @@
 #ifndef SRC_UTIL_SERIALIZE_HPP_
 #define SRC_UTIL_SERIALIZE_HPP_
 
-#include <iostream>
 #include <sstream>
 #include <string>
+#include <type_traits>
+#include <typeinfo>
+#include <utility>
 
 namespace sctf
 {
 namespace util
 {
+template<typename S, typename T>
+class is_streamable
+{
+    template<typename SS, typename TT>
+    static auto test(int)
+        -> decltype(std::declval<SS&>() << std::declval<TT>(), std::true_type());
+
+    template<typename, typename>
+    static auto test(...) -> std::false_type;
+
+public:
+    static const bool value = decltype(test<S, T>(0))::value;
+};
+
 /**
  * @brief Serialize generic types.
  * @tparam T The type
  * @param arg The element to serialize
  * @return the element as string
  */
-template<typename T>
+template<typename T, typename std::enable_if<
+                         is_streamable<std::ostringstream, T>::value>::type* = nullptr>
 inline std::string serialize(const T& arg)
 {
     std::ostringstream oss;
     oss << arg;
     return oss.str();
+}
+
+template<typename T, typename std::enable_if<not is_streamable<
+                         std::ostringstream, T>::value>::type* = nullptr>
+inline std::string serialize(const T& arg)
+{
+    return typeid(T).name();
 }
 
 /**
