@@ -22,6 +22,8 @@
 #ifndef SRC_UTIL_SERIALIZE_HPP_
 #define SRC_UTIL_SERIALIZE_HPP_
 
+#include <iostream>
+#include <sstream>
 #include <string>
 
 namespace sctf
@@ -37,7 +39,9 @@ namespace util
 template<typename T>
 inline std::string serialize(const T& arg)
 {
-    return std::to_string(arg);
+    std::ostringstream oss;
+    oss << arg;
+    return oss.str();
 }
 
 /**
@@ -56,6 +60,12 @@ template<>
 inline std::string serialize(const char* const& arg)
 {
     return std::string(arg);
+}
+
+template<>
+inline std::string serialize(const std::nullptr_t&)
+{
+    return "0";
 }
 
 }  // namespace util

@@ -48,7 +48,7 @@
  * @param COMP The Comparator
  */
 #define assert(VALUE, EXPECT, COMP) \
-    _assertStatement(VALUE, EXPECT, COMP, __FILE__, __LINE__)
+    _assertStatement(VALUE, EXPECT, COMP(), __FILE__, __LINE__)
 
 /**
  * @def assertT(VALUE, EXPECT, COMP, TYPE)
@@ -62,7 +62,7 @@
  * @param TYPE The value type
  */
 #define assertT(VALUE, EXPECT, COMP, TYPE) \
-    _assertStatement<TYPE>(VALUE, EXPECT, COMP, __FILE__, __LINE__)
+    _assertStatement<TYPE, TYPE>(VALUE, EXPECT, COMP<TYPE, TYPE>(), __FILE__, __LINE__)
 
 /**
  * @def assertTrue(VALUE)
@@ -81,14 +81,24 @@
     _assertStatement<bool>(VALUE, false, sctf::comp::EQUALS<bool>(), __FILE__, __LINE__)
 
 /**
+ * @def assertNotNull(VALUE)
+ * @brief Assert wrapper. Test value to be not nullptr.
+ * @param VALUE The value
+ */
+#define assertNotNull(VALUE)                                                        \
+    _assertStatement(static_cast<void* const>(VALUE), nullptr,                      \
+                     sctf::comp::UNEQUALS<void* const, std::nullptr_t>(), __FILE__, \
+                     __LINE__)
+
+/**
  * @def assertZero(VALUE, TYPE)
  * @brief Assert wrapper. Test value to be 0 as specified type.
  * @param VALUE The value
  * @param TYPE The type of value
  */
-#define assertZero(VALUE, TYPE)                                                     \
-    _assertStatement<TYPE>(VALUE, static_cast<TYPE>(0), sctf::comp::EQUALS<TYPE>(), \
-                           __FILE__, __LINE__)
+#define assertZero(VALUE, TYPE)                               \
+    _assertStatement<TYPE, TYPE>(VALUE, static_cast<TYPE>(0), \
+                                 sctf::comp::EQUALS<TYPE>(), __FILE__, __LINE__)
 
 /**
  * @def assertException(FUNC, EXCEPT)
@@ -117,8 +127,8 @@ namespace sctf
  * @param comp The Comparator
  * @throw AssertionFailure if the assertion failed.
  */
-template<typename T>
-static void _assertStatement(const T& value, const T& expect, comp::Comparator<T> comp,
+template<typename V, typename E = V>
+static void _assertStatement(const V& value, const E& expect, comp::Comparator<V, E> comp,
                              const char* file, int line)
 {
     comp::Comparison res = (*comp)(value, expect);

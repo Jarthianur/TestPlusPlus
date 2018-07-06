@@ -174,7 +174,7 @@ protected:
      * @param _1 The element to write
      */
     template<typename T>
-    inline std::ostream& operator<<(const T& _1)
+    std::ostream& operator<<(const T& _1)
     {
         mr_out_stream << _1;
         return mr_out_stream;

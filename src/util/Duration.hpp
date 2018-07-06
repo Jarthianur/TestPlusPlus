@@ -51,7 +51,7 @@ struct Duration final
      * @brief Get duration since start time in milliseconds.
      * @return the milliseconds
      */
-    inline double get()
+    double get()
     {
         return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now()
                                                          - _start)

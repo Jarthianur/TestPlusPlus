@@ -115,7 +115,7 @@ private:
     /**
      * @brief Implement AbstractReporter#beginReport
      */
-    inline virtual void beginReport() override
+    virtual void beginReport() override
     {
         *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << LF << "<testsuites>"
               << LF;
@@ -124,7 +124,7 @@ private:
     /**
      * @brief Implement AbstractReporter#endReport
      */
-    inline virtual void endReport() override
+    virtual void endReport() override
     {
         *this << "</testsuites>" << LF;
     }

@@ -33,7 +33,7 @@
 #define STD_OPTIONAL std::optional
 #define STD_NULLOPT std::nullopt
 
-#elif __cplusplus == 201402L
+#elif __cplusplus >= 201402L
 
 #include <experimental/optional>
 #define STD_OPTIONAL std::experimental::optional
@@ -57,26 +57,16 @@ namespace comp
  * @note As of C++17/14 optionals are available in the STL, so they are used
  * conditionally.
  */
-struct Comparison
+struct Comparison final
 {
-#if __cplusplus >= 201703L || __cplusplus == 201402L
+#if __cplusplus >= 201402L
     constexpr Comparison() : _failure(STD_NULLOPT)
     {}
 
     Comparison(const std::string& comp_str, const std::string& value,
                const std::string& expect)
-    {
-        std::string msg;
-        msg.reserve(15 + comp_str.length() + value.length() + expect.length());
-        msg = "Expected '";
-        msg.append(value)
-            .append("' ")
-            .append(comp_str)
-            .append(" '")
-            .append(expect)
-            .append("'");
-        _failure = msg;
-    }
+        : _failure("Expected '" + value + "' " + comp_str + " '" + expect + "'")
+    {}
 
     explicit operator bool()
     {
@@ -89,7 +79,7 @@ struct Comparison
     }
 
 private:
-    STD_OPTIONAL<std::string> _failure;
+    const STD_OPTIONAL<std::string> _failure;
 #else
     constexpr Comparison() : _success(true)
     {}
@@ -136,11 +126,15 @@ private:
  * @brief Function pointer to function comparing two elements
  * @tparam T The type of elements
  */
-template<typename T>
-using Comparator = Comparison (*)(const T&, const T&);
+template<typename V, typename E = V>
+using Comparator = Comparison (*)(const V&, const E&);
 
 /// @brief Default successful Comparison.
+#if __cplusplus >= 201402L
+#define success Comparison()
+#else
 constexpr Comparison success = Comparison();
+#endif
 
 }  // namespace comp
 }  // namespace sctf
@@ -152,17 +146,17 @@ constexpr Comparison success = Comparison();
  * @param COMP The Comparator function
  * @param NAME The final name, usually COMP in uppercase
  */
-#define PROVIDE_COMPARATOR(COMP, NAME) \
-    namespace sctf                     \
-    {                                  \
-    namespace comp                     \
-    {                                  \
-    template<typename T>               \
-    inline static Comparator<T> NAME() \
-    {                                  \
-        return &COMP<T>;               \
-    }                                  \
-    }                                  \
+#define PROVIDE_COMPARATOR(COMP, NAME)   \
+    namespace sctf                       \
+    {                                    \
+    namespace comp                       \
+    {                                    \
+    template<typename V, typename E = V> \
+    static Comparator<V, E> NAME()       \
+    {                                    \
+        return &COMP<V, E>;              \
+    }                                    \
+    }                                    \
     }
 
 /**
@@ -180,8 +174,8 @@ constexpr Comparison success = Comparison();
     namespace comp                                                          \
     {                                                                       \
     constexpr const char* NAME##_comp_str = COMPSTR;                        \
-    template<typename T>                                                    \
-    inline static Comparison NAME(const T& value, const T& expect)          \
+    template<typename V, typename E = V>                                    \
+    static Comparison NAME(const V& value, const E& expect)                 \
     {                                                                       \
         return (PRED) ? success                                             \
                       : Comparison(NAME##_comp_str, util::serialize(value), \
@@ -189,5 +183,7 @@ constexpr Comparison success = Comparison();
     }                                                                       \
     }                                                                       \
     }
+
+#include <iostream>
 
 #endif  // SRC_COMPARATOR_COMPARATORS_HPP_

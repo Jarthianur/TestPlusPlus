@@ -151,7 +151,7 @@ private:
     /**
      * @brief Implement AbstractReporter#beginReport
      */
-    inline virtual void beginReport() override
+    virtual void beginReport() override
     {
         *this
             << "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/>"
@@ -164,7 +164,7 @@ private:
     /**
      * @brief Implement AbstractReporter#endReport
      */
-    inline virtual void endReport() override
+    virtual void endReport() override
     {
         *this << "<footer><h3>Summary</h3><p>Tests: " << m_abs_tests
               << " Failures: " << m_abs_fails << " Errors: " << m_abs_errs

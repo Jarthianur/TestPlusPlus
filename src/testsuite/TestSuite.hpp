@@ -205,7 +205,7 @@ public:
 
 private:
     /**
-     *@brief Constructor
+     * @brief Constructor
      * @param name The name/description
      * @param context The context description
      */

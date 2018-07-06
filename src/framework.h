@@ -26,6 +26,7 @@
 #include "comparator/greater.hpp"
 #include "comparator/less.hpp"
 #include "comparator/unequals.hpp"
+#include "comparator/contains.hpp"
 #include "reporter/PlainTextReporter.hpp"
 #include "reporter/HtmlReporter.hpp"
 #include "reporter/PlainTextReporter.hpp"

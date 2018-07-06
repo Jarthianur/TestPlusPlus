@@ -130,7 +130,7 @@ public:
     }
 
     /**
-     *@brief Get the execution state.
+     * @brief Get the execution state.
      * @return the ExecState
      */
     inline ExecState getStatus() const

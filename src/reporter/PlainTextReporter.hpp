@@ -119,13 +119,13 @@ private:
     /**
      * @brief Implement AbstractReporter#beginReport
      */
-    inline virtual void beginReport() override
+    virtual void beginReport() override
     {}
 
     /**
      * @brief Implement AbstractReporter#endReport
      */
-    inline virtual void endReport() override
+    virtual void endReport() override
     {
         if(m_abs_fails >= (m_abs_tests + 1) / 2)
         {

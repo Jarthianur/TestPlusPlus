@@ -47,7 +47,7 @@ namespace comp
  * Takes care about floating point precision.
  */
 template<>
-inline Comparison equals<double>(const double& value, const double& expect)
+Comparison equals<double>(const double& value, const double& expect)
 {
     double diff_abs = std::abs(value - expect);
     double max      = std::max(std::abs(value), std::abs(expect));
@@ -63,7 +63,7 @@ inline Comparison equals<double>(const double& value, const double& expect)
  * Takes care about floating point precision.
  */
 template<>
-inline Comparison equals<float>(const float& value, const float& expect)
+Comparison equals<float>(const float& value, const float& expect)
 {
     float diff_abs = std::abs(value - expect);
     float max      = std::max(std::abs(value), std::abs(expect));
