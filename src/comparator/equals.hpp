@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <type_traits>
 
 #include "comparators.hpp"
 
@@ -46,31 +47,17 @@ namespace comp
  * Specialized equals for type 'double'.
  * Takes care about floating point precision.
  */
-template<>
-Comparison equals<double>(const double& value, const double& expect)
+template<typename T,
+         typename std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
+Comparison equals(const T& value, const T& expect)
 {
-    double diff_abs = std::abs(value - expect);
-    double max      = std::max(std::abs(value), std::abs(expect));
-    return (diff_abs <= max * std::numeric_limits<double>::epsilon()
-            || diff_abs <= max * 0.000001)
+    T diff_abs = std::abs(value - expect);
+    T max      = std::max(std::abs(value), std::abs(expect));
+    return (diff_abs <= max * std::numeric_limits<T>::epsilon()
+            || diff_abs <= max * static_cast<T>(0.000001))
                ? success
-               : Comparison(equals_comp_str, util::serialize<double>(value),
-                            util::serialize<double>(expect));
-}
-
-/**
- * Specialized equals for type 'float'.
- * Takes care about floating point precision.
- */
-template<>
-Comparison equals<float>(const float& value, const float& expect)
-{
-    float diff_abs = std::abs(value - expect);
-    float max      = std::max(std::abs(value), std::abs(expect));
-    return (diff_abs <= max * std::numeric_limits<float>::epsilon())
-               ? success
-               : Comparison(equals_comp_str, util::serialize<float>(value),
-                            util::serialize<float>(expect));
+               : Comparison(equals_comp_str, util::serialize(value),
+                            util::serialize(expect));
 }
 
 }  // namespace comp

@@ -46,30 +46,16 @@ namespace comp
  * Specialized unequals for type 'double'.
  * Takes care about floating point precision.
  */
-template<>
-Comparison unequals<double>(const double& value, const double& expect)
+template<typename T,
+         typename std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
+Comparison unequals(const T& value, const T& expect)
 {
-    double diff_abs = std::abs(value - expect);
-    double max      = std::max(std::abs(value), std::abs(expect));
-    return (diff_abs <= max * std::numeric_limits<double>::epsilon()
-            || diff_abs <= max * 0.000001)
-               ? Comparison(unequals_comp_str, util::serialize<double>(value),
-                            util::serialize<double>(expect))
-               : success;
-}
-
-/**
- * Specialized unequals for type 'float'.
- * Takes care about floating point precision.
- */
-template<>
-Comparison unequals<float>(const float& value, const float& expect)
-{
-    float diff_abs = std::abs(value - expect);
-    float max      = std::max(std::abs(value), std::abs(expect));
-    return (diff_abs <= max * std::numeric_limits<float>::epsilon())
-               ? Comparison(unequals_comp_str, util::serialize<float>(value),
-                            util::serialize<float>(expect))
+    T diff_abs = std::abs(value - expect);
+    T max      = std::max(std::abs(value), std::abs(expect));
+    return (diff_abs <= max * std::numeric_limits<T>::epsilon()
+            || diff_abs <= max * static_cast<T>(0.000001))
+               ? Comparison(unequals_comp_str, util::serialize(value),
+                            util::serialize(expect))
                : success;
 }
 
