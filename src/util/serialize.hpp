@@ -24,28 +24,14 @@
 
 #include <sstream>
 #include <string>
-#include <type_traits>
 #include <typeinfo>
 #include <utility>
+#include "traits.hpp"
 
 namespace sctf
 {
 namespace util
 {
-template<typename S, typename T>
-class is_streamable
-{
-    template<typename SS, typename TT>
-    static auto test(int)
-        -> decltype(std::declval<SS&>() << std::declval<TT>(), std::true_type());
-
-    template<typename, typename>
-    static auto test(...) -> std::false_type;
-
-public:
-    static const bool value = decltype(test<S, T>(0))::value;
-};
-
 /**
  * @brief Serialize generic types.
  * @tparam T The type

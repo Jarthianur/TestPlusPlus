@@ -24,20 +24,27 @@
 
 #include <algorithm>
 #include "../util/serialize.hpp"
+#include "../util/traits.hpp"
 #include "comparators.hpp"
-
-COMPARATOR(contains, "to contain",
-           std::find(value.begin(), value.end(), expect) != value.end())
-
-PROVIDE_COMPARATOR(contains, CONTAINS)
 
 namespace sctf
 {
 namespace comp
 {
+constexpr const char* contains_comp_str = "to contain";
+
+template<typename V, typename E = V,
+         typename std::enable_if<util::is_iterable<V>::value>::type* = nullptr>
+static Comparison contains(const V& value, const E& expect)
+{
+    return std::find(value.begin(), value.end(), expect) != value.end()
+               ? success
+               : Comparison(contains_comp_str, util::serialize(value),
+                            util::serialize(expect));
+}
+
 template<>
-Comparison contains<std::string>(const std::string& value,
-                                        const std::string& expect)
+Comparison contains<std::string>(const std::string& value, const std::string& expect)
 {
     return value.find(expect) != std::string::npos
                ? success
@@ -47,14 +54,27 @@ Comparison contains<std::string>(const std::string& value,
 
 template<>
 Comparison contains<std::string, const char*>(const std::string& value,
-                                                     const char* const& expect)
+                                              const char* const& expect)
 {
     return value.find(expect) != std::string::npos
                ? success
                : Comparison(contains_comp_str, util::serialize(value),
                             util::serialize(expect));
 }
+
+template<
+    typename V, typename E,
+    typename std::enable_if<std::is_same<V, std::pair<E, E>>::value>::type* = nullptr>
+Comparison contains(const V& bounds, const E& value)
+{
+    return value >= bounds.first && value <= bounds.second
+               ? success
+               : Comparison(contains_comp_str, util::serialize(bounds),
+                            util::serialize(value));
 }
 }
+}
+
+PROVIDE_COMPARATOR(contains, CONTAINS)
 
 #endif  // SRC_COMPARATOR_CONTAINS_HPP

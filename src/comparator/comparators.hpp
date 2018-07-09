@@ -184,6 +184,4 @@ constexpr Comparison success = Comparison();
     }                                                                       \
     }
 
-#include <iostream>
-
 #endif  // SRC_COMPARATOR_COMPARATORS_HPP_
