@@ -47,8 +47,9 @@
  * @param EXPECT The expected value
  * @param COMP The Comparator
  */
-#define assert(VALUE, EXPECT, COMP) \
-    _assertStatement(VALUE, EXPECT, COMP(), __FILE__, __LINE__)
+#define assert(VALUE, EXPECT, COMP)                                                  \
+    sctf::_assertStatement(VALUE, EXPECT, COMP<decltype(VALUE), decltype(EXPECT)>(), \
+                           __FILE__, __LINE__)
 
 /**
  * @def assertT(VALUE, EXPECT, COMP, TYPE)
@@ -61,34 +62,39 @@
  * @param COMP The Comparator
  * @param TYPE The value type
  */
-#define assertT(VALUE, EXPECT, COMP, TYPE) \
-    _assertStatement<TYPE, TYPE>(VALUE, EXPECT, COMP<TYPE, TYPE>(), __FILE__, __LINE__)
+#define assertT(VALUE, EXPECT, COMP, TYPE)                                          \
+    sctf::_assertStatement<TYPE, TYPE>(VALUE, EXPECT, COMP<TYPE, TYPE>(), __FILE__, \
+                                       __LINE__)
+
+#define assertEquals(VALUE, EXPECT) assert(VALUE, EXPECT, EQUALS)
 
 /**
  * @def assertTrue(VALUE)
  * @brief Assert wrapper. Test value to be true.
  * @param VALUE The value
  */
-#define assertTrue(VALUE) \
-    _assertStatement<bool>(VALUE, true, sctf::comp::EQUALS<bool>(), __FILE__, __LINE__)
+#define assertTrue(VALUE)                                                           \
+    sctf::_assertStatement<bool>(VALUE, true, sctf::comp::EQUALS<bool>(), __FILE__, \
+                                 __LINE__)
 
 /**
  * @def assertFalse(VALUE)
  * @brief Assert wrapper. Test value to be false.
  * @param VALUE The value
  */
-#define assertFalse(VALUE) \
-    _assertStatement<bool>(VALUE, false, sctf::comp::EQUALS<bool>(), __FILE__, __LINE__)
+#define assertFalse(VALUE)                                                           \
+    sctf::_assertStatement<bool>(VALUE, false, sctf::comp::EQUALS<bool>(), __FILE__, \
+                                 __LINE__)
 
 /**
  * @def assertNotNull(VALUE)
  * @brief Assert wrapper. Test value to be not nullptr.
  * @param VALUE The value
  */
-#define assertNotNull(VALUE)                                                        \
-    _assertStatement(static_cast<void* const>(VALUE), nullptr,                      \
-                     sctf::comp::UNEQUALS<void* const, std::nullptr_t>(), __FILE__, \
-                     __LINE__)
+#define assertNotNull(VALUE)                                                    \
+    sctf::_assertStatement(static_cast<void* const>(VALUE), nullptr,            \
+                           sctf::comp::UNEQUALS<void* const, std::nullptr_t>(), \
+                           __FILE__, __LINE__)
 
 /**
  * @def assertZero(VALUE, TYPE)
@@ -96,9 +102,9 @@
  * @param VALUE The value
  * @param TYPE The type of value
  */
-#define assertZero(VALUE, TYPE)                               \
-    _assertStatement<TYPE, TYPE>(VALUE, static_cast<TYPE>(0), \
-                                 sctf::comp::EQUALS<TYPE>(), __FILE__, __LINE__)
+#define assertZero(VALUE)                                          \
+    sctf::_assertStatement(VALUE, static_cast<decltype(VALUE)>(0), \
+                           sctf::comp::EQUALS<decltype(VALUE)>(), __FILE__, __LINE__)
 
 /**
  * @def assertException(FUNC, EXCEPT)
@@ -106,7 +112,8 @@
  * @param FUNC The function
  * @param EXCEPT The exception type
  */
-#define assertException(FUNC, EXCEPT) _assertException<EXCEPT>(FUNC, __FILE__, __LINE__)
+#define assertException(FUNC, EXCEPT) \
+    sctf::_assertException<EXCEPT>(FUNC, __FILE__, __LINE__)
 
 /**
  * @def assertPerformance(FUNC, MILLIS)
@@ -115,7 +122,7 @@
  * @param MILLIS The max amount of milliseconds
  */
 #define assertPerformance(FUNC, MILLIS) \
-    _assertPerformance(FUNC, MILLIS, __FILE__, __LINE__)
+    sctf::_assertPerformance(FUNC, MILLIS, __FILE__, __LINE__)
 
 namespace sctf
 {
