@@ -29,6 +29,11 @@ namespace sctf
 {
 namespace util
 {
+/**
+ * @brief Type trait to check for streaming operator compatibility.
+ * @tparam S The stream type
+ * @tparam T The type to check for
+ */
 template<typename S, typename T>
 class is_streamable
 {
@@ -43,6 +48,10 @@ public:
     static const bool value = decltype(test<S, T>(0))::value;
 };
 
+/**
+ * @brief Type trait to check for iterator capabilities.
+ * @tparam T The type to check for
+ */
 template<typename T>
 class is_iterable
 {
@@ -58,7 +67,8 @@ class is_iterable
 public:
     static const bool value = decltype(test<T>(0))::value;
 };
-}
-}
+
+}  // namespace util
+}  // namespace sctf
 
 #endif  // SRC_UTIL_TRAITS_HPP_

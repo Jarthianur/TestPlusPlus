@@ -64,7 +64,6 @@ private:
 };
 
 }  // namespace util
-
 }  // namespace sctf
 
 #endif  // SRC_UTIL_DURATION_HPP_

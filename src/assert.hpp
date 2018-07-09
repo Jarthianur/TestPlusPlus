@@ -40,9 +40,7 @@
 /**
  * @def assert(VALUE, EXPECT, COMP)
  * @brief Assert wrapper. Test for successful comparison.
- *
- * Type is deduced from arguments.
- *
+ * @note Type is deduced from arguments.
  * @param VALUE The actual value
  * @param EXPECT The expected value
  * @param COMP The Comparator
@@ -54,9 +52,7 @@
 /**
  * @def assertT(VALUE, EXPECT, COMP, TYPE)
  * @brief Assert wrapper. Test for successful comparison.
- *
- * Type is specialized.
- *
+ * @note Type is specialized.
  * @param VALUE The actual value
  * @param EXPECT The expected value
  * @param COMP The Comparator
@@ -66,7 +62,24 @@
     sctf::_assertStatement<TYPE, TYPE>(VALUE, EXPECT, COMP<TYPE, TYPE>(), __FILE__, \
                                        __LINE__)
 
+/**
+ * @def assertEquals(VALUE, EXPECT)
+ * @brief Assert wrapper. Test for equality.
+ * @param VALUE The actual value
+ * @param EXPECT The expected value
+ */
 #define assertEquals(VALUE, EXPECT) assert(VALUE, EXPECT, EQUALS)
+
+/**
+ * @def assertInInterval(VALUE, LOWER, UPPER)
+ * @brief Assert wrapper. Test for VALUE to be in an interval between LOWER and UPPER.
+ * @note Bounds are inclusive.
+ * @param VALUE The actual value
+ * @param LOWER The lower bound
+ * @param UPPER The upper bound
+ */
+#define assertInInterval(VALUE, LOWER, UPPER) \
+    assert(VALUE, (std::pair<decltype(LOWER), decltype(UPPER)>(LOWER, UPPER)), IN_RANGE)
 
 /**
  * @def assertTrue(VALUE)

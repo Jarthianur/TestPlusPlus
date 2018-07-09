@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SRC_COMPARATOR_UNEQUALS_HPP
-#define SRC_COMPARATOR_UNEQUALS_HPP
+#ifndef SRC_COMPARATOR_UNEQUALS_HPP_
+#define SRC_COMPARATOR_UNEQUALS_HPP_
 
 #include <algorithm>
 #include <cmath>
@@ -62,4 +62,4 @@ Comparison unequals(const T& value, const T& expect)
 }  // namespace comp
 }  // namespace sctf
 
-#endif  // SRC_COMPARATOR_UNEQUALS_HPP
+#endif  // SRC_COMPARATOR_UNEQUALS_HPP_

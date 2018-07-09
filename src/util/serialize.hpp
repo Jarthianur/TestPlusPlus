@@ -22,6 +22,7 @@
 #ifndef SRC_UTIL_SERIALIZE_HPP_
 #define SRC_UTIL_SERIALIZE_HPP_
 
+#include <cstddef>
 #include <sstream>
 #include <string>
 #include <typeinfo>
@@ -33,7 +34,34 @@ namespace sctf
 namespace util
 {
 /**
- * @brief Serialize generic types.
+ * @brief Resolve a more or less pretty type name.
+ * @tparam The type
+ * @return the typename as string
+ */
+template<typename T>
+static const std::string& typeName(const T&)
+{
+#if defined(__GNUG__) || defined(__clang__)
+    static std::string name;
+    if(name.length() > 0)
+    {
+        return name;
+    }
+    const std::string sig(__PRETTY_FUNCTION__);
+    std::size_t b = sig.rfind("T = ") + 4;
+#ifdef __clang__
+    name = sig.substr(b, sig.rfind(']') - b);
+#else
+    name = sig.substr(b, sig.find(';', b) - b);
+#endif
+    return name;
+#else
+    return typeid(T).name();
+#endif
+}
+
+/**
+ * @brief Serialize streamable types.
  * @tparam T The type
  * @param arg The element to serialize
  * @return the element as string
@@ -47,11 +75,14 @@ inline std::string serialize(const T& arg)
     return oss.str();
 }
 
+/**
+ * @brief Serialize not streamable types.
+ */
 template<typename T, typename std::enable_if<not is_streamable<
                          std::ostringstream, T>::value>::type* = nullptr>
 inline std::string serialize(const T& arg)
 {
-    return typeid(T).name();
+    return typeName(arg);
 }
 
 /**
@@ -72,10 +103,22 @@ inline std::string serialize(const char* const& arg)
     return std::string(arg);
 }
 
+/**
+ * @brief Specialized serialize for nullptr.
+ */
 template<>
 inline std::string serialize(const std::nullptr_t&)
 {
     return "0";
+}
+
+/**
+ * @brief Specialized serialize for pairs.
+ */
+template<typename T>
+inline std::string serialize(const std::pair<T, T>& arg)
+{
+    return std::string("[") + serialize(arg.first) + ", " + serialize(arg.second) + "]";
 }
 
 }  // namespace util
