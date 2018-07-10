@@ -79,7 +79,7 @@ private:
     /**
      * @brief Implement AbstractReporter#reportTestSuite
      */
-    virtual void reportTestSuite(test::TestSuite_shared ts) override
+    virtual void reportTestSuite(TestSuite_shared ts) override
     {
         *this << "Run Testsuite [" << ts->name << "]; time = " << ts->getTime() << "ms"
               << LF;
@@ -157,16 +157,18 @@ private:
     double m_abs_time = 0;
 };
 
+}  // namespace rep
+
 /**
  * @brief Create a PlainTextReporter
  * @param stream The stream to use
  * @param color Whether to print colored text
  * @return a shared pointer to the reporter
  */
-static AbstractReporter_shared createPlainTextReporter(std::ostream& stream,
-                                                       bool color = false)
+inline static rep::AbstractReporter_shared createPlainTextReporter(std::ostream& stream,
+                                                                   bool color = false)
 {
-    return AbstractReporter_shared(new PlainTextReporter(stream, color));
+    return std::make_shared<rep::PlainTextReporter>(stream, color);
 }
 
 /**
@@ -175,9 +177,9 @@ static AbstractReporter_shared createPlainTextReporter(std::ostream& stream,
  * @param color Whether to print colored text
  * @return a shared pointer to the reporter
  */
-static AbstractReporter_shared createPlainTextReporter(bool color = false)
+inline static rep::AbstractReporter_shared createPlainTextReporter(bool color = false)
 {
-    return AbstractReporter_shared(new PlainTextReporter(std::cout, color));
+    return std::make_shared<rep::PlainTextReporter>(std::cout, color);
 }
 
 /**
@@ -186,13 +188,12 @@ static AbstractReporter_shared createPlainTextReporter(bool color = false)
  * @param color Whether to print colored text
  * @return a shared pointer to the reporter
  */
-static AbstractReporter_shared createPlainTextReporter(const char* file,
-                                                       bool color = false)
+inline static rep::AbstractReporter_shared createPlainTextReporter(const char* file,
+                                                                   bool color = false)
 {
-    return AbstractReporter_shared(new PlainTextReporter(file, color));
+    return std::make_shared<rep::PlainTextReporter>(file, color);
 }
 
-}  // namespace rep
 }  // namespace sctf
 
 #endif  // SRC_REPORTER_COLOREDREPORTER_HPP_

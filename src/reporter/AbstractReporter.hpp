@@ -144,7 +144,7 @@ protected:
      * @brief Generate report for a given TestSuite.
      * @param ts The TestSuite
      */
-    inline virtual void reportTestSuite(test::TestSuite_shared ts)
+    inline virtual void reportTestSuite(TestSuite_shared ts)
     {
         for(auto& tc : ts->getTestCases())
         {

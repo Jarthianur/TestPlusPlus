@@ -149,13 +149,10 @@ constexpr Comparison success = Comparison();
 #define PROVIDE_COMPARATOR(COMP, NAME)   \
     namespace sctf                       \
     {                                    \
-    namespace comp                       \
-    {                                    \
     template<typename V, typename E = V> \
-    static Comparator<V, E> NAME()       \
+    static comp::Comparator<V, E> NAME() \
     {                                    \
-        return &COMP<V, E>;              \
-    }                                    \
+        return &comp::COMP<V, E>;        \
     }                                    \
     }
 

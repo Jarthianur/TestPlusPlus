@@ -26,6 +26,8 @@
 
 namespace sctf
 {
+class TestSuite;
+
 namespace test
 {
 /**
@@ -74,7 +76,7 @@ public:
     }
 
 private:
-    friend class TestSuite;
+    friend sctf::TestSuite;
 
     /// @brief The number of tests.
     std::size_t m_num_of_tests = 0;

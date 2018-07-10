@@ -23,7 +23,6 @@
 #define SRC_ASSERT_HPP_
 
 #include <string>
-#include <typeinfo>
 
 #include "comparator/comparators.hpp"
 #include "util/Duration.hpp"
@@ -86,28 +85,26 @@
  * @brief Assert wrapper. Test value to be true.
  * @param VALUE The value
  */
-#define assertTrue(VALUE)                                                           \
-    sctf::_assertStatement<bool>(VALUE, true, sctf::comp::EQUALS<bool>(), __FILE__, \
-                                 __LINE__)
+#define assertTrue(VALUE) \
+    sctf::_assertStatement<bool>(VALUE, true, sctf::EQUALS<bool>(), __FILE__, __LINE__)
 
 /**
  * @def assertFalse(VALUE)
  * @brief Assert wrapper. Test value to be false.
  * @param VALUE The value
  */
-#define assertFalse(VALUE)                                                           \
-    sctf::_assertStatement<bool>(VALUE, false, sctf::comp::EQUALS<bool>(), __FILE__, \
-                                 __LINE__)
+#define assertFalse(VALUE) \
+    sctf::_assertStatement<bool>(VALUE, false, sctf::EQUALS<bool>(), __FILE__, __LINE__)
 
 /**
  * @def assertNotNull(VALUE)
  * @brief Assert wrapper. Test value to be not nullptr.
  * @param VALUE The value
  */
-#define assertNotNull(VALUE)                                                    \
-    sctf::_assertStatement(static_cast<void* const>(VALUE), nullptr,            \
-                           sctf::comp::UNEQUALS<void* const, std::nullptr_t>(), \
-                           __FILE__, __LINE__)
+#define assertNotNull(VALUE)                                                        \
+    sctf::_assertStatement(static_cast<void* const>(VALUE), nullptr,                \
+                           sctf::UNEQUALS<void* const, std::nullptr_t>(), __FILE__, \
+                           __LINE__)
 
 /**
  * @def assertZero(VALUE, TYPE)
@@ -117,7 +114,7 @@
  */
 #define assertZero(VALUE)                                          \
     sctf::_assertStatement(VALUE, static_cast<decltype(VALUE)>(0), \
-                           sctf::comp::EQUALS<decltype(VALUE)>(), __FILE__, __LINE__)
+                           sctf::EQUALS<decltype(VALUE)>(), __FILE__, __LINE__)
 
 /**
  * @def assertException(FUNC, EXCEPT)
@@ -195,7 +192,7 @@ static void _assertException(test::test_function func, const char* file, int lin
         throw AssertionFailure("Wrong exception thrown", file, line);
     }
     throw AssertionFailure(std::string("No exception thrown, expected '")
-                               + util::serialize(T()) + "'",
+                               + util::typeName<T>() + "'",
                            file, line);
 }
 
@@ -206,7 +203,7 @@ static void _assertException(test::test_function func, const char* file, int lin
  * @param line The source line in file
  * @throw AssertionFailure if any exception is caught.
  */
-static void _assertNoExcept(test::test_function func, const char* file, int line)
+inline static void _assertNoExcept(test::test_function func, const char* file, int line)
 {
     try
     {
@@ -229,8 +226,8 @@ static void _assertNoExcept(test::test_function func, const char* file, int line
  * @param func The test function
  * @param max_millis The max duration in milliseconds
  */
-static void _assertPerformance(test::test_function func, double max_millis,
-                               const char* file, int line)
+inline static void _assertPerformance(test::test_function func, double max_millis,
+                                      const char* file, int line)
 {
     try
     {

@@ -25,11 +25,11 @@
 #include <cstdint>
 #include <stdexcept>
 #include <string>
-#include <typeinfo>
 #include <utility>
 #include <vector>
 
 #include "../types.h"
+#include "../util/serialize.hpp"
 #include "TestSuite.hpp"
 
 namespace sctf
@@ -171,6 +171,8 @@ private:
     ExecState m_exec_state = ExecState::NONE;
 };
 
+}  // namespace test
+
 /**
  * @brief Describe and register a TestSuite to the given runner.
  * @note All test cases in this suite will be executed in parallel.
@@ -179,9 +181,9 @@ private:
  * @param runner The TestSuitesRunner to register
  * @return a shared pointer to the created TestSuite
  */
-static TestSuite_shared describeParallel(const std::string& name,
-                                         TestSuitesRunner& runner,
-                                         const std::string& context = "")
+inline static TestSuite_shared describeParallel(const std::string& name,
+                                                test::TestSuitesRunner& runner,
+                                                const std::string& context = "")
 {
     return runner.registerTestSuite(TestSuite::create(name, context), true);
 }
@@ -196,9 +198,9 @@ static TestSuite_shared describeParallel(const std::string& name,
  */
 template<typename T>
 static TestSuite_shared describeParallel(const std::string& name,
-                                         TestSuitesRunner& runner)
+                                         test::TestSuitesRunner& runner)
 {
-    return runner.registerTestSuite(TestSuite::create(name, typeid(T).name()), true);
+    return runner.registerTestSuite(TestSuite::create(name, util::typeName<T>()), true);
 }
 
 /**
@@ -209,8 +211,9 @@ static TestSuite_shared describeParallel(const std::string& name,
  * @param runner The TestSuitesRunner to register
  * @return a shared pointer to the created TestSuite
  */
-static TestSuite_shared describe(const std::string& name, TestSuitesRunner& runner,
-                                 const std::string& context = "")
+inline static TestSuite_shared describe(const std::string& name,
+                                        test::TestSuitesRunner& runner,
+                                        const std::string& context = "")
 {
     return runner.registerTestSuite(TestSuite::create(name, context), false);
 }
@@ -224,12 +227,11 @@ static TestSuite_shared describe(const std::string& name, TestSuitesRunner& runn
  * @return a shared pointer to the created TestSuite
  */
 template<typename T>
-static TestSuite_shared describe(const std::string& name, TestSuitesRunner& runner)
+static TestSuite_shared describe(const std::string& name, test::TestSuitesRunner& runner)
 {
-    return runner.registerTestSuite(TestSuite::create(name, typeid(T).name()), false);
+    return runner.registerTestSuite(TestSuite::create(name, util::typeName<T>()), false);
 }
 
-}  // namespace test
 }  // namespace sctf
 
 #endif  // SRC_TESTSUITE_TESTSUITESRUNNER_HPP_

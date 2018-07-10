@@ -103,7 +103,7 @@ private:
     /**
      * @brief Implement AbstractReporter#reportTestSuite
      */
-    virtual void reportTestSuite(test::TestSuite_shared ts) override
+    virtual void reportTestSuite(TestSuite_shared ts) override
     {
         m_abs_tests += ts->getTestStats().getNumTests();
         m_abs_fails += ts->getTestStats().getNumFails();
@@ -184,14 +184,17 @@ private:
     double m_abs_time = 0;
 };
 
+}  // namespace rep
+
 /**
  * @brief Create a HtmlReporter
  * @param stream The stream to use, defaults to stdout
  * @return a shared pointer to the reporter
  */
-static AbstractReporter_shared createHtmlReporter(std::ostream& stream = std::cout)
+inline static rep::AbstractReporter_shared createHtmlReporter(std::ostream& stream
+                                                              = std::cout)
 {
-    return AbstractReporter_shared(new HtmlReporter(stream));
+    return std::make_shared<rep::HtmlReporter>(stream);
 }
 
 /**
@@ -199,12 +202,11 @@ static AbstractReporter_shared createHtmlReporter(std::ostream& stream = std::co
  * @param file The filename to use
  * @return a shared pointer to the reporter
  */
-static AbstractReporter_shared createHtmlReporter(const char* file)
+inline static rep::AbstractReporter_shared createHtmlReporter(const char* file)
 {
-    return AbstractReporter_shared(new HtmlReporter(file));
+    return std::make_shared<rep::HtmlReporter>(file);
 }
 
-}  // namespace rep
 }  // namespace sctf
 
 #endif  // SRC_REPORTER_HTMLREPORTER_HPP_

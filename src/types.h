@@ -33,7 +33,9 @@ namespace test
  * @typedef test_function
  * @brief Function schema passed to tests.
  */
-using test_function = std::function<void()>;
+using test_function = const std::function<void()>&;
+
+}  // namespace test
 
 /**
  * @typedef TestSuite_shared
@@ -41,7 +43,6 @@ using test_function = std::function<void()>;
  */
 class TestSuite;
 using TestSuite_shared = std::shared_ptr<TestSuite>;
-}  // namespace test
 
 namespace rep
 {

@@ -35,12 +35,6 @@ class AssertionFailure : public std::exception
 public:
     /**
      * @brief Constructor
-     */
-    AssertionFailure() : std::exception()
-    {}
-
-    /**
-     * @brief Constructor
      * @param msg The base error message
      * @param file The source file where the assertion took place
      * @param line The source line of the assertion

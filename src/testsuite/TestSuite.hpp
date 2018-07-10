@@ -27,16 +27,14 @@
 #include <iterator>
 #include <memory>
 #include <string>
-#include <typeinfo>
 #include <vector>
 
 #include "../types.h"
+#include "../util/serialize.hpp"
 #include "TestCase.hpp"
 #include "TestStats.hpp"
 
 namespace sctf
-{
-namespace test
 {
 /**
  * Testsuite class, providing some assertion methods.
@@ -75,10 +73,10 @@ public:
         {
             switch(tc.execute())
             {
-                case TestCase::TestState::FAILED:
+                case test::TestCase::TestState::FAILED:
                     ++m_stats.m_num_of_fails;
                     break;
-                case TestCase::TestState::ERROR:
+                case test::TestCase::TestState::ERROR:
                     ++m_stats.m_num_of_errs;
                     break;
                 default:
@@ -104,10 +102,10 @@ public:
             {
                 switch(tc->execute())
                 {
-                    case TestCase::TestState::FAILED:
+                    case test::TestCase::TestState::FAILED:
                         ++fails;
                         break;
-                    case TestCase::TestState::ERROR:
+                    case test::TestCase::TestState::ERROR:
                         ++errs;
                         break;
                     default:
@@ -137,9 +135,9 @@ public:
      * @return this as shared pointer
      */
     template<typename T>
-    TestSuite_shared test(const std::string& name, test_function t_func)
+    TestSuite_shared test(const std::string& name, test::test_function t_func)
     {
-        m_testcases.push_back(TestCase(name, typeid(T).name(), t_func));
+        m_testcases.push_back(test::TestCase(name, util::typeName<T>(), t_func));
         return shared_from_this();
     }
 
@@ -151,9 +149,9 @@ public:
      * @return this as shared pointer
      */
     TestSuite_shared test(const std::string& name, const std::string& context,
-                          test_function t_func)
+                          test::test_function t_func)
     {
-        m_testcases.push_back(TestCase(name, context, t_func));
+        m_testcases.push_back(test::TestCase(name, context, t_func));
         return shared_from_this();
     }
 
@@ -164,9 +162,9 @@ public:
      * @param t_func The test function
      * @return this as shared pointer
      */
-    TestSuite_shared test(const std::string& name, test_function func)
+    TestSuite_shared test(const std::string& name, test::test_function func)
     {
-        m_testcases.push_back(TestCase(name, m_context, func));
+        m_testcases.push_back(test::TestCase(name, m_context, func));
         return shared_from_this();
     }
 
@@ -174,7 +172,7 @@ public:
      * @brief Get the test statistics.
      * @return the TestStats
      */
-    inline const TestStats& getTestStats() const
+    inline const test::TestStats& getTestStats() const
     {
         return m_stats;
     }
@@ -192,7 +190,7 @@ public:
      * @brief Get the TestCases.
      * @return the test cases
      */
-    inline const std::vector<TestCase>& getTestCases() const
+    inline const std::vector<test::TestCase>& getTestCases() const
     {
         return m_testcases;
     }
@@ -217,16 +215,15 @@ private:
     double m_time = 0.0;
 
     /// @brief The test statistics.
-    TestStats m_stats;
+    test::TestStats m_stats;
 
     /// @brief The testcases.
-    std::vector<TestCase> m_testcases;
+    std::vector<test::TestCase> m_testcases;
 
     /// @brief The context description.
     const std::string m_context;
 };
 
-}  // namespace test
 }  // namespace sctf
 
 #endif  // SRC_TESTSUITE_TESTSUITE_HPP_

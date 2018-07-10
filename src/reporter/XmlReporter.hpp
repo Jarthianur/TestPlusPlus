@@ -68,7 +68,7 @@ private:
     /**
      * @brief Implement AbstractReporter#reportTestSuite
      */
-    virtual void reportTestSuite(test::TestSuite_shared ts) override
+    virtual void reportTestSuite(TestSuite_shared ts) override
     {
         std::time_t stamp = std::chrono::system_clock::to_time_t(ts->timestamp);
         char buff[128];
@@ -133,14 +133,17 @@ private:
     std::size_t id = 0;
 };
 
+}  // namespace rep
+
 /**
  * @brief Create a XmlReporter
  * @param stream The stream to use, defaults to stdout
  * @return a shared pointer to the reporter
  */
-static AbstractReporter_shared createXmlReporter(std::ostream& stream = std::cout)
+inline static rep::AbstractReporter_shared createXmlReporter(std::ostream& stream
+                                                             = std::cout)
 {
-    return AbstractReporter_shared(new XmlReporter(stream));
+    return std::make_shared<rep::XmlReporter>(stream);
 }
 
 /**
@@ -148,12 +151,11 @@ static AbstractReporter_shared createXmlReporter(std::ostream& stream = std::cou
  * @param file The filename to use
  * @return a shared pointer to the reporter
  */
-static AbstractReporter_shared createXmlReporter(const char* file)
+inline static rep::AbstractReporter_shared createXmlReporter(const char* file)
 {
-    return AbstractReporter_shared(new XmlReporter(file));
+    return std::make_shared<rep::XmlReporter>(file);
 }
 
-}  // namespace rep
 }  // namespace sctf
 
 #endif  // SRC_REPORTER_XMLREPORTER_HPP_

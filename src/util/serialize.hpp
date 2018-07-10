@@ -39,10 +39,10 @@ namespace util
  * @return the typename as string
  */
 template<typename T>
-static const std::string& typeName(const T&)
+static const std::string& typeName()
 {
 #if defined(__GNUG__) || defined(__clang__)
-    static std::string name;
+    static thread_local std::string name;
     if(name.length() > 0)
     {
         return name;
@@ -80,9 +80,9 @@ inline std::string serialize(const T& arg)
  */
 template<typename T, typename std::enable_if<not is_streamable<
                          std::ostringstream, T>::value>::type* = nullptr>
-inline std::string serialize(const T& arg)
+inline std::string serialize(const T&)
 {
-    return typeName(arg);
+    return typeName<T>();
 }
 
 /**
