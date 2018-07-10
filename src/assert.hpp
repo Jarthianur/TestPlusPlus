@@ -126,14 +126,14 @@
  * @param EXCEPT The exception type
  */
 #define assertException(FUNC, EXCEPT) \
-    sctf::_assertException<EXCEPT>([]() { FUNC; }, __FILE__, __LINE__)
+    sctf::_assertException<EXCEPT>([&]() { FUNC; }, __FILE__, __LINE__)
 
 /**
  * @def assertNoExcept(FUNC)
  * @brief Assert no exception wrapper. Test for FUNC not to throw any exception.
  * @param FUNC The function call
  */
-#define assertNoExcept(FUNC) sctf::_assertNoExcept([]() { FUNC; }, __FILE__, __LINE__)
+#define assertNoExcept(FUNC) sctf::_assertNoExcept([&]() { FUNC; }, __FILE__, __LINE__)
 
 /**
  * @def assertPerformance(FUNC, MILLIS)
@@ -142,7 +142,7 @@
  * @param MILLIS The max amount of milliseconds
  */
 #define assertPerformance(FUNC, MILLIS) \
-    sctf::_assertPerformance([]() { FUNC; }, MILLIS, __FILE__, __LINE__)
+    sctf::_assertPerformance([&]() { FUNC; }, MILLIS, __FILE__, __LINE__)
 
 namespace sctf
 {
