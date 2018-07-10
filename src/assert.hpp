@@ -122,20 +122,27 @@
 /**
  * @def assertException(FUNC, EXCEPT)
  * @brief Assert exception wrapper. Test for FUNC to throw EXCEPT.
- * @param FUNC The function
+ * @param FUNC The function call
  * @param EXCEPT The exception type
  */
 #define assertException(FUNC, EXCEPT) \
-    sctf::_assertException<EXCEPT>(FUNC, __FILE__, __LINE__)
+    sctf::_assertException<EXCEPT>([]() { FUNC; }, __FILE__, __LINE__)
+
+/**
+ * @def assertNoExcept(FUNC)
+ * @brief Assert no exception wrapper. Test for FUNC not to throw any exception.
+ * @param FUNC The function call
+ */
+#define assertNoExcept(FUNC) sctf::_assertNoExcept([]() { FUNC; }, __FILE__, __LINE__)
 
 /**
  * @def assertPerformance(FUNC, MILLIS)
  * @brief Assert performance wrapper. Test for FUNC to run shorter than MILLIS.
- * @param FUNC The function
+ * @param FUNC The function call
  * @param MILLIS The max amount of milliseconds
  */
 #define assertPerformance(FUNC, MILLIS) \
-    sctf::_assertPerformance(FUNC, MILLIS, __FILE__, __LINE__)
+    sctf::_assertPerformance([]() { FUNC; }, MILLIS, __FILE__, __LINE__)
 
 namespace sctf
 {
@@ -180,7 +187,7 @@ static void _assertException(test::test_function func, const char* file, int lin
     catch(const std::exception& e)
     {
         throw AssertionFailure(std::string("Wrong exception thrown, caught '")
-                                   + typeid(e).name() + "'",
+                                   + util::serialize(e) + "'",
                                file, line);
     }
     catch(...)
@@ -188,8 +195,33 @@ static void _assertException(test::test_function func, const char* file, int lin
         throw AssertionFailure("Wrong exception thrown", file, line);
     }
     throw AssertionFailure(std::string("No exception thrown, expected '")
-                               + typeid(T).name() + "'",
+                               + util::serialize(T()) + "'",
                            file, line);
+}
+
+/**
+ * @brief Assert a function not to throw any exception.
+ * @param func The test function
+ * @param file The source file
+ * @param line The source line in file
+ * @throw AssertionFailure if any exception is caught.
+ */
+static void _assertNoExcept(test::test_function func, const char* file, int line)
+{
+    try
+    {
+        func();
+    }
+    catch(const std::exception& e)
+    {
+        throw AssertionFailure(std::string("Expected no exception, caught '")
+                                   + util::serialize(e) + "'",
+                               file, line);
+    }
+    catch(...)
+    {
+        throw AssertionFailure("Expected no exception", file, line);
+    }
 }
 
 /**
