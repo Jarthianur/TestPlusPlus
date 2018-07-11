@@ -1,7 +1,7 @@
 # simple-cpp-test-framework
 
 A simple C++11, plain STL, header-only testing framework.
-Featuring great **extendability** and an **easy, but powerful**, **less-typing** optimized API.
+Featuring great **extendability** and an **easy, but powerful**, **less typing** optimized API.
 **Test reports** are generated in a specified format, according to the chosen reporter.
 Additionally it serves the capability to **parallelize** testruns, using *OpenMP*.
 
@@ -77,8 +77,8 @@ Of course, when executed in parallel, a test suites total time is the max time o
 
 | Assertion         | Parameters                | Description                                                                                                          | Example                                                          |
 | ----------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| assert            | VALUE, EXPECT, COMP       | Common assert. Assert successfull comparison of VALUE and EXPECT with COMP.                                          | `assert(1, 1, LT);`                                              |
-| assertT           | VALUE, EXPECT, COMP, TYPE | Same as *assert*, but parameters are specialized to TYPE, which allows implicit conversions.                         | `assertT("hell", "hello", IN, std::string);`                     |
+| assert            | VALUE, COMP, EXPECT       | Common assert. Assert successfull comparison of VALUE and EXPECT with COMP.                                          | `assert(1, LT, 1);`                                              |
+| assertT           | VALUE, COMP, EXPECT, TYPE | Same as *assert*, but parameters are specialized to TYPE, which allows implicit conversions.                         | `assertT("hell", IN, "hello", std::string);`                     |
 | assertEquals      | VALUE, EXPECT             | Wrapper for *assert* using *EQUALS* comparator.                                                                      | `assertEquals(1, 1);`                                            |
 | assertInInterval  | VALUE, LOWER, UPPER       | Wrapper for *assert* using *IN_RANGE* and a pair with LOWER and UPPER as bounds. Check VALUE to be in this interval. | `assertInInterval(2, 1, 3);`                                     |
 | assertTrue        | VALUE                     | Assert VALUE to be *true*.                                                                                           | `assertTrue(true);`                                              |
@@ -97,71 +97,101 @@ In order to use the parallelization capability compile and link the test code wi
 
 ### Example
 
-```c++
-#include <iostream>
-#include "framework.h"
-using namespace testsuite;
-using namespace comparator;
+```cpp
+// ...
+#include "sctf.h"
 
-int static_func()
-{
-    return 0;
-}
-int static_f(int i, int b)
-{
-    return i + b;
-}
-int throwal()
-{
-    throw std::logic_error("Hallo Welt!");
-}
-
-class dummy
-{
-public:
-    inline dummy()
-    {
-    }
-    inline virtual ~dummy() throw ()
-    {
-    }
-    inline int member_func(int i, int a)
-    {
-        return i + a;
-    }
-    inline std::string memf()
-    {
-        return "hello";
-    }
-};
+using namespace sctf;
 
 int main(int argc, char** argv)
 {
-    auto rep = reporter::createXmlReporter(/*stdout*/); // could also be a filename
-    TestSuitesRunner runner;
-
-    describe("a testsuite", runner)
-        ->test("a testcase", "main", [](){
-            assert(static_f(1,2), 3, EQUALS<int>());
-            assertException(throwal, std::logic_error);
-        })
-        ->test<dummy>("another testcase", [](){
-            dummy d;
-            assertT(d.memf(), "hello", EQUALS<std::string>(), std::string); // specify the type, so literal conversion can be used
-            assertPerformance([](){
-                d.memf();
-            }, 2.0);
+    test::TestSuitesRunner runner;
+    auto rep = createPlainTextReporter(true);
+    describe("test", runner)
+        ->test("1",
+               []() {
+                   assert(1+1, EQ, 2);
+                   assertFalse(false);
+                   assertT("hell", IN, "hello", std::string);
+                   int i = 101;
+                   assertNotNull(&i);
+                   assertNotNull(nullptr);
+               })
+        ->test("2",
+               []() {
+                   assertEquals(0, 0);
+                   assertZero(0.0);
+                   assertTrue(true);
+                   assertT(0, UNEQUALS, 1.0, double);
+                   assert(6, IN_RANGE, (std::pair<int, int>(1, 5)));
+               })
+        ->test("3",
+               []() {
+                   assert('w', IN, std::string("world"));
+                   assertInInterval(2, 1, 3);
+                   assert(std::string(""), IN, std::vector<std::string>({""}));
+               })
+        ->test("4", []() {
+            assertException(throw std::logic_error(""), std::logic_error);
         });
-
-    runner.executeAll(); //explicit call, or ..
-
-    return rep->report(runner); // ... implicit
+    return rep->report(runner);
 }
 ```
 
 ## Extending
 
+### Reporters
 
+To add a new reporter just implement the [AbstractReporter](src/reporter/AbstractReporter.hpp) interface. Therefor create a class in *sctf::rep* namespace and inherit from *AbstractReporter*. Have a look at the preimplemented repoerters, how this is exactly done.
+
+### Comparators
+
+To add a new comparator you basically just need to invoke two macros.
+For example:
+
+```c
+COMPARATOR(pred, "to be predecessor of", value + 1 == expect)
+PROVIDE_COMPARATOR(pred, PRE)
+```
+
+This will create a generic comparator function for you. The syntax is as follows:
+`COMPARATOR(NAME, CONSTRAINT, PREDICATE)`, where *NAME* is the function name. *CONSTRAINT* is a string representing what it does and is used for reporting. *PREDICATE* is the actual comparison.
+If you need some more complex comparators, have a look at the [in_range](src/comparator/inrange.hpp) to see how it is implemented.
+
+To specialize a comparator for custom types, which do not provide a respective operator, just specialize the comparator template. For example:
+
+```cpp
+namespace sctf {
+namespace comp {
+    template<>
+    Comparison equals<Custom>(const Custom& value, const Custom& expect)
+    {
+        return value.hash() == expect.hash()
+               ? success
+               : Comparison(equals_comp_str, util::serialize(value),
+                            util::serialize(expect));
+    }
+}
+}
+```
+
+### Serialization
+
+To allow proper reporting, every asserted value/type needs to be serialized, or stringified somehow. If you need to serialize custom types in a certain way, just specialize the [serialize](src/util/serialize.hpp) template. For example:
+
+```cpp
+namespace sctf
+{
+namespace util
+{
+    template<>
+    inline std::string serialize<Custom>(const Custom& arg)
+    {
+        return arg.to_string();
+    }
+}
+}
+```
 
 #### Footnote
 

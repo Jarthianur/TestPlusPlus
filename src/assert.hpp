@@ -26,8 +26,8 @@
 
 #include "comparator/comparators.hpp"
 #include "comparator/equals.hpp"
-#include "comparator/unequals.hpp"
 #include "comparator/inrange.hpp"
+#include "comparator/unequals.hpp"
 #include "util/Duration.hpp"
 #include "util/serialize.hpp"
 #include "AssertionFailure.hpp"
@@ -44,10 +44,10 @@
  * @brief Assert wrapper. Test for successful comparison.
  * @note Type is deduced from arguments.
  * @param VALUE The actual value
- * @param EXPECT The expected value
  * @param COMP The Comparator
+ * @param EXPECT The expected value
  */
-#define assert(VALUE, EXPECT, COMP)                                                  \
+#define assert(VALUE, COMP, EXPECT)                                                  \
     sctf::_assertStatement(VALUE, EXPECT, COMP<decltype(VALUE), decltype(EXPECT)>(), \
                            __FILE__, __LINE__)
 
@@ -56,11 +56,11 @@
  * @brief Assert wrapper. Test for successful comparison.
  * @note Type is specialized.
  * @param VALUE The actual value
- * @param EXPECT The expected value
  * @param COMP The Comparator
+ * @param EXPECT The expected value
  * @param TYPE The value type
  */
-#define assertT(VALUE, EXPECT, COMP, TYPE)                                          \
+#define assertT(VALUE, COMP, EXPECT, TYPE)                                          \
     sctf::_assertStatement<TYPE, TYPE>(VALUE, EXPECT, COMP<TYPE, TYPE>(), __FILE__, \
                                        __LINE__)
 
@@ -70,7 +70,7 @@
  * @param VALUE The actual value
  * @param EXPECT The expected value
  */
-#define assertEquals(VALUE, EXPECT) assert(VALUE, EXPECT, EQUALS)
+#define assertEquals(VALUE, EXPECT) assert(VALUE, EQUALS, EXPECT)
 
 /**
  * @def assertInInterval(VALUE, LOWER, UPPER)
@@ -81,7 +81,7 @@
  * @param UPPER The upper bound
  */
 #define assertInInterval(VALUE, LOWER, UPPER) \
-    assert(VALUE, (std::pair<decltype(LOWER), decltype(UPPER)>(LOWER, UPPER)), IN_RANGE)
+    assert(VALUE, IN_RANGE, (std::pair<decltype(LOWER), decltype(UPPER)>(LOWER, UPPER)))
 
 /**
  * @def assertTrue(VALUE)
