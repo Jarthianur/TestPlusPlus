@@ -87,5 +87,6 @@ Comparison in_range(const V& value, const R& bounds)
  * Provide a Comparator shortwrite
  */
 PROVIDE_COMPARATOR(in_range, IN_RANGE)
+PROVIDE_COMPARATOR(in_range, IN)
 
 #endif  // SRC_COMPARATOR_CONTAINS_HPP_

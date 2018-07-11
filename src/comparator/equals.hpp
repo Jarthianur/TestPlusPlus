@@ -38,6 +38,7 @@ COMPARATOR(equals, "to be equals", value == expect)
  * Provide a Comparator shortwrite.
  */
 PROVIDE_COMPARATOR(equals, EQUALS)
+PROVIDE_COMPARATOR(equals, EQ)
 
 namespace sctf
 {

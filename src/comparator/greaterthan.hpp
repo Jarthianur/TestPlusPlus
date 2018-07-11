@@ -27,11 +27,12 @@
 /**
  * Define a greater comparator
  */
-COMPARATOR(greater, "to be greater than", value > expect)
+COMPARATOR(greater_than, "to be greater than", value > expect)
 
 /**
  * Provide a Comparator shortwrite.
  */
-PROVIDE_COMPARATOR(greater, GREATER)
+PROVIDE_COMPARATOR(greater_than, GREATER)
+PROVIDE_COMPARATOR(greater_than, GT)
 
 #endif  // SRC_COMPARATOR_GREATER_HPP_

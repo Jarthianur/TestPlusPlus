@@ -19,19 +19,20 @@
  }
  */
 
-#ifndef SRC_COMPARATOR_LESS_HPP_
-#define SRC_COMPARATOR_LESS_HPP_
+#ifndef SRC_FRAMEWORK_H_
+#define SRC_FRAMEWORK_H_
 
-#include "comparators.hpp"
+#include "comparator/equals.hpp"
+#include "comparator/greaterthan.hpp"
+#include "comparator/lessthan.hpp"
+#include "comparator/unequals.hpp"
+#include "comparator/inrange.hpp"
+#include "reporter/PlainTextReporter.hpp"
+#include "reporter/HtmlReporter.hpp"
+#include "reporter/PlainTextReporter.hpp"
+#include "reporter/XmlReporter.hpp"
+#include "testsuite/TestSuite.hpp"
+#include "assert.hpp"
+#include "types.h"
 
-/**
- * Define a less comparator.
- */
-COMPARATOR(less, "to be less than", value < expect)
-
-/**
- * Provide a Comparator shortwrite.
- */
-PROVIDE_COMPARATOR(less, LESS)
-
-#endif  // SRC_COMPARATOR_LESS_HPP_
+#endif  // SRC_FRAMEWORK_H_

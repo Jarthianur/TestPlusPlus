@@ -37,6 +37,7 @@ COMPARATOR(unequals, "to be unequals", value != expect)
  * Provide a Comparator shortwrite.
  */
 PROVIDE_COMPARATOR(unequals, UNEQUALS)
+PROVIDE_COMPARATOR(unequals, UNEQ)
 
 namespace sctf
 {

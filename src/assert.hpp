@@ -25,6 +25,9 @@
 #include <string>
 
 #include "comparator/comparators.hpp"
+#include "comparator/equals.hpp"
+#include "comparator/unequals.hpp"
+#include "comparator/inrange.hpp"
 #include "util/Duration.hpp"
 #include "util/serialize.hpp"
 #include "AssertionFailure.hpp"
@@ -117,13 +120,13 @@
                            sctf::EQUALS<decltype(VALUE)>(), __FILE__, __LINE__)
 
 /**
- * @def assertException(FUNC, EXCEPT)
- * @brief Assert exception wrapper. Test for FUNC to throw EXCEPT.
+ * @def assertException(FUNC, TYPE)
+ * @brief Assert exception wrapper. Test for FUNC to throw TYPE.
  * @param FUNC The function call
- * @param EXCEPT The exception type
+ * @param TYPE The exception type
  */
-#define assertException(FUNC, EXCEPT) \
-    sctf::_assertException<EXCEPT>([&]() { FUNC; }, __FILE__, __LINE__)
+#define assertException(FUNC, TYPE) \
+    sctf::_assertException<TYPE>([&]() { FUNC; }, __FILE__, __LINE__)
 
 /**
  * @def assertNoExcept(FUNC)

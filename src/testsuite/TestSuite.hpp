@@ -162,9 +162,9 @@ public:
      * @param t_func The test function
      * @return this as shared pointer
      */
-    TestSuite_shared test(const std::string& name, test::test_function func)
+    TestSuite_shared test(const std::string& name, test::test_function t_func)
     {
-        m_testcases.push_back(test::TestCase(name, m_context, func));
+        m_testcases.push_back(test::TestCase(name, m_context, t_func));
         return shared_from_this();
     }
 
