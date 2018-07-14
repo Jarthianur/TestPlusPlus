@@ -68,6 +68,25 @@ public:
     static const bool value = decltype(test<T>(0))::value;
 };
 
+/**
+ * @brief Type trait to check for ordinal relation (operator<, operator>) capabilities.
+ * @tparam T The type to check for
+ */
+template<typename T>
+class is_ordinal
+{
+    template<typename TT>
+    static auto test(int)
+        -> decltype(std::declval<TT&>() < std::declval<TT&>(),
+                    std::declval<TT&>() > std::declval<TT&>(), std::true_type());
+
+    template<typename>
+    static auto test(...) -> std::false_type;
+
+public:
+    static const bool value = decltype(test<T>(0))::value;
+};
+
 }  // namespace util
 }  // namespace sctf
 

@@ -29,6 +29,7 @@
 #include "comparator/inrange.hpp"
 #include "comparator/unequals.hpp"
 #include "util/Duration.hpp"
+#include "util/Interval.hpp"
 #include "util/serialize.hpp"
 #include "AssertionFailure.hpp"
 #include "types.h"
@@ -81,7 +82,7 @@
  * @param UPPER The upper bound
  */
 #define assertInInterval(VALUE, LOWER, UPPER) \
-    assert(VALUE, IN_RANGE, (std::pair<decltype(LOWER), decltype(UPPER)>(LOWER, UPPER)))
+    assert(VALUE, IN_RANGE, (sctf::util::Interval<decltype(LOWER)>{LOWER, UPPER}))
 
 /**
  * @def assertTrue(VALUE)

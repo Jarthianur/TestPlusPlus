@@ -23,6 +23,8 @@
 #define SRC_COMPARATOR_CONTAINS_HPP_
 
 #include <algorithm>
+#include <utility>
+#include "../util/Interval.hpp"
 #include "../util/serialize.hpp"
 #include "../util/traits.hpp"
 #include "comparators.hpp"
@@ -66,15 +68,29 @@ Comparison in_range(const V& value, const R& range)
 }
 
 /**
- * @brief Check for a value to be in interval specified by the pair as lower and upper
- * bounds.
+ * @brief Check for pair to contain an appropriate value.
  */
 template<
     typename V, typename R,
     typename std::enable_if<std::is_same<R, std::pair<V, V>>::value>::type* = nullptr>
+Comparison in_range(const V& value, const R& range)
+{
+    return value == range.first || value == range.second
+               ? success
+               : Comparison(in_range_comp_str, util::serialize(value),
+                            util::serialize(range));
+}
+
+/**
+ * @brief Check for a value to be in Interval's lower and upper
+ * bounds.
+ */
+template<
+    typename V, typename R,
+    typename std::enable_if<std::is_same<R, util::Interval<V>>::value>::type* = nullptr>
 Comparison in_range(const V& value, const R& bounds)
 {
-    return value < bounds.first || value > bounds.second
+    return value < bounds.lower || value > bounds.upper
                ? Comparison(in_range_comp_str, util::serialize(value),
                             util::serialize(bounds))
                : success;

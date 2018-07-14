@@ -63,31 +63,31 @@ Of course, when executed in parallel, a test suites total time is the max time o
 
 **Note:** While the *Comparator* names the function itself, the *Shortwrite* is what you actually write in code.
 
-| Comparator   | Shortwrite(s)  | Description                                                                                                                                                                                                                                                                                                                        |
-| ------------ | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| equals       | EQUALS, EQ     | Compare two values to be equal, using `operator ==`.                                                                                                                                                                                                                                                                               |
-| unequals     | UNEQUALS, UNEQ | Compare two values not to be equal, using `operator !=`.                                                                                                                                                                                                                                                                           |
-| greater_than | GREATER, GT    | Compare one value to be greater than another, using `operator >`.                                                                                                                                                                                                                                                                  |
-| less_than    | LESS, LT       | Compare one value to be less than another, using `operator <`.                                                                                                                                                                                                                                                                     |
-| in_range     | IN_RANGE, IN   | Check a value to be in range of any container. This means for containers to contain the value and for strings to contain a substring. A special case is the pair, which is taken as an interval, where *first* is the lower and *second* is the upper bound. A value is then checked to be in this interval, including the bounds. |
+| Comparator   | Shortwrite(s)  | Description                                                                                                                                                                                                                                                                                                                                  |
+| ------------ | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| equals       | EQUALS, EQ     | Compare two values to be equal, using `operator ==`.                                                                                                                                                                                                                                                                                         |
+| unequals     | UNEQUALS, UNEQ | Compare two values not to be equal, using `operator !=`.                                                                                                                                                                                                                                                                                     |
+| greater_than | GREATER, GT    | Compare one value to be greater than another, using `operator >`.                                                                                                                                                                                                                                                                            |
+| less_than    | LESS, LT       | Compare one value to be less than another, using `operator <`.                                                                                                                                                                                                                                                                               |
+| in_range     | IN_RANGE, IN   | Check a value to be in range of any container. This means for containers to contain the value, for strings to contain a substring and for pairs to have it as one of the values. For the utility type [Interval](src/util/Interval.hpp), given lower and upper bounds, a value is then checked to be in this interval, including the bounds. |
 
 ### Assertions
 
 **Note:** VALUE means the actual value you want to check. EXPECT means the expected value. COMP means the comparator. TYPE means a certain type, or class. FUNC means a function call, or instruction and is wrapped in a lambda with captions as reference. Hence FUNC can be a single instruction, or multiple split by `;`.
 
-| Assertion         | Parameters                | Description                                                                                                          | Example                                                          |
-| ----------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| assert            | VALUE, COMP, EXPECT       | Common assert. Assert successfull comparison of VALUE and EXPECT with COMP.                                          | `assert(1, LT, 1);`                                              |
-| assertT           | VALUE, COMP, EXPECT, TYPE | Same as *assert*, but parameters are specialized to TYPE, which allows implicit conversions.                         | `assertT("hell", IN, "hello", std::string);`                     |
-| assertEquals      | VALUE, EXPECT             | Wrapper for *assert* using *EQUALS* comparator.                                                                      | `assertEquals(1, 1);`                                            |
-| assertInInterval  | VALUE, LOWER, UPPER       | Wrapper for *assert* using *IN_RANGE* and a pair with LOWER and UPPER as bounds. Check VALUE to be in this interval. | `assertInInterval(2, 1, 3);`                                     |
-| assertTrue        | VALUE                     | Assert VALUE to be *true*.                                                                                           | `assertTrue(true);`                                              |
-| assertFalse       | VALUE                     | Assert VALUE to be *false*.                                                                                          | `assertFalse(false);`                                            |
-| assertNotNull     | VALUE                     | Assert VALUE not to be *nullptr*.                                                                                    | `assertNotNull(&var);`                                           |
-| assertZero        | VALUE                     | Assert VALUE to be *0*, where the type of *0* will match VALUE's.                                                    | `assertZero(0.0);`                                               |
-| assertException   | FUNC, TYPE                | Assert FUNC to throw an exception of TYPE.                                                                           | `assertException(throw std::logic_error(""), std::logic_error);` |
-| assertNoExcept    | FUNC                      | Assert FUNC not to throw any exception.                                                                              | `assertNoExcept(int i = 0);`                                     |
-| assertPerformance | FUNC, MILLIS              | Assert FUNC to run in MILLIS milliseconds at maximum. The FUNC call is not interrupted, if the time exceeds MILLIS.  | `assertPerformance(call(), 5);`                                  |
+| Assertion         | Parameters                | Description                                                                                                               | Example                                                          |
+| ----------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| assert            | VALUE, COMP, EXPECT       | Common assert. Assert successfull comparison of VALUE and EXPECT with COMP.                                               | `assert(1, LT, 1);`                                              |
+| assertT           | VALUE, COMP, EXPECT, TYPE | Same as *assert*, but parameters are specialized to TYPE, which allows implicit conversions.                              | `assertT("hell", IN, "hello", std::string);`                     |
+| assertEquals      | VALUE, EXPECT             | Wrapper for *assert* using *EQUALS* comparator.                                                                           | `assertEquals(1, 1);`                                            |
+| assertInInterval  | VALUE, LOWER, UPPER       | Wrapper for *assert* using *IN_RANGE* and an Interval with LOWER and UPPER as bounds. Check VALUE to be in this interval. | `assertInInterval(2, 1, 3);`                                     |
+| assertTrue        | VALUE                     | Assert VALUE to be *true*.                                                                                                | `assertTrue(true);`                                              |
+| assertFalse       | VALUE                     | Assert VALUE to be *false*.                                                                                               | `assertFalse(false);`                                            |
+| assertNotNull     | VALUE                     | Assert VALUE not to be *nullptr*.                                                                                         | `assertNotNull(&var);`                                           |
+| assertZero        | VALUE                     | Assert VALUE to be *0*, where the type of *0* will match VALUE's.                                                         | `assertZero(0.0);`                                               |
+| assertException   | FUNC, TYPE                | Assert FUNC to throw an exception of TYPE.                                                                                | `assertException(throw std::logic_error(""), std::logic_error);` |
+| assertNoExcept    | FUNC                      | Assert FUNC not to throw any exception.                                                                                   | `assertNoExcept(int i = 0);`                                     |
+| assertPerformance | FUNC, MILLIS              | Assert FUNC to run in MILLIS milliseconds at maximum. The FUNC call is not interrupted, if the time exceeds MILLIS.       | `assertPerformance(call(), 5);`                                  |
 
 
 ## Usage
@@ -129,7 +129,8 @@ int main(int argc, char** argv)
                []() {
                    assert('w', IN, std::string("world"));
                    assertInInterval(2, 1, 3);
-                   assert(std::string(""), IN, std::vector<std::string>({""}));
+                   assert(std::string(""), IN, std::vector<std::string>{""});
+                   assert(1, IN, (util::Interval<int>{1, 2}));
                })
         ->test("4", []() {
             assertException(throw std::logic_error(""), std::logic_error);
@@ -187,7 +188,7 @@ namespace util
     template<>
     inline std::string serialize<Custom>(const Custom& arg)
     {
-        return arg.to_string();
+        return arg.get_id();
     }
 }
 }

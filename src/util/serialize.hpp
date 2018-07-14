@@ -27,6 +27,7 @@
 #include <string>
 #include <typeinfo>
 #include <utility>
+#include "Interval.hpp"
 #include "traits.hpp"
 
 namespace sctf
@@ -118,7 +119,17 @@ inline std::string serialize(const std::nullptr_t&)
 template<typename T>
 inline std::string serialize(const std::pair<T, T>& arg)
 {
-    return std::string("[") + serialize(arg.first) + ", " + serialize(arg.second) + "]";
+    return std::string("std::pair<") + serialize(arg.first) + ", " + serialize(arg.second)
+           + ">";
+}
+
+/**
+ * @brief Specialized serialize for Intervals.
+ */
+template<typename T>
+inline std::string serialize(const Interval<T>& arg)
+{
+    return std::string("[") + serialize(arg.lower) + ", " + serialize(arg.upper) + "]";
 }
 
 }  // namespace util
