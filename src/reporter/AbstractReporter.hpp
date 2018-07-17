@@ -77,13 +77,13 @@ public:
 
             auto ts_pair = runner.getTestSuites();
 
-            for(auto ts : ts_pair.first)
+            for(const auto& ts : ts_pair.first)
             {
                 reportTestSuite(ts);
                 ret_val
                     += ts->getTestStats().getNumFails() + ts->getTestStats().getNumErrs();
             }
-            for(auto ts : ts_pair.second)
+            for(const auto& ts : ts_pair.second)
             {
                 reportTestSuite(ts);
                 ret_val

@@ -98,9 +98,9 @@ public:
             std::size_t fails = 0;
             std::size_t errs  = 0;
 #pragma omp for schedule(dynamic)
-            for(auto tc = m_testcases.begin(); tc < m_testcases.end(); ++tc)
+            for(auto& tc : m_testcases)
             {
-                switch(tc->execute())
+                switch(tc.execute())
                 {
                     case test::TestCase::TestState::FAILED:
                         ++fails;
@@ -111,7 +111,7 @@ public:
                     default:
                         break;
                 }
-                tmp += tc->getDuration();
+                tmp += tc.getDuration();
             }
 #pragma omp atomic
             m_stats.m_num_of_fails += fails;

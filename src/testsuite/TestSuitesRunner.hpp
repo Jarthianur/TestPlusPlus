@@ -95,7 +95,7 @@ public:
     {
         if(m_exec_state != ExecState::PARALLEL && m_exec_state != ExecState::ALL)
         {
-            for(auto ts : m_parallel_suites)
+            for(auto& ts : m_parallel_suites)
             {
                 ts->executeParallel();
             }
@@ -111,7 +111,7 @@ public:
     {
         if(m_exec_state != ExecState::SEQUENTIAL && m_exec_state != ExecState::ALL)
         {
-            for(auto ts : m_sequential_suites)
+            for(auto& ts : m_sequential_suites)
             {
                 ts->execute();
             }
