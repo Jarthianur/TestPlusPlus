@@ -5,6 +5,9 @@ Featuring great **extendability** and an **easy, but powerful**, **less typing**
 **Test reports** are generated in a specified format, according to the chosen reporter.
 Additionally it serves the capability to **parallelize** testruns, using *OpenMP*.
 
+*So why actually writing a new unit-testing framework?* Except for the reason of learning how to do and self development in C++, there is something I don't really like about many other ones. Excessive use of macros and unflexible testing methods. Yes this framework utilizes macros too, but they are neither required, nor part of the program logic. They just reduce the workload of typing and wrap functions in a usefull way.
+Even test code should be regular code and also look like that. The next point is extendability. You will see later how easy it is to define new, or modify existing logic of this framework, to adjust it to your needs. There is no need to provide an ultra large allmighty framework, as some basic stuff is commonly enough and every project specific logic can be added easily.
+
 ## Contents
 
 + [Concept](#concept-of-simplicity)

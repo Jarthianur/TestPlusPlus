@@ -52,10 +52,8 @@ template<typename T,
          typename std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
 Comparison equals(const T& value, const T& expect)
 {
-    T diff_abs = std::abs(value - expect);
-    T max      = std::max(std::abs(value), std::abs(expect));
-    return (diff_abs <= max * std::numeric_limits<T>::epsilon()
-            || diff_abs <= max * static_cast<T>(0.000001))
+    return (std::abs(value - expect) <= std::max(std::abs(value), std::abs(expect))
+                                            * std::numeric_limits<T>::epsilon())
                ? success
                : Comparison(equals_comp_str, util::serialize(value),
                             util::serialize(expect));
