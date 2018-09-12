@@ -19,48 +19,50 @@
  }
  */
 
-#ifndef SRC_UTIL_ASSERTIONFAILURE_HPP_
-#define SRC_UTIL_ASSERTIONFAILURE_HPP_
+#ifndef SCTF_SRC_ASSERTIONFAILURE_HPP_
+#define SCTF_SRC_ASSERTIONFAILURE_HPP_
 
 #include <exception>
 #include <string>
 
-namespace testsuite
+namespace sctf
 {
 /**
- * Exception indicating an assertion has failed.
+ * @brief Represent a failed assertion.
  */
 class AssertionFailure : public std::exception
 {
 public:
     /**
-     * c'tor with error msg.
+     * @brief Constructor
+     * @param msg The base error message
+     * @param file The source file where the assertion took place
+     * @param line The source line of the assertion
      */
     AssertionFailure(const std::string& msg, const char* file, int line)
-        : std::exception(), msg(msg + " at " + file + ":" + std::to_string(line))
+        : std::exception(), m_msg(msg + " at " + file + ":" + std::to_string(line))
     {}
 
     /**
-     * d'tor
+     * @brief Destructor
      */
-    virtual ~AssertionFailure() noexcept
+    ~AssertionFailure() noexcept
     {}
 
     /**
-     * Return err msg.
+     * @brief Get the error message.
+     * @return the message
      */
-    inline virtual const char* what() const noexcept override
+    inline const char* what() const noexcept override
     {
-        return msg.c_str();
+        return m_msg.c_str();
     }
 
 private:
-    /**
-     * Error msg
-     */
-    const std::string msg;
+    /// @brief The error message
+    const std::string m_msg;
 };
 
-}  // namespace testsuite
+}  // namespace sctf
 
-#endif /* SRC_UTIL_ASSERTIONFAILURE_HPP_ */
+#endif  // SCTF_SRC_ASSERTIONFAILURE_HPP_

@@ -19,35 +19,41 @@
  }
  */
 
-#ifndef SRC_UTIL_TYPES_H_
-#define SRC_UTIL_TYPES_H_
+#ifndef SCTF_SRC_TYPES_H_
+#define SCTF_SRC_TYPES_H_
 
 #include <functional>
 #include <memory>
 
-namespace testsuite
+namespace sctf
+{
+namespace test
 {
 /**
- * test function
+ * @typedef test_function
+ * @brief Function schema passed to tests.
  */
 using test_function = std::function<void()>;
 
+}  // namespace test
+
 /**
- * Typedef for shared ptr to TestSuite
+ * @typedef TestSuite_shared
+ * @brief Shared ptr to TestSuite.
  */
 class TestSuite;
 using TestSuite_shared = std::shared_ptr<TestSuite>;
 
-namespace reporter
+namespace rep
 {
 /**
- * Typedef for shared ptr to AbstractReporter
+ * @typedef AbstractReporter_shared
+ * @brief Shared ptr to AbstractReporter
  */
 class AbstractReporter;
 using AbstractReporter_shared = std::shared_ptr<AbstractReporter>;
 
-}  // namespace reporter
+}  // namespace rep
+}  // namespace sctf
 
-}  // namespace testsuite
-
-#endif /* SRC_UTIL_TYPES_H_ */
+#endif  // SCTF_SRC_TYPES_H_

@@ -19,49 +19,31 @@
  }
  */
 
-#ifndef SRC_UTIL_DURATION_HPP_
-#define SRC_UTIL_DURATION_HPP_
+#ifndef SCTF_SRC_UTIL_INTERVAL_HPP_
+#define SCTF_SRC_UTIL_INTERVAL_HPP_
 
-#include <chrono>
-#include <cstdint>
+#include "traits.hpp"
 
-namespace testsuite
+namespace sctf
 {
 namespace util
 {
 /**
- * Struct to measure runtime in milliseconds.
+ * @brief A utility used for bounds checking for in_range comparator.
+ * @tparam T The type used as bounds
+ * @note T must provide ordinal relation with operators < and >.
  */
-struct duration final
+template<typename T, typename std::enable_if<is_ordinal<T>::value>::type* = nullptr>
+struct Interval final
 {
-    /**
-     * c'tor setting start time
-     */
-    duration() : start(std::chrono::steady_clock::now())
+    Interval(const T& l, const T& u) : lower(l), upper(u)
     {}
 
-    virtual ~duration() noexcept
-    {}
-
-    /**
-     * Get duration since start time (construction)
-     * in millis.
-     */
-    inline double get()
-    {
-        return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now()
-                                                         - start)
-            .count();
-    }
-
-    /**
-     * Start time
-     */
-    const std::chrono::steady_clock::time_point start;
+    const T lower;
+    const T upper;
 };
 
 }  // namespace util
+}  // namespace sctf
 
-}  // namespace testsuite
-
-#endif /* SRC_UTIL_DURATION_HPP_ */
+#endif  // SCTF_SRC_UTIL_INTERVAL_HPP_

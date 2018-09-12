@@ -19,130 +19,181 @@
  }
  */
 
-#ifndef REPORTER_PLAINTEXTREPORTER_HPP_
-#define REPORTER_PLAINTEXTREPORTER_HPP_
+#ifndef SCTF_SRC_REPORTER_PLAINTEXTREPORTER_HPP_
+#define SCTF_SRC_REPORTER_PLAINTEXTREPORTER_HPP_
 
-#include <cstdint>
+#include <cstddef>
 #include <iostream>
 #include <string>
 
 #include "../testsuite/TestCase.hpp"
 #include "../testsuite/TestStats.hpp"
 #include "../testsuite/TestSuite.hpp"
-#include "../util/types.h"
+#include "../types.h"
 #include "AbstractReporter.hpp"
 
-namespace testsuite
+namespace sctf
 {
-namespace reporter
+namespace rep
 {
+// ANSI colors
+#define ANSI_RED "\x1b[31m"
+#define ANSI_GREEN "\x1b[32m"
+#define ANSI_YELLOW "\x1b[33m"
+#define ANSI_BLUE "\x1b[34m"
+#define ANSI_MAGENTA "\x1b[35m"
+#define ANSI_CYAN "\x1b[36m"
+#define ANSI_RESET "\x1b[0m"
+
 /**
- * Concrete reporter,
- * featuring simple plain text format.
+ * @brief Concrete reporter featuring , optionally colored, plain text format.
  */
 class PlainTextReporter : public AbstractReporter
 {
 public:
     /**
-     * c'tor with stream
+     * @brief Constructor
+     * @param stream The stream to write to
+     * @param color Whether to print colored text
      */
-    PlainTextReporter(std::ostream& stream) : AbstractReporter(stream)
+    explicit PlainTextReporter(std::ostream& stream, bool color = false)
+        : AbstractReporter(stream), m_color(color)
     {}
 
     /**
-     * c'tor with filename
+     * @brief Constructor
+     * @param fname The file to write to
+     * @param color Whether to print colored text
      */
-    PlainTextReporter(const char* fnam) : AbstractReporter(fnam)
+    explicit PlainTextReporter(const char* fname, bool color = false)
+        : AbstractReporter(fname), m_color(color)
     {}
 
     /**
-     * d'tor
+     * @brief Destructor
      */
-    virtual ~PlainTextReporter() noexcept
+    ~PlainTextReporter() noexcept
     {}
 
-protected:
+private:
     /**
-     * impl
+     * @brief Implement AbstractReporter#reportTestSuite
      */
-    virtual void reportTestSuite(TestSuite_shared ts) override
+    void report_ts(TestSuite_shared ts) override
     {
-        *this << "Run Testsuite [" << ts->mName << "]; time = " << ts->getTime() << "ms"
+        *this << "Run Testsuite [" << ts->name() << "]; time = " << ts->time() << "ms"
               << LF;
 
-        abs_tests += ts->getTestStats().getNumTests();
-        abs_fails += ts->getTestStats().getNumFails();
-        abs_errs += ts->getTestStats().getNumErrs();
-        abs_time += ts->getTime();
+        m_abs_tests += ts->statistics().tests();
+        m_abs_fails += ts->statistics().failures();
+        m_abs_errs += ts->statistics().errors();
+        m_abs_time += ts->time();
 
-        AbstractReporter::reportTestSuite(ts);
+        AbstractReporter::report_ts(ts);
     }
 
     /**
-     * impl
+     * @brief Implement AbstractReporter#reportTestCase
      */
-    virtual void reportTestCase(const TestCase& tc) override
+    void report_tc(const test::TestCase& tc) override
     {
-        *this << SPACE << "Run Testcase [" << tc.mName << "](" << tc.mClassname
-              << "); time = " << tc.getDuration() << "ms" << LF << XSPACE;
-        switch(tc.getState())
+        *this << SPACE << "Run Testcase [" << tc.name() << "](" << tc.context()
+              << "); time = " << tc.duration() << "ms" << LF << XSPACE;
+        switch(tc.state())
         {
-            case TestCase::ERROR:
-                *this << "ERROR! " << tc.getErrMsg();
+            case test::TestCase::TestState::ERROR:
+                *this << (m_color ? ANSI_MAGENTA : "") << "ERROR! " << tc.err_msg();
                 break;
-            case TestCase::FAILED:
-                *this << "FAILED! " << tc.getErrMsg();
+            case test::TestCase::TestState::FAILED:
+                *this << (m_color ? ANSI_RED : "") << "FAILED! " << tc.err_msg();
                 break;
-            case TestCase::PASSED:
-                *this << "PASSED!";
+            case test::TestCase::TestState::PASSED:
+                *this << (m_color ? ANSI_GREEN : "") << "PASSED!";
                 break;
             default:
                 break;
         }
-        *this << LF;
+        *this << (m_color ? ANSI_RESET : "") << LF;
     }
 
     /**
-     * impl
+     * @brief Implement AbstractReporter#beginReport
      */
-    inline virtual void beginReport() override
+    void begin_report() override
     {}
 
     /**
-     * impl
+     * @brief Implement AbstractReporter#endReport
      */
-    inline virtual void endReport() override
+    void end_report() override
     {
-        *this << "Result:: passed: " << abs_tests - abs_fails - abs_errs << "/"
-              << abs_tests << " ; failed: " << abs_fails << "/" << abs_tests
-              << " ; errors: " << abs_errs << "/" << abs_tests << " ; time = " << abs_time
-              << "ms" << LF;
+        if(m_abs_fails >= (m_abs_tests + 1) / 2)
+        {
+            *this << (m_color ? ANSI_YELLOW : "");
+        }
+        else
+        {
+            *this << (m_color ? ANSI_CYAN : "");
+        }
+        *this << "Result:: passed: " << m_abs_tests - m_abs_fails - m_abs_errs << "/"
+              << m_abs_tests << " ; failed: " << m_abs_fails << "/" << m_abs_tests
+              << " ; errors: " << m_abs_errs << "/" << m_abs_tests
+              << " ; time = " << m_abs_time << "ms" << (m_color ? ANSI_RESET : "") << LF;
     }
 
-private:
-    double abs_time         = 0;
-    std::uint32_t abs_tests = 0;
-    std::uint32_t abs_fails = 0;
-    std::uint32_t abs_errs  = 0;
+    /// @brief Use colors flag.
+    bool m_color;
+
+    /// @brief The amount of tests.
+    std::size_t m_abs_tests = 0;
+
+    /// @brief The amount of failed tests.
+    std::size_t m_abs_fails = 0;
+
+    /// @brief The amount of erroneous tests.
+    std::size_t m_abs_errs = 0;
+
+    /// @brief The accumulated runtime.
+    double m_abs_time = 0;
 };
 
+}  // namespace rep
+
 /**
- * Factory method for plain text reporter.
+ * @brief Create a PlainTextReporter
+ * @param stream The stream to use
+ * @param color Whether to print colored text
+ * @return a shared pointer to the reporter
  */
-inline AbstractReporter_shared createPlainTextReporter(std::ostream& stream = std::cout)
+inline static rep::AbstractReporter_shared createPlainTextReporter(std::ostream& stream,
+                                                                   bool color = false)
 {
-    return AbstractReporter_shared(new PlainTextReporter(stream));
+    return std::make_shared<rep::PlainTextReporter>(stream, color);
 }
 
 /**
- * Factory method for plain text reporter.
+ * @brief Create a PlainTextReporter
+ * @note Prints to stdout.
+ * @param color Whether to print colored text
+ * @return a shared pointer to the reporter
  */
-inline AbstractReporter_shared createPlainTextReporter(const char* file)
+inline static rep::AbstractReporter_shared createPlainTextReporter(bool color = false)
 {
-    return AbstractReporter_shared(new PlainTextReporter(file));
+    return std::make_shared<rep::PlainTextReporter>(std::cout, color);
 }
 
-}  // reporter
-}  // testsuite
+/**
+ * @brief Create a PlainTextReporter
+ * @param file The filename to use
+ * @param color Whether to print colored text
+ * @return a shared pointer to the reporter
+ */
+inline static rep::AbstractReporter_shared createPlainTextReporter(const char* file,
+                                                                   bool color = false)
+{
+    return std::make_shared<rep::PlainTextReporter>(file, color);
+}
 
-#endif /* REPORTER_PLAINTEXTREPORTER_HPP_ */
+}  // namespace sctf
+
+#endif  // SCTF_SRC_REPORTER_PLAINTEXTREPORTER_HPP_

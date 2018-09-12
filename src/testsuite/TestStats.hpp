@@ -19,68 +19,85 @@
  }
  */
 
-#ifndef TESTSUITE_TESTSTATS_HPP_
-#define TESTSUITE_TESTSTATS_HPP_
+#ifndef SCTF_SRC_TESTSUITE_TESTSTATS_HPP_
+#define SCTF_SRC_TESTSUITE_TESTSTATS_HPP_
 
-#include <cstdint>
+#include <cstddef>
 
-namespace testsuite
+namespace sctf
+{
+class TestSuite;
+
+namespace test
 {
 /**
- * Statistics class for testsuites.
+ * @brief Statistics for test results.
  */
 class TestStats
 {
 public:
     /**
-     * c'tor
+     * @brief Constructor
      */
     TestStats()
     {}
 
     /**
-     * d'tor
+     * @brief Destructor
      */
-    virtual ~TestStats() noexcept
+    ~TestStats() noexcept
     {}
 
-    inline std::uint32_t getNumTests() const
+    /**
+     * @brief Get the number of all tests.
+     * @return the number of tests
+     */
+    inline std::size_t tests() const
     {
-        return num_of_tests;
+        return m_num_of_tests;
     }
 
-    inline std::uint32_t getNumFails() const
+    /**
+     * @brief Get the number of successful tests.
+     * @return the number of tests
+     */
+    inline std::size_t successes() const
     {
-        return num_of_fails;
+        return m_num_of_tests - m_num_of_errs - m_num_of_fails;
     }
 
-    inline std::uint32_t getNumErrs() const
+    /**
+     * @brief Get the number of all failed tests.
+     * @return the number of tests
+     */
+    inline std::size_t failures() const
     {
-        return num_of_errs;
+        return m_num_of_fails;
+    }
+
+    /**
+     * @brief Get the number of erroneous tests.
+     * @return the number of tests
+     */
+    inline std::size_t errors() const
+    {
+        return m_num_of_errs;
     }
 
 private:
-    /**
-     * Only TestSuite is allowed to write these members.
-     */
-    friend class TestSuite;
+    friend sctf::TestSuite;
 
-    /**
-     * Number of tests run
-     */
-    std::uint32_t num_of_tests = 0;
+    /// @brief The number of tests.
+    std::size_t m_num_of_tests = 0;
 
-    /**
-     * Number of failed tests.
-     */
-    std::uint32_t num_of_fails = 0;
+    /// @brief The number of failed tests.
+    std::size_t m_num_of_fails = 0;
 
-    /**
-     * Number of erroneous tests.
-     */
-    std::uint32_t num_of_errs = 0;
+    /// @brief The number of erroneous tests.
+    std::size_t m_num_of_errs = 0;
 };
 
-}  // testsuite
+}  // namespace test
+}  // namespace sctf
 
-#endif /* TESTSUITE_TESTSTATS_HPP_ */
+#endif  // SCTF_SRC_TESTSUITE_TESTSTATS_HPP_

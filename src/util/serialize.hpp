@@ -19,26 +19,75 @@
  }
  */
 
-#ifndef UTIL_SERIALIZE_HPP_
-#define UTIL_SERIALIZE_HPP_
+#ifndef SCTF_SRC_UTIL_SERIALIZE_HPP_
+#define SCTF_SRC_UTIL_SERIALIZE_HPP_
 
+#include <cstddef>
+#include <sstream>
 #include <string>
+#include <typeinfo>
+#include <utility>
+#include "Interval.hpp"
+#include "traits.hpp"
 
-namespace testsuite
+namespace sctf
 {
 namespace util
 {
 /**
- * Serialize number types.
+ * @brief Resolve a more or less pretty type name.
+ * @tparam The type
+ * @return the typename as string
  */
 template<typename T>
-inline std::string serialize(const T& arg)
+static const std::string& typeName()
 {
-    return std::to_string(arg);
+#if defined(__GNUG__) || defined(__clang__)
+    static thread_local std::string name;
+    if(name.length() > 0)
+    {
+        return name;
+    }
+    const std::string sig(__PRETTY_FUNCTION__);
+    std::size_t b = sig.rfind("T = ") + 4;
+#ifdef __clang__
+    name = sig.substr(b, sig.rfind(']') - b);
+#else
+    name = sig.substr(b, sig.find(';', b) - b);
+#endif
+    return name;
+#else
+    return typeid(T).name();
+#endif
 }
 
 /**
- * Serialize strings.
+ * @brief Serialize streamable types.
+ * @tparam T The type
+ * @param arg The element to serialize
+ * @return the element as string
+ */
+template<typename T, typename std::enable_if<
+                         is_streamable<std::ostringstream, T>::value>::type* = nullptr>
+inline std::string serialize(const T& arg)
+{
+    std::ostringstream oss;
+    oss << arg;
+    return oss.str();
+}
+
+/**
+ * @brief Serialize not streamable types.
+ */
+template<typename T, typename std::enable_if<not is_streamable<
+                         std::ostringstream, T>::value>::type* = nullptr>
+inline std::string serialize(const T&)
+{
+    return typeName<T>();
+}
+
+/**
+ * @brief Specialized serialize for strings (dummy).
  */
 template<>
 inline std::string serialize(const std::string& arg)
@@ -47,7 +96,7 @@ inline std::string serialize(const std::string& arg)
 }
 
 /**
- * Serialize const char ptr's
+ * @brief Specialized serialize for C-strings.
  */
 template<>
 inline std::string serialize(const char* const& arg)
@@ -55,7 +104,35 @@ inline std::string serialize(const char* const& arg)
     return std::string(arg);
 }
 
-}  // util
-}  // testsuite
+/**
+ * @brief Specialized serialize for nullptr.
+ */
+template<>
+inline std::string serialize(const std::nullptr_t&)
+{
+    return "0";
+}
 
-#endif /* UTIL_SERIALIZE_HPP_ */
+/**
+ * @brief Specialized serialize for pairs.
+ */
+template<typename T>
+inline std::string serialize(const std::pair<T, T>& arg)
+{
+    return std::string("std::pair<") + serialize(arg.first) + ", " + serialize(arg.second)
+           + ">";
+}
+
+/**
+ * @brief Specialized serialize for Intervals.
+ */
+template<typename T>
+inline std::string serialize(const Interval<T>& arg)
+{
+    return std::string("[") + serialize(arg.lower) + ", " + serialize(arg.upper) + "]";
+}
+
+}  // namespace util
+}  // namespace sctf
+
+#endif  // SCTF_SRC_UTIL_SERIALIZE_HPP_

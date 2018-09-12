@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef REPORTER_ABSTRACTREPORTER_HPP_
-#define REPORTER_ABSTRACTREPORTER_HPP_
+#ifndef SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_
+#define SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_
 
 #include <cstdint>
 #include <fstream>
@@ -32,132 +32,158 @@
 #include "../testsuite/TestStats.hpp"
 #include "../testsuite/TestSuite.hpp"
 #include "../testsuite/TestSuitesRunner.hpp"
-#include "../util/types.h"
+#include "../types.h"
 
-namespace testsuite
+namespace sctf
 {
-namespace reporter
+namespace rep
 {
+/**
+ * @def LF
+ * @brief Line feed
+ */
+#ifdef _WIN32
+#define LF "\r\n"
+#else
 #define LF "\n"
+#endif
+
+/**
+ * @def SPACE
+ * @brief Spacing with two spaces
+ */
 #define SPACE "  "
+
+/**
+ * @def XSPACE
+ * @brief Spacing with four spaces
+ */
 #define XSPACE "    "
 
 /**
- * Abstract reporter type.
- * Reports tests to given out-stream,
- * in format specified by concrete types generate method.
+ * @brief Report testsuites in a format specified by concrete reporter types.
  */
 class AbstractReporter
 {
 public:
     /**
-     * c'tor with target out-stream.
+     * @brief Generate report.
+     * @param runner The TestSuitesRunner to generate reports for
+     * @note Executes runner's pending TestSuite.
+     * @return the sum of failed tests and errors
      */
-    AbstractReporter(std::ostream& stream) : out_file(), out_stream(stream)
-    {}
-
-    /**
-     * c'tor with target filename
-     */
-    AbstractReporter(const char* fnam) : out_file(fnam), out_stream(this->out_file)
+    std::int32_t report(test::TestSuitesRunner& runner)
     {
-        if(!out_stream)
-        {
-            throw std::runtime_error("Could not open file.");
-        }
-    }
-
-    /**
-     * d'tor
-     */
-    virtual ~AbstractReporter() noexcept
-    {}
-
-    /**
-     * Generate report and return sum
-     * of failed tests and errors.
-     * Executes runners test suites, if not done yet.
-     */
-    std::int32_t report(TestSuitesRunner& runner)
-    {
-        if(runner.getStatus() == TestSuitesRunner::ALL)
+        if(runner.state() == test::TestSuitesRunner::ExecState::ALL)
         {
             std::int32_t ret_val = 0;
-            beginReport();
+            begin_report();
 
-            auto ts_pair = runner.getTestSuites();
+            auto ts_pair = runner.testsuites();
 
-            for(auto ts : ts_pair.first)
+            for(const auto& ts : ts_pair.first)
             {
-                reportTestSuite(ts);
-                ret_val
-                    += ts->getTestStats().getNumFails() + ts->getTestStats().getNumErrs();
+                report_ts(ts);
+                ret_val += ts->statistics().failures() + ts->statistics().errors();
             }
-            for(auto ts : ts_pair.second)
+            for(const auto& ts : ts_pair.second)
             {
-                reportTestSuite(ts);
-                ret_val
-                    += ts->getTestStats().getNumFails() + ts->getTestStats().getNumErrs();
+                report_ts(ts);
+                ret_val += ts->statistics().failures() + ts->statistics().errors();
             }
 
-            endReport();
+            end_report();
             return ret_val;
         }
         else
         {
-            runner.executeAll();
+            runner.run();
             return report(runner);
         }
     }
 
 protected:
     /**
-     * Target out-stream
+     * @var m_out_file
+     * @brief The output file stream
      */
-    std::ofstream out_file;
-    std::ostream& out_stream;
+    std::ofstream m_out_file;
 
     /**
-     * Generate report format for given test suite.
-     * This parent method may be overridden and called from
-     * derived class to generate report for each contained test case.
+     * @var mr_out_stream
+     * @brief The output stream reference
      */
-    inline virtual void reportTestSuite(TestSuite_shared ts)
+    std::ostream& mr_out_stream;
+
+    /**
+     * @brief Constructor
+     * @param stream The out-stream to report to
+     */
+    explicit AbstractReporter(std::ostream& stream) : mr_out_stream(stream)
+    {}
+
+    /**
+     * @brief Constructor
+     * @param fname The filename where to report to
+     * @throw std::runtime_error if the file cannot be opened for writing
+     */
+    explicit AbstractReporter(const char* fname)
+        : m_out_file(fname), mr_out_stream(m_out_file)
     {
-        for(auto& tc : ts->getTestCases())
+        if(!mr_out_stream)
         {
-            reportTestCase(tc);
+            throw std::runtime_error("Could not open file.");
         }
     }
 
     /**
-     * Generate report format for given test case.
+     * @brief Destructor
      */
-    virtual void reportTestCase(const TestCase& tc) = 0;
+    virtual ~AbstractReporter() noexcept
+    {}
 
     /**
-     * Generate intro report format.
+     * @brief Generate report for a given TestSuite.
+     * @param ts The TestSuite
      */
-    virtual void beginReport() = 0;
+    inline virtual void report_ts(TestSuite_shared ts)
+    {
+        for(auto& tc : ts->testcases())
+        {
+            report_tc(tc);
+        }
+    }
 
     /**
-     * Generate outro report format.
+     * @brief Generate report for a given TestCase.
+     * @param tc The TestCase
      */
-    virtual void endReport() = 0;
+    virtual void report_tc(const test::TestCase& tc) = 0;
 
     /**
-     * Write to stream.
-     * Chainable
+     * @brief Generate the intro of a report.
+     */
+    virtual void begin_report() = 0;
+
+    /**
+     * @brief Generate the outro of a report.
+     */
+    virtual void end_report() = 0;
+
+    /**
+     * @brief Write to stream.
+     * @tparam Type of what to write to stream
+     * @param _1 The element to write
      */
     template<typename T>
-    inline std::ostream& operator<<(const T& rep)
+    std::ostream& operator<<(const T& _1)
     {
-        out_stream << rep;
-        return out_stream;
+        mr_out_stream << _1;
+        return mr_out_stream;
     }
 };
 
-}  // reporter
-}  // testsuite
+}  // namespace rep
+}  // namespace sctf
 
-#endif /* REPORTER_ABSTRACTREPORTER_HPP_ */
+#endif  // SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_
