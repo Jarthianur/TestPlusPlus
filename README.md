@@ -5,7 +5,7 @@ Featuring great **extendability** and an **easy, but powerful**, **less typing**
 **Test reports** are generated in a specified format, according to the chosen reporter.
 Additionally it serves the capability to **parallelize** testruns, using *OpenMP*.
 
-*So why actually writing a new unit-testing framework?* Except for the reason of learning how to do and self development in C++, there is something I don't really like about many other ones. Excessive use of macros and unflexible testing methods. Yes this framework utilizes macros too, but they are neither required, nor part of the program logic. They just reduce the workload of typing and wrap functions in a usefull way.
+*So why actually writing a new unit-testing framework?* Except for the reason of learning how to do and self-development in C++, there is something I don't really like about many other ones. Excessive use of macros and unflexible testing methods. Yes this framework utilizes macros too, but they are neither required, nor part of the program logic. They just reduce the workload of typing and wrap functions in a usefull way.
 Even test code should be regular code and also look like that. The next point is extendability. You will see later how easy it is to define new, or modify existing logic of this framework, to adjust it to your needs. There is no need to provide an ultra large allmighty framework, as some basic stuff is commonly enough and every project specific logic can be added easily.
 
 ## Contents
@@ -50,7 +50,7 @@ Of course, when executed in parallel, a test suites total time is the max time o
 
 ### Testsuite Executions
 
-**Note:** The argument *runner* of all *describe* functions is always the *TestSuitesRunner* where to register the *TestSuite*. The argument *t_func* of all *test* methods is always a void function without arguments, preferably a lambda. Calls to *test* methods are chainable.
+**Note:** The argument *runner* of all *describe* functions is always the *TestSuitesRunner* where to register the *TestSuite*. The argument *t_func* of all *test*,*setup*,*before*,*after* methods is always a void function without arguments, preferably a lambda expression. Calls to those methods are chainable.
 
 | Call                | Arguments             | Description                                                                                                                                          | Example                                               |
 | ------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
@@ -61,6 +61,9 @@ Of course, when executed in parallel, a test suites total time is the max time o
 | test                | name, context, t_func | Create a testcase on a testsuite with *name* and *context*.                                                                                          | `...->test("test1", "Component::func", [](){...})...` |
 | test                | name, t_func          | Create a testcase on a testsuite with *name*, the context is inherited from the testsuite.                                                           | `...->test("test2", [](){...})...`                    |
 | test<T>             | name, t_func          | Create a testcase on a testsuite with *name*. The context is taken as the class-/typename of T.                                                      | `...->test<Component>("test3", [](){...})...`         |
+| setup               | t_func                | Set a *setup* function, which will be executed once before all testcases. Exceptions thrown by the given function will get ignored.                  | `...->setup([&]{ x = 10; ... })...`                   |
+| before              | t_func                | Set a *pre-test* function, which will be executed before each testcase. Exceptions thrown by the given function will get ignored.                    | `...->before([&]{ x = 10; ... })...`                  |
+| after               | t_func                | Set a *post-test* function, which will be executed after each testcase. Exceptions thrown by the given function will get ignored.                    | `...->after([&]{ x = 10; ... })...`                   |
 
 ### Comparators
 
@@ -110,10 +113,12 @@ int main(int argc, char** argv)
 {
     test::TestSuitesRunner runner;
     auto rep = createPlainTextReporter(true);
+    int x;
     describe("test", runner)
+        ->setup([&]{ x = 10; })
         ->test("1",
-               []() {
-                   assert(1+1, EQ, 2);
+               [&]() {
+                   assert(x+1, EQ, 11);
                    assertFalse(false);
                    assertT("hell", IN, "hello", std::string);
                    int i = 101;
