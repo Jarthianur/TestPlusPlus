@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SRC_ASSERT_HPP_
-#define SRC_ASSERT_HPP_
+#ifndef SCTF_SRC_ASSERT_HPP_
+#define SCTF_SRC_ASSERT_HPP_
 
 #include <string>
 
@@ -175,7 +175,7 @@ static void _assertStatement(const V& value, const E& expect, comp::Comparator<V
  * @throw AssertionFailure if any other or no exception is caught at all.
  */
 template<typename T>
-static void _assertException(test::test_function func, const char* file, int line)
+static void _assertException(const test::test_function& func, const char* file, int line)
 {
     try
     {
@@ -207,7 +207,8 @@ static void _assertException(test::test_function func, const char* file, int lin
  * @param line The source line in file
  * @throw AssertionFailure if any exception is caught.
  */
-inline static void _assertNoExcept(test::test_function func, const char* file, int line)
+inline static void _assertNoExcept(const test::test_function& func, const char* file,
+                                   int line)
 {
     try
     {
@@ -230,7 +231,7 @@ inline static void _assertNoExcept(test::test_function func, const char* file, i
  * @param func The test function
  * @param max_millis The max duration in milliseconds
  */
-inline static void _assertPerformance(test::test_function func, double max_millis,
+inline static void _assertPerformance(const test::test_function& func, double max_millis,
                                       const char* file, int line)
 {
     try
@@ -257,4 +258,4 @@ inline static void _assertPerformance(test::test_function func, double max_milli
 
 }  // namespace sctf
 
-#endif  // SRC_ASSERT_HPP_
+#endif  // SCTF_SRC_ASSERT_HPP_

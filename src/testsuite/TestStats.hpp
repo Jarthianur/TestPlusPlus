@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SRC_TESTSUITE_TESTSTATS_HPP_
-#define SRC_TESTSUITE_TESTSTATS_HPP_
+#ifndef SCTF_SRC_TESTSUITE_TESTSTATS_HPP_
+#define SCTF_SRC_TESTSUITE_TESTSTATS_HPP_
 
 #include <cstddef>
 
@@ -52,16 +52,25 @@ public:
      * @brief Get the number of all tests.
      * @return the number of tests
      */
-    inline std::size_t getNumTests() const
+    inline std::size_t tests() const
     {
         return m_num_of_tests;
+    }
+
+    /**
+     * @brief Get the number of successful tests.
+     * @return the number of tests
+     */
+    inline std::size_t successes() const
+    {
+        return m_num_of_tests - m_num_of_errs - m_num_of_fails;
     }
 
     /**
      * @brief Get the number of all failed tests.
      * @return the number of tests
      */
-    inline std::size_t getNumFails() const
+    inline std::size_t failures() const
     {
         return m_num_of_fails;
     }
@@ -70,7 +79,7 @@ public:
      * @brief Get the number of erroneous tests.
      * @return the number of tests
      */
-    inline std::size_t getNumErrs() const
+    inline std::size_t errors() const
     {
         return m_num_of_errs;
     }
@@ -91,4 +100,4 @@ private:
 }  // namespace test
 }  // namespace sctf
 
-#endif  // SRC_TESTSUITE_TESTSTATS_HPP_
+#endif  // SCTF_SRC_TESTSUITE_TESTSTATS_HPP_

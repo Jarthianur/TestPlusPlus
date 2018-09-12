@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SRC_REPORTER_ABSTRACTREPORTER_HPP_
-#define SRC_REPORTER_ABSTRACTREPORTER_HPP_
+#ifndef SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_
+#define SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_
 
 #include <cstdint>
 #include <fstream>
@@ -40,9 +40,13 @@ namespace rep
 {
 /**
  * @def LF
- * @brief Unix line feed
+ * @brief Line feed
  */
+#ifdef _WIN32
+#define LF "\r\n"
+#else
 #define LF "\n"
+#endif
 
 /**
  * @def SPACE
@@ -80,14 +84,12 @@ public:
             for(const auto& ts : ts_pair.first)
             {
                 reportTestSuite(ts);
-                ret_val
-                    += ts->getTestStats().getNumFails() + ts->getTestStats().getNumErrs();
+                ret_val += ts->getTestStats().failures() + ts->getTestStats().errors();
             }
             for(const auto& ts : ts_pair.second)
             {
                 reportTestSuite(ts);
-                ret_val
-                    += ts->getTestStats().getNumFails() + ts->getTestStats().getNumErrs();
+                ret_val += ts->getTestStats().failures() + ts->getTestStats().errors();
             }
 
             endReport();
@@ -184,4 +186,4 @@ protected:
 }  // namespace rep
 }  // namespace sctf
 
-#endif  // SRC_REPORTER_ABSTRACTREPORTER_HPP_
+#endif  // SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_

@@ -19,11 +19,12 @@
  }
  */
 
-#ifndef SRC_TESTSUITE_TESTCASE_HPP_
-#define SRC_TESTSUITE_TESTCASE_HPP_
+#ifndef SCTF_SRC_TESTSUITE_TESTCASE_HPP_
+#define SCTF_SRC_TESTSUITE_TESTCASE_HPP_
 
 #include <cstdint>
 #include <string>
+#include <utility>
 
 #include "../AssertionFailure.hpp"
 #include "../types.h"
@@ -43,14 +44,30 @@ namespace test
 class TestCase
 {
 public:
+    TestCase(const TestCase&) = delete;
+    TestCase& operator=(const TestCase&) = delete;
+
     /**
      * @brief Constructor
      * @param name The name/description of the test case
      * @param context The context of the test function
      * @param t_func The test function
      */
-    TestCase(const std::string& name, const std::string& context, test_function t_func)
-        : name(name), context("test." + context), mTestFunc(t_func)
+    TestCase(const std::string& name, const std::string& context, test_function&& t_func)
+        : m_name(name), m_context("test." + context), m_test_func(std::move(t_func))
+    {}
+
+    /**
+     * @brief Move-constructor
+     * @param other The other TestCase
+     */
+    TestCase(TestCase&& other)
+        : m_name(std::move(other.m_name)),
+          m_context(std::move(other.m_context)),
+          m_state(other.m_state),
+          m_duration(other.m_duration),
+          m_err_msg(std::move(other.m_err_msg)),
+          m_test_func(std::move(other.m_test_func))
     {}
 
     /**
@@ -58,6 +75,22 @@ public:
      */
     ~TestCase() noexcept
     {}
+
+    /**
+     * @brief Move-assignment
+     * @param other The other TestCase
+     * @return this
+     */
+    TestCase& operator=(TestCase&& other)
+    {
+        m_name      = std::move(other.m_name);
+        m_context   = std::move(other.m_context);
+        m_state     = other.m_state;
+        m_duration  = other.m_duration;
+        m_err_msg   = std::move(other.m_err_msg);
+        m_test_func = std::move(other.m_test_func);
+        return *this;
+    }
 
     /**
      * @brief The test state.
@@ -83,7 +116,7 @@ public:
         util::Duration dur;
         try
         {
-            mTestFunc();
+            m_test_func();
             pass();
         }
         catch(const AssertionFailure& e)
@@ -106,7 +139,7 @@ public:
      * @brief Get the TestState.
      * @return the test state
      */
-    inline TestState getState() const
+    inline TestState state() const
     {
         return m_state;
     }
@@ -115,7 +148,7 @@ public:
      * @brief Get the Duration.
      * @return the duration
      */
-    inline double getDuration() const
+    inline double duration() const
     {
         return m_duration;
     }
@@ -124,13 +157,28 @@ public:
      * @brief Get the error message.
      * @return the error message
      */
-    inline const std::string& getErrMsg() const
+    inline const std::string& err_msg() const
     {
         return m_err_msg;
     }
 
-    const std::string name;
-    const std::string context;
+    /**
+     * @brief Get the name.
+     * @return the name
+     */
+    inline const std::string& name() const
+    {
+        return m_name;
+    }
+
+    /**
+     * @brief Get the context.
+     * @return the context
+     */
+    inline const std::string& context() const
+    {
+        return m_context;
+    }
 
 private:
     /**
@@ -161,6 +209,12 @@ private:
         m_err_msg = error;
     }
 
+    /// @brief The testcase name.
+    std::string m_name;
+
+    /// @brief The testcase context.
+    std::string m_context;
+
     /// @brief The test state.
     TestState m_state = TestState::NONE;
 
@@ -171,10 +225,10 @@ private:
     std::string m_err_msg;
 
     /// @brief The test function.
-    test_function mTestFunc;
+    test_function m_test_func;
 };
 
 }  // namespace test
 }  // namespace sctf
 
-#endif  // SRC_TESTSUITE_TESTCASE_HPP_
+#endif  // SCTF_SRC_TESTSUITE_TESTCASE_HPP_

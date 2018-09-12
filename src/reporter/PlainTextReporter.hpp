@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SRC_REPORTER_COLOREDREPORTER_HPP_
-#define SRC_REPORTER_COLOREDREPORTER_HPP_
+#ifndef SCTF_SRC_REPORTER_PLAINTEXTREPORTER_HPP_
+#define SCTF_SRC_REPORTER_PLAINTEXTREPORTER_HPP_
 
 #include <cstddef>
 #include <iostream>
@@ -72,21 +72,21 @@ public:
     /**
      * @brief Destructor
      */
-    virtual ~PlainTextReporter() noexcept
+    ~PlainTextReporter() noexcept
     {}
 
 private:
     /**
      * @brief Implement AbstractReporter#reportTestSuite
      */
-    virtual void reportTestSuite(TestSuite_shared ts) override
+    void reportTestSuite(TestSuite_shared ts) override
     {
         *this << "Run Testsuite [" << ts->name << "]; time = " << ts->getTime() << "ms"
               << LF;
 
-        m_abs_tests += ts->getTestStats().getNumTests();
-        m_abs_fails += ts->getTestStats().getNumFails();
-        m_abs_errs += ts->getTestStats().getNumErrs();
+        m_abs_tests += ts->getTestStats().tests();
+        m_abs_fails += ts->getTestStats().failures();
+        m_abs_errs += ts->getTestStats().errors();
         m_abs_time += ts->getTime();
 
         AbstractReporter::reportTestSuite(ts);
@@ -95,17 +95,17 @@ private:
     /**
      * @brief Implement AbstractReporter#reportTestCase
      */
-    virtual void reportTestCase(const test::TestCase& tc) override
+    void reportTestCase(const test::TestCase& tc) override
     {
         *this << SPACE << "Run Testcase [" << tc.name << "](" << tc.context
-              << "); time = " << tc.getDuration() << "ms" << LF << XSPACE;
-        switch(tc.getState())
+              << "); time = " << tc.duration() << "ms" << LF << XSPACE;
+        switch(tc.state())
         {
             case test::TestCase::TestState::ERROR:
-                *this << (m_color ? ANSI_MAGENTA : "") << "ERROR! " << tc.getErrMsg();
+                *this << (m_color ? ANSI_MAGENTA : "") << "ERROR! " << tc.err_msg();
                 break;
             case test::TestCase::TestState::FAILED:
-                *this << (m_color ? ANSI_RED : "") << "FAILED! " << tc.getErrMsg();
+                *this << (m_color ? ANSI_RED : "") << "FAILED! " << tc.err_msg();
                 break;
             case test::TestCase::TestState::PASSED:
                 *this << (m_color ? ANSI_GREEN : "") << "PASSED!";
@@ -119,13 +119,13 @@ private:
     /**
      * @brief Implement AbstractReporter#beginReport
      */
-    virtual void beginReport() override
+    void beginReport() override
     {}
 
     /**
      * @brief Implement AbstractReporter#endReport
      */
-    virtual void endReport() override
+    void endReport() override
     {
         if(m_abs_fails >= (m_abs_tests + 1) / 2)
         {
@@ -196,4 +196,4 @@ inline static rep::AbstractReporter_shared createPlainTextReporter(const char* f
 
 }  // namespace sctf
 
-#endif  // SRC_REPORTER_COLOREDREPORTER_HPP_
+#endif  // SCTF_SRC_REPORTER_PLAINTEXTREPORTER_HPP_

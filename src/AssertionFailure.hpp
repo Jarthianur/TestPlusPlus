@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SRC_ASSERTIONFAILURE_HPP_
-#define SRC_ASSERTIONFAILURE_HPP_
+#ifndef SCTF_SRC_ASSERTIONFAILURE_HPP_
+#define SCTF_SRC_ASSERTIONFAILURE_HPP_
 
 #include <exception>
 #include <string>
@@ -46,7 +46,7 @@ public:
     /**
      * @brief Destructor
      */
-    virtual ~AssertionFailure() noexcept
+    ~AssertionFailure() noexcept
     {}
 
     /**
@@ -65,4 +65,4 @@ private:
 
 }  // namespace sctf
 
-#endif  // SRC_ASSERTIONFAILURE_HPP_
+#endif  // SCTF_SRC_ASSERTIONFAILURE_HPP_

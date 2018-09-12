@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SRC_COMPARATOR_COMPARATORS_HPP_
-#define SRC_COMPARATOR_COMPARATORS_HPP_
+#ifndef SCTF_SRC_COMPARATOR_COMPARATORS_HPP_
+#define SCTF_SRC_COMPARATOR_COMPARATORS_HPP_
 
 #include <memory>
 #include <string>
@@ -181,4 +181,4 @@ constexpr Comparison success = Comparison();
     }                                                                       \
     }
 
-#endif  // SRC_COMPARATOR_COMPARATORS_HPP_
+#endif  // SCTF_SRC_COMPARATOR_COMPARATORS_HPP_

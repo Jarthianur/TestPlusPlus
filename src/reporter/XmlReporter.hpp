@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SRC_REPORTER_XMLREPORTER_HPP_
-#define SRC_REPORTER_XMLREPORTER_HPP_
+#ifndef SCTF_SRC_REPORTER_XMLREPORTER_HPP_
+#define SCTF_SRC_REPORTER_XMLREPORTER_HPP_
 
 #include <chrono>
 #include <cstddef>
@@ -48,36 +48,36 @@ public:
      * @brief Constructor
      * @param stream The stream to write to
      */
-    XmlReporter(std::ostream& stream) : AbstractReporter(stream)
+    explicit XmlReporter(std::ostream& stream) : AbstractReporter(stream)
     {}
 
     /**
      * @brief Constructor
      * @param fname The file to write to
      */
-    XmlReporter(const char* fnam) : AbstractReporter(fnam)
+    explicit XmlReporter(const char* fnam) : AbstractReporter(fnam)
     {}
 
     /**
      * @brief Destructor
      */
-    virtual ~XmlReporter() noexcept
+    ~XmlReporter() noexcept
     {}
 
 private:
     /**
      * @brief Implement AbstractReporter#reportTestSuite
      */
-    virtual void reportTestSuite(TestSuite_shared ts) override
+    void reportTestSuite(TestSuite_shared ts) override
     {
         std::time_t stamp = std::chrono::system_clock::to_time_t(ts->timestamp);
         char buff[128];
         std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
 
         *this << SPACE << "<testsuite id=\"" << id++ << "\" name=\"" << ts->name
-              << "\" errors=\"" << ts->getTestStats().getNumErrs() << "\" tests=\""
-              << ts->getTestStats().getNumTests() << "\" failures=\""
-              << ts->getTestStats().getNumFails() << "\" skipped=\"0\" time=\""
+              << "\" errors=\"" << ts->getTestStats().errors() << "\" tests=\""
+              << ts->getTestStats().tests() << "\" failures=\""
+              << ts->getTestStats().failures() << "\" skipped=\"0\" time=\""
               << ts->getTime() << "\" timestamp=\"" << buff << "\">" << LF;
 
         AbstractReporter::reportTestSuite(ts);
@@ -88,19 +88,19 @@ private:
     /**
      * @brief Implement AbstractReporter#reportTestCase
      */
-    virtual void reportTestCase(const test::TestCase& tc) override
+    void reportTestCase(const test::TestCase& tc) override
     {
         *this << XSPACE << "<testcase name=\"" << tc.name << "\" classname=\""
-              << tc.context << "\" time=\"" << tc.getDuration() << "\"";
-        switch(tc.getState())
+              << tc.context << "\" time=\"" << tc.duration() << "\"";
+        switch(tc.state())
         {
             case test::TestCase::TestState::ERROR:
                 *this << ">" << LF << XSPACE << SPACE << "<error message=\""
-                      << tc.getErrMsg() << "\"></error>" << LF << XSPACE << "</testcase>";
+                      << tc.err_msg() << "\"></error>" << LF << XSPACE << "</testcase>";
                 break;
             case test::TestCase::TestState::FAILED:
                 *this << ">" << LF << XSPACE << SPACE << "<failure message=\""
-                      << tc.getErrMsg() << "\"></failure>" << LF << XSPACE
+                      << tc.err_msg() << "\"></failure>" << LF << XSPACE
                       << "</testcase>";
                 break;
             case test::TestCase::TestState::PASSED:
@@ -115,7 +115,7 @@ private:
     /**
      * @brief Implement AbstractReporter#beginReport
      */
-    virtual void beginReport() override
+    void beginReport() override
     {
         *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << LF << "<testsuites>"
               << LF;
@@ -124,7 +124,7 @@ private:
     /**
      * @brief Implement AbstractReporter#endReport
      */
-    virtual void endReport() override
+    void endReport() override
     {
         *this << "</testsuites>" << LF;
     }
@@ -158,4 +158,4 @@ inline static rep::AbstractReporter_shared createXmlReporter(const char* file)
 
 }  // namespace sctf
 
-#endif  // SRC_REPORTER_XMLREPORTER_HPP_
+#endif  // SCTF_SRC_REPORTER_XMLREPORTER_HPP_

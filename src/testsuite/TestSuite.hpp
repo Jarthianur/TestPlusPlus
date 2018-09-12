@@ -19,14 +19,15 @@
  }
  */
 
-#ifndef SRC_TESTSUITE_TESTSUITE_HPP_
-#define SRC_TESTSUITE_TESTSUITE_HPP_
+#ifndef SCTF_SRC_TESTSUITE_TESTSUITE_HPP_
+#define SCTF_SRC_TESTSUITE_TESTSUITE_HPP_
 
 #include <chrono>
 #include <cstddef>
 #include <iterator>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "../types.h"
@@ -69,7 +70,7 @@ public:
     void execute() noexcept
     {
         m_stats.m_num_of_tests = m_testcases.size();
-        for(auto& tc : m_testcases)
+        for(test::TestCase& tc : m_testcases)
         {
             switch(tc.execute())
             {
@@ -82,7 +83,7 @@ public:
                 default:
                     break;
             }
-            m_time += tc.getDuration();
+            m_time += tc.duration();
         }
     }
 
@@ -94,13 +95,13 @@ public:
         m_stats.m_num_of_tests = m_testcases.size();
 #pragma omp parallel
         {
-            double tmp        = 0.0;
-            std::size_t fails = 0;
-            std::size_t errs  = 0;
+            thread_local double tmp        = 0.0;
+            thread_local std::size_t fails = 0;
+            thread_local std::size_t errs  = 0;
 #pragma omp for schedule(dynamic)
-            for(auto& tc : m_testcases)
+            for(auto tc = m_testcases.begin(); tc < m_testcases.end(); ++tc)
             {
-                switch(tc.execute())
+                switch(tc->execute())
                 {
                     case test::TestCase::TestState::FAILED:
                         ++fails;
@@ -111,7 +112,7 @@ public:
                     default:
                         break;
                 }
-                tmp += tc.getDuration();
+                tmp += tc->getDuration();
             }
 #pragma omp atomic
             m_stats.m_num_of_fails += fails;
@@ -135,9 +136,10 @@ public:
      * @return this as shared pointer
      */
     template<typename T>
-    TestSuite_shared test(const std::string& name, test::test_function t_func)
+    TestSuite_shared test(const std::string& name, test::test_function&& t_func)
     {
-        m_testcases.push_back(test::TestCase(name, util::typeName<T>(), t_func));
+        m_testcases.push_back(
+            test::TestCase(name, util::typeName<T>(), std::move(t_func)));
         return shared_from_this();
     }
 
@@ -149,9 +151,9 @@ public:
      * @return this as shared pointer
      */
     TestSuite_shared test(const std::string& name, const std::string& context,
-                          test::test_function t_func)
+                          test::test_function&& t_func)
     {
-        m_testcases.push_back(test::TestCase(name, context, t_func));
+        m_testcases.push_back(test::TestCase(name, context, std::move(t_func)));
         return shared_from_this();
     }
 
@@ -162,9 +164,9 @@ public:
      * @param t_func The test function
      * @return this as shared pointer
      */
-    TestSuite_shared test(const std::string& name, test::test_function t_func)
+    TestSuite_shared test(const std::string& name, test::test_function&& t_func)
     {
-        m_testcases.push_back(test::TestCase(name, m_context, t_func));
+        m_testcases.push_back(test::TestCase(name, m_context, std::move(t_func)));
         return shared_from_this();
     }
 
@@ -226,4 +228,4 @@ private:
 
 }  // namespace sctf
 
-#endif  // SRC_TESTSUITE_TESTSUITE_HPP_
+#endif  // SCTF_SRC_TESTSUITE_TESTSUITE_HPP_

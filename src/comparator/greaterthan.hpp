@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SRC_COMPARATOR_GREATER_HPP_
-#define SRC_COMPARATOR_GREATER_HPP_
+#ifndef SCTF_SRC_COMPARATOR_GREATER_HPP_
+#define SCTF_SRC_COMPARATOR_GREATER_HPP_
 
 #include "comparators.hpp"
 
@@ -35,4 +35,4 @@ COMPARATOR(greater_than, "to be greater than", value > expect)
 PROVIDE_COMPARATOR(greater_than, GREATER)
 PROVIDE_COMPARATOR(greater_than, GT)
 
-#endif  // SRC_COMPARATOR_GREATER_HPP_
+#endif  // SCTF_SRC_COMPARATOR_GREATER_HPP_

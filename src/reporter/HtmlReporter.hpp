@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SRC_REPORTER_HTMLREPORTER_HPP_
-#define SRC_REPORTER_HTMLREPORTER_HPP_
+#ifndef SCTF_SRC_REPORTER_HTMLREPORTER_HPP_
+#define SCTF_SRC_REPORTER_HTMLREPORTER_HPP_
 
 #include <cstddef>
 #include <fstream>
@@ -96,27 +96,27 @@ public:
     /**
      * @brief Destructor
      */
-    virtual ~HtmlReporter() noexcept
+    ~HtmlReporter() noexcept
     {}
 
 private:
     /**
      * @brief Implement AbstractReporter#reportTestSuite
      */
-    virtual void reportTestSuite(TestSuite_shared ts) override
+    void reportTestSuite(TestSuite_shared ts) override
     {
-        m_abs_tests += ts->getTestStats().getNumTests();
-        m_abs_fails += ts->getTestStats().getNumFails();
-        m_abs_errs += ts->getTestStats().getNumErrs();
+        m_abs_tests += ts->getTestStats().tests();
+        m_abs_fails += ts->getTestStats().failures();
+        m_abs_errs += ts->getTestStats().errors();
         m_abs_time += ts->getTime();
 
         *this << "<h3>" << ts->name << "</h3>"
-              << "<p>Tests: " << ts->getTestStats().getNumTests()
-              << " Failures: " << ts->getTestStats().getNumFails()
-              << " Errors: " << ts->getTestStats().getNumErrs()
-              << " Time: " << ts->getTime() << "ms</p><table><thead>" << TR << TH
-              << "Name" << TH_ << TH << "Context" << TH_ << TH << "Time" << TH_ << TH
-              << "Status" << TH_ << TR_ << "</thead><tbody>";
+              << "<p>Tests: " << ts->getTestStats().tests()
+              << " Failures: " << ts->getTestStats().failures()
+              << " Errors: " << ts->getTestStats().errors() << " Time: " << ts->getTime()
+              << "ms</p><table><thead>" << TR << TH << "Name" << TH_ << TH << "Context"
+              << TH_ << TH << "Time" << TH_ << TH << "Status" << TH_ << TR_
+              << "</thead><tbody>";
 
         AbstractReporter::reportTestSuite(ts);
 
@@ -126,7 +126,7 @@ private:
     /**
      * @brief Implement AbstractReporter#reportTestCase
      */
-    virtual void reportTestCase(const test::TestCase& tc) override
+    void reportTestCase(const test::TestCase& tc) override
     {
         std::string status;
         switch(tc.getState())
@@ -151,7 +151,7 @@ private:
     /**
      * @brief Implement AbstractReporter#beginReport
      */
-    virtual void beginReport() override
+    void beginReport() override
     {
         *this
             << "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/>"
@@ -164,7 +164,7 @@ private:
     /**
      * @brief Implement AbstractReporter#endReport
      */
-    virtual void endReport() override
+    void endReport() override
     {
         *this << "<footer><h3>Summary</h3><p>Tests: " << m_abs_tests
               << " Failures: " << m_abs_fails << " Errors: " << m_abs_errs
@@ -209,4 +209,4 @@ inline static rep::AbstractReporter_shared createHtmlReporter(const char* file)
 
 }  // namespace sctf
 
-#endif  // SRC_REPORTER_HTMLREPORTER_HPP_
+#endif  // SCTF_SRC_REPORTER_HTMLREPORTER_HPP_

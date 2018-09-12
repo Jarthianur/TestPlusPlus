@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SRC_TESTSUITE_TESTSUITESRUNNER_HPP_
-#define SRC_TESTSUITE_TESTSUITESRUNNER_HPP_
+#ifndef SCTF_SRC_TESTSUITE_TESTSUITESRUNNER_HPP_
+#define SCTF_SRC_TESTSUITE_TESTSUITESRUNNER_HPP_
 
 #include <cstdint>
 #include <stdexcept>
@@ -234,4 +234,4 @@ static TestSuite_shared describe(const std::string& name, test::TestSuitesRunner
 
 }  // namespace sctf
 
-#endif  // SRC_TESTSUITE_TESTSUITESRUNNER_HPP_
+#endif  // SCTF_SRC_TESTSUITE_TESTSUITESRUNNER_HPP_

@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SRC_TYPES_H_
-#define SRC_TYPES_H_
+#ifndef SCTF_SRC_TYPES_H_
+#define SCTF_SRC_TYPES_H_
 
 #include <functional>
 #include <memory>
@@ -33,7 +33,7 @@ namespace test
  * @typedef test_function
  * @brief Function schema passed to tests.
  */
-using test_function = const std::function<void()>&;
+using test_function = std::function<void()>;
 
 }  // namespace test
 
@@ -56,4 +56,4 @@ using AbstractReporter_shared = std::shared_ptr<AbstractReporter>;
 }  // namespace rep
 }  // namespace sctf
 
-#endif  // SRC_TYPES_H_
+#endif  // SCTF_SRC_TYPES_H_

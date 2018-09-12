@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SRC_UTIL_SERIALIZE_HPP_
-#define SRC_UTIL_SERIALIZE_HPP_
+#ifndef SCTF_SRC_UTIL_SERIALIZE_HPP_
+#define SCTF_SRC_UTIL_SERIALIZE_HPP_
 
 #include <cstddef>
 #include <sstream>
@@ -135,4 +135,4 @@ inline std::string serialize(const Interval<T>& arg)
 }  // namespace util
 }  // namespace sctf
 
-#endif  // SRC_UTIL_SERIALIZE_HPP_
+#endif  // SCTF_SRC_UTIL_SERIALIZE_HPP_
