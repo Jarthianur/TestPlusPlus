@@ -75,7 +75,7 @@ public:
      * @param parallel Whether to execute in parallel or sequential
      * @return a shared pointer to the TestSuite
      */
-    TestSuite_shared registerTestSuite(TestSuite_shared ts, bool parallel)
+    TestSuite_shared register_ts(TestSuite_shared ts, bool parallel)
     {
         if(parallel)
         {
@@ -91,13 +91,13 @@ public:
     /**
      * @brief Execute parallel TestSuites.
      */
-    void executeParallel() noexcept
+    void run_parallel() noexcept
     {
         if(m_exec_state != ExecState::PARALLEL && m_exec_state != ExecState::ALL)
         {
             for(auto& ts : m_parallel_suites)
             {
-                ts->executeParallel();
+                ts->run_parallel();
             }
             m_exec_state
                 = m_exec_state == ExecState::NONE ? ExecState::PARALLEL : ExecState::ALL;
@@ -107,13 +107,13 @@ public:
     /**
      * @brief Execute sequential TestSuites.
      */
-    void executeSequential() noexcept
+    void run_sequential() noexcept
     {
         if(m_exec_state != ExecState::SEQUENTIAL && m_exec_state != ExecState::ALL)
         {
             for(auto& ts : m_sequential_suites)
             {
-                ts->execute();
+                ts->run();
             }
             m_exec_state = m_exec_state == ExecState::NONE ? ExecState::SEQUENTIAL
                                                            : ExecState::ALL;
@@ -123,17 +123,17 @@ public:
     /**
      * @brief Execute both parallel and sequential TestSuites.
      */
-    void executeAll() noexcept
+    void run() noexcept
     {
-        executeParallel();
-        executeSequential();
+        run_parallel();
+        run_sequential();
     }
 
     /**
      * @brief Get the execution state.
      * @return the ExecState
      */
-    inline ExecState getStatus() const
+    inline ExecState state() const
     {
         return m_exec_state;
     }
@@ -146,7 +146,7 @@ public:
      * @throw std::logic_error if not all TestSuites were executed yet
      */
     const std::pair<std::vector<TestSuite_shared>&, std::vector<TestSuite_shared>&>
-    getTestSuites()
+    testsuites()
     {
         if(m_exec_state == ExecState::ALL)
         {
@@ -185,7 +185,7 @@ inline static TestSuite_shared describeParallel(const std::string& name,
                                                 test::TestSuitesRunner& runner,
                                                 const std::string& context = "")
 {
-    return runner.registerTestSuite(TestSuite::create(name, context), true);
+    return runner.register_ts(TestSuite::create(name, context), true);
 }
 
 /**
@@ -200,7 +200,7 @@ template<typename T>
 static TestSuite_shared describeParallel(const std::string& name,
                                          test::TestSuitesRunner& runner)
 {
-    return runner.registerTestSuite(TestSuite::create(name, util::typeName<T>()), true);
+    return runner.register_ts(TestSuite::create(name, util::typeName<T>()), true);
 }
 
 /**
@@ -215,7 +215,7 @@ inline static TestSuite_shared describe(const std::string& name,
                                         test::TestSuitesRunner& runner,
                                         const std::string& context = "")
 {
-    return runner.registerTestSuite(TestSuite::create(name, context), false);
+    return runner.register_ts(TestSuite::create(name, context), false);
 }
 
 /**
@@ -229,7 +229,7 @@ inline static TestSuite_shared describe(const std::string& name,
 template<typename T>
 static TestSuite_shared describe(const std::string& name, test::TestSuitesRunner& runner)
 {
-    return runner.registerTestSuite(TestSuite::create(name, util::typeName<T>()), false);
+    return runner.register_ts(TestSuite::create(name, util::typeName<T>()), false);
 }
 
 }  // namespace sctf

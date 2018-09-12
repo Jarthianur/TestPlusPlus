@@ -74,30 +74,30 @@ public:
      */
     std::int32_t report(test::TestSuitesRunner& runner)
     {
-        if(runner.getStatus() == test::TestSuitesRunner::ExecState::ALL)
+        if(runner.state() == test::TestSuitesRunner::ExecState::ALL)
         {
             std::int32_t ret_val = 0;
-            beginReport();
+            begin_report();
 
-            auto ts_pair = runner.getTestSuites();
+            auto ts_pair = runner.testsuites();
 
             for(const auto& ts : ts_pair.first)
             {
-                reportTestSuite(ts);
-                ret_val += ts->getTestStats().failures() + ts->getTestStats().errors();
+                report_ts(ts);
+                ret_val += ts->statistics().failures() + ts->statistics().errors();
             }
             for(const auto& ts : ts_pair.second)
             {
-                reportTestSuite(ts);
-                ret_val += ts->getTestStats().failures() + ts->getTestStats().errors();
+                report_ts(ts);
+                ret_val += ts->statistics().failures() + ts->statistics().errors();
             }
 
-            endReport();
+            end_report();
             return ret_val;
         }
         else
         {
-            runner.executeAll();
+            runner.run();
             return report(runner);
         }
     }
@@ -146,11 +146,11 @@ protected:
      * @brief Generate report for a given TestSuite.
      * @param ts The TestSuite
      */
-    inline virtual void reportTestSuite(TestSuite_shared ts)
+    inline virtual void report_ts(TestSuite_shared ts)
     {
-        for(auto& tc : ts->getTestCases())
+        for(auto& tc : ts->testcases())
         {
-            reportTestCase(tc);
+            report_tc(tc);
         }
     }
 
@@ -158,17 +158,17 @@ protected:
      * @brief Generate report for a given TestCase.
      * @param tc The TestCase
      */
-    virtual void reportTestCase(const test::TestCase& tc) = 0;
+    virtual void report_tc(const test::TestCase& tc) = 0;
 
     /**
      * @brief Generate the intro of a report.
      */
-    virtual void beginReport() = 0;
+    virtual void begin_report() = 0;
 
     /**
      * @brief Generate the outro of a report.
      */
-    virtual void endReport() = 0;
+    virtual void end_report() = 0;
 
     /**
      * @brief Write to stream.

@@ -79,25 +79,25 @@ private:
     /**
      * @brief Implement AbstractReporter#reportTestSuite
      */
-    void reportTestSuite(TestSuite_shared ts) override
+    void report_ts(TestSuite_shared ts) override
     {
-        *this << "Run Testsuite [" << ts->name << "]; time = " << ts->getTime() << "ms"
+        *this << "Run Testsuite [" << ts->name() << "]; time = " << ts->time() << "ms"
               << LF;
 
-        m_abs_tests += ts->getTestStats().tests();
-        m_abs_fails += ts->getTestStats().failures();
-        m_abs_errs += ts->getTestStats().errors();
-        m_abs_time += ts->getTime();
+        m_abs_tests += ts->statistics().tests();
+        m_abs_fails += ts->statistics().failures();
+        m_abs_errs += ts->statistics().errors();
+        m_abs_time += ts->time();
 
-        AbstractReporter::reportTestSuite(ts);
+        AbstractReporter::report_ts(ts);
     }
 
     /**
      * @brief Implement AbstractReporter#reportTestCase
      */
-    void reportTestCase(const test::TestCase& tc) override
+    void report_tc(const test::TestCase& tc) override
     {
-        *this << SPACE << "Run Testcase [" << tc.name << "](" << tc.context
+        *this << SPACE << "Run Testcase [" << tc.name() << "](" << tc.context()
               << "); time = " << tc.duration() << "ms" << LF << XSPACE;
         switch(tc.state())
         {
@@ -119,13 +119,13 @@ private:
     /**
      * @brief Implement AbstractReporter#beginReport
      */
-    void beginReport() override
+    void begin_report() override
     {}
 
     /**
      * @brief Implement AbstractReporter#endReport
      */
-    void endReport() override
+    void end_report() override
     {
         if(m_abs_fails >= (m_abs_tests + 1) / 2)
         {

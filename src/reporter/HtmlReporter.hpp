@@ -83,14 +83,14 @@ public:
      * @brief Constructor
      * @param stream The stream to write to
      */
-    HtmlReporter(std::ostream& stream) : AbstractReporter(stream)
+    explicit HtmlReporter(std::ostream& stream) : AbstractReporter(stream)
     {}
 
     /**
      * @brief Constructor
      * @param fname The file to write to
      */
-    HtmlReporter(const char* fname) : AbstractReporter(fname)
+    explicit HtmlReporter(const char* fname) : AbstractReporter(fname)
     {}
 
     /**
@@ -103,22 +103,22 @@ private:
     /**
      * @brief Implement AbstractReporter#reportTestSuite
      */
-    void reportTestSuite(TestSuite_shared ts) override
+    void report_ts(TestSuite_shared ts) override
     {
-        m_abs_tests += ts->getTestStats().tests();
-        m_abs_fails += ts->getTestStats().failures();
-        m_abs_errs += ts->getTestStats().errors();
-        m_abs_time += ts->getTime();
+        m_abs_tests += ts->statistics().tests();
+        m_abs_fails += ts->statistics().failures();
+        m_abs_errs += ts->statistics().errors();
+        m_abs_time += ts->time();
 
-        *this << "<h3>" << ts->name << "</h3>"
-              << "<p>Tests: " << ts->getTestStats().tests()
-              << " Failures: " << ts->getTestStats().failures()
-              << " Errors: " << ts->getTestStats().errors() << " Time: " << ts->getTime()
+        *this << "<h3>" << ts->name() << "</h3>"
+              << "<p>Tests: " << ts->statistics().tests()
+              << " Failures: " << ts->statistics().failures()
+              << " Errors: " << ts->statistics().errors() << " Time: " << ts->time()
               << "ms</p><table><thead>" << TR << TH << "Name" << TH_ << TH << "Context"
               << TH_ << TH << "Time" << TH_ << TH << "Status" << TH_ << TR_
               << "</thead><tbody>";
 
-        AbstractReporter::reportTestSuite(ts);
+        AbstractReporter::report_ts(ts);
 
         *this << "</tbody></table>";
     }
@@ -126,10 +126,10 @@ private:
     /**
      * @brief Implement AbstractReporter#reportTestCase
      */
-    void reportTestCase(const test::TestCase& tc) override
+    void report_tc(const test::TestCase& tc) override
     {
         std::string status;
-        switch(tc.getState())
+        switch(tc.state())
         {
             case test::TestCase::TestState::ERROR:
                 status = "error";
@@ -143,15 +143,15 @@ private:
             default:
                 break;
         }
-        *this << "<tr class=\"" << status << "\">" << TD << tc.name << TD_ << TD
-              << tc.context << TD_ << TD << tc.getDuration() << "ms" << TD_ << TD
-              << status << TD_ << TR_;
+        *this << "<tr class=\"" << status << "\">" << TD << tc.name() << TD_ << TD
+              << tc.context() << TD_ << TD << tc.duration() << "ms" << TD_ << TD << status
+              << TD_ << TR_;
     }
 
     /**
      * @brief Implement AbstractReporter#beginReport
      */
-    void beginReport() override
+    void begin_report() override
     {
         *this
             << "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/>"
@@ -164,7 +164,7 @@ private:
     /**
      * @brief Implement AbstractReporter#endReport
      */
-    void endReport() override
+    void end_report() override
     {
         *this << "<footer><h3>Summary</h3><p>Tests: " << m_abs_tests
               << " Failures: " << m_abs_fails << " Errors: " << m_abs_errs

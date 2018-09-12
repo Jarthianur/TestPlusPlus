@@ -68,19 +68,19 @@ private:
     /**
      * @brief Implement AbstractReporter#reportTestSuite
      */
-    void reportTestSuite(TestSuite_shared ts) override
+    void report_ts(TestSuite_shared ts) override
     {
-        std::time_t stamp = std::chrono::system_clock::to_time_t(ts->timestamp);
+        std::time_t stamp = std::chrono::system_clock::to_time_t(ts->timestamp());
         char buff[128];
         std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
 
-        *this << SPACE << "<testsuite id=\"" << id++ << "\" name=\"" << ts->name
-              << "\" errors=\"" << ts->getTestStats().errors() << "\" tests=\""
-              << ts->getTestStats().tests() << "\" failures=\""
-              << ts->getTestStats().failures() << "\" skipped=\"0\" time=\""
-              << ts->getTime() << "\" timestamp=\"" << buff << "\">" << LF;
+        *this << SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts->name()
+              << "\" errors=\"" << ts->statistics().errors() << "\" tests=\""
+              << ts->statistics().tests() << "\" failures=\""
+              << ts->statistics().failures() << "\" skipped=\"0\" time=\"" << ts->time()
+              << "\" timestamp=\"" << buff << "\">" << LF;
 
-        AbstractReporter::reportTestSuite(ts);
+        AbstractReporter::report_ts(ts);
 
         *this << SPACE << "</testsuite>" << LF;
     }
@@ -88,10 +88,10 @@ private:
     /**
      * @brief Implement AbstractReporter#reportTestCase
      */
-    void reportTestCase(const test::TestCase& tc) override
+    void report_tc(const test::TestCase& tc) override
     {
-        *this << XSPACE << "<testcase name=\"" << tc.name << "\" classname=\""
-              << tc.context << "\" time=\"" << tc.duration() << "\"";
+        *this << XSPACE << "<testcase name=\"" << tc.name() << "\" classname=\""
+              << tc.context() << "\" time=\"" << tc.duration() << "\"";
         switch(tc.state())
         {
             case test::TestCase::TestState::ERROR:
@@ -100,8 +100,7 @@ private:
                 break;
             case test::TestCase::TestState::FAILED:
                 *this << ">" << LF << XSPACE << SPACE << "<failure message=\""
-                      << tc.err_msg() << "\"></failure>" << LF << XSPACE
-                      << "</testcase>";
+                      << tc.err_msg() << "\"></failure>" << LF << XSPACE << "</testcase>";
                 break;
             case test::TestCase::TestState::PASSED:
                 *this << "/>";
@@ -115,7 +114,7 @@ private:
     /**
      * @brief Implement AbstractReporter#beginReport
      */
-    void beginReport() override
+    void begin_report() override
     {
         *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << LF << "<testsuites>"
               << LF;
@@ -124,13 +123,13 @@ private:
     /**
      * @brief Implement AbstractReporter#endReport
      */
-    void endReport() override
+    void end_report() override
     {
         *this << "</testsuites>" << LF;
     }
 
     /// @brief The incremental testsuite id
-    std::size_t id = 0;
+    mutable std::size_t m_id = 0;
 };
 
 }  // namespace rep

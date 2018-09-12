@@ -67,7 +67,7 @@ public:
     /**
      * @brief Execute all TestCases sequentially.
      */
-    void execute() noexcept
+    void run() noexcept
     {
         m_stats.m_num_of_tests = m_testcases.size();
         for(test::TestCase& tc : m_testcases)
@@ -90,7 +90,7 @@ public:
     /**
      * @brief Execute all TestCases in parallel.
      */
-    void executeParallel() noexcept
+    void run_parallel() noexcept
     {
         m_stats.m_num_of_tests = m_testcases.size();
 #pragma omp parallel
@@ -112,7 +112,7 @@ public:
                     default:
                         break;
                 }
-                tmp += tc->getDuration();
+                tmp += tc->duration();
             }
 #pragma omp atomic
             m_stats.m_num_of_fails += fails;
@@ -171,10 +171,28 @@ public:
     }
 
     /**
+     * @brief Get the testsuite name.
+     * @return The name
+     */
+    inline const std::string& name() const
+    {
+        return m_name;
+    }
+
+    /**
+     * @brief Get the testsuite timestamp.
+     * @return The timestamp
+     */
+    inline const std::chrono::system_clock::time_point& timestamp() const
+    {
+        return m_timestamp;
+    }
+
+    /**
      * @brief Get the test statistics.
      * @return the TestStats
      */
-    inline const test::TestStats& getTestStats() const
+    inline const test::TestStats& statistics() const
     {
         return m_stats;
     }
@@ -183,7 +201,7 @@ public:
      * @brief Get the accumulated time.
      * @return the time
      */
-    inline double getTime() const
+    inline double time() const
     {
         return m_time;
     }
@@ -192,16 +210,10 @@ public:
      * @brief Get the TestCases.
      * @return the test cases
      */
-    inline const std::vector<test::TestCase>& getTestCases() const
+    inline const std::vector<test::TestCase>& testcases() const
     {
         return m_testcases;
     }
-
-    /// @brief The name/description
-    const std::string name;
-
-    /// @brief The start timestamp
-    const std::chrono::system_clock::time_point timestamp;
 
 private:
     /**
@@ -210,8 +222,17 @@ private:
      * @param context The context description
      */
     TestSuite(const std::string& name, const std::string& context)
-        : name(name), timestamp(std::chrono::system_clock::now()), m_context(context)
+        : m_name(name), m_context(context), m_timestamp(std::chrono::system_clock::now())
     {}
+
+    /// @brief The name/description
+    const std::string m_name;
+
+    /// @brief The context description.
+    const std::string m_context;
+
+    /// @brief The start timestamp
+    const std::chrono::system_clock::time_point m_timestamp;
 
     /// @brief The accumulated runtime of all tests.
     double m_time = 0.0;
@@ -221,9 +242,6 @@ private:
 
     /// @brief The testcases.
     std::vector<test::TestCase> m_testcases;
-
-    /// @brief The context description.
-    const std::string m_context;
 };
 
 }  // namespace sctf
