@@ -24,6 +24,7 @@
 
 #include <chrono>
 #include <cstddef>
+#include <functional>
 #include <iterator>
 #include <memory>
 #include <string>
@@ -34,6 +35,15 @@
 #include "../util/serialize.hpp"
 #include "TestCase.hpp"
 #include "TestStats.hpp"
+
+#define EXEC_SILENT(F) \
+    try                \
+    {                  \
+        F();           \
+    }                  \
+    catch(...)         \
+    {                  \
+    }
 
 namespace sctf
 {
@@ -70,8 +80,16 @@ public:
     void run() noexcept
     {
         m_stats.m_num_of_tests = m_testcases.size();
+        if(m_setup_func)
+        {
+            EXEC_SILENT(m_setup_func)
+        }
         for(test::TestCase& tc : m_testcases)
         {
+            if(m_pre_test_func)
+            {
+                EXEC_SILENT(m_pre_test_func)
+            }
             switch(tc.execute())
             {
                 case test::TestCase::TestState::FAILED:
@@ -84,15 +102,23 @@ public:
                     break;
             }
             m_time += tc.duration();
+            if(m_post_test_func)
+            {
+                EXEC_SILENT(m_post_test_func)
+            }
         }
     }
 
     /**
      * @brief Execute all TestCases in parallel.
      */
-    void run_parallel() noexcept
+    void run_p() noexcept
     {
         m_stats.m_num_of_tests = m_testcases.size();
+        if(m_setup_func)
+        {
+            EXEC_SILENT(m_setup_func)
+        }
 #pragma omp parallel
         {
             thread_local double tmp        = 0.0;
@@ -101,6 +127,10 @@ public:
 #pragma omp for schedule(dynamic)
             for(auto tc = m_testcases.begin(); tc < m_testcases.end(); ++tc)
             {
+                if(m_pre_test_func)
+                {
+                    EXEC_SILENT(m_pre_test_func)
+                }
                 switch(tc->execute())
                 {
                     case test::TestCase::TestState::FAILED:
@@ -113,6 +143,10 @@ public:
                         break;
                 }
                 tmp += tc->duration();
+                if(m_post_test_func)
+                {
+                    EXEC_SILENT(m_post_test_func)
+                }
             }
 #pragma omp atomic
             m_stats.m_num_of_fails += fails;
@@ -167,6 +201,42 @@ public:
     TestSuite_shared test(const std::string& name, test::test_function&& t_func)
     {
         m_testcases.push_back(test::TestCase(name, m_context, std::move(t_func)));
+        return shared_from_this();
+    }
+
+    /**
+     * @brief Set a setup function, which will be executed once before all testcases.
+     * @note Exceptions thrown by this get ignored.
+     * @param t_func The function
+     * @return this as shared pointer
+     */
+    TestSuite_shared setup(test::test_function&& t_func)
+    {
+        m_setup_func = std::move(t_func);
+        return shared_from_this();
+    }
+
+    /**
+     * @brief Set a pre-test function, which will be executed before every testcase.
+     * @note Exceptions thrown by this get ignored.
+     * @param t_func The function
+     * @return this as shared pointer
+     */
+    TestSuite_shared before(test::test_function&& t_func)
+    {
+        m_pre_test_func = std::move(t_func);
+        return shared_from_this();
+    }
+
+    /**
+     * @brief Set a post-test function, which will be executed after every testcase.
+     * @note Exceptions thrown by this get ignored.
+     * @param t_func The function
+     * @return this as shared pointer
+     */
+    TestSuite_shared after(test::test_function&& t_func)
+    {
+        m_post_test_func = std::move(t_func);
         return shared_from_this();
     }
 
@@ -242,6 +312,15 @@ private:
 
     /// @brief The testcases.
     std::vector<test::TestCase> m_testcases;
+
+    /// @brief The optional setup function, executed once before all testcases.
+    test::test_function m_setup_func;
+
+    /// @brief The optional pre-test function, executed before each testcase.
+    test::test_function m_pre_test_func;
+
+    /// @brief The optional post-test function, executed after each testcase.
+    test::test_function m_post_test_func;
 };
 
 }  // namespace sctf

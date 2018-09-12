@@ -97,7 +97,7 @@ public:
         {
             for(auto& ts : m_parallel_suites)
             {
-                ts->run_parallel();
+                ts->run_p();
             }
             m_exec_state
                 = m_exec_state == ExecState::NONE ? ExecState::PARALLEL : ExecState::ALL;
