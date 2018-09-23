@@ -36,10 +36,18 @@ namespace util
 template<typename T, typename std::enable_if<is_ordinal<T>::value>::type* = nullptr>
 struct Interval final
 {
+    /**
+     * @brief Constructor
+     * @param l The lower bounds
+     * @param u The upper bounds
+     */
     Interval(const T& l, const T& u) : lower(l), upper(u)
     {}
 
+    /// @brief The lower bounds
     const T lower;
+
+    /// @brief The upper bounds
     const T upper;
 };
 

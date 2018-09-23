@@ -66,7 +66,7 @@ public:
 
 private:
     /**
-     * @brief Implement AbstractReporter#reportTestSuite
+     * @brief Implement AbstractReporter#report_ts
      */
     void report_ts(const TestSuite_shared ts) override
     {
@@ -86,7 +86,7 @@ private:
     }
 
     /**
-     * @brief Implement AbstractReporter#reportTestCase
+     * @brief Implement AbstractReporter#report_tc
      */
     void report_tc(const test::TestCase& tc) override
     {
@@ -112,7 +112,7 @@ private:
     }
 
     /**
-     * @brief Implement AbstractReporter#beginReport
+     * @brief Implement AbstractReporter#begin_report
      */
     void begin_report() override
     {
@@ -121,7 +121,7 @@ private:
     }
 
     /**
-     * @brief Implement AbstractReporter#endReport
+     * @brief Implement AbstractReporter#end_report
      */
     void end_report() override
     {

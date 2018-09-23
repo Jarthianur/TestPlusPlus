@@ -69,13 +69,13 @@ Of course, when executed in parallel, a test suites total time is the max time o
 
 **Note:** While the *Comparator* names the function itself, the *Shortwrite* is what you actually write in code.
 
-| Comparator   | Shortwrite(s)  | Description                                                                                                                                                                                                                                                                                                                                  |
-| ------------ | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| equals       | EQUALS, EQ     | Compare two values to be equal, using `operator ==`.                                                                                                                                                                                                                                                                                         |
-| unequals     | UNEQUALS, UNEQ | Compare two values not to be equal, using `operator !=`.                                                                                                                                                                                                                                                                                     |
-| greater_than | GREATER, GT    | Compare one value to be greater than another, using `operator >`.                                                                                                                                                                                                                                                                            |
-| less_than    | LESS, LT       | Compare one value to be less than another, using `operator <`.                                                                                                                                                                                                                                                                               |
-| in_range     | IN_RANGE, IN   | Check a value to be in range of any container. This means for containers to contain the value, for strings to contain a substring and for pairs to have it as one of the values. For the utility type [Interval](src/util/Interval.hpp), given lower and upper bounds, a value is then checked to be in this interval, including the bounds. |
+| Comparator   | Shortwrite(s) | Description                                                                                                                                                                                                                                                                                                                                  |
+| ------------ | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| equals       | EQUALS, EQ    | Compare two values to be equal, using `operator ==`.                                                                                                                                                                                                                                                                                         |
+| unequals     | UNEQUALS, NE  | Compare two values not to be equal, using `operator !=`.                                                                                                                                                                                                                                                                                     |
+| greater_than | GREATER, GT   | Compare one value to be greater than another, using `operator >`.                                                                                                                                                                                                                                                                            |
+| less_than    | LESS, LT      | Compare one value to be less than another, using `operator <`.                                                                                                                                                                                                                                                                               |
+| in_range     | IN_RANGE, IN  | Check a value to be in range of any container. This means for containers to contain the value, for strings to contain a substring and for pairs to have it as one of the values. For the utility type [Interval](src/util/Interval.hpp), given lower and upper bounds, a value is then checked to be in this interval, including the bounds. |
 
 ### Assertions
 
@@ -105,7 +105,7 @@ In order to use the parallelization capability compile and link the test code wi
 
 ```cpp
 // ...
-#include "sctf.h"
+#include "sctf.hpp"
 
 using namespace sctf;
 

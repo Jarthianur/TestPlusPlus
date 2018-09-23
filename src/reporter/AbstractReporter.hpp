@@ -48,16 +48,10 @@ namespace rep
 #define LF "\n"
 #endif
 
-/**
- * @def SPACE
- * @brief Spacing with two spaces
- */
+/// @brief Spacing with two spaces
 #define SPACE "  "
 
-/**
- * @def XSPACE
- * @brief Spacing with four spaces
- */
+/// @brief Spacing with four spaces
 #define XSPACE "    "
 
 /**
@@ -95,16 +89,10 @@ public:
     }
 
 protected:
-    /**
-     * @var m_out_file
-     * @brief The output file stream
-     */
+    /// @brief The output file stream
     std::ofstream m_out_file;
 
-    /**
-     * @var mr_out_stream
-     * @brief The output stream reference
-     */
+    /// @brief The output stream reference
     std::ostream& mr_out_stream;
 
     /**
@@ -174,21 +162,37 @@ protected:
         return mr_out_stream;
     }
 
+    /**
+     * @brief Get the absolute amount of tests for current report.
+     * @return the absolute tests
+     */
     inline std::size_t abs_tests() const
     {
         return m_abs_tests;
     }
 
+    /**
+     * @brief Get the absolute amount of failed tests for current report.
+     * @return the absolute tests
+     */
     inline std::size_t abs_fails() const
     {
         return m_abs_fails;
     }
 
+    /**
+     * @brief Get the absolute amount of erroneous tests for current report.
+     * @return the absolute tests
+     */
     inline std::size_t abs_errs() const
     {
         return m_abs_errs;
     }
 
+    /**
+     * @brief Get the absolute amount of time for current report.
+     * @return the absolute time
+     */
     inline double abs_time() const
     {
         return m_abs_time;

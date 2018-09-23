@@ -36,7 +36,7 @@ namespace sctf
 {
 namespace rep
 {
-// ANSI colors
+/// @brief ANSI colors
 #define ANSI_RED "\x1b[31m"
 #define ANSI_GREEN "\x1b[32m"
 #define ANSI_YELLOW "\x1b[33m"
@@ -77,7 +77,7 @@ public:
 
 private:
     /**
-     * @brief Implement AbstractReporter#reportTestSuite
+     * @brief Implement AbstractReporter#report_ts
      */
     void report_ts(const TestSuite_shared ts) override
     {
@@ -88,7 +88,7 @@ private:
     }
 
     /**
-     * @brief Implement AbstractReporter#reportTestCase
+     * @brief Implement AbstractReporter#report_tc
      */
     void report_tc(const test::TestCase& tc) override
     {
@@ -112,13 +112,13 @@ private:
     }
 
     /**
-     * @brief Implement AbstractReporter#beginReport
+     * @brief Implement AbstractReporter#begin_report
      */
     void begin_report() override
     {}
 
     /**
-     * @brief Implement AbstractReporter#endReport
+     * @brief Implement AbstractReporter#end_report
      */
     void end_report() override
     {

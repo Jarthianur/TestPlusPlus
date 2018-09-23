@@ -58,7 +58,6 @@ public:
     /**
      * @brief Register a TestSuite.
      * @param ts A shared ptr to the TestSuite
-     * @param parallel Whether to execute in parallel or sequential
      * @return a shared pointer to the TestSuite
      */
     TestSuite_shared register_ts(TestSuite_shared ts)
@@ -68,7 +67,7 @@ public:
     }
 
     /**
-     * @brief Execute both parallel and sequential TestSuites.
+     * @brief Run TestSuites.
      */
     void run() noexcept
     {
@@ -79,11 +78,8 @@ public:
     }
 
     /**
-     * @brief Get parallel and sequential test suites.
-     * @note All have to be executed until call.
-     * @return a pair with all testsuites, where first are the sequential ones and second
-     * are the parallel ones
-     * @throw std::logic_error if not all TestSuites were executed yet
+     * @brief Get the TestSuites.
+     * @return the testsuites
      */
     const std::vector<TestSuite_shared>& testsuites()
     {
@@ -91,7 +87,7 @@ public:
     }
 
 private:
-    /// @brief The registered sequential TestSuites.
+    /// @brief The registered TestSuites.
     std::vector<TestSuite_shared> m_testsuites;
 };
 

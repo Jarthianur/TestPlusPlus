@@ -36,6 +36,8 @@
 #include "TestCase.hpp"
 #include "TestStats.hpp"
 
+/// @brief Call a functor silently, catching all exceptions and only if it points to a
+/// target.
 #define SCTF_EXEC_SILENT(F) \
     if(F)                   \
     {                       \
@@ -51,8 +53,8 @@
 namespace sctf
 {
 /**
- * Testsuite class, providing some assertion methods.
- * Non-copyable
+ * @brief Testsuite class for managing sequential testcases.
+ * @note Not-copyable
  */
 class TestSuite : public std::enable_shared_from_this<TestSuite>
 {
@@ -234,9 +236,14 @@ public:
     }
 
 protected:
+    /**
+     * @brief The state of all testcases.
+     */
     enum class State : std::int32_t
     {
+        /// Still testcases to execute
         PENDING,
+        /// All testcases executed
         DONE
     };
 
@@ -267,6 +274,7 @@ protected:
     /// @brief The testcases.
     std::vector<test::TestCase> m_testcases;
 
+    /// @brief The execution state.
     State m_state = State::PENDING;
 
     /// @brief The optional setup function, executed once before all testcases.

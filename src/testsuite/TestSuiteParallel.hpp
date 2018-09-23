@@ -29,8 +29,8 @@
 namespace sctf
 {
 /**
- * Testsuite class, providing some assertion methods.
- * Non-copyable
+ * @brief Testsuite class for managing parallel testcases.
+ * @note Non-copyable
  */
 class TestSuiteParallel : public TestSuite
 {
@@ -65,9 +65,9 @@ public:
         SCTF_EXEC_SILENT(m_setup_func)
 #pragma omp parallel
         {
-            thread_local double tmp        = 0.0;
-            thread_local std::size_t fails = 0;
-            thread_local std::size_t errs  = 0;
+            double tmp        = 0.0;
+            std::size_t fails = 0;
+            std::size_t errs  = 0;
 #pragma omp for schedule(dynamic)
             for(auto tc = m_testcases.begin(); tc < m_testcases.end(); ++tc)
             {
