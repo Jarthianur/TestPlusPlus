@@ -50,7 +50,7 @@ Of course, when executed in parallel, a test suites total time is the max time o
 
 ### Testsuite Executions
 
-**Note:** The argument *runner* of all *describe* functions is always the *TestSuitesRunner* where to register the *TestSuite*. The argument *t_func* of all *test*,*setup*,*before*,*after* methods is always a void function without arguments, preferably a lambda expression. Calls to those methods are chainable.
+**Note:** The argument *runner* of all *describe* functions is always the *TestSuitesRunner* where to register the *TestSuite*. The argument *t_func* of all *test*,*setup*,*before*,*after* methods is always a void function without arguments, preferably a lambda expression. Calls to those methods are chainable. It is possible to add tests after the runner has run, thus run tests partially, and run it again. Already executed tests will be skipped.
 
 | Call                | Arguments             | Description                                                                                                                                          | Example                                               |
 | ------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
@@ -98,7 +98,7 @@ Of course, when executed in parallel, a test suites total time is the max time o
 
 ## Usage
 
-This framework is header-only. To use it, just inlude the *sctf.h* header file.  
+This framework is header-only. To use it, just inlude the *sctf.hpp* header file.  
 In order to use the parallelization capability compile and link the test code with *'-fopenmp'* flag. As the asserts are wrapped with macros, statements inside assert statements, that have commata itself, must be written in braces.
 
 ### Example
@@ -151,7 +151,7 @@ int main(int argc, char** argv)
 
 ### Reporters
 
-To add a new reporter just implement the [AbstractReporter](src/reporter/AbstractReporter.hpp) interface. Therefor create a class in *sctf::rep* namespace and inherit from *AbstractReporter*. Have a look at the preimplemented repoerters, how this is exactly done.
+To add a new reporter just implement the [AbstractReporter](src/reporter/AbstractReporter.hpp) interface. Therefor create a class in *sctf::rep* namespace and inherit from *AbstractReporter*. Have a look at the preimplemented reporters, how this is exactly done.
 
 ### Comparators
 
