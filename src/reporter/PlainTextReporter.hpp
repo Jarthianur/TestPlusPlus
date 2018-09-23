@@ -79,15 +79,10 @@ private:
     /**
      * @brief Implement AbstractReporter#reportTestSuite
      */
-    void report_ts(TestSuite_shared ts) override
+    void report_ts(const TestSuite_shared ts) override
     {
         *this << "Run Testsuite [" << ts->name() << "]; time = " << ts->time() << "ms"
               << LF;
-
-        m_abs_tests += ts->statistics().tests();
-        m_abs_fails += ts->statistics().failures();
-        m_abs_errs += ts->statistics().errors();
-        m_abs_time += ts->time();
 
         AbstractReporter::report_ts(ts);
     }
@@ -101,13 +96,13 @@ private:
               << "); time = " << tc.duration() << "ms" << LF << XSPACE;
         switch(tc.state())
         {
-            case test::TestCase::TestState::ERROR:
+            case test::TestCase::State::ERROR:
                 *this << (m_color ? ANSI_MAGENTA : "") << "ERROR! " << tc.err_msg();
                 break;
-            case test::TestCase::TestState::FAILED:
+            case test::TestCase::State::FAILED:
                 *this << (m_color ? ANSI_RED : "") << "FAILED! " << tc.err_msg();
                 break;
-            case test::TestCase::TestState::PASSED:
+            case test::TestCase::State::PASSED:
                 *this << (m_color ? ANSI_GREEN : "") << "PASSED!";
                 break;
             default:
@@ -127,7 +122,7 @@ private:
      */
     void end_report() override
     {
-        if(m_abs_fails >= (m_abs_tests + 1) / 2)
+        if(abs_fails() >= (abs_tests() + 1) / 2)
         {
             *this << (m_color ? ANSI_YELLOW : "");
         }
@@ -135,26 +130,14 @@ private:
         {
             *this << (m_color ? ANSI_CYAN : "");
         }
-        *this << "Result:: passed: " << m_abs_tests - m_abs_fails - m_abs_errs << "/"
-              << m_abs_tests << " ; failed: " << m_abs_fails << "/" << m_abs_tests
-              << " ; errors: " << m_abs_errs << "/" << m_abs_tests
-              << " ; time = " << m_abs_time << "ms" << (m_color ? ANSI_RESET : "") << LF;
+        *this << "Result:: passed: " << abs_tests() - abs_fails() - abs_errs() << "/"
+              << abs_tests() << " ; failed: " << abs_fails() << "/" << abs_tests()
+              << " ; errors: " << abs_errs() << "/" << abs_tests()
+              << " ; time = " << abs_time() << "ms" << (m_color ? ANSI_RESET : "") << LF;
     }
 
     /// @brief Use colors flag.
     bool m_color;
-
-    /// @brief The amount of tests.
-    std::size_t m_abs_tests = 0;
-
-    /// @brief The amount of failed tests.
-    std::size_t m_abs_fails = 0;
-
-    /// @brief The amount of erroneous tests.
-    std::size_t m_abs_errs = 0;
-
-    /// @brief The accumulated runtime.
-    double m_abs_time = 0;
 };
 
 }  // namespace rep

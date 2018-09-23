@@ -40,7 +40,7 @@ namespace util
  * @return the typename as string
  */
 template<typename T>
-static const std::string& typeName()
+static const std::string& name_for_type()
 {
 #if defined(__GNUG__) || defined(__clang__)
     static thread_local std::string name;
@@ -83,7 +83,7 @@ template<typename T, typename std::enable_if<not is_streamable<
                          std::ostringstream, T>::value>::type* = nullptr>
 inline std::string serialize(const T&)
 {
-    return typeName<T>();
+    return name_for_type<T>();
 }
 
 /**

@@ -30,7 +30,7 @@
 #include "reporter/HtmlReporter.hpp"
 #include "reporter/PlainTextReporter.hpp"
 #include "reporter/XmlReporter.hpp"
-#include "testsuite/TestSuite.hpp"
+#include "testsuite/TestSuitesRunner.hpp"
 #include "assert.hpp"
 #include "types.h"
 

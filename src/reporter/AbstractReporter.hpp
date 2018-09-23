@@ -22,7 +22,7 @@
 #ifndef SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_
 #define SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_
 
-#include <cstdint>
+#include <cstddef>
 #include <fstream>
 #include <memory>
 #include <stdexcept>
@@ -72,34 +72,26 @@ public:
      * @note Executes runner's pending TestSuite.
      * @return the sum of failed tests and errors
      */
-    std::int32_t report(test::TestSuitesRunner& runner)
+    std::size_t report(test::TestSuitesRunner& runner)
     {
-        if(runner.state() == test::TestSuitesRunner::ExecState::ALL)
+        m_abs_errs  = 0;
+        m_abs_fails = 0;
+        m_abs_tests = 0;
+        m_abs_time  = 0.0;
+
+        runner.run();
+        begin_report();
+        const std::vector<TestSuite_shared>& testsuites = runner.testsuites();
+        for(const TestSuite_shared& ts : testsuites)
         {
-            std::int32_t ret_val = 0;
-            begin_report();
-
-            auto ts_pair = runner.testsuites();
-
-            for(const auto& ts : ts_pair.first)
-            {
-                report_ts(ts);
-                ret_val += ts->statistics().failures() + ts->statistics().errors();
-            }
-            for(const auto& ts : ts_pair.second)
-            {
-                report_ts(ts);
-                ret_val += ts->statistics().failures() + ts->statistics().errors();
-            }
-
-            end_report();
-            return ret_val;
+            m_abs_errs += ts->statistics().errors();
+            m_abs_fails += ts->statistics().failures();
+            m_abs_tests += ts->statistics().tests();
+            m_abs_time += ts->time();
+            report_ts(ts);
         }
-        else
-        {
-            runner.run();
-            return report(runner);
-        }
+        end_report();
+        return m_abs_errs + m_abs_fails;
     }
 
 protected:
@@ -146,7 +138,7 @@ protected:
      * @brief Generate report for a given TestSuite.
      * @param ts The TestSuite
      */
-    inline virtual void report_ts(TestSuite_shared ts)
+    inline virtual void report_ts(const TestSuite_shared ts)
     {
         for(auto& tc : ts->testcases())
         {
@@ -181,6 +173,39 @@ protected:
         mr_out_stream << _1;
         return mr_out_stream;
     }
+
+    inline std::size_t abs_tests() const
+    {
+        return m_abs_tests;
+    }
+
+    inline std::size_t abs_fails() const
+    {
+        return m_abs_fails;
+    }
+
+    inline std::size_t abs_errs() const
+    {
+        return m_abs_errs;
+    }
+
+    inline double abs_time() const
+    {
+        return m_abs_time;
+    }
+
+private:
+    /// @brief The amount of tests.
+    std::size_t m_abs_tests = 0;
+
+    /// @brief The amount of failed tests.
+    std::size_t m_abs_fails = 0;
+
+    /// @brief The amount of erroneous tests.
+    std::size_t m_abs_errs = 0;
+
+    /// @brief The accumulated runtime.
+    double m_abs_time = 0;
 };
 
 }  // namespace rep

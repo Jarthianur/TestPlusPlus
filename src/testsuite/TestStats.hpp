@@ -27,6 +27,7 @@
 namespace sctf
 {
 class TestSuite;
+class TestSuiteParallel;
 
 namespace test
 {
@@ -86,6 +87,7 @@ public:
 
 private:
     friend sctf::TestSuite;
+    friend sctf::TestSuiteParallel;
 
     /// @brief The number of tests.
     std::size_t m_num_of_tests = 0;

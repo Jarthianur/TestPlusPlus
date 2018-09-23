@@ -68,7 +68,7 @@ private:
     /**
      * @brief Implement AbstractReporter#reportTestSuite
      */
-    void report_ts(TestSuite_shared ts) override
+    void report_ts(const TestSuite_shared ts) override
     {
         std::time_t stamp = std::chrono::system_clock::to_time_t(ts->timestamp());
         char buff[128];
@@ -94,15 +94,15 @@ private:
               << tc.context() << "\" time=\"" << tc.duration() << "\"";
         switch(tc.state())
         {
-            case test::TestCase::TestState::ERROR:
+            case test::TestCase::State::ERROR:
                 *this << ">" << LF << XSPACE << SPACE << "<error message=\""
                       << tc.err_msg() << "\"></error>" << LF << XSPACE << "</testcase>";
                 break;
-            case test::TestCase::TestState::FAILED:
+            case test::TestCase::State::FAILED:
                 *this << ">" << LF << XSPACE << SPACE << "<failure message=\""
                       << tc.err_msg() << "\"></failure>" << LF << XSPACE << "</testcase>";
                 break;
-            case test::TestCase::TestState::PASSED:
+            case test::TestCase::State::PASSED:
                 *this << "/>";
                 break;
             default:

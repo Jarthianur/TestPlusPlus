@@ -95,7 +95,7 @@ public:
     /**
      * @brief The test state.
      */
-    enum class TestState : std::uint32_t
+    enum class State : std::int32_t
     {
         /// not yet executed
         NONE,
@@ -109,10 +109,11 @@ public:
 
     /**
      * @brief Execute the test function and store results.
-     * @return the resulting TestState
+     * @note If already executed, this does nothing.
      */
-    TestState execute() noexcept
+    void operator()()
     {
+        if(m_state != State::NONE) return;
         util::Duration dur;
         try
         {
@@ -132,14 +133,13 @@ public:
             erroneous();
         }
         m_duration = dur.get();
-        return m_state;
     }
 
     /**
      * @brief Get the TestState.
      * @return the test state
      */
-    inline TestState state() const
+    inline State state() const
     {
         return m_state;
     }
@@ -186,7 +186,7 @@ private:
      */
     inline void pass()
     {
-        m_state = TestState::PASSED;
+        m_state = State::PASSED;
     }
 
     /**
@@ -195,7 +195,7 @@ private:
      */
     inline void fail(const char* msg)
     {
-        m_state   = TestState::FAILED;
+        m_state   = State::FAILED;
         m_err_msg = msg;
     }
 
@@ -205,7 +205,7 @@ private:
      */
     inline void erroneous(const std::string& error = "")
     {
-        m_state   = TestState::ERROR;
+        m_state   = State::ERROR;
         m_err_msg = error;
     }
 
@@ -216,7 +216,7 @@ private:
     std::string m_context;
 
     /// @brief The test state.
-    TestState m_state = TestState::NONE;
+    State m_state = State::NONE;
 
     /// @brief The duration in milliseconds.
     double m_duration = 0.0;

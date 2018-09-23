@@ -196,7 +196,7 @@ static void _assertException(const test::test_function& func, const char* file, 
         throw AssertionFailure("Wrong exception thrown", file, line);
     }
     throw AssertionFailure(std::string("No exception thrown, expected '")
-                               + util::typeName<T>() + "'",
+                               + util::name_for_type<T>() + "'",
                            file, line);
 }
 
