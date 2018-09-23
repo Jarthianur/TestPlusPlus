@@ -37,40 +37,22 @@ namespace sctf
 {
 namespace rep
 {
-/**
- * @def TD
- * @brief HTML table column start tag
- */
+/// @brief HTML table column start tag
 #define TD "<td>"
 
-/**
- * @def TD_
- * @brief HTML table column end tag
- */
+/// @brief HTML table column end tag
 #define TD_ "</td>"
 
-/**
- * @def TR
- * @brief HTML table row start tag
- */
+/// @brief HTML table row start tag
 #define TR "<tr>"
 
-/**
- * @def TR_
- * @brief HTML table row end tag
- */
+/// @brief HTML table row end tag
 #define TR_ "</tr>"
 
-/**
- * @def TH
- * @brief HTML table head start tag
- */
+/// @brief HTML table head start tag
 #define TH "<th>"
 
-/**
- * @def TH_
- * @brief HTML table head end tag
- */
+/// @brief HTML table head end tag
 #define TH_ "</th>"
 
 /**
@@ -101,15 +83,10 @@ public:
 
 private:
     /**
-     * @brief Implement AbstractReporter#reportTestSuite
+     * @brief Implement AbstractReporter#report_ts
      */
-    void report_ts(TestSuite_shared ts) override
+    void report_ts(const TestSuite_shared ts) override
     {
-        m_abs_tests += ts->statistics().tests();
-        m_abs_fails += ts->statistics().failures();
-        m_abs_errs += ts->statistics().errors();
-        m_abs_time += ts->time();
-
         *this << "<h3>" << ts->name() << "</h3>"
               << "<p>Tests: " << ts->statistics().tests()
               << " Failures: " << ts->statistics().failures()
@@ -124,20 +101,20 @@ private:
     }
 
     /**
-     * @brief Implement AbstractReporter#reportTestCase
+     * @brief Implement AbstractReporter#report_tc
      */
     void report_tc(const test::TestCase& tc) override
     {
         std::string status;
         switch(tc.state())
         {
-            case test::TestCase::TestState::ERROR:
+            case test::TestCase::State::ERROR:
                 status = "error";
                 break;
-            case test::TestCase::TestState::FAILED:
+            case test::TestCase::State::FAILED:
                 status = "failed";
                 break;
-            case test::TestCase::TestState::PASSED:
+            case test::TestCase::State::PASSED:
                 status = "passed";
                 break;
             default:
@@ -149,7 +126,7 @@ private:
     }
 
     /**
-     * @brief Implement AbstractReporter#beginReport
+     * @brief Implement AbstractReporter#begin_report
      */
     void begin_report() override
     {
@@ -162,26 +139,14 @@ private:
     }
 
     /**
-     * @brief Implement AbstractReporter#endReport
+     * @brief Implement AbstractReporter#end_report
      */
     void end_report() override
     {
-        *this << "<footer><h3>Summary</h3><p>Tests: " << m_abs_tests
-              << " Failures: " << m_abs_fails << " Errors: " << m_abs_errs
-              << " Time: " << m_abs_time << "ms</p></footer></body></html>";
+        *this << "<footer><h3>Summary</h3><p>Tests: " << abs_tests()
+              << " Failures: " << abs_fails() << " Errors: " << abs_errs()
+              << " Time: " << abs_time() << "ms</p></footer></body></html>";
     }
-
-    /// @brief The amount of tests.
-    std::size_t m_abs_tests = 0;
-
-    /// @brief The amount of failed tests.
-    std::size_t m_abs_fails = 0;
-
-    /// @brief The amount of erroneous tests.
-    std::size_t m_abs_errs = 0;
-
-    /// @brief The accumulated runtime.
-    double m_abs_time = 0;
 };
 
 }  // namespace rep

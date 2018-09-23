@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_SRC_FRAMEWORK_H_
-#define SCTF_SRC_FRAMEWORK_H_
+#ifndef SCTF_SRC_FRAMEWORK_HPP_
+#define SCTF_SRC_FRAMEWORK_HPP_
 
 #include "comparator/equals.hpp"
 #include "comparator/greaterthan.hpp"
@@ -30,8 +30,8 @@
 #include "reporter/HtmlReporter.hpp"
 #include "reporter/PlainTextReporter.hpp"
 #include "reporter/XmlReporter.hpp"
-#include "testsuite/TestSuite.hpp"
+#include "testsuite/TestSuitesRunner.hpp"
 #include "assert.hpp"
 #include "types.h"
 
-#endif  // SCTF_SRC_FRAMEWORK_H_
+#endif  // SCTF_SRC_FRAMEWORK_HPP_

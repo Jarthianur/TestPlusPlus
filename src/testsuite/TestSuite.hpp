@@ -36,20 +36,25 @@
 #include "TestCase.hpp"
 #include "TestStats.hpp"
 
-#define EXEC_SILENT(F) \
-    try                \
-    {                  \
-        F();           \
-    }                  \
-    catch(...)         \
-    {                  \
+/// @brief Call a functor silently, catching all exceptions and only if it points to a
+/// target.
+#define SCTF_EXEC_SILENT(F) \
+    if(F)                   \
+    {                       \
+        try                 \
+        {                   \
+            F();            \
+        }                   \
+        catch(...)          \
+        {                   \
+        }                   \
     }
 
 namespace sctf
 {
 /**
- * Testsuite class, providing some assertion methods.
- * Non-copyable
+ * @brief Testsuite class for managing sequential testcases.
+ * @note Not-copyable
  */
 class TestSuite : public std::enable_shared_from_this<TestSuite>
 {
@@ -71,95 +76,37 @@ public:
     /**
      * @brief Destructor
      */
-    ~TestSuite() noexcept
+    virtual ~TestSuite() noexcept
     {}
 
     /**
      * @brief Execute all TestCases sequentially.
      */
-    void run() noexcept
+    virtual void run() noexcept
     {
+        if(m_state == State::DONE) return;
         m_stats.m_num_of_tests = m_testcases.size();
-        if(m_setup_func)
-        {
-            EXEC_SILENT(m_setup_func)
-        }
+        SCTF_EXEC_SILENT(m_setup_func)
         for(test::TestCase& tc : m_testcases)
         {
-            if(m_pre_test_func)
+            if(tc.state() != test::TestCase::State::NONE) continue;
+            SCTF_EXEC_SILENT(m_pre_test_func)
+            tc();
+            switch(tc.state())
             {
-                EXEC_SILENT(m_pre_test_func)
-            }
-            switch(tc.execute())
-            {
-                case test::TestCase::TestState::FAILED:
+                case test::TestCase::State::FAILED:
                     ++m_stats.m_num_of_fails;
                     break;
-                case test::TestCase::TestState::ERROR:
+                case test::TestCase::State::ERROR:
                     ++m_stats.m_num_of_errs;
                     break;
                 default:
                     break;
             }
             m_time += tc.duration();
-            if(m_post_test_func)
-            {
-                EXEC_SILENT(m_post_test_func)
-            }
+            SCTF_EXEC_SILENT(m_post_test_func)
         }
-    }
-
-    /**
-     * @brief Execute all TestCases in parallel.
-     */
-    void run_p() noexcept
-    {
-        m_stats.m_num_of_tests = m_testcases.size();
-        if(m_setup_func)
-        {
-            EXEC_SILENT(m_setup_func)
-        }
-#pragma omp parallel
-        {
-            thread_local double tmp        = 0.0;
-            thread_local std::size_t fails = 0;
-            thread_local std::size_t errs  = 0;
-#pragma omp for schedule(dynamic)
-            for(auto tc = m_testcases.begin(); tc < m_testcases.end(); ++tc)
-            {
-                if(m_pre_test_func)
-                {
-                    EXEC_SILENT(m_pre_test_func)
-                }
-                switch(tc->execute())
-                {
-                    case test::TestCase::TestState::FAILED:
-                        ++fails;
-                        break;
-                    case test::TestCase::TestState::ERROR:
-                        ++errs;
-                        break;
-                    default:
-                        break;
-                }
-                tmp += tc->duration();
-                if(m_post_test_func)
-                {
-                    EXEC_SILENT(m_post_test_func)
-                }
-            }
-#pragma omp atomic
-            m_stats.m_num_of_fails += fails;
-#pragma omp atomic
-            m_stats.m_num_of_errs += errs;
-#pragma omp critical
-            {
-                if(m_time < tmp)
-                {
-                    m_time = tmp;
-                }
-            }
-        }
+        m_state = State::DONE;
     }
 
     /**
@@ -173,7 +120,8 @@ public:
     TestSuite_shared test(const std::string& name, test::test_function&& t_func)
     {
         m_testcases.push_back(
-            test::TestCase(name, util::typeName<T>(), std::move(t_func)));
+            test::TestCase(name, util::name_for_type<T>(), std::move(t_func)));
+        m_state = State::PENDING;
         return shared_from_this();
     }
 
@@ -188,6 +136,7 @@ public:
                           test::test_function&& t_func)
     {
         m_testcases.push_back(test::TestCase(name, context, std::move(t_func)));
+        m_state = State::PENDING;
         return shared_from_this();
     }
 
@@ -201,6 +150,7 @@ public:
     TestSuite_shared test(const std::string& name, test::test_function&& t_func)
     {
         m_testcases.push_back(test::TestCase(name, m_context, std::move(t_func)));
+        m_state = State::PENDING;
         return shared_from_this();
     }
 
@@ -285,7 +235,18 @@ public:
         return m_testcases;
     }
 
-private:
+protected:
+    /**
+     * @brief The state of all testcases.
+     */
+    enum class State : std::int32_t
+    {
+        /// Still testcases to execute
+        PENDING,
+        /// All testcases executed
+        DONE
+    };
+
     /**
      * @brief Constructor
      * @param name The name/description
@@ -312,6 +273,9 @@ private:
 
     /// @brief The testcases.
     std::vector<test::TestCase> m_testcases;
+
+    /// @brief The execution state.
+    State m_state = State::PENDING;
 
     /// @brief The optional setup function, executed once before all testcases.
     test::test_function m_setup_func;
