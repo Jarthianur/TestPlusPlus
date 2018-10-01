@@ -71,7 +71,7 @@
  * @param VALUE The actual value
  * @param EXPECT The expected value
  */
-#define assertEquals(VALUE, EXPECT) assert(VALUE, EQUALS, EXPECT)
+#define assertEquals(VALUE, EXPECT) assertT(VALUE, EQUALS, EXPECT, decltype(VALUE))
 
 /**
  * @def assertInInterval(VALUE, LOWER, UPPER)
