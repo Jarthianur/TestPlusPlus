@@ -29,31 +29,51 @@
 
 #include "comparators.hpp"
 
-/**
- * Define an equals comparator.
- */
-COMPARATOR(equals, "to be equals", value == expect)
-
-/**
- * Provide a Comparator shortwrite.
- */
-PROVIDE_COMPARATOR(equals, EQUALS)
-PROVIDE_COMPARATOR(equals, EQ)
-
 namespace sctf
 {
 namespace comp
 {
+/// @brief constraint string
+constexpr const char* equals_comp_str = "to be equals";
+
 /**
- * Specialized equals for type 'double'.
- * Takes care about floating point precision.
+ * @brief Check a value to be equal to an expected.
+ * @note Applies to all non-floating-point types for V.
+ * @tparam V The type of value
+ * @tparam E The type of expect
+ * @param value The value to check
+ * @param expect The expected value
+ * @return true if value is equals expect, else false
  */
-template<typename T,
-         typename std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
-Comparison equals(const T& value, const T& expect)
+template<typename V, typename E = V,
+         typename std::enable_if<not std::is_floating_point<V>::value>::type* = nullptr>
+static Comparison equals(const V& value, const E& expect)
 {
-    return (std::abs(value - expect) <= std::max(std::abs(value), std::abs(expect))
-                                            * std::numeric_limits<T>::epsilon())
+    return (value == expect) ? success
+                             : Comparison(equals_comp_str, util::serialize(value),
+                                          util::serialize(expect));
+}
+
+/**
+ * @brief Check a value to be equal to an expected.
+ * @note Applies to all floating-point types for V.
+ * @tparam V The type of value
+ * @tparam E The type of expect
+ * @param value The value to check
+ * @param expect The expected value
+ * @return true if value is equals expect, else false
+ */
+template<typename V, typename E = V,
+         typename std::enable_if<std::is_floating_point<V>::value>::type* = nullptr>
+Comparison equals(const V& value, const E& expect)
+{
+#ifdef SCTF_CUSTOM_EPSILON
+    static V epsilon = SCTF_CUSTOM_EPSILON;
+#else
+    static V epsilon = std::numeric_limits<V>::epsilon();
+#endif
+    return (std::abs(value - expect)
+            <= std::max(std::abs(value), std::abs(expect)) * epsilon)
                ? success
                : Comparison(equals_comp_str, util::serialize(value),
                             util::serialize(expect));
@@ -61,5 +81,11 @@ Comparison equals(const T& value, const T& expect)
 
 }  // namespace comp
 }  // namespace sctf
+
+/**
+ * Provide a Comparator shortwrite
+ */
+PROVIDE_COMPARATOR(equals, EQUALS)
+PROVIDE_COMPARATOR(equals, EQ)
 
 #endif  // SCTF_SRC_COMPARATOR_EQUALS_HPP_
