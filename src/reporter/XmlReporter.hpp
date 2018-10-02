@@ -55,14 +55,13 @@ public:
      * @brief Constructor
      * @param fname The file to write to
      */
-    explicit XmlReporter(const char* fnam) : AbstractReporter(fnam)
+    explicit XmlReporter(const char* fname) : AbstractReporter(fname)
     {}
 
     /**
      * @brief Destructor
      */
-    ~XmlReporter() noexcept
-    {}
+    ~XmlReporter() noexcept = default;
 
 private:
     /**

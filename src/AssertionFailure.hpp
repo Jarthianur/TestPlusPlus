@@ -28,7 +28,7 @@
 namespace sctf
 {
 /**
- * @brief Represent a failed assertion.
+ * @brief Thrown when an assertion fails.
  */
 class AssertionFailure : public std::exception
 {
@@ -46,8 +46,7 @@ public:
     /**
      * @brief Destructor
      */
-    ~AssertionFailure() noexcept
-    {}
+    ~AssertionFailure() noexcept = default;
 
     /**
      * @brief Get the error message.

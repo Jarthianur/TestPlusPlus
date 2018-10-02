@@ -76,8 +76,7 @@ public:
     /**
      * @brief Destructor
      */
-    virtual ~TestSuite() noexcept
-    {}
+    virtual ~TestSuite() noexcept = default;
 
     /**
      * @brief Execute all TestCases sequentially.

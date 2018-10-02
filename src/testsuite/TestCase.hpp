@@ -28,7 +28,7 @@
 
 #include "../AssertionFailure.hpp"
 #include "../types.h"
-#include "../util/Duration.hpp"
+#include "../util/duration.hpp"
 
 namespace sctf
 {
@@ -73,8 +73,7 @@ public:
     /**
      * @brief Destructor
      */
-    ~TestCase() noexcept
-    {}
+    ~TestCase() noexcept = default;
 
     /**
      * @brief Move-assignment
@@ -114,7 +113,7 @@ public:
     void operator()()
     {
         if(m_state != State::NONE) return;
-        util::Duration dur;
+        util::duration dur;
         try
         {
             m_test_func();

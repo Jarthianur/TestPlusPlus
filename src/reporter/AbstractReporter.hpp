@@ -119,8 +119,7 @@ protected:
     /**
      * @brief Destructor
      */
-    virtual ~AbstractReporter() noexcept
-    {}
+    virtual ~AbstractReporter() noexcept = default;
 
     /**
      * @brief Generate report for a given TestSuite.

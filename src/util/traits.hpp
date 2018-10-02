@@ -87,6 +87,44 @@ public:
     static const bool value = decltype(test<T>(0))::value;
 };
 
+/**
+ * @brief Type trait to check for equality operator compatibility.
+ * @tparam S The left hand type
+ * @tparam T The right hand type
+ */
+template<typename S, typename T>
+class is_equal_comparable
+{
+    template<typename SS, typename TT>
+    static auto test(int)
+        -> decltype(std::declval<SS&>() == std::declval<TT&>(), std::true_type());
+
+    template<typename, typename>
+    static auto test(...) -> std::false_type;
+
+public:
+    static const bool value = decltype(test<S, T>(0))::value;
+};
+
+/**
+ * @brief Type trait to check for unequality operator compatibility.
+ * @tparam S The left hand type
+ * @tparam T The right hand type
+ */
+template<typename S, typename T>
+class is_unequal_comparable
+{
+    template<typename SS, typename TT>
+    static auto test(int)
+        -> decltype(std::declval<SS&>() != std::declval<TT&>(), std::true_type());
+
+    template<typename, typename>
+    static auto test(...) -> std::false_type;
+
+public:
+    static const bool value = decltype(test<S, T>(0))::value;
+};
+
 }  // namespace util
 }  // namespace sctf
 

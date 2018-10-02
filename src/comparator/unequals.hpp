@@ -26,33 +26,79 @@
 #include <cmath>
 #include <limits>
 
+#include "../util/traits.hpp"
 #include "comparators.hpp"
-
-/**
- * Define an unequals comparator.
- */
-COMPARATOR(unequals, "to be unequals", value != expect)
-
-/**
- * Provide a Comparator shortwrite.
- */
-PROVIDE_COMPARATOR(unequals, UNEQUALS)
-PROVIDE_COMPARATOR(unequals, NE)
 
 namespace sctf
 {
 namespace comp
 {
+/// @brief The constraint string for unequals.
+constexpr const char* unequals_comp_str = "to be unequals";
+
 /**
- * Specialized unequals for type 'double'.
- * Takes care about floating point precision.
+ * @brief Check a value to be unequal to an expected.
+ * @note Applies to all non-floating-point types for V, which provide an unequality
+ * operator.
+ * @tparam V The type of value
+ * @tparam E The type of expect
+ * @param value The value to check
+ * @param expect The expected value
+ * @return true if value is unequals expect, else false
  */
-template<typename T,
-         typename std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
-Comparison unequals(const T& value, const T& expect)
+template<typename V, typename E = V,
+         typename std::enable_if<
+             not std::is_floating_point<V>::value
+             and util::is_unequal_comparable<V, E>::value>::type* = nullptr>
+static Comparison unequals(const V& value, const E& expect)
 {
-    return (std::abs(value - expect) <= std::max(std::abs(value), std::abs(expect))
-                                            * std::numeric_limits<T>::epsilon())
+    return value != expect ? success
+                           : Comparison(unequals_comp_str, util::serialize(value),
+                                        util::serialize(expect));
+}
+
+/**
+ * @brief Check a value to be unequal to an expected.
+ * @note Applies to all non-floating-point types for V, which provide an equality, but no
+ * unequality operator.
+ * @tparam V The type of value
+ * @tparam E The type of expect
+ * @param value The value to check
+ * @param expect The expected value
+ * @return true if value is unequals expect, else false
+ */
+template<
+    typename V, typename E = V,
+    typename std::enable_if<not std::is_floating_point<V>::value
+                            and not util::is_unequal_comparable<V, E>::value
+                            and util::is_equal_comparable<V, E>::value>::type* = nullptr>
+static Comparison unequals(const V& value, const E& expect)
+{
+    return value == expect ? Comparison(unequals_comp_str, util::serialize(value),
+                                        util::serialize(expect))
+                           : success;
+}
+
+/**
+ * @brief Check a value to be unequal to an expected.
+ * @note Applies to all floating-point types for V.
+ * @tparam V The type of value
+ * @tparam E The type of expect
+ * @param value The value to check
+ * @param expect The expected value
+ * @return true if value is unequals expect, else false
+ */
+template<typename V, typename E = V,
+         typename std::enable_if<std::is_floating_point<V>::value>::type* = nullptr>
+Comparison unequals(const V& value, const E& expect)
+{
+#ifdef SCTF_CUSTOM_EPSILON
+    static V epsilon = SCTF_CUSTOM_EPSILON;
+#else
+    static V epsilon = std::numeric_limits<V>::epsilon();
+#endif
+    return (std::abs(value - expect)
+            <= std::max(std::abs(value), std::abs(expect)) * epsilon)
                ? Comparison(unequals_comp_str, util::serialize(value),
                             util::serialize(expect))
                : success;
@@ -60,5 +106,11 @@ Comparison unequals(const T& value, const T& expect)
 
 }  // namespace comp
 }  // namespace sctf
+
+/**
+ * Provide a Comparator shortwrite.
+ */
+PROVIDE_COMPARATOR(unequals, UNEQUALS)
+PROVIDE_COMPARATOR(unequals, NE)
 
 #endif  // SCTF_SRC_COMPARATOR_UNEQUALS_HPP_

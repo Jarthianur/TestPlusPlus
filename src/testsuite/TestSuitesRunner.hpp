@@ -46,14 +46,12 @@ public:
     /**
      * @brief Constructor
      */
-    TestSuitesRunner()
-    {}
+    TestSuitesRunner() = default;
 
     /**
      * @brief Destructor
      */
-    ~TestSuitesRunner() noexcept
-    {}
+    ~TestSuitesRunner() noexcept = default;
 
     /**
      * @brief Register a TestSuite.
