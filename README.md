@@ -100,6 +100,8 @@ Of course, when executed in parallel, a test suites total time is the max time o
 
 This framework is header-only. To use it, just inlude the *sctf.hpp* header file.  
 In order to use the parallelization capability compile and link the test code with *'-fopenmp'* flag. As the asserts are wrapped with macros, statements inside assert statements, that have commata itself, must be written in braces.
+As floating-point comparison relies on an, so called, epsilon, we use the machine epsilon by default. But this may lead into false-negative test results, as it could be too accurate. In order to provide a custom epsilon, provide a macro in each compilation unit, which is called `SCTF_CUSTOM_EPSILON` and set it to a satisfying value (like 0.000001).
+A compiler invocation could look like "`g++ -std=c++0x test.cpp -fopenmp -DSCTF_CUSTOM_EPSILON=0.000001`".
 
 ### Example
 

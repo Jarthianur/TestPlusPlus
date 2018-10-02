@@ -23,10 +23,13 @@
 #define SCTF_SRC_UTIL_SERIALIZE_HPP_
 
 #include <cstddef>
+#include <iomanip>
+#include <limits>
 #include <sstream>
 #include <string>
 #include <typeinfo>
 #include <utility>
+
 #include "Interval.hpp"
 #include "traits.hpp"
 
@@ -68,11 +71,28 @@ static const std::string& name_for_type()
  * @return the element as string
  */
 template<typename T, typename std::enable_if<
-                         is_streamable<std::ostringstream, T>::value>::type* = nullptr>
+                         is_streamable<std::ostringstream, T>::value
+                         and not std::is_floating_point<T>::value>::type* = nullptr>
 inline std::string serialize(const T& arg)
 {
     std::ostringstream oss;
     oss << arg;
+    return oss.str();
+}
+
+/**
+ * @brief Serialize streamable types.
+ * @tparam T The type
+ * @param arg The element to serialize
+ * @return the element as string
+ */
+template<typename T,
+         typename std::enable_if<is_streamable<std::ostringstream, T>::value
+                                 and std::is_floating_point<T>::value>::type* = nullptr>
+inline std::string serialize(const T& arg)
+{
+    std::ostringstream oss;
+    oss << std::setprecision(std::numeric_limits<T>::max_digits10) << arg;
     return oss.str();
 }
 
