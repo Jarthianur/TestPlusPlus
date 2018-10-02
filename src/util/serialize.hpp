@@ -167,6 +167,17 @@ inline std::string serialize(const interval<T>& arg)
     return std::string("[") + serialize(arg.lower) + ", " + serialize(arg.upper) + "]";
 }
 
+/**
+ * @brief Specialized serialize for bool.
+ * @param arg The bool to serialize
+ * @return the bool as string
+ */
+template<>
+inline std::string serialize(const bool& arg)
+{
+    return arg ? "true" : "false";
+}
+
 }  // namespace util
 }  // namespace sctf
 
