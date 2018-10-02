@@ -27,13 +27,14 @@
 #include <limits>
 #include <type_traits>
 
+#include "../util/traits.hpp"
 #include "comparators.hpp"
 
 namespace sctf
 {
 namespace comp
 {
-/// @brief constraint string
+/// @brief The constraint string for equals.
 constexpr const char* equals_comp_str = "to be equals";
 
 /**
@@ -45,13 +46,36 @@ constexpr const char* equals_comp_str = "to be equals";
  * @param expect The expected value
  * @return true if value is equals expect, else false
  */
-template<typename V, typename E = V,
-         typename std::enable_if<not std::is_floating_point<V>::value>::type* = nullptr>
+template<
+    typename V, typename E = V,
+    typename std::enable_if<not std::is_floating_point<V>::value
+                            and util::is_equal_comparable<V, E>::value>::type* = nullptr>
 static Comparison equals(const V& value, const E& expect)
 {
-    return (value == expect) ? success
-                             : Comparison(equals_comp_str, util::serialize(value),
-                                          util::serialize(expect));
+    return value == expect ? success
+                           : Comparison(equals_comp_str, util::serialize(value),
+                                        util::serialize(expect));
+}
+
+/**
+ * @brief Check a value to be equal to an expected.
+ * @note Applies to all non-floating-point types for V.
+ * @tparam V The type of value
+ * @tparam E The type of expect
+ * @param value The value to check
+ * @param expect The expected value
+ * @return true if value is equals expect, else false
+ */
+template<typename V, typename E = V,
+         typename std::enable_if<
+             not std::is_floating_point<V>::value
+             and not util::is_equal_comparable<V, E>::value
+             and util::is_unequal_comparable<V, E>::value>::type* = nullptr>
+static Comparison equals(const V& value, const E& expect)
+{
+    return value != expect ? Comparison(equals_comp_str, util::serialize(value),
+                                        util::serialize(expect))
+                           : success;
 }
 
 /**
