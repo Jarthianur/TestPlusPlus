@@ -88,9 +88,9 @@ public:
 };
 
 /**
- * @brief Type trait to check for streaming operator compatibility.
- * @tparam S The stream type
- * @tparam T The type to check for
+ * @brief Type trait to check for equality operator compatibility.
+ * @tparam S The left hand type
+ * @tparam T The right hand type
  */
 template<typename S, typename T>
 class is_equal_comparable
@@ -107,9 +107,9 @@ public:
 };
 
 /**
- * @brief Type trait to check for streaming operator compatibility.
- * @tparam S The stream type
- * @tparam T The type to check for
+ * @brief Type trait to check for unequality operator compatibility.
+ * @tparam S The left hand type
+ * @tparam T The right hand type
  */
 template<typename S, typename T>
 class is_unequal_comparable

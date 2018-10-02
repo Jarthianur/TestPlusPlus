@@ -30,7 +30,7 @@
 #include <typeinfo>
 #include <utility>
 
-#include "Interval.hpp"
+#include "interval.hpp"
 #include "traits.hpp"
 
 namespace sctf
@@ -81,7 +81,7 @@ inline std::string serialize(const T& arg)
 }
 
 /**
- * @brief Serialize streamable types.
+ * @brief Serialize floating-point types.
  * @tparam T The type
  * @param arg The element to serialize
  * @return the element as string
@@ -98,6 +98,9 @@ inline std::string serialize(const T& arg)
 
 /**
  * @brief Serialize not streamable types.
+ * @tparam T The type
+ * @param unused
+ * @return the element as string
  */
 template<typename T, typename std::enable_if<not is_streamable<
                          std::ostringstream, T>::value>::type* = nullptr>
@@ -108,6 +111,8 @@ inline std::string serialize(const T&)
 
 /**
  * @brief Specialized serialize for strings (dummy).
+ * @param arg The string to serialize
+ * @return the string
  */
 template<>
 inline std::string serialize(const std::string& arg)
@@ -117,6 +122,8 @@ inline std::string serialize(const std::string& arg)
 
 /**
  * @brief Specialized serialize for C-strings.
+ * @param arg The C-string to serialize
+ * @return the C-string as string
  */
 template<>
 inline std::string serialize(const char* const& arg)
@@ -126,6 +133,8 @@ inline std::string serialize(const char* const& arg)
 
 /**
  * @brief Specialized serialize for nullptr.
+ * @param unused
+ * @return "0"
  */
 template<>
 inline std::string serialize(const std::nullptr_t&)
@@ -135,6 +144,9 @@ inline std::string serialize(const std::nullptr_t&)
 
 /**
  * @brief Specialized serialize for pairs.
+ * @tparam T The type inside pair
+ * @param arg The pair to serialize
+ * @return the pair as string
  */
 template<typename T>
 inline std::string serialize(const std::pair<T, T>& arg)
@@ -144,10 +156,13 @@ inline std::string serialize(const std::pair<T, T>& arg)
 }
 
 /**
- * @brief Specialized serialize for Intervals.
+ * @brief Specialized serialize for intervals.
+ * @tparam T The type inside interval
+ * @param arg The interval to serialize
+ * @return the interval as string
  */
 template<typename T>
-inline std::string serialize(const Interval<T>& arg)
+inline std::string serialize(const interval<T>& arg)
 {
     return std::string("[") + serialize(arg.lower) + ", " + serialize(arg.upper) + "]";
 }

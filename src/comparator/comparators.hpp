@@ -23,7 +23,6 @@
 #define SCTF_SRC_COMPARATOR_COMPARATORS_HPP_
 
 #include <memory>
-#include <string>
 
 #include "../util/serialize.hpp"
 
@@ -124,7 +123,8 @@ private:
 /**
  * @typedef Comparator
  * @brief Function pointer to function comparing two elements
- * @tparam T The type of elements
+ * @tparam V The left hand type
+ * @tparam E The right hand type
  */
 template<typename V, typename E = V>
 using Comparator = Comparison (*)(const V&, const E&);

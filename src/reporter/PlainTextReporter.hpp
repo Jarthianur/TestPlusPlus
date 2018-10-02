@@ -72,8 +72,7 @@ public:
     /**
      * @brief Destructor
      */
-    ~PlainTextReporter() noexcept
-    {}
+    ~PlainTextReporter() noexcept = default;
 
 private:
     /**

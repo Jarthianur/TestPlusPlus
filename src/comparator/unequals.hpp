@@ -38,7 +38,8 @@ constexpr const char* unequals_comp_str = "to be unequals";
 
 /**
  * @brief Check a value to be unequal to an expected.
- * @note Applies to all non-floating-point types for V.
+ * @note Applies to all non-floating-point types for V, which provide an unequality
+ * operator.
  * @tparam V The type of value
  * @tparam E The type of expect
  * @param value The value to check
@@ -58,7 +59,8 @@ static Comparison unequals(const V& value, const E& expect)
 
 /**
  * @brief Check a value to be unequal to an expected.
- * @note Applies to all non-floating-point types for V.
+ * @note Applies to all non-floating-point types for V, which provide an equality, but no
+ * unequality operator.
  * @tparam V The type of value
  * @tparam E The type of expect
  * @param value The value to check

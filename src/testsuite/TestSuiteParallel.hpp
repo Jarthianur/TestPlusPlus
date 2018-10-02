@@ -52,8 +52,7 @@ public:
     /**
      * @brief Destructor
      */
-    ~TestSuiteParallel() noexcept
-    {}
+    ~TestSuiteParallel() noexcept = default;
 
     /**
      * @brief Execute all TestCases in parallel.

@@ -40,14 +40,12 @@ public:
     /**
      * @brief Constructor
      */
-    TestStats()
-    {}
+    TestStats() = default;
 
     /**
      * @brief Destructor
      */
-    ~TestStats() noexcept
-    {}
+    ~TestStats() noexcept = default;
 
     /**
      * @brief Get the number of all tests.

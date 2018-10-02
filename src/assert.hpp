@@ -22,14 +22,12 @@
 #ifndef SCTF_SRC_ASSERT_HPP_
 #define SCTF_SRC_ASSERT_HPP_
 
-#include <string>
-
 #include "comparator/comparators.hpp"
 #include "comparator/equals.hpp"
 #include "comparator/inrange.hpp"
 #include "comparator/unequals.hpp"
-#include "util/Duration.hpp"
-#include "util/Interval.hpp"
+#include "util/duration.hpp"
+#include "util/interval.hpp"
 #include "util/serialize.hpp"
 #include "AssertionFailure.hpp"
 #include "types.h"
@@ -82,7 +80,7 @@
  * @param UPPER The upper bound
  */
 #define assertInInterval(VALUE, LOWER, UPPER) \
-    assert(VALUE, IN_RANGE, (sctf::util::Interval<decltype(LOWER)>{LOWER, UPPER}))
+    assert(VALUE, IN_RANGE, (sctf::util::interval<decltype(LOWER)>{LOWER, UPPER}))
 
 /**
  * @def assertTrue(VALUE)
@@ -148,8 +146,9 @@
 namespace sctf
 {
 /**
- * @brief Assert a value to be compared successfully to expected value.
- * @tparam T The type of value and expected
+ * @brief Assert a value to be compared successfully to an expected value.
+ * @tparam V The type of value
+ * * @tparam V The type of expect
  * @param value The actual value
  * @param expect The expected value
  * @param comp The Comparator
@@ -236,7 +235,7 @@ inline static void _assertPerformance(const test::test_function& func, double ma
 {
     try
     {
-        util::Duration dur;
+        util::duration dur;
         func();
         double dur_ms = dur.get();
         if(dur_ms > max_millis)
