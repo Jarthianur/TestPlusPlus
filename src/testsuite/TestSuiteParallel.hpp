@@ -22,7 +22,9 @@
 #ifndef SCTF_SRC_TESTSUITE_TESTSUITEPARALLEL_HPP_
 #define SCTF_SRC_TESTSUITE_TESTSUITEPARALLEL_HPP_
 
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 
 #include "TestSuite.hpp"
 
