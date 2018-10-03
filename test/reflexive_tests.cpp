@@ -18,21 +18,12 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  }
  */
+
 #include <stdexcept>
-#include "basic_tests.h"
+
+#include "reflexive_tests.h"
 
 using namespace sctf;
 
-void test()
-{
-    auto rep = createPlainTextReporter();
-    test::TestSuitesRunner runner;
-    auto ts = describeParallel("ts", runner);
-    ts->test("1", [] { assertTrue(true); })->test("2", [] {
-        assertException(throw 1, std::logic_error);
-    });
-    runner.run();
-    rep->report(runner);
-    ts->test("3", [] { assertFalse(false); });
-    rep->report(runner);
-}
+void reflexive_tests(test::TestSuitesRunner& runner)
+{}

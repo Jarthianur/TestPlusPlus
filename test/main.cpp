@@ -29,7 +29,14 @@ int main(int, char**)
 {
     test::TestSuitesRunner runner;
     auto rep = createPlainTextReporter(true);
-
-    rep->report(runner);
-    return 0;
+    try
+    {
+        basic_tests();
+    }
+    catch(...)
+    {
+        return 1;
+    }
+    reflexive_tests(runner);
+    return rep->report(runner) > 0 ? 1 : 0;
 }

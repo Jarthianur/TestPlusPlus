@@ -18,3 +18,12 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  }
  */
+
+#ifndef TEST_REFLEXIVE_TESTS_H_
+#define TEST_REFLEXIVE_TESTS_H_
+
+#include "../sctf.hpp"
+
+void reflexive_tests(sctf::test::TestSuitesRunner& runner);
+
+#endif  // TEST_REFLEXIVE_TESTS_H_

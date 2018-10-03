@@ -19,11 +19,11 @@
  }
  */
 
-#ifndef TEST_H
-#define TEST_H
+#ifndef TEST_BASIC_TESTS_H_
+#define TEST_BASIC_TESTS_H_
 
 #include "../sctf.hpp"
 
-/*extern*/ void test();
+void basic_tests();
 
-#endif // TEST_H
+#endif  // TEST_BASIC_TESTS_H_
