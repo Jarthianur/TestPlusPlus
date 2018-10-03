@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_SRC_FRAMEWORK_HPP_
-#define SCTF_SRC_FRAMEWORK_HPP_
+#ifndef SCTF_SCTF_HPP_
+#define SCTF_SCTF_HPP_
 
 #include "src/comparator/equals.hpp"
 #include "src/comparator/greaterthan.hpp"
@@ -34,4 +34,4 @@
 #include "src/assert.hpp"
 #include "src/types.h"
 
-#endif  // SCTF_SRC_FRAMEWORK_HPP_
+#endif  // SCTF_SCTF_HPP_
