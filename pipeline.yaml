@@ -1,0 +1,45 @@
+matrix(parallel):
+  - name: C++11
+    env: 
+      CPP_STD: c++11
+    tags: 
+      - c++11
+  - name: C++14
+    env: 
+      CPP_STD: c++14
+    tags: 
+      - c++14
+  - name: C++17
+    env: 
+      CPP_STD: c++17
+    tags: 
+      - c++17
+
+pipeline:
+  - stage(Build):
+    - tasks(ordered):
+      - docker(container):
+          image: debian:sid-slim
+          mount: true
+          script: |
+            set -e
+            case $1 in
+              INIT)
+                apt update
+                apt -y install git g++ g++-multilib tar
+                $0 RUN
+              ;;
+              RUN)
+                mkdir /build
+                pushd /mnt/host/
+                tar cvzf /build/testing.tar.gz $(git ls-files)
+                popd
+                pushd /build
+                tar xzf testing.tar.gz
+                rm -rf testing.tar.gz
+                cd test
+                g++ -o testing -g3 -O0 --coverage -std={{ env.CPP_STD }} -fopenmp main.cpp basic_tests.cpp reflexive_tests.cpp
+                ./testing
+                popd
+              ;;
+            esac
