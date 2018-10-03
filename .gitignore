@@ -2,3 +2,5 @@
 .project
 .settings/
 simple-cpp-test-framework.*
+run.sh
+pipeline.yaml
