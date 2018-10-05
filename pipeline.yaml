@@ -34,7 +34,7 @@ pipeline:
                 pushd $TRAVIS_BUILD_DIR
                 tar xzf testing.tar.gz
                 rm -rf testing.tar.gz
-                mkdir reports
+                mkdir -p reports/{{ env.CPP_STD }}
                 cp -r test test_p
                 popd
                 $0 RUN
@@ -55,11 +55,10 @@ pipeline:
                 ./test_par
                 lcov --directory . --capture --output-file par.info
                 popd
-                lcov -a test/seq.info -a test_p/par.info -o reports/all.info
-                lcov --remove reports/all.info "$TRAVIS_BUILD_DIR/test/*" "$TRAVIS_BUILD_DIR/test_p/*" '/usr/*' -o reports/cov.info
-                genhtml reports/cov.info -o reports/coverage/
+                lcov -a test/seq.info -a test_p/par.info -o all.info
+                lcov --remove all.info "$TRAVIS_BUILD_DIR/test/*" "$TRAVIS_BUILD_DIR/test_p/*" '/usr/*' -o reports/{{ env.CPP_STD }}/cov.info
                 popd
-                cp -r $TRAVIS_BUILD_DIR/reports /mnt/host/
-                chown -R ${UID}:${GID} /mnt/host/reports
+                cp -r $TRAVIS_BUILD_DIR/reports/{{ env.CPP_STD }} /mnt/host/reports/
+                chown -R ${UID}:${GID} /mnt/host/reports/{{ env.CPP_STD }}
               ;;
             esac
