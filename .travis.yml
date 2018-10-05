@@ -15,9 +15,11 @@ before_install:
 
 install:
     - gem install coveralls-lcov
+    - pip install --upgrade pip
+    - pip install spline
 
 script:
-    - ./run.sh
+    - spline --strict
 
 after_success:
     - coveralls-lcov --repo-token ${COVERALLS_TOKEN} reports/cov.info
