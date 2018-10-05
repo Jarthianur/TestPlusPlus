@@ -5,3 +5,4 @@ test/
 simple-cpp-test-framework.*
 reports/
 pipeline.yaml
+.travis.yml
