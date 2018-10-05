@@ -1,0 +1,30 @@
+sudo: required
+
+services:
+    - docker
+
+language: minimal
+
+addons:
+  apt:
+    packages:
+      - python-pip
+
+before_install:
+    - docker pull debian:sid-slim
+
+install:
+    - gem install coveralls-lcov
+
+script:
+    - run.sh
+
+after_success:
+    - coveralls-lcov --repo-token ${COVERALLS_TOKEN} reports/cov.info
+
+notifications:
+    email:
+        recipients:
+           - jarthianur.github@gmail.com
+        on_success: change
+on_failure: change
