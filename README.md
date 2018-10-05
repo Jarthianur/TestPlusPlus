@@ -1,5 +1,7 @@
 # simple-cpp-test-framework
 
+[![Coverage Status](https://coveralls.io/repos/github/Jarthianur/simple-cpp-test-framework/badge.svg?branch=testing)](https://coveralls.io/github/Jarthianur/simple-cpp-test-framework?branch=testing)
+
 A simple C++11, plain STL, header-only testing framework.
 Featuring great **extendability** and an **easy, but powerful**, **less typing** optimized API.
 **Test reports** are generated in a specified format, according to the chosen reporter.
