@@ -12,19 +12,13 @@ addons:
 
 before_install:
     - docker pull debian:sid-slim
-    - mkdir reports
-    - export COVERALLS_PARALLEL=true
 
 install:
-    - gem install coveralls-lcov
     - sudo pip install --upgrade pip
     - sudo pip install spline
 
 script:
     - spline
-
-after_success:
-    - for d in reports/*; do coveralls-lcov --service-job-id=$TRAVIS_JOB_ID --repo-token ${COVERALLS_TOKEN} $d/cov.info; done
 
 notifications:
     email:

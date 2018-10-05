@@ -26,39 +26,32 @@ pipeline:
               INIT)
                 export LC_ALL=C
                 apt-get update
-                apt-get -y install git g++ g++-multilib tar wget make perl lcov
-                mkdir -p $TRAVIS_BUILD_DIR
+                apt-get -y install git g++ g++-multilib tar wget make perl
+                mkdir /build
                 pushd /mnt/host/
-                tar cvzf $TRAVIS_BUILD_DIR/testing.tar.gz $(git ls-files)
+                tar cvzf /build/testing.tar.gz $(git ls-files)
                 popd
-                pushd $TRAVIS_BUILD_DIR
+                pushd /build
                 tar xzf testing.tar.gz
                 rm -rf testing.tar.gz
-                mkdir -p reports/{{ env.CPP_STD }}
                 cp -r test test_p
                 popd
                 $0 RUN
               ;;
               RUN)
-                pushd $TRAVIS_BUILD_DIR
+                pushd /build
                 echo "BUILD SEQUENTIAL TEST BINARIES"
                 pushd test
-                g++ -o test_seq -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
+                g++ -o test_seq -g3 -O0 -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
                 echo "RUN SEQUENTIAL TESTS"
                 ./test_seq
-                lcov --directory . --capture --output-file seq.info
                 popd
                 pushd test_p/
                 echo "BUILD PARALLEL TEST BINARIES"
-                g++ -o test_par -fopenmp -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
+                g++ -o test_par -fopenmp -g3 -O0 -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
                 echo "RUN PARALLEL TESTS"
                 ./test_par
-                lcov --directory . --capture --output-file par.info
                 popd
-                lcov -a test/seq.info -a test_p/par.info -o all.info
-                lcov --remove all.info "$TRAVIS_BUILD_DIR/test/*" "$TRAVIS_BUILD_DIR/test_p/*" '/usr/*' -o reports/{{ env.CPP_STD }}/cov.info
                 popd
-                cp -r $TRAVIS_BUILD_DIR/reports/{{ env.CPP_STD }} /mnt/host/reports/
-                chown -R ${UID}:${GID} /mnt/host/reports/{{ env.CPP_STD }}
               ;;
             esac
