@@ -17,7 +17,7 @@ install:
     - gem install coveralls-lcov
 
 script:
-    - run.sh
+    - ./run.sh
 
 after_success:
     - coveralls-lcov --repo-token ${COVERALLS_TOKEN} reports/cov.info
