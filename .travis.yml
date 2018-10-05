@@ -15,8 +15,8 @@ before_install:
 
 install:
     - gem install coveralls-lcov
-    - pip install --upgrade pip
-    - pip install spline
+    - sudo pip install --upgrade pip
+    - sudo pip install spline
 
 script:
     - spline --strict
