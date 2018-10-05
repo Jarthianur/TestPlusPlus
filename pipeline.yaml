@@ -24,7 +24,7 @@ pipeline:
           script: |
             case $1 in
               INIT)
-                export LC_ALL=C
+                export LC_ALL=${LC_ALL:-C}
                 apt-get update
                 apt-get -y install git g++ g++-multilib tar wget make perl lcov
                 mkdir -p $TRAVIS_BUILD_DIR

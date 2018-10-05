@@ -24,11 +24,11 @@ script:
     - spline
 
 after_success:
-    - for d in reports/*; do coveralls-lcov -s travisci --service-job-id=$TRAVIS_JOB_ID --repo-token ${COVERALLS_TOKEN} $d/cov.info; done
+    - for d in reports/*; do coveralls-lcov --service-job-id=$TRAVIS_JOB_ID --repo-token ${COVERALLS_TOKEN} $d/cov.info; done
 
 notifications:
     email:
         recipients:
            - jarthianur.github@gmail.com
         on_success: change
-on_failure: change
+        on_failure: change
