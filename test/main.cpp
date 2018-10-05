@@ -28,7 +28,7 @@ using namespace sctf;
 int main(int, char**)
 {
     test::TestSuitesRunner runner;
-    auto rep = createPlainTextReporter(true);
+    auto rep = createPlainTextReporter(false);
     try
     {
         basic_tests();

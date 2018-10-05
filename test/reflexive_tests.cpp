@@ -26,4 +26,8 @@
 using namespace sctf;
 
 void reflexive_tests(test::TestSuitesRunner& runner)
-{}
+{
+    describe("test", runner)->test("1",[]{
+        assertEquals(1, 1);
+    });
+}
