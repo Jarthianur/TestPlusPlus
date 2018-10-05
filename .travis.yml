@@ -19,7 +19,7 @@ install:
     - sudo pip install spline
 
 script:
-    - spline --strict
+    - spline
 
 after_success:
     - coveralls-lcov --repo-token ${COVERALLS_TOKEN} reports/cov.info
