@@ -24,15 +24,14 @@ pipeline:
           script: |
             case $1 in
               INIT)
-                echo $TRAVIS_BUILD_DIR
                 export LC_ALL=C
                 apt-get update
                 apt-get -y install git g++ g++-multilib tar wget make perl lcov
-                mkdir /build
+                mkdir -p $TRAVIS_BUILD_DIR
                 pushd /mnt/host/
-                tar cvzf /build/testing.tar.gz $(git ls-files)
+                tar cvzf $TRAVIS_BUILD_DIR/testing.tar.gz $(git ls-files)
                 popd
-                pushd /build
+                pushd $TRAVIS_BUILD_DIR
                 tar xzf testing.tar.gz
                 rm -rf testing.tar.gz
                 mkdir reports
@@ -41,7 +40,7 @@ pipeline:
                 $0 RUN
               ;;
               RUN)
-                pushd /build
+                pushd $TRAVIS_BUILD_DIR
                 echo "BUILD SEQUENTIAL TEST BINARIES"
                 pushd test
                 g++ -o test_seq -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
@@ -57,10 +56,10 @@ pipeline:
                 lcov --directory . --capture --output-file par.info
                 popd
                 lcov -a test/seq.info -a test_p/par.info -o reports/all.info
-                lcov --remove reports/all.info '/build/test/*' '/build/test_p/*' '/usr/*' -o reports/cov.info
+                lcov --remove reports/all.info "$TRAVIS_BUILD_DIR/test/*" "$TRAVIS_BUILD_DIR/test_p/*" '/usr/*' -o reports/cov.info
                 genhtml reports/cov.info -o reports/coverage/
                 popd
-                cp -r /build/reports /mnt/host/
+                cp -r $TRAVIS_BUILD_DIR/reports /mnt/host/
                 chown -R ${UID}:${GID} /mnt/host/reports
               ;;
             esac
