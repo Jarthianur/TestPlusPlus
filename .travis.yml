@@ -24,8 +24,7 @@ script:
     - spline
 
 after_success:
-    - coveralls-lcov --help
-    - for d in reports/*; do coveralls-lcov --repo-token ${COVERALLS_TOKEN} reports/$d/cov.info; done
+    - for d in reports/*; do coveralls-lcov -s travisci --service-job-id=$TRAVIS_JOB_ID --repo-token ${COVERALLS_TOKEN} $d/cov.info; done
 
 notifications:
     email:
