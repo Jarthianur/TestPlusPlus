@@ -59,6 +59,7 @@ pipeline:
                 lcov --remove all.info "$TRAVIS_BUILD_DIR/test/*" "$TRAVIS_BUILD_DIR/test_p/*" '/usr/*' -o reports/{{ env.CPP_STD }}/cov.info
                 popd
                 cp -r $TRAVIS_BUILD_DIR/reports/{{ env.CPP_STD }} /mnt/host/reports/
-                chown -R ${UID}:${GID} /mnt/host/reports/{{ env.CPP_STD }}
+                lcov -a /mnt/host/reports/*/cov.info -o /mnt/host/reports/cov.info
+                chown -R ${UID}:${GID} /mnt/host/reports
               ;;
             esac

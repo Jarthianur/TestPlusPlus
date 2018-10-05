@@ -13,7 +13,6 @@ addons:
 before_install:
     - docker pull debian:sid-slim
     - mkdir reports
-    - export COVERALLS_PARALLEL=true
 
 install:
     - gem install coveralls-lcov
@@ -24,7 +23,7 @@ script:
     - spline
 
 after_success:
-    - coveralls-lcov --repo-token ${COVERALLS_TOKEN} reports/*/cov.info
+    - coveralls-lcov --repo-token ${COVERALLS_TOKEN} reports/cov.info
 
 notifications:
     email:
