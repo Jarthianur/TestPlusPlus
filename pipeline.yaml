@@ -16,20 +16,17 @@ matrix(parallel):
       - c++17
 
 pipeline:
-  - stage(Build):
+  - stage(Testing):
     - tasks(ordered):
       - docker(container):
           image: debian:sid-slim
           mount: true
           script: |
-            set -e
             case $1 in
               INIT)
-                apt update
-                apt -y install git g++ g++-multilib tar
-                $0 RUN
-              ;;
-              RUN)
+                apt-get update
+                apt-get -y install git g++ g++-multilib tar wget make perl lcov
+                export LC_ALL=C
                 mkdir /build
                 pushd /mnt/host/
                 tar cvzf /build/testing.tar.gz $(git ls-files)
@@ -37,9 +34,32 @@ pipeline:
                 pushd /build
                 tar xzf testing.tar.gz
                 rm -rf testing.tar.gz
-                cd test
-                g++ -o testing -g3 -O0 --coverage -std={{ env.CPP_STD }} -fopenmp main.cpp basic_tests.cpp reflexive_tests.cpp
-                ./testing
+                mkdir reports
+                cp -r test test_p
                 popd
+                $0 RUN
+              ;;
+              RUN)
+                pushd /build
+                echo "BUILD SEQUENTIAL TEST BINARIES"
+                pushd test
+                g++ -o test_seq -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
+                echo "RUN SEQUENTIAL TESTS"
+                ./test_seq
+                lcov --directory . --capture --output-file seq.info
+                popd
+                pushd test_p/
+                echo "BUILD PARALLEL TEST BINARIES"
+                g++ -o test_par -fopenmp -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
+                echo "RUN PARALLEL TESTS"
+                ./test_par
+                lcov --directory . --capture --output-file par.info
+                popd
+                lcov -a test/seq.info -a test_p/par.info -o reports/all.info
+                lcov --remove reports/all.info '/build/test/*' '/build/test_p/*' '/usr/*' -o reports/cov.info
+                genhtml reports/cov.info -o reports/coverage/
+                popd
+                cp -r /build/reports /mnt/host/
+                chown -R ${UID}:${GID} /mnt/host/reports
               ;;
             esac
