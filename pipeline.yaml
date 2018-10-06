@@ -27,7 +27,7 @@ pipeline:
                 export LC_ALL=C
                 export BUILD_DIR=${TRAVIS_BUILD_DIR:-/build}
                 apt-get update
-                apt-get -y install git g++ g++-multilib tar wget make perl lcov
+                apt-get -y install git g++ g++-multilib tar wget make perl lcov cppcheck clang-format-5.0
                 mkdir -p $BUILD_DIR
                 pushd /mnt/host/
                 tar cvzf $BUILD_DIR/testing.tar.gz $(git ls-files)
