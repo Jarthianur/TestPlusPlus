@@ -217,7 +217,7 @@ The *gh-pages* branch is used for the GitHub page and contains examples, documen
 
 ### Workflow
 
-Whenever a change is made to the code, these change must be made against the *testing* branch. If and only if those changes pass through the CI run, a merge to *testing* and *release-candidate* is allowed. When merging to *master* or *release-candidate* it must be assured that only changes to the actual framework are applied, neither tests, nor CI files, nor docs should appear there.
+Whenever a change is made to the code, these change must be made against the *testing* branch. If and only if those changes pass through the CI run, a merge to *testing* and *release-candidate* is allowed. When merging to *master* or *release-candidate* it must be assured that only changes to the actual framework are applied, neither tests, nor CI files, nor docs - with some exceptions - should appear there.
 Altough this looks kinda complicated, the basic idea behind it is to sepparate contents.
 So *testing* is basically a copy of *release-candidate*, but contains tests and CI setup. Hence they should always correlate to each other.
 
