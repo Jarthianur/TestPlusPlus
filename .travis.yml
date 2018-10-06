@@ -12,6 +12,7 @@ addons:
 
 before_install:
     - docker pull debian:sid-slim
+    - mkdir reports
 
 install:
     - sudo pip install --upgrade pip
@@ -19,6 +20,9 @@ install:
 
 script:
     - spline
+
+after_success:
+    - bash <(curl -s https://codecov.io/bash)
 
 notifications:
     email:
