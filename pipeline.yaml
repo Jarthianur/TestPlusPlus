@@ -58,6 +58,7 @@ pipeline:
                 popd
                 lcov -a test/seq.info -a test_p/par.info -o all.info
                 lcov --remove all.info "$BUILD_DIR/test/*" "$BUILD_DIR/test_p/*" '/usr/*' -o reports/{{ env.CPP_STD }}/lcov.info
+                lcov --list reports/{{ env.CPP_STD }}/lcov.info
                 popd
                 cp -r $BUILD_DIR/reports/{{ env.CPP_STD }} /mnt/host/reports/
                 chown -R ${UID}:${GID} /mnt/host/reports/{{ env.CPP_STD }}
