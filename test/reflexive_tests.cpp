@@ -157,7 +157,9 @@ void reflexive_tests(test::TestSuitesRunner& runner)
             // successful
             assertNoExcept(assertPerformance(return, 100));
             // failing
-            assertNoExcept(assertPerformance(
-                std::this_thread::sleep_for(std::chrono::milliseconds(100)), 10));
+            assertException(
+                assertPerformance(
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100)), 10),
+                AssertionFailure);
         });
 }

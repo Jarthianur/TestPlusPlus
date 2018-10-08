@@ -2,8 +2,6 @@
 
 [![codecov](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework/branch/testing/graph/badge.svg)](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework)
 
-[![BCH compliance](https://bettercodehub.com/edge/badge/Jarthianur/simple-cpp-test-framework?branch=testing)](https://bettercodehub.com/)
-
 A simple C++11, plain STL, header-only testing framework.
 Featuring great **extendability** and an **easy, but powerful**, **less typing** optimized API.
 **Test reports** are generated in a specified format, according to the chosen reporter.
