@@ -47,6 +47,7 @@ pipeline:
                 g++ -o test_seq -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
                 echo "RUN SEQUENTIAL TESTS"
                 ./test_seq
+                if [ $? -ne 0 ]; then exit 1; fi
                 lcov --directory . --capture --output-file seq.info
                 popd
                 pushd test_p/
@@ -54,6 +55,7 @@ pipeline:
                 g++ -o test_par -fopenmp -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
                 echo "RUN PARALLEL TESTS"
                 ./test_par
+                if [ $? -ne 0 ]; then exit 1; fi
                 lcov --directory . --capture --output-file par.info
                 popd
                 lcov -a test/seq.info -a test_p/par.info -o all.info
