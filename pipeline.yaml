@@ -50,6 +50,7 @@ pipeline:
                 ./test_seq
                 if [ $? -ne 0 ]; then exit 1; fi
                 lcov --directory . --capture --output-file seq.info
+                lcov --list seq.info
                 popd
                 pushd test_p/
                 echo "BUILD PARALLEL TEST BINARIES"
