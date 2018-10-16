@@ -41,8 +41,7 @@ struct interval final
      * @param l The lower bounds
      * @param u The upper bounds
      */
-    interval(const T& l, const T& u) : lower(l), upper(u)
-    {}
+    interval(const T& l, const T& u) : lower(l), upper(u) {}
 
     /// @brief The lower bounds
     const T lower;

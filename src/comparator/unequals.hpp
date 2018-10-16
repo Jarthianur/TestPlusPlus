@@ -27,6 +27,7 @@
 #include <limits>
 
 #include "../util/traits.hpp"
+
 #include "comparators.hpp"
 
 namespace sctf
@@ -47,14 +48,13 @@ constexpr const char* unequals_comp_str = "to be unequals";
  * @return true if value is unequals expect, else false
  */
 template<typename V, typename E = V,
-         typename std::enable_if<
-             not std::is_floating_point<V>::value
-             and util::is_unequal_comparable<V, E>::value>::type* = nullptr>
+         typename std::enable_if<not std::is_floating_point<V>::value and
+                                 util::is_unequal_comparable<V, E>::value>::type* = nullptr>
 static Comparison unequals(const V& value, const E& expect)
 {
-    return value != expect ? success
-                           : Comparison(unequals_comp_str, util::serialize(value),
-                                        util::serialize(expect));
+    return value != expect ?
+               success :
+               Comparison(unequals_comp_str, util::serialize(value), util::serialize(expect));
 }
 
 /**
@@ -67,16 +67,15 @@ static Comparison unequals(const V& value, const E& expect)
  * @param expect The expected value
  * @return true if value is unequals expect, else false
  */
-template<
-    typename V, typename E = V,
-    typename std::enable_if<not std::is_floating_point<V>::value
-                            and not util::is_unequal_comparable<V, E>::value
-                            and util::is_equal_comparable<V, E>::value>::type* = nullptr>
+template<typename V, typename E = V,
+         typename std::enable_if<not std::is_floating_point<V>::value and
+                                 not util::is_unequal_comparable<V, E>::value and
+                                 util::is_equal_comparable<V, E>::value>::type* = nullptr>
 static Comparison unequals(const V& value, const E& expect)
 {
-    return value == expect ? Comparison(unequals_comp_str, util::serialize(value),
-                                        util::serialize(expect))
-                           : success;
+    return value == expect ?
+               Comparison(unequals_comp_str, util::serialize(value), util::serialize(expect)) :
+               success;
 }
 
 /**
@@ -97,11 +96,9 @@ Comparison unequals(const V& value, const E& expect)
 #else
     static V epsilon = std::numeric_limits<V>::epsilon();
 #endif
-    return (std::abs(value - expect)
-            <= std::max(std::abs(value), std::abs(expect)) * epsilon)
-               ? Comparison(unequals_comp_str, util::serialize(value),
-                            util::serialize(expect))
-               : success;
+    return (std::abs(value - expect) <= std::max(std::abs(value), std::abs(expect)) * epsilon) ?
+               Comparison(unequals_comp_str, util::serialize(value), util::serialize(expect)) :
+               success;
 }
 
 }  // namespace comp

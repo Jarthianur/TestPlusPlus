@@ -38,14 +38,12 @@ struct duration final
     /**
      * @brief Constructor
      */
-    duration() : _start(std::chrono::steady_clock::now())
-    {}
+    duration() : _start(std::chrono::steady_clock::now()) {}
 
     /**
      * @brief Destructor
      */
-    ~duration() noexcept
-    {}
+    ~duration() noexcept {}
 
     /**
      * @brief Get the actual duration since start time in milliseconds.
@@ -53,8 +51,7 @@ struct duration final
      */
     double get()
     {
-        return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now()
-                                                         - _start)
+        return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - _start)
             .count();
     }
 

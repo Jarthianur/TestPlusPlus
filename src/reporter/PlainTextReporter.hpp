@@ -30,6 +30,7 @@
 #include "../testsuite/TestStats.hpp"
 #include "../testsuite/TestSuite.hpp"
 #include "../types.h"
+
 #include "AbstractReporter.hpp"
 
 namespace sctf
@@ -80,8 +81,7 @@ private:
      */
     void report_ts(const TestSuite_shared ts) override
     {
-        *this << "Run Testsuite [" << ts->name() << "]; time = " << ts->time() << "ms"
-              << LF;
+        *this << "Run Testsuite [" << ts->name() << "]; time = " << ts->time() << "ms" << LF;
 
         AbstractReporter::report_ts(ts);
     }
@@ -93,7 +93,7 @@ private:
     {
         *this << SPACE << "Run Testcase [" << tc.name() << "](" << tc.context()
               << "); time = " << tc.duration() << "ms" << LF << XSPACE;
-        switch(tc.state())
+        switch (tc.state())
         {
             case test::TestCase::State::ERROR:
                 *this << (m_color ? ANSI_MAGENTA : "") << "ERROR! " << tc.err_msg();
@@ -104,8 +104,7 @@ private:
             case test::TestCase::State::PASSED:
                 *this << (m_color ? ANSI_GREEN : "") << "PASSED!";
                 break;
-            default:
-                break;
+            default: break;
         }
         *this << (m_color ? ANSI_RESET : "") << LF;
     }
@@ -113,15 +112,14 @@ private:
     /**
      * @brief Implement AbstractReporter#begin_report
      */
-    void begin_report() override
-    {}
+    void begin_report() override {}
 
     /**
      * @brief Implement AbstractReporter#end_report
      */
     void end_report() override
     {
-        if(abs_fails() >= (abs_tests() + 1) / 2)
+        if (abs_fails() >= (abs_tests() + 1) / 2)
         {
             *this << (m_color ? ANSI_YELLOW : "");
         }
@@ -129,10 +127,10 @@ private:
         {
             *this << (m_color ? ANSI_CYAN : "");
         }
-        *this << "Result:: passed: " << abs_tests() - abs_fails() - abs_errs() << "/"
-              << abs_tests() << " ; failed: " << abs_fails() << "/" << abs_tests()
-              << " ; errors: " << abs_errs() << "/" << abs_tests()
-              << " ; time = " << abs_time() << "ms" << (m_color ? ANSI_RESET : "") << LF;
+        *this << "Result:: passed: " << abs_tests() - abs_fails() - abs_errs() << "/" << abs_tests()
+              << " ; failed: " << abs_fails() << "/" << abs_tests() << " ; errors: " << abs_errs()
+              << "/" << abs_tests() << " ; time = " << abs_time() << "ms"
+              << (m_color ? ANSI_RESET : "") << LF;
     }
 
     /// @brief Use colors flag.
@@ -148,7 +146,7 @@ private:
  * @return a shared pointer to the reporter
  */
 inline static rep::AbstractReporter_shared createPlainTextReporter(std::ostream& stream,
-                                                                   bool color = false)
+                                                                   bool          color = false)
 {
     return std::make_shared<rep::PlainTextReporter>(stream, color);
 }
@@ -171,7 +169,7 @@ inline static rep::AbstractReporter_shared createPlainTextReporter(bool color = 
  * @return a shared pointer to the reporter
  */
 inline static rep::AbstractReporter_shared createPlainTextReporter(const char* file,
-                                                                   bool color = false)
+                                                                   bool        color = false)
 {
     return std::make_shared<rep::PlainTextReporter>(file, color);
 }

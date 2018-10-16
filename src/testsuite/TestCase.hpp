@@ -112,22 +112,22 @@ public:
      */
     void operator()()
     {
-        if(m_state != State::NONE) return;
+        if (m_state != State::NONE) return;
         util::duration dur;
         try
         {
             m_test_func();
             pass();
         }
-        catch(const AssertionFailure& e)
+        catch (const AssertionFailure& e)
         {
             fail(e.what());
         }
-        catch(const std::exception& e)
+        catch (const std::exception& e)
         {
             erroneous(e.what());
         }
-        catch(...)
+        catch (...)
         {
             erroneous();
         }

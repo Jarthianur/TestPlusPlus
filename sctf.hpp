@@ -22,6 +22,7 @@
 #ifndef SCTF_SCTF_HPP_
 #define SCTF_SCTF_HPP_
 
+#include "src/assert.hpp"
 #include "src/comparator/equals.hpp"
 #include "src/comparator/greaterthan.hpp"
 #include "src/comparator/inrange.hpp"
@@ -31,7 +32,6 @@
 #include "src/reporter/PlainTextReporter.hpp"
 #include "src/reporter/XmlReporter.hpp"
 #include "src/testsuite/TestSuitesRunner.hpp"
-#include "src/assert.hpp"
 #include "src/types.h"
 
 #endif  // SCTF_SCTF_HPP_

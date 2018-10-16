@@ -32,6 +32,7 @@
 #include "../testsuite/TestStats.hpp"
 #include "../testsuite/TestSuite.hpp"
 #include "../types.h"
+
 #include "AbstractReporter.hpp"
 
 namespace sctf
@@ -48,15 +49,13 @@ public:
      * @brief Constructor
      * @param stream The stream to write to
      */
-    explicit XmlReporter(std::ostream& stream) : AbstractReporter(stream)
-    {}
+    explicit XmlReporter(std::ostream& stream) : AbstractReporter(stream) {}
 
     /**
      * @brief Constructor
      * @param fname The file to write to
      */
-    explicit XmlReporter(const char* fname) : AbstractReporter(fname)
-    {}
+    explicit XmlReporter(const char* fname) : AbstractReporter(fname) {}
 
     /**
      * @brief Destructor
@@ -70,14 +69,14 @@ private:
     void report_ts(const TestSuite_shared ts) override
     {
         std::time_t stamp = std::chrono::system_clock::to_time_t(ts->timestamp());
-        char buff[128];
+        char        buff[128];
         std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
 
         *this << SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts->name()
               << "\" errors=\"" << ts->statistics().errors() << "\" tests=\""
-              << ts->statistics().tests() << "\" failures=\""
-              << ts->statistics().failures() << "\" skipped=\"0\" time=\"" << ts->time()
-              << "\" timestamp=\"" << buff << "\">" << LF;
+              << ts->statistics().tests() << "\" failures=\"" << ts->statistics().failures()
+              << "\" skipped=\"0\" time=\"" << ts->time() << "\" timestamp=\"" << buff << "\">"
+              << LF;
 
         AbstractReporter::report_ts(ts);
 
@@ -89,23 +88,20 @@ private:
      */
     void report_tc(const test::TestCase& tc) override
     {
-        *this << XSPACE << "<testcase name=\"" << tc.name() << "\" classname=\""
-              << tc.context() << "\" time=\"" << tc.duration() << "\"";
-        switch(tc.state())
+        *this << XSPACE << "<testcase name=\"" << tc.name() << "\" classname=\"" << tc.context()
+              << "\" time=\"" << tc.duration() << "\"";
+        switch (tc.state())
         {
             case test::TestCase::State::ERROR:
-                *this << ">" << LF << XSPACE << SPACE << "<error message=\""
-                      << tc.err_msg() << "\"></error>" << LF << XSPACE << "</testcase>";
+                *this << ">" << LF << XSPACE << SPACE << "<error message=\"" << tc.err_msg()
+                      << "\"></error>" << LF << XSPACE << "</testcase>";
                 break;
             case test::TestCase::State::FAILED:
-                *this << ">" << LF << XSPACE << SPACE << "<failure message=\""
-                      << tc.err_msg() << "\"></failure>" << LF << XSPACE << "</testcase>";
+                *this << ">" << LF << XSPACE << SPACE << "<failure message=\"" << tc.err_msg()
+                      << "\"></failure>" << LF << XSPACE << "</testcase>";
                 break;
-            case test::TestCase::State::PASSED:
-                *this << "/>";
-                break;
-            default:
-                break;
+            case test::TestCase::State::PASSED: *this << "/>"; break;
+            default: break;
         }
         *this << LF;
     }
@@ -115,8 +111,7 @@ private:
      */
     void begin_report() override
     {
-        *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << LF << "<testsuites>"
-              << LF;
+        *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << LF << "<testsuites>" << LF;
     }
 
     /**
@@ -138,8 +133,7 @@ private:
  * @param stream The stream to use, defaults to stdout
  * @return a shared pointer to the reporter
  */
-inline static rep::AbstractReporter_shared createXmlReporter(std::ostream& stream
-                                                             = std::cout)
+inline static rep::AbstractReporter_shared createXmlReporter(std::ostream& stream = std::cout)
 {
     return std::make_shared<rep::XmlReporter>(stream);
 }

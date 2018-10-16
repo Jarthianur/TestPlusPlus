@@ -29,8 +29,7 @@ void basic_tests();
 class Failure : public std::exception
 {
 public:
-    Failure(const char* msg) : std::exception(), m_msg(msg)
-    {}
+    Failure(const char* msg) : std::exception(), m_msg(msg) {}
 
     ~Failure() noexcept = default;
 
