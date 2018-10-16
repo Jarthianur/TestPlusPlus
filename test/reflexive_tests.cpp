@@ -34,9 +34,93 @@
 
 using namespace sctf;
 using namespace util;
+using namespace test;
 
 void reflexive_tests(test::TestSuitesRunner& runner)
 {
+    describe<TestSuite>("TestSuite", runner)
+        ->test("creation",
+               [] {
+                   auto             a  = std::chrono::system_clock::now();
+                   TestSuite_shared ts = TestSuite::create("ts", "ctx");
+                   auto             b  = std::chrono::system_clock::now();
+                   assert(b, GT, a);
+                   assert(ts->timestamp(), GT, a);
+                   assert(ts->timestamp(), LT, b);
+                   assertT(ts->name(), EQ, "ts", std::string);
+               })
+        ->test("meta functions",
+               [] {
+                   TestSuite_shared ts = TestSuite::create("ts", "ctx");
+                   int              i  = 0;
+                   ts->setup([&i] { i = 1; });
+                   ts->after([&i] { ++i; });
+                   ts->before([&i] { --i; });
+                   ts->test("tc1", [] {});
+                   ts->test("tc2", "ctx2", [] {});
+                   ts->test<int>("tc3", [] {});
+                   const TestCase& tc1 = ts->testcases().at(0);
+                   const TestCase& tc2 = ts->testcases().at(1);
+                   const TestCase& tc3 = ts->testcases().at(2);
+                   assertT(tc1.context(), EQ, "test.ctx", std::string);
+                   assertT(tc2.context(), EQ, "test.ctx2", std::string);
+                   assertT(tc3.context(), EQ, "test.int", std::string);
+                   ts->run();
+                   assertEquals(i, 1);
+               })
+        ->test("running", [] {
+            TestSuite_shared ts = TestSuite::create("ts", "ctx");
+            ts->test("", [] {});
+            ts->test("", [] { assertTrue(false); });
+            ts->test("", [] { throw std::logic_error(""); });
+            ts->run();
+            const TestStats& stat = ts->statistics();
+            assertEquals(stat.tests(), 3);
+            assertEquals(stat.errors(), 1);
+            assertEquals(stat.failures(), 1);
+            assertEquals(stat.successes(), 1);
+            ts->run();
+            assertEquals(stat.tests(), 3);
+            assertEquals(stat.errors(), 1);
+            assertEquals(stat.failures(), 1);
+            assertEquals(stat.successes(), 1);
+            ts->test("", [] {});
+            ts->run();
+            assertEquals(stat.tests(), 4);
+            assertEquals(stat.successes(), 2);
+        });
+
+    describe<TestCase>("TestCase", runner)
+        ->test("creation",
+               [] {
+                   TestCase tc("t1", "ctx", [] {});
+                   assertEquals(tc.state(), TestCase::State::NONE);
+                   assertT(tc.context(), EQ, "test.ctx", std::string);
+                   assertT(tc.name(), EQ, "t1", std::string);
+               })
+        ->test("successful execution",
+               [] {
+                   TestCase tc("t1", "ctx", [] {});
+                   tc();
+                   assertEquals(tc.state(), TestCase::State::PASSED);
+                   assert(tc.duration(), GT, 0.0);
+                   assertZero(tc.err_msg().size());
+               })
+        ->test("failed execution",
+               [] {
+                   TestCase tc("t1", "ctx", [] { assertTrue(false); });
+                   tc();
+                   assertEquals(tc.state(), TestCase::State::FAILED);
+                   assert(tc.duration(), GT, 0.0);
+               })
+        ->test("erroneous execution", [] {
+            TestCase tc("t1", "ctx", [] { throw std::logic_error("err"); });
+            tc();
+            assertEquals(tc.state(), TestCase::State::ERROR);
+            assert(tc.duration(), GT, 0.0);
+            assertT(tc.err_msg(), EQ, "err", std::string);
+        });
+
     describe("serialize", runner)
         ->test("bool",
                [] {
@@ -49,8 +133,7 @@ void reflexive_tests(test::TestSuitesRunner& runner)
                })
         ->test("std::pair",
                [] {
-                   assertT(serialize(std::make_pair(1, 2)), EQ, "std::pair<1,2>",
-                           std::string);
+                   assertT(serialize(std::make_pair(1, 2)), EQ, "std::pair<1,2>", std::string);
                    assertT(serialize(std::make_pair(1, interval<int>{3, 4})), EQ,
                            "std::pair<1,[3,4]>", std::string);
                })
@@ -73,76 +156,62 @@ void reflexive_tests(test::TestSuitesRunner& runner)
                    assertT("1.123", IN, serialize(1.123), std::string);
                })
         ->test("not streamable",
-               [] {
-                   assertT(serialize(not_streamable()), EQ, "not_streamable",
-                           std::string);
-               })
+               [] { assertT(serialize(not_streamable()), EQ, "not_streamable", std::string); })
         ->test("streamable", [] { assertT(serialize(1), EQ, "1", std::string); });
 
     describe("test traits", runner)
         ->test("is_streamable",
                [] {
-                   assertNoExcept(
-                       (throw_if_not_streamable<std::ostringstream, streamable>()));
-                   assertException(
-                       (throw_if_not_streamable<std::ostringstream, void_type>()),
-                       std::logic_error);
-                   assertException(
-                       (throw_if_not_streamable<std::ostringstream, not_streamable>()),
-                       std::logic_error);
+                   assertNoExcept((throw_if_not_streamable<std::ostringstream, streamable>()));
+                   assertException((throw_if_not_streamable<std::ostringstream, void_type>()),
+                                   std::logic_error);
+                   assertException((throw_if_not_streamable<std::ostringstream, not_streamable>()),
+                                   std::logic_error);
                })
         ->test("is_iterable",
                [] {
                    assertNoExcept((throw_if_not_iterable<iterable>()));
-                   assertException((throw_if_not_iterable<void_type>()),
-                                   std::logic_error);
-                   assertException((throw_if_not_iterable<not_iterable>()),
-                                   std::logic_error);
+                   assertException((throw_if_not_iterable<void_type>()), std::logic_error);
+                   assertException((throw_if_not_iterable<not_iterable>()), std::logic_error);
                })
         ->test("is_ordinal",
                [] {
                    assertNoExcept((throw_if_not_ordinal<ordinal>()));
                    assertException((throw_if_not_ordinal<void_type>()), std::logic_error);
-                   assertException((throw_if_not_ordinal<not_ordinal>()),
-                                   std::logic_error);
+                   assertException((throw_if_not_ordinal<not_ordinal>()), std::logic_error);
                })
         ->test("is_equal_comparable",
                [] {
                    assertNoExcept((throw_if_not_equal_comparable<equal_comparable>()));
-                   assertException((throw_if_not_equal_comparable<void_type>()),
+                   assertException((throw_if_not_equal_comparable<void_type>()), std::logic_error);
+                   assertException((throw_if_not_equal_comparable<not_equal_comparable>()),
                                    std::logic_error);
-                   assertException(
-                       (throw_if_not_equal_comparable<not_equal_comparable>()),
-                       std::logic_error);
                })
         ->test("is_unequal_comparable", [] {
             assertNoExcept((throw_if_not_unequal_comparable<unequal_comparable>()));
-            assertException((throw_if_not_unequal_comparable<void_type>()),
-                            std::logic_error);
+            assertException((throw_if_not_unequal_comparable<void_type>()), std::logic_error);
             assertException((throw_if_not_unequal_comparable<not_unequal_comparable>()),
                             std::logic_error);
         });
 
     describe("test assertions", runner)
-        ->test(
-            "assert",
-            [] {
-                // successful
-                assertNoExcept(assert(1, EQUALS, 1));
-                assertNoExcept(assert(true, EQUALS, true));
-                assertNoExcept(assert(1.5, LESS, 100.3));
-                assertNoExcept(assert(2, IN, (interval<int>{1, 3})));
-                assertNoExcept(assert("hello", NE, "world"));
-                assertNoExcept(assert(2, IN, (std::vector<int>{1, 3, 2})));
-                // failing
-                assertException(assert(2, EQUALS, 1), AssertionFailure);
-                assertException(assert(false, EQUALS, true), AssertionFailure);
-                assertException(assert(1002.5, LESS, 100.3), AssertionFailure);
-                assertException(assert(4, IN, (interval<int>{1, 3})), AssertionFailure);
-                assertException(assert("hello", EQ, "world"), AssertionFailure);
-                assertException(assert(2, IN, (std::vector<int>{1, 3})),
-                                AssertionFailure);
-            })
+        ->test("assert",
+               [] {
+                   // successful
+                   assertNoExcept(assert(1, EQUALS, 1));
+                   assertNoExcept(assert(true, EQUALS, true));
+                   assertNoExcept(assert(1.5, LESS, 100.3));
+                   assertNoExcept(assert(2, IN, (interval<int>{1, 3})));
+                   assertNoExcept(assert("hello", NE, "world"));
+                   assertNoExcept(assert(2, IN, (std::vector<int>{1, 3, 2})));
+                   // failing
+                   assertException(assert(2, EQUALS, 1), AssertionFailure);
+                   assertException(assert(false, EQUALS, true), AssertionFailure);
+                   assertException(assert(1002.5, LESS, 100.3), AssertionFailure);
+                   assertException(assert(4, IN, (interval<int>{1, 3})), AssertionFailure);
+                   assertException(assert("hello", EQ, "world"), AssertionFailure);
+                   assertException(assert(2, IN, (std::vector<int>{1, 3})), AssertionFailure);
+               })
         ->test("assertT",
                [] {
                    // successful
@@ -153,10 +222,8 @@ void reflexive_tests(test::TestSuitesRunner& runner)
                    // failing
                    assertException(assertT(2, EQUALS, 1, unsigned int), AssertionFailure);
                    assertException(assertT(false, EQUALS, true, bool), AssertionFailure);
-                   assertException(assertT(1002.5, LESS, 100.3, double),
-                                   AssertionFailure);
-                   assertException(assertT("hello", EQ, "world", std::string),
-                                   AssertionFailure);
+                   assertException(assertT(1002.5, LESS, 100.3, double), AssertionFailure);
+                   assertException(assertT("hello", EQ, "world", std::string), AssertionFailure);
                })
         ->test("assertEquals",
                [] {
@@ -201,8 +268,8 @@ void reflexive_tests(test::TestSuitesRunner& runner)
         ->test("assertNotNull",
                [] {
                    // successful
-                   int i         = 1;
-                   double d      = 1.0;
+                   int         i = 1;
+                   double      d = 1.0;
                    const char* s = "";
                    assertNoExcept(assertNotNull(&i));
                    assertNoExcept(assertNotNull(&d));
@@ -223,24 +290,19 @@ void reflexive_tests(test::TestSuitesRunner& runner)
         ->test("assertException",
                [] {
                    // successful
-                   assertNoExcept(
-                       assertException(throw std::logic_error(""), std::logic_error));
+                   assertNoExcept(assertException(throw std::logic_error(""), std::logic_error));
                    // failing
-                   assertException(assertException(return, std::logic_error),
+                   assertException(assertException(return, std::logic_error), AssertionFailure);
+                   assertException(assertException(throw std::runtime_error(""), std::logic_error),
                                    AssertionFailure);
-                   assertException(
-                       assertException(throw std::runtime_error(""), std::logic_error),
-                       AssertionFailure);
-                   assertException(assertException(throw 1, std::logic_error),
-                                   AssertionFailure);
+                   assertException(assertException(throw 1, std::logic_error), AssertionFailure);
                })
         ->test("assertNoExcept",
                [] {
                    // successful
                    assertNoExcept(assertNoExcept(return ));
                    // failing
-                   assertException(assertNoExcept(throw std::runtime_error("")),
-                                   AssertionFailure);
+                   assertException(assertNoExcept(throw std::runtime_error("")), AssertionFailure);
                    assertException(assertNoExcept(throw 1), AssertionFailure);
                })
         ->test("assertPerformance", [] {
@@ -248,8 +310,7 @@ void reflexive_tests(test::TestSuitesRunner& runner)
             assertNoExcept(assertPerformance(return, 100));
             // failing
             assertException(
-                assertPerformance(
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100)), 10),
+                assertPerformance(std::this_thread::sleep_for(std::chrono::milliseconds(100)), 10),
                 AssertionFailure);
         });
 }
