@@ -19,6 +19,8 @@
  }
  */
 
+#include <iostream>
+
 #include "../sctf.hpp"
 #include "basic_tests.h"
 #include "reflexive_tests.h"
@@ -33,8 +35,14 @@ int main(int, char**)
     {
         basic_tests();
     }
+    catch(const std::exception& e)
+    {
+        std::cout << "Basic tests have failed! [" << e.what() << "]" << std::endl;
+        return 1;
+    }
     catch(...)
     {
+        std::cout << "Basic tests have failed!" << std::endl;
         return 1;
     }
     reflexive_tests(runner);

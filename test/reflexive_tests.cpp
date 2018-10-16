@@ -19,14 +19,14 @@
  }
  */
 
+#include "reflexive_tests.h"
+
 #include <chrono>
 #include <cstddef>
 #include <stdexcept>
 #include <string>
 #include <thread>
 #include <vector>
-
-#include "reflexive_tests.h"
 
 using namespace sctf;
 using namespace util;

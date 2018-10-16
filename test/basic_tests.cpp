@@ -21,7 +21,19 @@
 
 #include "basic_tests.h"
 
+#include <sstream>
+
 using namespace sctf;
 
 void basic_tests()
-{}
+{
+    throw_if_not_streamable<std::ostringstream, streamable>();
+    try
+    {
+        throw_if_not_streamable<std::ostringstream, not_streamable>();
+        throw Failure("Given type should be not streamable");
+    }
+    catch(const std::logic_error&)
+    {
+    }
+}
