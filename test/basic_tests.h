@@ -22,10 +22,7 @@
 #ifndef TEST_BASIC_TESTS_H_
 #define TEST_BASIC_TESTS_H_
 
-#include <stdexcept>
-
 #include "../sctf.hpp"
-#include "../src/util/traits.hpp"
 
 void basic_tests();
 
@@ -45,33 +42,5 @@ public:
 private:
     const char* m_msg;
 };
-
-struct streamable
-{
-    template<typename S>
-    friend auto operator<<(S& s, const streamable&) -> S&
-    {
-        return s;
-    }
-};
-
-struct not_streamable
-{
-    template<typename S>
-    friend auto operator<<(S& s, const not_streamable&) -> S& = delete;
-};
-
-template<
-    typename S, typename T,
-    typename std::enable_if<not sctf::util::is_streamable<S, T>::value>::type* = nullptr>
-void throw_if_not_streamable()
-{
-    throw std::logic_error("Given type is not streamable");
-}
-
-template<typename S, typename T,
-         typename std::enable_if<sctf::util::is_streamable<S, T>::value>::type* = nullptr>
-void throw_if_not_streamable()
-{}
 
 #endif  // TEST_BASIC_TESTS_H_

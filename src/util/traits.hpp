@@ -77,8 +77,8 @@ class is_ordinal
 {
     template<typename TT>
     static auto test(int)
-        -> decltype(std::declval<TT&>() < std::declval<TT&>(),
-                    std::declval<TT&>() > std::declval<TT&>(), std::true_type());
+        -> decltype(std::declval<TT>() < std::declval<TT>(),
+                    std::declval<TT>() > std::declval<TT>(), std::true_type());
 
     template<typename>
     static auto test(...) -> std::false_type;
@@ -97,7 +97,7 @@ class is_equal_comparable
 {
     template<typename SS, typename TT>
     static auto test(int)
-        -> decltype(std::declval<SS&>() == std::declval<TT&>(), std::true_type());
+        -> decltype(std::declval<SS>() == std::declval<TT>(), std::true_type());
 
     template<typename, typename>
     static auto test(...) -> std::false_type;
@@ -116,7 +116,7 @@ class is_unequal_comparable
 {
     template<typename SS, typename TT>
     static auto test(int)
-        -> decltype(std::declval<SS&>() != std::declval<TT&>(), std::true_type());
+        -> decltype(std::declval<SS>() != std::declval<TT>(), std::true_type());
 
     template<typename, typename>
     static auto test(...) -> std::false_type;
