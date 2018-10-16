@@ -30,7 +30,7 @@ using namespace sctf;
 int main(int, char**)
 {
     test::TestSuitesRunner runner;
-    auto rep = createPlainTextReporter(false);
+    auto rep = createPlainTextReporter(true);
     try
     {
         basic_tests();
@@ -45,6 +45,7 @@ int main(int, char**)
         std::cout << "Basic tests have failed!" << std::endl;
         return 1;
     }
+    std::cout << "Basic tests have succeeded!" << std::endl;
     reflexive_tests(runner);
     return rep->report(runner) > 0 ? 1 : 0;
 }

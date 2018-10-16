@@ -144,14 +144,15 @@ inline std::string serialize(const std::nullptr_t&)
 
 /**
  * @brief Specialized serialize for pairs.
- * @tparam T The type inside pair
+ * @tparam T The first type inside pair
+ * @tparam S The second type inside pair
  * @param arg The pair to serialize
  * @return the pair as string
  */
-template<typename T>
-inline std::string serialize(const std::pair<T, T>& arg)
+template<typename T, typename S>
+inline std::string serialize(const std::pair<T, S>& arg)
 {
-    return std::string("std::pair<") + serialize(arg.first) + ", " + serialize(arg.second)
+    return std::string("std::pair<") + serialize(arg.first) + "," + serialize(arg.second)
            + ">";
 }
 
@@ -164,7 +165,7 @@ inline std::string serialize(const std::pair<T, T>& arg)
 template<typename T>
 inline std::string serialize(const interval<T>& arg)
 {
-    return std::string("[") + serialize(arg.lower) + ", " + serialize(arg.upper) + "]";
+    return std::string("[") + serialize(arg.lower) + "," + serialize(arg.upper) + "]";
 }
 
 /**

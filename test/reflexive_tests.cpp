@@ -23,16 +23,106 @@
 
 #include <chrono>
 #include <cstddef>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <thread>
+#include <utility>
 #include <vector>
+
+#include "traits.hpp"
 
 using namespace sctf;
 using namespace util;
 
 void reflexive_tests(test::TestSuitesRunner& runner)
 {
+    describe("serialize", runner)
+        ->test("bool",
+               [] {
+                   assertT(serialize(true), EQ, "true", std::string);
+                   assertT(serialize(false), EQ, "false", std::string);
+               })
+        ->test("interval",
+               [] {
+                   assertT(serialize(interval<int>{1, 2}), EQ, "[1,2]", std::string);
+               })
+        ->test("std::pair",
+               [] {
+                   assertT(serialize(std::make_pair(1, 2)), EQ, "std::pair<1,2>",
+                           std::string);
+                   assertT(serialize(std::make_pair(1, interval<int>{3, 4})), EQ,
+                           "std::pair<1,[3,4]>", std::string);
+               })
+        ->test("nullptr",
+               [] {
+                   assertT(serialize(nullptr), EQ, "0", std::string);
+                   assertT(serialize(NULL), EQ, "0", std::string);
+               })
+        ->test("string/cstring",
+               [] {
+                   std::string str("cstring");
+                   assertEquals(serialize(str), str);
+                   assertEquals(serialize("cstring"), str);
+                   const char* cstr = "cstring";
+                   assertEquals(serialize(cstr), str);
+               })
+        ->test("floating-point",
+               [] {
+                   assertT("1.123", IN, serialize(1.123f), std::string);
+                   assertT("1.123", IN, serialize(1.123), std::string);
+               })
+        ->test("not streamable",
+               [] {
+                   assertT(serialize(not_streamable()), EQ, "not_streamable",
+                           std::string);
+               })
+        ->test("streamable", [] { assertT(serialize(1), EQ, "1", std::string); });
+
+    describe("test traits", runner)
+        ->test("is_streamable",
+               [] {
+                   assertNoExcept(
+                       (throw_if_not_streamable<std::ostringstream, streamable>()));
+                   assertException(
+                       (throw_if_not_streamable<std::ostringstream, void_type>()),
+                       std::logic_error);
+                   assertException(
+                       (throw_if_not_streamable<std::ostringstream, not_streamable>()),
+                       std::logic_error);
+               })
+        ->test("is_iterable",
+               [] {
+                   assertNoExcept((throw_if_not_iterable<iterable>()));
+                   assertException((throw_if_not_iterable<void_type>()),
+                                   std::logic_error);
+                   assertException((throw_if_not_iterable<not_iterable>()),
+                                   std::logic_error);
+               })
+        ->test("is_ordinal",
+               [] {
+                   assertNoExcept((throw_if_not_ordinal<ordinal>()));
+                   assertException((throw_if_not_ordinal<void_type>()), std::logic_error);
+                   assertException((throw_if_not_ordinal<not_ordinal>()),
+                                   std::logic_error);
+               })
+        ->test("is_equal_comparable",
+               [] {
+                   assertNoExcept((throw_if_not_equal_comparable<equal_comparable>()));
+                   assertException((throw_if_not_equal_comparable<void_type>()),
+                                   std::logic_error);
+                   assertException(
+                       (throw_if_not_equal_comparable<not_equal_comparable>()),
+                       std::logic_error);
+               })
+        ->test("is_unequal_comparable", [] {
+            assertNoExcept((throw_if_not_unequal_comparable<unequal_comparable>()));
+            assertException((throw_if_not_unequal_comparable<void_type>()),
+                            std::logic_error);
+            assertException((throw_if_not_unequal_comparable<not_unequal_comparable>()),
+                            std::logic_error);
+        });
+
     describe("test assertions", runner)
         ->test(
             "assert",
