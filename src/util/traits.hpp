@@ -38,8 +38,7 @@ template<typename S, typename T>
 class is_streamable
 {
     template<typename SS, typename TT>
-    static auto test(int)
-        -> decltype(std::declval<SS&>() << std::declval<TT>(), std::true_type());
+    static auto test(int) -> decltype(std::declval<SS&>() << std::declval<TT>(), std::true_type());
 
     template<typename, typename>
     static auto test(...) -> std::false_type;
@@ -57,8 +56,8 @@ class is_iterable
 {
     template<typename TT>
     static auto test(int)
-        -> decltype(std::begin(std::declval<TT&>()) != std::end(std::declval<TT&>()),
-                    void(), ++std::declval<decltype(std::begin(std::declval<TT&>())) &>(),
+        -> decltype(std::begin(std::declval<TT&>()) != std::end(std::declval<TT&>()), void(),
+                    ++std::declval<decltype(std::begin(std::declval<TT&>()))&>(),
                     void(*std::begin(std::declval<TT&>())), std::true_type());
 
     template<typename>
@@ -76,9 +75,8 @@ template<typename T>
 class is_ordinal
 {
     template<typename TT>
-    static auto test(int)
-        -> decltype(std::declval<TT&>() < std::declval<TT&>(),
-                    std::declval<TT&>() > std::declval<TT&>(), std::true_type());
+    static auto test(int) -> decltype(std::declval<TT>() < std::declval<TT>(),
+                                      std::declval<TT>() > std::declval<TT>(), std::true_type());
 
     template<typename>
     static auto test(...) -> std::false_type;
@@ -96,8 +94,7 @@ template<typename S, typename T>
 class is_equal_comparable
 {
     template<typename SS, typename TT>
-    static auto test(int)
-        -> decltype(std::declval<SS&>() == std::declval<TT&>(), std::true_type());
+    static auto test(int) -> decltype(std::declval<SS>() == std::declval<TT>(), std::true_type());
 
     template<typename, typename>
     static auto test(...) -> std::false_type;
@@ -115,8 +112,7 @@ template<typename S, typename T>
 class is_unequal_comparable
 {
     template<typename SS, typename TT>
-    static auto test(int)
-        -> decltype(std::declval<SS&>() != std::declval<TT&>(), std::true_type());
+    static auto test(int) -> decltype(std::declval<SS>() != std::declval<TT>(), std::true_type());
 
     template<typename, typename>
     static auto test(...) -> std::false_type;

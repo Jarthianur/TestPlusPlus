@@ -27,6 +27,7 @@
 
 #include "../util/interval.hpp"
 #include "../util/traits.hpp"
+
 #include "comparators.hpp"
 
 namespace sctf
@@ -44,16 +45,14 @@ constexpr const char* in_range_comp_str = "to be in range of";
  * @param range The range/container to search
  * @return whether the value was found
  */
-template<
-    typename V, typename R,
-    typename std::enable_if<util::is_iterable<R>::value
-                            and not std::is_same<R, std::string>::value>::type* = nullptr>
+template<typename V, typename R,
+         typename std::enable_if<util::is_iterable<R>::value and
+                                 not std::is_same<R, std::string>::value>::type* = nullptr>
 static Comparison in_range(const V& value, const R& range)
 {
-    return std::find(range.begin(), range.end(), value) != range.end()
-               ? success
-               : Comparison(in_range_comp_str, util::serialize(value),
-                            util::serialize(range));
+    return std::find(range.begin(), range.end(), value) != range.end() ?
+               success :
+               Comparison(in_range_comp_str, util::serialize(value), util::serialize(range));
 }
 
 /**
@@ -68,10 +67,9 @@ template<typename V, typename R = V,
          typename std::enable_if<std::is_same<R, std::string>::value>::type* = nullptr>
 Comparison in_range(const V& value, const R& range)
 {
-    return range.find(value) != std::string::npos
-               ? success
-               : Comparison(in_range_comp_str, util::serialize(value),
-                            util::serialize(range));
+    return range.find(value) != std::string::npos ?
+               success :
+               Comparison(in_range_comp_str, util::serialize(value), util::serialize(range));
 }
 
 /**
@@ -83,16 +81,14 @@ Comparison in_range(const V& value, const R& range)
  * @param range The range/container to search
  * @return whether the value was found
  */
-template<
-    typename V, typename R,
-    typename std::enable_if<std::is_same<R, std::pair<V, V>>::value
-                            and util::is_equal_comparable<V, V>::value>::type* = nullptr>
+template<typename V, typename R,
+         typename std::enable_if<std::is_same<R, std::pair<V, V>>::value and
+                                 util::is_equal_comparable<V, V>::value>::type* = nullptr>
 Comparison in_range(const V& value, const R& range)
 {
-    return value == range.first || value == range.second
-               ? success
-               : Comparison(in_range_comp_str, util::serialize(value),
-                            util::serialize(range));
+    return value == range.first || value == range.second ?
+               success :
+               Comparison(in_range_comp_str, util::serialize(value), util::serialize(range));
 }
 
 /**
@@ -105,16 +101,14 @@ Comparison in_range(const V& value, const R& range)
  * @return whether the value was found
  */
 template<typename V, typename R,
-         typename std::enable_if<
-             std::is_same<R, std::pair<V, V>>::value
-             and not util::is_equal_comparable<V, V>::value
-             and util::is_unequal_comparable<V, V>::value>::type* = nullptr>
+         typename std::enable_if<std::is_same<R, std::pair<V, V>>::value and
+                                 not util::is_equal_comparable<V, V>::value and
+                                 util::is_unequal_comparable<V, V>::value>::type* = nullptr>
 Comparison in_range(const V& value, const R& range)
 {
-    return value != range.first && value != range.second
-               ? Comparison(in_range_comp_str, util::serialize(value),
-                            util::serialize(range))
-               : success;
+    return value != range.first && value != range.second ?
+               Comparison(in_range_comp_str, util::serialize(value), util::serialize(range)) :
+               success;
 }
 
 /**
@@ -125,15 +119,13 @@ Comparison in_range(const V& value, const R& range)
  * @param range The range/container to search
  * @return whether the value was found
  */
-template<
-    typename V, typename R,
-    typename std::enable_if<std::is_same<R, util::interval<V>>::value>::type* = nullptr>
+template<typename V, typename R,
+         typename std::enable_if<std::is_same<R, util::interval<V>>::value>::type* = nullptr>
 Comparison in_range(const V& value, const R& bounds)
 {
-    return value < bounds.lower || value > bounds.upper
-               ? Comparison(in_range_comp_str, util::serialize(value),
-                            util::serialize(bounds))
-               : success;
+    return value < bounds.lower || value > bounds.upper ?
+               Comparison(in_range_comp_str, util::serialize(value), util::serialize(bounds)) :
+               success;
 }
 
 }  // namespace comp

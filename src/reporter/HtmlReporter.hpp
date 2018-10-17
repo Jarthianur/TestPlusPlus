@@ -31,6 +31,7 @@
 #include "../testsuite/TestStats.hpp"
 #include "../testsuite/TestSuite.hpp"
 #include "../types.h"
+
 #include "AbstractReporter.hpp"
 
 namespace sctf
@@ -65,15 +66,13 @@ public:
      * @brief Constructor
      * @param stream The stream to write to
      */
-    explicit HtmlReporter(std::ostream& stream) : AbstractReporter(stream)
-    {}
+    explicit HtmlReporter(std::ostream& stream) : AbstractReporter(stream) {}
 
     /**
      * @brief Constructor
      * @param fname The file to write to
      */
-    explicit HtmlReporter(const char* fname) : AbstractReporter(fname)
-    {}
+    explicit HtmlReporter(const char* fname) : AbstractReporter(fname) {}
 
     /**
      * @brief Destructor
@@ -90,9 +89,8 @@ private:
               << "<p>Tests: " << ts->statistics().tests()
               << " Failures: " << ts->statistics().failures()
               << " Errors: " << ts->statistics().errors() << " Time: " << ts->time()
-              << "ms</p><table><thead>" << TR << TH << "Name" << TH_ << TH << "Context"
-              << TH_ << TH << "Time" << TH_ << TH << "Status" << TH_ << TR_
-              << "</thead><tbody>";
+              << "ms</p><table><thead>" << TR << TH << "Name" << TH_ << TH << "Context" << TH_ << TH
+              << "Time" << TH_ << TH << "Status" << TH_ << TR_ << "</thead><tbody>";
 
         AbstractReporter::report_ts(ts);
 
@@ -105,23 +103,15 @@ private:
     void report_tc(const test::TestCase& tc) override
     {
         std::string status;
-        switch(tc.state())
+        switch (tc.state())
         {
-            case test::TestCase::State::ERROR:
-                status = "error";
-                break;
-            case test::TestCase::State::FAILED:
-                status = "failed";
-                break;
-            case test::TestCase::State::PASSED:
-                status = "passed";
-                break;
-            default:
-                break;
+            case test::TestCase::State::ERROR: status = "error"; break;
+            case test::TestCase::State::FAILED: status = "failed"; break;
+            case test::TestCase::State::PASSED: status = "passed"; break;
+            default: break;
         }
-        *this << "<tr class=\"" << status << "\">" << TD << tc.name() << TD_ << TD
-              << tc.context() << TD_ << TD << tc.duration() << "ms" << TD_ << TD << status
-              << TD_ << TR_;
+        *this << "<tr class=\"" << status << "\">" << TD << tc.name() << TD_ << TD << tc.context()
+              << TD_ << TD << tc.duration() << "ms" << TD_ << TD << status << TD_ << TR_;
     }
 
     /**
@@ -129,12 +119,11 @@ private:
      */
     void begin_report() override
     {
-        *this
-            << "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/>"
-               "<style>table{border-collapse: collapse;min-width: 50%}"
-               "tr,th,td{border: 1px solid black;padding: 2px}.failed{background: lightskyblue}"
-               ".passed{background: lightgreen}.error{background: lightcoral}</style>"
-               "</head><body><header><h1>Test Report</h1></header>";
+        *this << "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/>"
+                 "<style>table{border-collapse: collapse;min-width: 50%}"
+                 "tr,th,td{border: 1px solid black;padding: 2px}.failed{background: lightskyblue}"
+                 ".passed{background: lightgreen}.error{background: lightcoral}</style>"
+                 "</head><body><header><h1>Test Report</h1></header>";
     }
 
     /**
@@ -142,9 +131,9 @@ private:
      */
     void end_report() override
     {
-        *this << "<footer><h3>Summary</h3><p>Tests: " << abs_tests()
-              << " Failures: " << abs_fails() << " Errors: " << abs_errs()
-              << " Time: " << abs_time() << "ms</p></footer></body></html>";
+        *this << "<footer><h3>Summary</h3><p>Tests: " << abs_tests() << " Failures: " << abs_fails()
+              << " Errors: " << abs_errs() << " Time: " << abs_time()
+              << "ms</p></footer></body></html>";
     }
 };
 
@@ -155,8 +144,7 @@ private:
  * @param stream The stream to use, defaults to stdout
  * @return a shared pointer to the reporter
  */
-inline static rep::AbstractReporter_shared createHtmlReporter(std::ostream& stream
-                                                              = std::cout)
+inline static rep::AbstractReporter_shared createHtmlReporter(std::ostream& stream = std::cout)
 {
     return std::make_shared<rep::HtmlReporter>(stream);
 }

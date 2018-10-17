@@ -1,5 +1,8 @@
 # simple-cpp-test-framework
 
+[![Build Status](https://travis-ci.org/Jarthianur/simple-cpp-test-framework.svg?branch=testing)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
+[![codecov](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework/branch/testing/graph/badge.svg)](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework)
+
 A simple C++11, plain STL, header-only testing framework.
 Featuring great **extendability** and an **easy, but powerful**, **less typing** optimized API.
 **Test reports** are generated in a specified format, according to the chosen reporter.
@@ -16,6 +19,7 @@ Even test code should be regular code and also look like that. The next point is
 + [Usage](#usage)
 + [Example](#example)
 + [Extending](#extending)
++ [Contributing](#contributing)
 + [Footnote](#footnote)
 
 ## Concept of Simplicity
@@ -204,6 +208,35 @@ namespace util
 }
 ```
 
+## Contributing
+
+Contribution to this project is always welcome. To keep the framework clean, we have branches for different purposes.
+Generally the *master* branch is the release branch, which consists only of the framework sources and some necessary files, like the license etc. and is always coherent to the latest release.
+The *release-candidate* branch contains the newest framework code, waiting for to be released.
+The *testing* branch is not only the development branch, but also contains the actual tests for this framework and a CI setup.
+The *gh-pages* branch is used for the GitHub page and contains examples, documentation etc.
+
+### Workflow
+
+Whenever a change is made to the code, these change must be made against the *testing* branch. If and only if those changes pass through the CI run, a merge to *testing* and *release-candidate* is allowed. When merging to *master* or *release-candidate* it must be assured that only changes to the actual framework are applied, neither tests, nor CI files, nor docs - with some exceptions - should appear there.
+Altough this looks kinda complicated, the basic idea behind it is to sepparate contents.
+So *testing* is basically a copy of *release-candidate*, but contains tests and CI setup. Hence they should always correlate to each other.
+
+So here is the basic workflow.
+
++ Checkout a new branch based on current *testing*
++ Provide your changes
++ Create a PR from your branch to *testing*
++ Iff the status is green and the PR is approved, do merge
++ Create a PR from *testing* to *release-candidate*
++ Assure only changes to the actual framework code or README is applied to *release-candidate*
++ Iff this is assured and approved, do merge and keep *testing*
++ Tag and push from *release-candidate* a new version (rc) accordingly
++ Create a PR from *release-candidate* to *master*
++ Iff the rc is approved, do merge and keep *release-candidate*
++ Tag and push from *master* a new release version accordingly
++ Adjust the docs in *gh-pages* if necessary
+
 #### Footnote
 
-I've implemented this framework, intentionally, to test my own C++ projects, with an fundamental and extendable API. Nevertheless anybody, finding this framework useful, may use, or even extend and contribute to it.
+I (Jarthianur) have implemented this framework, intentionally, to test my own C++ projects, with an fundamental and extendable API. Nevertheless anybody, finding this framework useful, may use, or even extend and contribute to it.

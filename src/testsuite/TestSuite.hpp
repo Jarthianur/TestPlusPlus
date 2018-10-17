@@ -33,21 +33,21 @@
 
 #include "../types.h"
 #include "../util/serialize.hpp"
+
 #include "TestCase.hpp"
 #include "TestStats.hpp"
 
 /// @brief Call a functor silently, catching all exceptions and only if it points to a
 /// target.
 #define SCTF_EXEC_SILENT(F) \
-    if(F)                   \
+    if (F)                  \
     {                       \
         try                 \
         {                   \
             F();            \
         }                   \
-        catch(...)          \
-        {                   \
-        }                   \
+        catch (...)         \
+        {}                  \
     }
 
 namespace sctf
@@ -83,24 +83,19 @@ public:
      */
     virtual void run() noexcept
     {
-        if(m_state == State::DONE) return;
+        if (m_state == State::DONE) return;
         m_stats.m_num_of_tests = m_testcases.size();
         SCTF_EXEC_SILENT(m_setup_func)
-        for(test::TestCase& tc : m_testcases)
+        for (test::TestCase& tc : m_testcases)
         {
-            if(tc.state() != test::TestCase::State::NONE) continue;
+            if (tc.state() != test::TestCase::State::NONE) continue;
             SCTF_EXEC_SILENT(m_pre_test_func)
             tc();
-            switch(tc.state())
+            switch (tc.state())
             {
-                case test::TestCase::State::FAILED:
-                    ++m_stats.m_num_of_fails;
-                    break;
-                case test::TestCase::State::ERROR:
-                    ++m_stats.m_num_of_errs;
-                    break;
-                default:
-                    break;
+                case test::TestCase::State::FAILED: ++m_stats.m_num_of_fails; break;
+                case test::TestCase::State::ERROR: ++m_stats.m_num_of_errs; break;
+                default: break;
             }
             m_time += tc.duration();
             SCTF_EXEC_SILENT(m_post_test_func)
@@ -118,8 +113,7 @@ public:
     template<typename T>
     TestSuite_shared test(const std::string& name, test::test_function&& t_func)
     {
-        m_testcases.push_back(
-            test::TestCase(name, util::name_for_type<T>(), std::move(t_func)));
+        m_testcases.push_back(test::TestCase(name, util::name_for_type<T>(), std::move(t_func)));
         m_state = State::PENDING;
         return shared_from_this();
     }

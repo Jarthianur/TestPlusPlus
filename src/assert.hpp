@@ -29,12 +29,13 @@
 #include "util/duration.hpp"
 #include "util/interval.hpp"
 #include "util/serialize.hpp"
+
 #include "AssertionFailure.hpp"
 #include "types.h"
 
 // disable assert macro
 #ifdef assert
-#undef assert
+#    undef assert
 #endif
 
 // provide assertion macros and wrappers
@@ -46,9 +47,9 @@
  * @param COMP The Comparator
  * @param EXPECT The expected value
  */
-#define assert(VALUE, COMP, EXPECT)                                                  \
-    sctf::_assertStatement(VALUE, EXPECT, COMP<decltype(VALUE), decltype(EXPECT)>(), \
-                           __FILE__, __LINE__)
+#define assert(VALUE, COMP, EXPECT)                                                            \
+    sctf::_assertStatement(VALUE, EXPECT, COMP<decltype(VALUE), decltype(EXPECT)>(), __FILE__, \
+                           __LINE__)
 
 /**
  * @def assertT(VALUE, EXPECT, COMP, TYPE)
@@ -59,9 +60,8 @@
  * @param EXPECT The expected value
  * @param TYPE The value type
  */
-#define assertT(VALUE, COMP, EXPECT, TYPE)                                          \
-    sctf::_assertStatement<TYPE, TYPE>(VALUE, EXPECT, COMP<TYPE, TYPE>(), __FILE__, \
-                                       __LINE__)
+#define assertT(VALUE, COMP, EXPECT, TYPE) \
+    sctf::_assertStatement<TYPE, TYPE>(VALUE, EXPECT, COMP<TYPE, TYPE>(), __FILE__, __LINE__)
 
 /**
  * @def assertEquals(VALUE, EXPECT)
@@ -103,10 +103,9 @@
  * @brief Assert wrapper. Test value to be not nullptr.
  * @param VALUE The value
  */
-#define assertNotNull(VALUE)                                                        \
-    sctf::_assertStatement(static_cast<void* const>(VALUE), nullptr,                \
-                           sctf::UNEQUALS<void* const, std::nullptr_t>(), __FILE__, \
-                           __LINE__)
+#define assertNotNull(VALUE)                                         \
+    sctf::_assertStatement(static_cast<void* const>(VALUE), nullptr, \
+                           sctf::UNEQUALS<void* const, std::nullptr_t>(), __FILE__, __LINE__)
 
 /**
  * @def assertZero(VALUE, TYPE)
@@ -159,7 +158,7 @@ static void _assertStatement(const V& value, const E& expect, comp::Comparator<V
                              const char* file, int line)
 {
     comp::Comparison res = (*comp)(value, expect);
-    if(!res)
+    if (!res)
     {
         throw AssertionFailure(*res, file, line);
     }
@@ -180,22 +179,21 @@ static void _assertException(const test::test_function& func, const char* file, 
     {
         func();
     }
-    catch(const T&)
+    catch (const T&)
     {
         return;
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
-        throw AssertionFailure(std::string("Wrong exception thrown, caught '")
-                                   + util::serialize(e) + "'",
-                               file, line);
+        throw AssertionFailure(
+            std::string("Wrong exception thrown, caught '") + util::serialize(e) + "'", file, line);
     }
-    catch(...)
+    catch (...)
     {
         throw AssertionFailure("Wrong exception thrown", file, line);
     }
-    throw AssertionFailure(std::string("No exception thrown, expected '")
-                               + util::name_for_type<T>() + "'",
+    throw AssertionFailure(std::string("No exception thrown, expected '") +
+                               util::name_for_type<T>() + "'",
                            file, line);
 }
 
@@ -206,20 +204,18 @@ static void _assertException(const test::test_function& func, const char* file, 
  * @param line The source line in file
  * @throw AssertionFailure if any exception is caught.
  */
-inline static void _assertNoExcept(const test::test_function& func, const char* file,
-                                   int line)
+inline static void _assertNoExcept(const test::test_function& func, const char* file, int line)
 {
     try
     {
         func();
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
-        throw AssertionFailure(std::string("Expected no exception, caught '")
-                                   + util::serialize(e) + "'",
-                               file, line);
+        throw AssertionFailure(
+            std::string("Expected no exception, caught '") + util::serialize(e) + "'", file, line);
     }
-    catch(...)
+    catch (...)
     {
         throw AssertionFailure("Expected no exception", file, line);
     }
@@ -238,18 +234,17 @@ inline static void _assertPerformance(const test::test_function& func, double ma
         util::duration dur;
         func();
         double dur_ms = dur.get();
-        if(dur_ms > max_millis)
+        if (dur_ms > max_millis)
         {
-            throw AssertionFailure(std::string("runtime > ") + util::serialize(max_millis)
-                                       + "ms",
+            throw AssertionFailure(std::string("runtime > ") + util::serialize(max_millis) + "ms",
                                    file, line);
         }
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         throw AssertionFailure(e.what(), file, line);
     }
-    catch(...)
+    catch (...)
     {
         throw AssertionFailure("Unknown exception thrown", file, line);
     }

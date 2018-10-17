@@ -28,15 +28,15 @@
 
 #if __cplusplus >= 201703L
 
-#include <optional>
-#define STD_OPTIONAL std::optional
-#define STD_NULLOPT std::nullopt
+#    include <optional>
+#    define STD_OPTIONAL std::optional
+#    define STD_NULLOPT std::nullopt
 
 #elif __cplusplus >= 201402L
 
-#include <experimental/optional>
-#define STD_OPTIONAL std::experimental::optional
-#define STD_NULLOPT std::experimental::nullopt
+#    include <experimental/optional>
+#    define STD_OPTIONAL std::experimental::optional
+#    define STD_NULLOPT std::experimental::nullopt
 
 #endif
 
@@ -59,11 +59,9 @@ namespace comp
 struct Comparison final
 {
 #if __cplusplus >= 201402L
-    constexpr Comparison() : _failure(STD_NULLOPT)
-    {}
+    constexpr Comparison() : _failure(STD_NULLOPT) {}
 
-    Comparison(const std::string& comp_str, const std::string& value,
-               const std::string& expect)
+    Comparison(const std::string& comp_str, const std::string& value, const std::string& expect)
         : _failure("Expected '" + value + "' " + comp_str + " '" + expect + "'")
     {}
 
@@ -80,22 +78,15 @@ struct Comparison final
 private:
     const STD_OPTIONAL<std::string> _failure;
 #else
-    constexpr Comparison() : _success(true)
-    {}
+    constexpr Comparison() : _success(true) {}
 
-    Comparison(const std::string& comp_str, const std::string& value,
-               const std::string& expect)
+    Comparison(const std::string& comp_str, const std::string& value, const std::string& expect)
         : _success(false)
     {
         std::string msg;
         msg.reserve(15 + comp_str.length() + value.length() + expect.length());
         msg = "Expected '";
-        msg.append(value)
-            .append("' ")
-            .append(comp_str)
-            .append(" '")
-            .append(expect)
-            .append("'");
+        msg.append(value).append("' ").append(comp_str).append(" '").append(expect).append("'");
         error() = msg;
     }
 
@@ -131,7 +122,7 @@ using Comparator = Comparison (*)(const V&, const E&);
 
 /// @brief Default successful Comparison.
 #if __cplusplus >= 201402L
-#define success Comparison()
+#    define success Comparison()
 #else
 constexpr Comparison success = Comparison();
 #endif
@@ -165,20 +156,20 @@ constexpr Comparison success = Comparison();
  * @note In PRED the two elements are named 'value' and 'expect', where 'value' is the
  * actual value and 'expect' is the expected value.
  */
-#define COMPARATOR(NAME, COMPSTR, PRED)                                     \
-    namespace sctf                                                          \
-    {                                                                       \
-    namespace comp                                                          \
-    {                                                                       \
-    constexpr const char* NAME##_comp_str = COMPSTR;                        \
-    template<typename V, typename E = V>                                    \
-    static Comparison NAME(const V& value, const E& expect)                 \
-    {                                                                       \
-        return (PRED) ? success                                             \
-                      : Comparison(NAME##_comp_str, util::serialize(value), \
-                                   util::serialize(expect));                \
-    }                                                                       \
-    }                                                                       \
+#define COMPARATOR(NAME, COMPSTR, PRED)                                                          \
+    namespace sctf                                                                               \
+    {                                                                                            \
+    namespace comp                                                                               \
+    {                                                                                            \
+    constexpr const char* NAME##_comp_str = COMPSTR;                                             \
+    template<typename V, typename E = V>                                                         \
+    static Comparison NAME(const V& value, const E& expect)                                      \
+    {                                                                                            \
+        return (PRED) ?                                                                          \
+                   success :                                                                     \
+                   Comparison(NAME##_comp_str, util::serialize(value), util::serialize(expect)); \
+    }                                                                                            \
+    }                                                                                            \
     }
 
 #endif  // SCTF_SRC_COMPARATOR_COMPARATORS_HPP_

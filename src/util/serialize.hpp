@@ -47,17 +47,17 @@ static const std::string& name_for_type()
 {
 #if defined(__GNUG__) || defined(__clang__)
     static thread_local std::string name;
-    if(name.length() > 0)
+    if (name.length() > 0)
     {
         return name;
     }
     const std::string sig(__PRETTY_FUNCTION__);
-    std::size_t b = sig.rfind("T = ") + 4;
-#ifdef __clang__
+    std::size_t       b = sig.rfind("T = ") + 4;
+#    ifdef __clang__
     name = sig.substr(b, sig.rfind(']') - b);
-#else
+#    else
     name = sig.substr(b, sig.find(';', b) - b);
-#endif
+#    endif
     return name;
 #else
     return typeid(T).name();
@@ -70,9 +70,8 @@ static const std::string& name_for_type()
  * @param arg The element to serialize
  * @return the element as string
  */
-template<typename T, typename std::enable_if<
-                         is_streamable<std::ostringstream, T>::value
-                         and not std::is_floating_point<T>::value>::type* = nullptr>
+template<typename T, typename std::enable_if<is_streamable<std::ostringstream, T>::value and
+                                             not std::is_floating_point<T>::value>::type* = nullptr>
 inline std::string serialize(const T& arg)
 {
     std::ostringstream oss;
@@ -86,9 +85,8 @@ inline std::string serialize(const T& arg)
  * @param arg The element to serialize
  * @return the element as string
  */
-template<typename T,
-         typename std::enable_if<is_streamable<std::ostringstream, T>::value
-                                 and std::is_floating_point<T>::value>::type* = nullptr>
+template<typename T, typename std::enable_if<is_streamable<std::ostringstream, T>::value and
+                                             std::is_floating_point<T>::value>::type* = nullptr>
 inline std::string serialize(const T& arg)
 {
     std::ostringstream oss;
@@ -102,8 +100,8 @@ inline std::string serialize(const T& arg)
  * @param unused
  * @return the element as string
  */
-template<typename T, typename std::enable_if<not is_streamable<
-                         std::ostringstream, T>::value>::type* = nullptr>
+template<typename T,
+         typename std::enable_if<not is_streamable<std::ostringstream, T>::value>::type* = nullptr>
 inline std::string serialize(const T&)
 {
     return name_for_type<T>();
@@ -144,15 +142,15 @@ inline std::string serialize(const std::nullptr_t&)
 
 /**
  * @brief Specialized serialize for pairs.
- * @tparam T The type inside pair
+ * @tparam T The first type inside pair
+ * @tparam S The second type inside pair
  * @param arg The pair to serialize
  * @return the pair as string
  */
-template<typename T>
-inline std::string serialize(const std::pair<T, T>& arg)
+template<typename T, typename S>
+inline std::string serialize(const std::pair<T, S>& arg)
 {
-    return std::string("std::pair<") + serialize(arg.first) + ", " + serialize(arg.second)
-           + ">";
+    return std::string("std::pair<") + serialize(arg.first) + "," + serialize(arg.second) + ">";
 }
 
 /**
@@ -164,7 +162,7 @@ inline std::string serialize(const std::pair<T, T>& arg)
 template<typename T>
 inline std::string serialize(const interval<T>& arg)
 {
-    return std::string("[") + serialize(arg.lower) + ", " + serialize(arg.upper) + "]";
+    return std::string("[") + serialize(arg.lower) + "," + serialize(arg.upper) + "]";
 }
 
 /**

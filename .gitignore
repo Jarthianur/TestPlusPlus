@@ -3,9 +3,13 @@
 !.github/*
 !src/
 !src/*
+!test/
+!test/*
 !.clang-format
 !.gitattributes
 !.gitignore
+!.travis.yml
 !LICENSE
+!pipeline.yaml
 !README.md
 !sctf.hpp

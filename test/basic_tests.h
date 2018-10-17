@@ -19,19 +19,27 @@
  }
  */
 
-#ifndef SCTF_SCTF_HPP_
-#define SCTF_SCTF_HPP_
+#ifndef TEST_BASIC_TESTS_H_
+#define TEST_BASIC_TESTS_H_
 
-#include "src/assert.hpp"
-#include "src/comparator/equals.hpp"
-#include "src/comparator/greaterthan.hpp"
-#include "src/comparator/inrange.hpp"
-#include "src/comparator/lessthan.hpp"
-#include "src/comparator/unequals.hpp"
-#include "src/reporter/HtmlReporter.hpp"
-#include "src/reporter/PlainTextReporter.hpp"
-#include "src/reporter/XmlReporter.hpp"
-#include "src/testsuite/TestSuitesRunner.hpp"
-#include "src/types.h"
+#include "../sctf.hpp"
 
-#endif  // SCTF_SCTF_HPP_
+void basic_tests();
+
+class Failure : public std::exception
+{
+public:
+    Failure(const char* msg) : std::exception(), m_msg(msg) {}
+
+    ~Failure() noexcept = default;
+
+    const char* what() const noexcept override
+    {
+        return m_msg;
+    }
+
+private:
+    const char* m_msg;
+};
+
+#endif  // TEST_BASIC_TESTS_H_

@@ -19,19 +19,11 @@
  }
  */
 
-#ifndef SCTF_SCTF_HPP_
-#define SCTF_SCTF_HPP_
+#ifndef TEST_REFLEXIVE_TESTS_H_
+#define TEST_REFLEXIVE_TESTS_H_
 
-#include "src/assert.hpp"
-#include "src/comparator/equals.hpp"
-#include "src/comparator/greaterthan.hpp"
-#include "src/comparator/inrange.hpp"
-#include "src/comparator/lessthan.hpp"
-#include "src/comparator/unequals.hpp"
-#include "src/reporter/HtmlReporter.hpp"
-#include "src/reporter/PlainTextReporter.hpp"
-#include "src/reporter/XmlReporter.hpp"
-#include "src/testsuite/TestSuitesRunner.hpp"
-#include "src/types.h"
+#include "../sctf.hpp"
 
-#endif  // SCTF_SCTF_HPP_
+void reflexive_tests(sctf::test::TestSuitesRunner& runner);
+
+#endif  // TEST_REFLEXIVE_TESTS_H_
