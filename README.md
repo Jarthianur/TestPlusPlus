@@ -227,7 +227,7 @@ So here is the basic workflow.
 + Checkout a new branch based on current *testing*
 + Provide your changes
 + Create a PR from your branch to *testing*
-+ Iff the status is green and the PR is approved, do merge and delete your branch
++ Iff the status is green and the PR is approved, do merge
 + Create a PR from *testing* to *release-candidate*
 + Assure only changes to the actual framework code or README is applied to *release-candidate*
 + Iff this is assured and approved, do merge and keep *testing*

@@ -118,25 +118,23 @@ void reflexive_tests(test::TestSuitesRunner& runner)
         ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
         ts->test("", [] { assertTrue(false); });
         ts->test("", [] { throw std::logic_error(""); });
+#ifdef _OPENMP
+        assertPerformance(ts->run(), 200);
+        assert(ts->time(), LT, 200);
+#else
         ts->run();
+        double t = 0.0;
+        for (const auto& tc : ts->testcases())
+        {
+         t += tc.duration();
+        }
+        assertEquals(ts->time(), t);
+#endif
         const TestStats& stat = ts->statistics();
         assertEquals(stat.tests(), 6);
         assertEquals(stat.errors(), 2);
         assertEquals(stat.failures(), 2);
         assertEquals(stat.successes(), 2);
-        double t = 0.0;
-        for (const auto& tc : ts->testcases())
-        {
-#ifdef _OPENMP
-            if (tc.duration() > t)
-            {
-                t = tc.duration();
-            }
-#else
-            t += tc.duration();
-#endif
-        }
-        assertEquals(ts->time(), t);
     });
 
     describe<TestSuite>("TestSuite", runner)
