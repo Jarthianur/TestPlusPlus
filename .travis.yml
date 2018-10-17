@@ -13,6 +13,7 @@ addons:
 before_install:
     - docker pull debian:sid-slim
     - mkdir reports
+    - export BUILD_DIR=$TRAVIS_BUILD_DIR
 
 install:
     - sudo pip install --upgrade pip
