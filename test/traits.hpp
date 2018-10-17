@@ -181,15 +181,22 @@ void throw_if_not_iterable()
 
 struct ordinal
 {
+    ordinal() = default;
+
+    ordinal(bool v) : _v(v) {}
+
     bool operator<(const ordinal&) const noexcept
     {
-        return true;
+        return _v;
     }
 
     bool operator>(const ordinal&) const noexcept
     {
-        return true;
+        return _v;
     }
+
+private:
+    bool _v = true;
 };
 
 struct not_ordinal
@@ -212,23 +219,37 @@ void throw_if_not_ordinal()
 
 struct equal_comparable
 {
+    equal_comparable() = default;
+
+    equal_comparable(bool v) : _v(v) {}
+
     bool operator==(const equal_comparable&) const noexcept
     {
-        return true;
+        return _v;
     }
+
+private:
+    bool _v = true;
 };
 
 struct equal_unequal_comparable
 {
+    equal_unequal_comparable() = default;
+
+    equal_unequal_comparable(bool v) : _v(v) {}
+
     bool operator==(const equal_unequal_comparable&) const noexcept
     {
-        return true;
+        return _v;
     }
 
     bool operator!=(const equal_unequal_comparable&) const noexcept
     {
-        return false;
+        return _v;
     }
+
+private:
+    bool _v = true;
 };
 
 struct not_equal_comparable
@@ -251,10 +272,17 @@ void throw_if_not_equal_comparable()
 
 struct unequal_comparable
 {
+    unequal_comparable() = default;
+
+    unequal_comparable(bool v) : _v(v) {}
+
     bool operator!=(const unequal_comparable&) const noexcept
     {
-        return true;
+        return _v;
     }
+
+private:
+    bool _v = true;
 };
 
 struct not_unequal_comparable

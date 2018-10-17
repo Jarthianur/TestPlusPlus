@@ -89,7 +89,8 @@ static Comparison equals(const V& value, const E& expect)
  * @return true if value is equals expect, else false
  */
 template<typename V, typename E = V,
-         typename std::enable_if<std::is_floating_point<V>::value>::type* = nullptr>
+         typename std::enable_if<std::is_floating_point<V>::value and
+                                 std::is_floating_point<E>::value>::type* = nullptr>
 Comparison equals(const V& value, const E& expect)
 {
 #ifdef SCTF_CUSTOM_EPSILON

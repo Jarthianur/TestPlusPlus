@@ -35,9 +35,110 @@
 using namespace sctf;
 using namespace util;
 using namespace test;
+using namespace comp;
 
 void reflexive_tests(test::TestSuitesRunner& runner)
 {
+    describeParallel("comparators", runner)
+        ->test("equals",
+               [] {
+                   assertFalse(!equals(1, 1));
+                   assertFalse(!equals(equal_comparable(), equal_comparable()));
+                   assertFalse(!equals(unequal_comparable(false), unequal_comparable(false)));
+                   assertFalse(!equals(1.0, 1.0));
+                   assertFalse(!equals(1.0f, 1.0f));
+                   assertTrue(!equals(2, 1));
+                   assertTrue(!equals(equal_comparable(false), equal_comparable()));
+                   assertTrue(!equals(unequal_comparable(true), unequal_comparable(false)));
+                   assertTrue(!equals(1.1, 2.0));
+                   assertTrue(!equals(1.1f, 2.0f));
+                   Comparison c = equals(1, 2);
+                   assertTrue(!c);
+                   assertT(*c, EQ, "Expected '1' to be equals '2'", std::string);
+               })
+        ->test("greater than",
+               [] {
+                   assertFalse(!greater_than(2, 1));
+                   assertFalse(!greater_than(ordinal(), ordinal()));
+                   assertFalse(!greater_than(2.1, 1.9));
+                   assertTrue(!greater_than(1, 2));
+                   assertTrue(!greater_than(ordinal(false), ordinal()));
+                   assertTrue(!greater_than(2.1, 3.9));
+                   Comparison c = greater_than(1, 2);
+                   assertTrue(!c);
+                   assertT(*c, EQ, "Expected '1' to be greater than '2'", std::string);
+               })
+        ->test("in range",
+               [] {
+                   assertFalse(!in_range(1, std::vector<int>{1}));
+                   assertFalse(!in_range("a", std::string("a")));
+                   assertFalse(!in_range(1, std::pair<int, int>{1, 2}));
+                   assertFalse(!in_range(1, interval<int>{1, 2}));
+                   assertTrue(!in_range(2, std::vector<int>{1}));
+                   assertTrue(!in_range("b", std::string("a")));
+                   assertTrue(!in_range(3, std::pair<int, int>{1, 2}));
+                   assertTrue(!in_range(3, interval<int>{1, 2}));
+                   Comparison c = in_range(3, interval<int>{1, 2});
+                   assertTrue(!c);
+                   assertT(*c, EQ, "Expected '3' to be in range of '[1,2]'", std::string);
+               })
+        ->test("less than",
+               [] {
+                   assertFalse(!less_than(1, 2));
+                   assertFalse(!less_than(ordinal(), ordinal()));
+                   assertFalse(!less_than(1.9, 2.1));
+                   assertTrue(!less_than(2, 1));
+                   assertTrue(!less_than(ordinal(false), ordinal()));
+                   assertTrue(!less_than(3.9, 2.1));
+                   Comparison c = less_than(2, 1);
+                   assertTrue(!c);
+                   assertT(*c, EQ, "Expected '2' to be less than '1'", std::string);
+               })
+        ->test("unequals", [] {
+            assertFalse(!unequals(1, 2));
+            assertFalse(!unequals(unequal_comparable(), unequal_comparable()));
+            assertFalse(!unequals(equal_comparable(false), equal_comparable(false)));
+            assertFalse(!unequals(1.0, 1.1));
+            assertFalse(!unequals(1.0f, 1.1f));
+            assertTrue(!unequals(2, 2));
+            assertTrue(!unequals(equal_comparable(), equal_comparable()));
+            assertTrue(!unequals(unequal_comparable(false), unequal_comparable()));
+            assertTrue(!unequals(2.0, 2.0));
+            assertTrue(!unequals(1.1f, 1.1f));
+            Comparison c = unequals(1, 1);
+            assertTrue(!c);
+            assertT(*c, EQ, "Expected '1' to be unequals '1'", std::string);
+        });
+
+    describe<TestSuiteParallel>("TestSuiteParallel", runner)->test("parallel run", [] {
+        TestSuite_shared ts = TestSuiteParallel::create("ts", "ctx");
+        ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
+        ts->test("", [] { assertTrue(false); });
+        ts->test("", [] { throw std::logic_error(""); });
+        ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
+        ts->test("", [] { assertTrue(false); });
+        ts->test("", [] { throw std::logic_error(""); });
+        ts->run();
+        const TestStats& stat = ts->statistics();
+        assertEquals(stat.tests(), 6);
+        assertEquals(stat.errors(), 2);
+        assertEquals(stat.failures(), 2);
+        assertEquals(stat.successes(), 2);
+        double t = 0.0;
+        for (const auto& tc : ts->testcases())
+        {
+#ifdef _OPENMP
+            if (tc.duration() > t)
+            {
+                t = tc.duration();
+            }
+#else
+            t += tc.duration();
+#endif
+        }
+        assertEquals(ts->time(), t);
+    });
+
     describe<TestSuite>("TestSuite", runner)
         ->test("creation",
                [] {
@@ -88,6 +189,12 @@ void reflexive_tests(test::TestSuitesRunner& runner)
             ts->run();
             assertEquals(stat.tests(), 4);
             assertEquals(stat.successes(), 2);
+            double t = 0.0;
+            for (const auto& tc : ts->testcases())
+            {
+                t += tc.duration();
+            }
+            assertEquals(t, ts->time());
         });
 
     describe<TestCase>("TestCase", runner)
@@ -121,7 +228,7 @@ void reflexive_tests(test::TestSuitesRunner& runner)
             assertT(tc.err_msg(), EQ, "err", std::string);
         });
 
-    describe("serialize", runner)
+    describeParallel("serialize", runner)
         ->test("bool",
                [] {
                    assertT(serialize(true), EQ, "true", std::string);
@@ -159,7 +266,7 @@ void reflexive_tests(test::TestSuitesRunner& runner)
                [] { assertT(serialize(not_streamable()), EQ, "not_streamable", std::string); })
         ->test("streamable", [] { assertT(serialize(1), EQ, "1", std::string); });
 
-    describe("test traits", runner)
+    describeParallel("test traits", runner)
         ->test("is_streamable",
                [] {
                    assertNoExcept((throw_if_not_streamable<std::ostringstream, streamable>()));
@@ -194,7 +301,7 @@ void reflexive_tests(test::TestSuitesRunner& runner)
                             std::logic_error);
         });
 
-    describe("test assertions", runner)
+    describeParallel("test assertions", runner)
         ->test("assert",
                [] {
                    // successful
