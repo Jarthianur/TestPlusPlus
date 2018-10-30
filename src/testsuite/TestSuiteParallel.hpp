@@ -23,7 +23,7 @@
 #define SCTF_SRC_TESTSUITE_TESTSUITEPARALLEL_HPP_
 
 #ifdef _OPENMP
-#include <omp.h>
+#    include <omp.h>
 #endif
 
 #include "TestSuite.hpp"
@@ -61,30 +61,25 @@ public:
      */
     void run() noexcept override
     {
-        if(m_state == State::DONE) return;
+        if (m_state == State::DONE) return;
         m_stats.m_num_of_tests = m_testcases.size();
         SCTF_EXEC_SILENT(m_setup_func)
 #pragma omp parallel
         {
-            double tmp        = 0.0;
+            double      tmp   = 0.0;
             std::size_t fails = 0;
             std::size_t errs  = 0;
 #pragma omp for schedule(dynamic)
-            for(auto tc = m_testcases.begin(); tc < m_testcases.end(); ++tc)
+            for (auto tc = m_testcases.begin(); tc < m_testcases.end(); ++tc)
             {
-                if(tc->state() != test::TestCase::State::NONE) continue;
+                if (tc->state() != test::TestCase::State::NONE) continue;
                 SCTF_EXEC_SILENT(m_pre_test_func)
                 (*tc)();
-                switch(tc->state())
+                switch (tc->state())
                 {
-                    case test::TestCase::State::FAILED:
-                        ++fails;
-                        break;
-                    case test::TestCase::State::ERROR:
-                        ++errs;
-                        break;
-                    default:
-                        break;
+                    case test::TestCase::State::FAILED: ++fails; break;
+                    case test::TestCase::State::ERROR: ++errs; break;
+                    default: break;
                 }
                 tmp += tc->duration();
                 SCTF_EXEC_SILENT(m_post_test_func)
@@ -95,7 +90,7 @@ public:
             m_stats.m_num_of_errs += errs;
 #pragma omp critical
             {
-                if(m_time < tmp)
+                if (m_time < tmp)
                 {
                     m_time = tmp;
                 }

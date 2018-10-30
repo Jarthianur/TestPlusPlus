@@ -43,9 +43,9 @@ namespace rep
  * @brief Line feed
  */
 #ifdef _WIN32
-#define LF "\r\n"
+#    define LF "\r\n"
 #else
-#define LF "\n"
+#    define LF "\n"
 #endif
 
 /// @brief Spacing with two spaces
@@ -76,7 +76,7 @@ public:
         runner.run();
         begin_report();
         const std::vector<TestSuite_shared>& testsuites = runner.testsuites();
-        for(const TestSuite_shared& ts : testsuites)
+        for (const TestSuite_shared& ts : testsuites)
         {
             m_abs_errs += ts->statistics().errors();
             m_abs_fails += ts->statistics().failures();
@@ -99,18 +99,16 @@ protected:
      * @brief Constructor
      * @param stream The out-stream to report to
      */
-    explicit AbstractReporter(std::ostream& stream) : mr_out_stream(stream)
-    {}
+    explicit AbstractReporter(std::ostream& stream) : mr_out_stream(stream) {}
 
     /**
      * @brief Constructor
      * @param fname The filename where to report to
      * @throw std::runtime_error if the file cannot be opened for writing
      */
-    explicit AbstractReporter(const char* fname)
-        : m_out_file(fname), mr_out_stream(m_out_file)
+    explicit AbstractReporter(const char* fname) : m_out_file(fname), mr_out_stream(m_out_file)
     {
-        if(!mr_out_stream)
+        if (!mr_out_stream)
         {
             throw std::runtime_error("Could not open file.");
         }
@@ -127,7 +125,7 @@ protected:
      */
     inline virtual void report_ts(const TestSuite_shared ts)
     {
-        for(auto& tc : ts->testcases())
+        for (auto& tc : ts->testcases())
         {
             report_tc(tc);
         }

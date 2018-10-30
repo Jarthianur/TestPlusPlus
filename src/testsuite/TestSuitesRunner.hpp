@@ -30,6 +30,7 @@
 
 #include "../types.h"
 #include "../util/serialize.hpp"
+
 #include "TestSuite.hpp"
 #include "TestSuiteParallel.hpp"
 
@@ -69,7 +70,7 @@ public:
      */
     void run() noexcept
     {
-        for(TestSuite_shared& ts : m_testsuites)
+        for (TestSuite_shared& ts : m_testsuites)
         {
             ts->run();
         }
@@ -99,9 +100,9 @@ private:
  * @param runner The TestSuitesRunner to register
  * @return a shared pointer to the created TestSuite
  */
-inline static TestSuite_shared describeParallel(const std::string& name,
+inline static TestSuite_shared describeParallel(const std::string&      name,
                                                 test::TestSuitesRunner& runner,
-                                                const std::string& context = "")
+                                                const std::string&      context = "")
 {
     return runner.register_ts(TestSuiteParallel::create(name, context));
 }
@@ -115,8 +116,7 @@ inline static TestSuite_shared describeParallel(const std::string& name,
  * @return a shared pointer to the created TestSuite
  */
 template<typename T>
-static TestSuite_shared describeParallel(const std::string& name,
-                                         test::TestSuitesRunner& runner)
+static TestSuite_shared describeParallel(const std::string& name, test::TestSuitesRunner& runner)
 {
     return runner.register_ts(TestSuiteParallel::create(name, util::name_for_type<T>()));
 }
@@ -129,8 +129,7 @@ static TestSuite_shared describeParallel(const std::string& name,
  * @param runner The TestSuitesRunner to register
  * @return a shared pointer to the created TestSuite
  */
-inline static TestSuite_shared describe(const std::string& name,
-                                        test::TestSuitesRunner& runner,
+inline static TestSuite_shared describe(const std::string& name, test::TestSuitesRunner& runner,
                                         const std::string& context = "")
 {
     return runner.register_ts(TestSuite::create(name, context));
