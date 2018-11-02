@@ -32,6 +32,14 @@
 
 #include "traits.hpp"
 
+namespace sctf
+{
+namespace comp
+{
+double epsilon = 0.000001;
+}  // namespace comp
+}  // namespace sctf
+
 using namespace sctf;
 using namespace util;
 using namespace test;
