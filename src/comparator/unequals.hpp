@@ -92,12 +92,15 @@ template<typename V, typename E = V,
                                  std::is_floating_point<E>::value>::type* = nullptr>
 Comparison unequals(const V& value, const E& expect)
 {
-#ifdef SCTF_CUSTOM_EPSILON
-    static V epsilon = SCTF_CUSTOM_EPSILON;
+#ifdef SCTF_EPSILON
+    static V epsilon_ = SCTF_EPSILON;
+#elif defined(SCTF_EXTERN_EPSILON)
+    extern double epsilon;
+    static V      epsilon_ = static_cast<V>(epsilon);
 #else
-    static V epsilon = std::numeric_limits<V>::epsilon();
+    static V epsilon_ = std::numeric_limits<V>::epsilon();
 #endif
-    return (std::abs(value - expect) <= std::max(std::abs(value), std::abs(expect)) * epsilon) ?
+    return (std::abs(value - expect) <= std::max(std::abs(value), std::abs(expect)) * epsilon_) ?
                Comparison(unequals_comp_str, util::serialize(value), util::serialize(expect)) :
                success;
 }

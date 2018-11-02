@@ -22,6 +22,7 @@
 #include <iostream>
 
 #include "../sctf.hpp"
+
 #include "basic_tests.h"
 #include "reflexive_tests.h"
 
@@ -30,17 +31,17 @@ using namespace sctf;
 int main(int, char**)
 {
     test::TestSuitesRunner runner;
-    auto rep = createPlainTextReporter(true);
+    auto                   rep = createPlainTextReporter(true);
     try
     {
         basic_tests();
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         std::cout << "Basic tests have failed! [" << e.what() << "]" << std::endl;
         return 1;
     }
-    catch(...)
+    catch (...)
     {
         std::cout << "Basic tests have failed!" << std::endl;
         return 1;

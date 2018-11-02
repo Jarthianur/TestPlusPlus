@@ -17,6 +17,7 @@ Even test code should be regular code and also look like that. The next point is
 + [Parallelization](#some-words-about-parallelization)
 + [Feature Set](#feature-set)
 + [Usage](#usage)
++ [Floats](#floats)
 + [Example](#example)
 + [Extending](#extending)
 + [Contributing](#contributing)
@@ -59,12 +60,12 @@ Of course, when executed in parallel, a test suites total time is the max time o
 | Call                | Arguments             | Description                                                                                                                                          | Example                                               |
 | ------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
 | describe            | name, runner, context | Describe a testsuite with *name* and *context*, where context defaults to an empty string.                                                           | `describe("ts1", runner, "Component")...`             |
-| describe<T>         | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T.                                                                  | `describe<Component>("ts2", runner)...`               |
+| describe\<T>         | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T.                                                                  | `describe<Component>("ts2", runner)...`               |
 | describeParallel    | name, runner, context | Describe a testsuite with *name* and *context*, where context defaults to an empty string. Tests inside this testsuite will be executed in parallel. | `describeParallel("ts3", runner, "Component")...`     |
-| describeParallel<T> | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T. Tests inside this testsuite will be executed in parallel.        | `describeParallel<Component>("ts2", runner)...`       |
+| describeParallel\<T> | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T. Tests inside this testsuite will be executed in parallel.        | `describeParallel<Component>("ts2", runner)...`       |
 | test                | name, context, t_func | Create a testcase on a testsuite with *name* and *context*.                                                                                          | `...->test("test1", "Component::func", [](){...})...` |
 | test                | name, t_func          | Create a testcase on a testsuite with *name*, the context is inherited from the testsuite.                                                           | `...->test("test2", [](){...})...`                    |
-| test<T>             | name, t_func          | Create a testcase on a testsuite with *name*. The context is taken as the class-/typename of T.                                                      | `...->test<Component>("test3", [](){...})...`         |
+| test\<T>             | name, t_func          | Create a testcase on a testsuite with *name*. The context is taken as the class-/typename of T.                                                      | `...->test<Component>("test3", [](){...})...`         |
 | setup               | t_func                | Set a *setup* function, which will be executed once before all testcases. Exceptions thrown by the given function will get ignored.                  | `...->setup([&]{ x = 10; ... })...`                   |
 | before              | t_func                | Set a *pre-test* function, which will be executed before each testcase. Exceptions thrown by the given function will get ignored.                    | `...->before([&]{ x = 10; ... })...`                  |
 | after               | t_func                | Set a *post-test* function, which will be executed after each testcase. Exceptions thrown by the given function will get ignored.                    | `...->after([&]{ x = 10; ... })...`                   |
@@ -99,18 +100,31 @@ Of course, when executed in parallel, a test suites total time is the max time o
 | assertNoExcept    | FUNC                      | Assert FUNC not to throw any exception.                                                                                   | `assertNoExcept(int i = 0);`                                     |
 | assertPerformance | FUNC, MILLIS              | Assert FUNC to run in MILLIS milliseconds at maximum. The FUNC call is not interrupted, if the time exceeds MILLIS.       | `assertPerformance(call(), 5);`                                  |
 
-
 ## Usage
 
 This framework is header-only. To use it, just inlude the *sctf.hpp* header file.  
 In order to use the parallelization capability compile and link the test code with *'-fopenmp'* flag. As the asserts are wrapped with macros, statements inside assert statements, that have commata itself, must be written in braces.
-As floating-point comparison relies on an, so called, epsilon, we use the machine epsilon by default. But this may lead into false-negative test results, as it could be too accurate. In order to provide a custom epsilon, provide a macro in each compilation unit, which is called `SCTF_CUSTOM_EPSILON` and set it to a satisfying value (like 0.000001).
-A compiler invocation could look like "`g++ -std=c++0x test.cpp -fopenmp -DSCTF_CUSTOM_EPSILON=0.000001`".
+
+### Floats
+
+As floating-point comparison relies on a so called epsilon, we use the machine epsilon by default. But this may lead into false-negative test results, as it could be too accurate. In order to use a custom epsilon, there are two ways to achieve this. First, you can provide a macro in each compilation unit, which is called `SCTF_EPSILON` with a satisfying value (like 0.000001). A compiler invocation could look like "`g++ -std=c++0x test.cpp -fopenmp -DSCTF_EPSILON=0.000001`". Or you provide it before including *sctf.hpp* like in the [example](#example) below. The second way, is to provide it as an extern variable. Therefor define `SCTF_EXTERN_EPSILON` before including *sctf.hpp* and place a `double epsilon` inside namespace `sctf::comp` with a satisfying value into the compilation unit. The latter one allows more fine grained control over the required epsilon value.
 
 ### Example
 
 ```cpp
 // ...
+/* 1st way for custom epsilon
+#define SCTF_EPSILON 0.000001
+*/
+/* 2nd way for custom epsilon
+#define SCTF_EXTERN_EPSILON
+namespace sctf {
+    namespace comp {
+        double epsilon = 0.000001;
+    }
+}
+*/
+
 #include "sctf.hpp"
 
 using namespace sctf;
@@ -155,11 +169,11 @@ int main(int argc, char** argv)
 
 ## Extending
 
-### Reporters
+### of reporters
 
 To add a new reporter just implement the [AbstractReporter](src/reporter/AbstractReporter.hpp) interface. Therefor create a class in *sctf::rep* namespace and inherit from *AbstractReporter*. Have a look at the preimplemented reporters, how this is exactly done.
 
-### Comparators
+### of comparators
 
 To add a new comparator you basically just need to invoke two macros.
 For example:
