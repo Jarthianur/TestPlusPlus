@@ -57,23 +57,26 @@ public:
 
     std::string get_buf()
     {
-        std::cerr << __FUNCTION__ << " called from " << omp_get_thread_num() << std::endl;
         std::stringbuf& buf = m_streams.at(omp_get_thread_num());
         buf.pubsync();
         return buf.str();
     }
 
+    void clear()
+    {
+        std::stringbuf& buf = m_streams.at(omp_get_thread_num());
+        buf.str("");
+    }
+
 protected:
     virtual int overflow(int c) override
     {
-        std::cerr << __FUNCTION__ << " called from " << omp_get_thread_num() << std::endl;
         std::stringbuf& buf = m_streams.at(omp_get_thread_num());
         return buf.sputc(c);
     }
 
     virtual std::streamsize xsputn(const char* s, std::streamsize n) override
     {
-        std::cerr << __FUNCTION__ << " called from " << omp_get_thread_num() << std::endl;
         std::stringbuf& buf = m_streams.at(omp_get_thread_num());
         return buf.sputn(s, n);
     }

@@ -94,6 +94,7 @@ private:
         *this << SPACE << "Run Testcase [" << tc.name() << "](" << tc.context()
               << "); time = " << tc.duration() << "ms" << LF << XSPACE;
         *this << "COUT: '" << tc.cout() << "'" << LF << XSPACE;
+        *this << "CERR: '" << tc.cerr() << "'" << LF << XSPACE;
         switch (tc.state())
         {
             case test::TestCase::State::ERROR:

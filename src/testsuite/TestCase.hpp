@@ -184,9 +184,19 @@ public:
         m_cout = msg;
     }
 
+    inline void set_cerr(const std::string& msg)
+    {
+        m_cerr = msg;
+    }
+
     inline const std::string& cout() const
     {
         return m_cout;
+    }
+
+    inline const std::string& cerr() const
+    {
+        return m_cerr;
     }
 
 private:
