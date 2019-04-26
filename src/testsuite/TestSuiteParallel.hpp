@@ -26,6 +26,8 @@
 #    include <omp.h>
 #endif
 
+#include "../util/mt_streambuf.hpp"
+
 #include "TestSuite.hpp"
 
 namespace sctf
@@ -63,6 +65,7 @@ public:
     {
         if (m_state == State::DONE) return;
         m_stats.m_num_of_tests = m_testcases.size();
+        util::mt_streambuf mt_buf(std::cout);
         SCTF_EXEC_SILENT(m_setup_func)
 #pragma omp parallel
         {
@@ -83,6 +86,7 @@ public:
                 }
                 tmp += tc->duration();
                 SCTF_EXEC_SILENT(m_post_test_func)
+                tc->set_cout(mt_buf.get_buf());
             }
 #pragma omp atomic
             m_stats.m_num_of_fails += fails;

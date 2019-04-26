@@ -179,6 +179,16 @@ public:
         return m_context;
     }
 
+    inline void set_cout(const std::string& msg)
+    {
+        m_cout = msg;
+    }
+
+    inline const std::string& cout() const
+    {
+        return m_cout;
+    }
+
 private:
     /**
      * @brief Pass this test.
@@ -225,6 +235,9 @@ private:
 
     /// @brief The test function.
     test_function m_test_func;
+
+    std::string m_cout;
+    std::string m_cerr;
 };
 
 }  // namespace test
