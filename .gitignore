@@ -1,9 +1,8 @@
 *
 !*/
-!.github/*
-!*.hpp
-!*.cpp
-!*.h
+!.github/**
+!/src/**
+!/test/**
 !.clang-format
 !.gitattributes
 !.gitignore
