@@ -25,6 +25,7 @@
 #include <chrono>
 #include <cstddef>
 #include <functional>
+#include <iostream>
 #include <iterator>
 #include <memory>
 #include <string>
@@ -33,6 +34,7 @@
 
 #include "../types.h"
 #include "../util/serialize.hpp"
+#include "../util/streambuf_proxy.hpp"
 
 #include "TestCase.hpp"
 #include "TestStats.hpp"
@@ -85,6 +87,8 @@ public:
     {
         if (m_state == State::DONE) return;
         m_stats.m_num_of_tests = m_testcases.size();
+        util::streambuf_proxy buf_cout(std::cout);
+        util::streambuf_proxy buf_cerr(std::cerr);
         SCTF_EXEC_SILENT(m_setup_func)
         for (test::TestCase& tc : m_testcases)
         {
@@ -99,6 +103,10 @@ public:
             }
             m_time += tc.duration();
             SCTF_EXEC_SILENT(m_post_test_func)
+            tc.set_cout(buf_cout.str());
+            tc.set_cerr(buf_cerr.str());
+            buf_cout.clear();
+            buf_cerr.clear();
         }
         m_state = State::DONE;
     }

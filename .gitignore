@@ -1,10 +1,8 @@
 *
-!.github/
-!.github/*
-!src/
-!src/*
-!test/
-!test/*
+!*/
+!.github/**
+!/src/**
+!/test/**
 !.clang-format
 !.gitattributes
 !.gitignore

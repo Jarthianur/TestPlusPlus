@@ -22,9 +22,9 @@
 #ifndef SCTF_SRC_TESTSUITE_TESTSUITEPARALLEL_HPP_
 #define SCTF_SRC_TESTSUITE_TESTSUITEPARALLEL_HPP_
 
-#ifdef _OPENMP
-#    include <omp.h>
-#endif
+#include <iostream>
+
+#include "../util/streambuf_proxy_omp.hpp"
 
 #include "TestSuite.hpp"
 
@@ -63,6 +63,8 @@ public:
     {
         if (m_state == State::DONE) return;
         m_stats.m_num_of_tests = m_testcases.size();
+        util::streambuf_proxy_omp mt_buf_cout(std::cout);
+        util::streambuf_proxy_omp mt_buf_cerr(std::cerr);
         SCTF_EXEC_SILENT(m_setup_func)
 #pragma omp parallel
         {
@@ -83,6 +85,10 @@ public:
                 }
                 tmp += tc->duration();
                 SCTF_EXEC_SILENT(m_post_test_func)
+                tc->set_cout(mt_buf_cout.str());
+                tc->set_cerr(mt_buf_cerr.str());
+                mt_buf_cout.clear();
+                mt_buf_cerr.clear();
             }
 #pragma omp atomic
             m_stats.m_num_of_fails += fails;
