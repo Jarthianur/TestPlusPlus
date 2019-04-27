@@ -179,14 +179,14 @@ public:
         return m_context;
     }
 
-    inline void set_cout(const std::string& msg)
+    inline void set_cout(const std::string& str)
     {
-        m_cout = msg;
+        m_cout = str;
     }
 
-    inline void set_cerr(const std::string& msg)
+    inline void set_cerr(const std::string& str)
     {
-        m_cerr = msg;
+        m_cerr = str;
     }
 
     inline const std::string& cout() const

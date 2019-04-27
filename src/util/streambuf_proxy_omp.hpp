@@ -19,18 +19,19 @@
  }
  */
 
-#ifndef SCTF_SRC_UTIL_MT_STREAMBUF_HPP_
-#define SCTF_SRC_UTIL_MT_STREAMBUF_HPP_
+#ifndef SCTF_SRC_UTIL_STREAMBUF_PROXY_OMP_HPP_
+#define SCTF_SRC_UTIL_STREAMBUF_PROXY_OMP_HPP_
 
-#include <iostream>
+#include <ostream>
 #include <sstream>
 #include <streambuf>
-#include <string>
-#include <utility>
 #include <vector>
 
 #ifdef _OPENMP
 #    include <omp.h>
+#else
+#    define omp_get_max_threads() 1
+#    define omp_get_thread_num() 0
 #endif
 
 namespace sctf
@@ -40,54 +41,55 @@ namespace util
 /**
  * @brief The mt_streambuf class
  */
-class mt_streambuf final : public std::streambuf
+class streambuf_proxy_omp : public std::streambuf
 {
+#define CURRENT_THREAD_BUFFER() (m_thd_buffers.at(static_cast<std::size_t>(omp_get_thread_num())))
 public:
-    mt_streambuf(const mt_streambuf&) = delete;
-    mt_streambuf& operator=(const mt_streambuf&) = delete;
-
-    mt_streambuf(std::ostream& stream)
-        : m_orig_buf(stream.rdbuf(this)), m_orig_stream(stream), m_streams(omp_get_max_threads())
+    streambuf_proxy_omp(std::ostream& stream)
+        : m_orig_buf(stream.rdbuf(this)),
+          m_orig_stream(stream),
+          m_thd_buffers(static_cast<std::size_t>(omp_get_max_threads()))
     {}
 
-    virtual ~mt_streambuf() noexcept
+    virtual ~streambuf_proxy_omp() noexcept override
     {
         m_orig_stream.rdbuf(m_orig_buf);
     }
 
-    std::string get_buf()
+    std::string str() const
     {
-        std::stringbuf& buf = m_streams.at(omp_get_thread_num());
-        buf.pubsync();
-        return buf.str();
+        return CURRENT_THREAD_BUFFER().str();
     }
 
     void clear()
     {
-        std::stringbuf& buf = m_streams.at(omp_get_thread_num());
-        buf.str("");
+        CURRENT_THREAD_BUFFER().str("");
     }
 
 protected:
-    virtual int overflow(int c) override
+    virtual int_type overflow(int_type c) override
     {
-        std::stringbuf& buf = m_streams.at(omp_get_thread_num());
-        return buf.sputc(c);
+        return CURRENT_THREAD_BUFFER().sputc(std::stringbuf::traits_type::to_char_type(c));
     }
 
     virtual std::streamsize xsputn(const char* s, std::streamsize n) override
     {
-        std::stringbuf& buf = m_streams.at(omp_get_thread_num());
-        return buf.sputn(s, n);
+        return CURRENT_THREAD_BUFFER().sputn(s, n);
     }
 
-private:
+    // private:
     std::streambuf*             m_orig_buf;
     std::ostream&               m_orig_stream;
-    std::vector<std::stringbuf> m_streams;
+    std::vector<std::stringbuf> m_thd_buffers;
 };
 
 }  // namespace util
 }  // namespace sctf
 
-#endif  // SCTF_SRC_UTIL_MT_STREAMBUF_HPP_
+#ifndef _OPENMP
+#    undef omp_get_max_threads
+#    undef omp_get_thread_num
+#endif
+#undef CURRENT_THREAD_BUFFER
+
+#endif  // SCTF_SRC_UTIL_STREAMBUF_PROXY_OMP_HPP_

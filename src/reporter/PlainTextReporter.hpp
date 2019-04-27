@@ -57,8 +57,8 @@ public:
      * @param stream The stream to write to
      * @param color Whether to print colored text
      */
-    explicit PlainTextReporter(std::ostream& stream, bool color = false)
-        : AbstractReporter(stream), m_color(color)
+    explicit PlainTextReporter(std::ostream& stream, bool color = false, bool out = false)
+        : AbstractReporter(stream), m_color(color), m_out(out)
     {}
 
     /**
@@ -66,8 +66,8 @@ public:
      * @param fname The file to write to
      * @param color Whether to print colored text
      */
-    explicit PlainTextReporter(const char* fname, bool color = false)
-        : AbstractReporter(fname), m_color(color)
+    explicit PlainTextReporter(const char* fname, bool color = false, bool out = false)
+        : AbstractReporter(fname), m_color(color), m_out(out)
     {}
 
     /**
@@ -93,8 +93,11 @@ private:
     {
         *this << SPACE << "Run Testcase [" << tc.name() << "](" << tc.context()
               << "); time = " << tc.duration() << "ms" << LF << XSPACE;
-        *this << "COUT: '" << tc.cout() << "'" << LF << XSPACE;
-        *this << "CERR: '" << tc.cerr() << "'" << LF << XSPACE;
+        if (m_out)
+        {
+            *this << "stdout = '" << tc.cout() << '\'' << LF << XSPACE;
+            *this << "stderr = '" << tc.cerr() << '\'' << LF << XSPACE;
+        }
         switch (tc.state())
         {
             case test::TestCase::State::ERROR:
@@ -137,6 +140,8 @@ private:
 
     /// @brief Use colors flag.
     bool m_color;
+
+    bool m_out;
 };
 
 }  // namespace rep
@@ -147,10 +152,10 @@ private:
  * @param color Whether to print colored text
  * @return a shared pointer to the reporter
  */
-inline static rep::AbstractReporter_shared createPlainTextReporter(std::ostream& stream,
-                                                                   bool          color = false)
+inline static rep::AbstractReporter_shared
+    createPlainTextReporter(std::ostream& stream, bool color = false, bool out = false)
 {
-    return std::make_shared<rep::PlainTextReporter>(stream, color);
+    return std::make_shared<rep::PlainTextReporter>(stream, color, out);
 }
 
 /**
@@ -159,9 +164,10 @@ inline static rep::AbstractReporter_shared createPlainTextReporter(std::ostream&
  * @param color Whether to print colored text
  * @return a shared pointer to the reporter
  */
-inline static rep::AbstractReporter_shared createPlainTextReporter(bool color = false)
+inline static rep::AbstractReporter_shared createPlainTextReporter(bool color = false,
+                                                                   bool out   = false)
 {
-    return std::make_shared<rep::PlainTextReporter>(std::cout, color);
+    return std::make_shared<rep::PlainTextReporter>(std::cout, color, out);
 }
 
 /**
@@ -170,10 +176,10 @@ inline static rep::AbstractReporter_shared createPlainTextReporter(bool color = 
  * @param color Whether to print colored text
  * @return a shared pointer to the reporter
  */
-inline static rep::AbstractReporter_shared createPlainTextReporter(const char* file,
-                                                                   bool        color = false)
+inline static rep::AbstractReporter_shared
+    createPlainTextReporter(const char* file, bool color = false, bool out = false)
 {
-    return std::make_shared<rep::PlainTextReporter>(file, color);
+    return std::make_shared<rep::PlainTextReporter>(file, color, out);
 }
 
 }  // namespace sctf
