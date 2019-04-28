@@ -1,24 +1,26 @@
 os:
     - linux
-    - osx
 
+dist: trusty
 sudo: required
 
-services:
-    - docker
-
-language: minimal
+language: cpp
 
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
     packages:
       - python-pip
+      - g++-7
+      - lcov
 
 compiler:
-    - clang
+    - gcc
 
 before_install:
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker pull debian:sid-slim; fi
+    - lcov --version
+    - g++ --version
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install libomp; fi
     - mkdir reports
     - export BUILD_DIR=$TRAVIS_BUILD_DIR
