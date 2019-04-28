@@ -22,6 +22,7 @@
 #ifndef SCTF_SRC_UTIL_SERIALIZE_HPP_
 #define SCTF_SRC_UTIL_SERIALIZE_HPP_
 
+#include <algorithm>
 #include <cstddef>
 #include <iomanip>
 #include <limits>
@@ -44,12 +45,12 @@ namespace util
 template<typename T>
 static std::string name_for_type()
 {
-#if defined(__GNUG__) || defined(__clang__)
     static thread_local std::string name;
     if (name.length() > 0)
     {
         return name;
     }
+#if defined(__GNUG__) || defined(__clang__)
     const std::string sig(__PRETTY_FUNCTION__);
     std::size_t       b = sig.rfind("T = ") + 4;
 #    ifdef __clang__
@@ -57,10 +58,23 @@ static std::string name_for_type()
 #    else
     name = sig.substr(b, sig.find(';', b) - b);
 #    endif
-    return name;
+    name.erase(std::remove(name.begin(), name.end(), ' '), name.end());
+    name.shrink_to_fit();
 #else
-    return typeid(T).name();
+    const std::string sig(typeid(T).name());
+    std::size_t       b = sig.find("struct ");
+    if (b != std::string::npos)
+    {
+        name = sig.substr(b + 7);
+        return name;
+    }
+    b = sig.find("class ");
+    if (b != std::string::npos)
+    {
+        name = sig.substr(b + 6);
+    }
 #endif
+    return name;
 }
 
 /**

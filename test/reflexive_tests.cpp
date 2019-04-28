@@ -236,7 +236,7 @@ void reflexive_tests(test::TestSuitesRunner& runner)
 
         ->test(
             "std::pair",
-            [] { assertT(serialize(std::make_pair(1, 2)), EQ, "std::pair<int, int>", std::string); })
+            [] { assertT(serialize(std::make_pair(1, 2)), EQ, "std::pair<int,int>", std::string); })
         ->test("nullptr",
                [] {
                    assertT(serialize(nullptr), EQ, "0", std::string);
