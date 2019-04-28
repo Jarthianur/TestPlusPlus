@@ -1,5 +1,6 @@
 os:
     - linux
+    - osx
 
 dist: trusty
 sudo: required
@@ -15,10 +16,10 @@ addons:
 
 compiler:
     - gcc
+    - clang
 
 before_install:
-    - find /usr -name '*gcov*' 2>/dev/null
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CXX=g++-8; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CXX=g++-8; export GCOV=gcov-8; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install libomp; fi
     - mkdir reports
 
