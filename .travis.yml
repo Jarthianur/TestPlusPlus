@@ -19,6 +19,7 @@ compiler:
 
 before_install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker pull debian:sid-slim; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update && brew install llvm; fi
     - mkdir reports
     - export BUILD_DIR=$TRAVIS_BUILD_DIR
 
