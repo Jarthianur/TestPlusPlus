@@ -43,7 +43,7 @@ namespace util
  * @return the typename as string
  */
 template<typename T>
-static const std::string& name_for_type()
+static std::string name_for_type()
 {
 #if defined(__GNUG__) || defined(__clang__)
     static thread_local std::string name;
