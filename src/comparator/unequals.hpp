@@ -48,7 +48,7 @@ constexpr const char* unequals_comp_str = "to be unequals";
  * @return true if value is unequals expect, else false
  */
 template<typename V, typename E = V,
-         typename std::enable_if<not std::is_floating_point<V>::value and
+         typename std::enable_if<!std::is_floating_point<V>::value &&
                                  util::is_unequal_comparable<V, E>::value>::type* = nullptr>
 static Comparison unequals(const V& value, const E& expect)
 {
@@ -68,8 +68,8 @@ static Comparison unequals(const V& value, const E& expect)
  * @return true if value is unequals expect, else false
  */
 template<typename V, typename E = V,
-         typename std::enable_if<not std::is_floating_point<V>::value and
-                                 not util::is_unequal_comparable<V, E>::value and
+         typename std::enable_if<!std::is_floating_point<V>::value &&
+                                 !util::is_unequal_comparable<V, E>::value &&
                                  util::is_equal_comparable<V, E>::value>::type* = nullptr>
 static Comparison unequals(const V& value, const E& expect)
 {
@@ -88,7 +88,7 @@ static Comparison unequals(const V& value, const E& expect)
  * @return true if value is unequals expect, else false
  */
 template<typename V, typename E = V,
-         typename std::enable_if<std::is_floating_point<V>::value and
+         typename std::enable_if<std::is_floating_point<V>::value &&
                                  std::is_floating_point<E>::value>::type* = nullptr>
 Comparison unequals(const V& value, const E& expect)
 {

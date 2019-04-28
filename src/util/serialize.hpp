@@ -70,8 +70,8 @@ static const std::string& name_for_type()
  * @param arg The element to serialize
  * @return the element as string
  */
-template<typename T, typename std::enable_if<is_streamable<std::ostringstream, T>::value and
-                                             not std::is_floating_point<T>::value>::type* = nullptr>
+template<typename T, typename std::enable_if<is_streamable<std::ostringstream, T>::value &&
+                                             !std::is_floating_point<T>::value>::type* = nullptr>
 inline std::string serialize(const T& arg)
 {
     std::ostringstream oss;
@@ -85,7 +85,7 @@ inline std::string serialize(const T& arg)
  * @param arg The element to serialize
  * @return the element as string
  */
-template<typename T, typename std::enable_if<is_streamable<std::ostringstream, T>::value and
+template<typename T, typename std::enable_if<is_streamable<std::ostringstream, T>::value &&
                                              std::is_floating_point<T>::value>::type* = nullptr>
 inline std::string serialize(const T& arg)
 {
@@ -101,7 +101,7 @@ inline std::string serialize(const T& arg)
  * @return the element as string
  */
 template<typename T,
-         typename std::enable_if<not is_streamable<std::ostringstream, T>::value>::type* = nullptr>
+         typename std::enable_if<!is_streamable<std::ostringstream, T>::value>::type* = nullptr>
 inline std::string serialize(const T&)
 {
     return name_for_type<T>();

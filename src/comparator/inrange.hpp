@@ -46,8 +46,8 @@ constexpr const char* in_range_comp_str = "to be in range of";
  * @return whether the value was found
  */
 template<typename V, typename R,
-         typename std::enable_if<util::is_iterable<R>::value and
-                                 not std::is_same<R, std::string>::value>::type* = nullptr>
+         typename std::enable_if<util::is_iterable<R>::value &&
+                                 !std::is_same<R, std::string>::value>::type* = nullptr>
 static Comparison in_range(const V& value, const R& range)
 {
     return std::find(range.begin(), range.end(), value) != range.end() ?
@@ -82,7 +82,7 @@ Comparison in_range(const V& value, const R& range)
  * @return whether the value was found
  */
 template<typename V, typename R,
-         typename std::enable_if<std::is_same<R, std::pair<V, V>>::value and
+         typename std::enable_if<std::is_same<R, std::pair<V, V>>::value &&
                                  util::is_equal_comparable<V, V>::value>::type* = nullptr>
 Comparison in_range(const V& value, const R& range)
 {
@@ -101,8 +101,8 @@ Comparison in_range(const V& value, const R& range)
  * @return whether the value was found
  */
 template<typename V, typename R,
-         typename std::enable_if<std::is_same<R, std::pair<V, V>>::value and
-                                 not util::is_equal_comparable<V, V>::value and
+         typename std::enable_if<std::is_same<R, std::pair<V, V>>::value &&
+                                 !util::is_equal_comparable<V, V>::value &&
                                  util::is_unequal_comparable<V, V>::value>::type* = nullptr>
 Comparison in_range(const V& value, const R& range)
 {
