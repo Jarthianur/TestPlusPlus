@@ -24,7 +24,9 @@ before_install:
         $LCOV --version; $GCOV --version; $CXX --version;
       fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install libomp; fi
-    - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cl.exe; fi
+    - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then
+        find "/c/Program Files (x86)/Microsoft Visual Studio/" -name cl.exe -o -name vcvars64.bat;
+      fi
     - mkdir reports
 
 install:
