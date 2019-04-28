@@ -19,7 +19,9 @@ compiler:
 
 before_install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker pull debian:sid-slim; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update && brew install llvm; fi
+    - # if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update && brew install llvm; fi
+    - clang++ --version
+    - clang-omp
     - mkdir reports
     - export BUILD_DIR=$TRAVIS_BUILD_DIR
 
