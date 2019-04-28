@@ -1,4 +1,4 @@
-matrix:
+matrix(parallel):
   - name: C++11
     env: 
       CPP_STD: c++11
@@ -18,30 +18,35 @@ matrix:
 model:
   templates:
     linux_script: |
-        cp -r test test_p
+        export BUILD_DIR=build_{{ env.CPP_STD }}
+        mkdir $BUILD_DIR
         mkdir -p reports/{{ env.CPP_STD }}
+        cp -r test src sctf.hpp $BUILD_DIR/
+        pushd $BUILD_DIR
+        cp -r test test_p
         echo "BUILD SEQUENTIAL TEST BINARIES"
-        pushd test
+        pushd test/
         $CXX -o test_seq -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
-        lcov -c -i -d . -o base.info
+        $LCOV -c -i -d . -o base.info
         echo "RUN SEQUENTIAL TESTS"
         ./test_seq
         if [ $? -ne 0 ]; then exit 1; fi
-        lcov -c -d . -o test.info
-        lcov -a base.info -a test.info -o seq.info
+        $LCOV -c -d . -o test.info
+        $LCOV -a base.info -a test.info -o seq.info
         popd
         pushd test_p/
         echo "BUILD PARALLEL TEST BINARIES"
         $CXX -o test_par -fopenmp -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
-        lcov -c -i -d . -o base.info
+        $LCOV -c -i -d . -o base.info
         echo "RUN PARALLEL TESTS"
         ./test_par
         if [ $? -ne 0 ]; then exit 1; fi
-        lcov -c -d . -o test.info
-        lcov -a base.info -a test.info -o par.info
+        $LCOV -c -d . -o test.info
+        $LCOV -a base.info -a test.info -o par.info
         popd
-        lcov -a test/seq.info -a test_p/par.info -o all.info
-        lcov -e all.info "$PWD/src/*" -o reports/{{ env.CPP_STD }}/lcov.info
+        $LCOV -a test/seq.info -a test_p/par.info -o all.info
+        $LCOV -e all.info "$PWD/src/*" -o ../reports/{{ env.CPP_STD }}/lcov.info
+        popd
     osx_script: |
         pushd test
         clang++ -o test_seq -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
@@ -57,6 +62,8 @@ pipeline:
     - tasks(ordered):
       - shell:
           script: |
+            wget -q 'https://github.com/linux-test-project/lcov/releases/download/v1.14/lcov-1.14.tar.gz'
+            export LCOV=$PWD/lcov-1.14/bin/lcov
             {{ model.templates['linux_script']|render(env=env) }}
           tags:
             - linux
