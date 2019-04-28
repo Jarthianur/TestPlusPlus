@@ -28,8 +28,8 @@ install:
 
 script:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then spline; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd test; clang -o test_seq -std=c++11 main.cpp basic_tests.cpp reflexive_tests.cpp; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then clang -o test_par -fopenmp -std=c++11 main.cpp basic_tests.cpp reflexive_tests.cpp; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd test; clang++ -o test_seq -std=c++11 main.cpp basic_tests.cpp reflexive_tests.cpp; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then clang++ -o test_par -fopenmp -std=c++11 main.cpp basic_tests.cpp reflexive_tests.cpp; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./test_seq; ./test_par; cd ..; fi
 
 after_success:
