@@ -64,7 +64,7 @@ pipeline:
           script: |
             wget -q https://github.com/linux-test-project/lcov/releases/download/v1.14/lcov-1.14.tar.gz
             tar xf lcov-1.14.tar.gz
-            export LCOV=$PWD/lcov-1.14/bin/lcov
+            export LCOV="$PWD/lcov-1.14/bin/lcov --gcov-tool=/usr/bin/gcov-8"
             $LCOV --version
             $CXX --version
             {{ model.templates['linux_script']|render(env=env) }}
