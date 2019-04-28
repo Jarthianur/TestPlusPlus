@@ -27,7 +27,6 @@
 #include "comparator/inrange.hpp"
 #include "comparator/unequals.hpp"
 #include "util/duration.hpp"
-#include "util/interval.hpp"
 #include "util/serialize.hpp"
 
 #include "AssertionFailure.hpp"
@@ -70,17 +69,6 @@
  * @param EXPECT The expected value
  */
 #define assertEquals(VALUE, EXPECT) assertT(VALUE, EQUALS, EXPECT, decltype(VALUE))
-
-/**
- * @def assertInInterval(VALUE, LOWER, UPPER)
- * @brief Assert wrapper. Test for VALUE to be in an interval between LOWER and UPPER.
- * @note Bounds are inclusive.
- * @param VALUE The actual value
- * @param LOWER The lower bound
- * @param UPPER The upper bound
- */
-#define assertInInterval(VALUE, LOWER, UPPER) \
-    assert(VALUE, IN_RANGE, (sctf::util::interval<decltype(LOWER)>{LOWER, UPPER}))
 
 /**
  * @def assertTrue(VALUE)

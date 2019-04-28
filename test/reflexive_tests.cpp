@@ -80,15 +80,8 @@ void reflexive_tests(test::TestSuitesRunner& runner)
                [] {
                    assertFalse(!in_range(1, std::vector<int>{1}));
                    assertFalse(!in_range("a", std::string("a")));
-                   assertFalse(!in_range(1, std::pair<int, int>{1, 2}));
-                   assertFalse(!in_range(1, interval<int>{1, 2}));
                    assertTrue(!in_range(2, std::vector<int>{1}));
                    assertTrue(!in_range("b", std::string("a")));
-                   assertTrue(!in_range(3, std::pair<int, int>{1, 2}));
-                   assertTrue(!in_range(3, interval<int>{1, 2}));
-                   Comparison c = in_range(3, interval<int>{1, 2});
-                   assertTrue(!c);
-                   assertT(*c, EQ, "Expected '3' to be in range of '[1,2]'", std::string);
                })
         ->test("less than",
                [] {
@@ -240,16 +233,10 @@ void reflexive_tests(test::TestSuitesRunner& runner)
                    assertT(serialize(true), EQ, "true", std::string);
                    assertT(serialize(false), EQ, "false", std::string);
                })
-        ->test("interval",
-               [] {
-                   assertT(serialize(interval<int>{1, 2}), EQ, "[1,2]", std::string);
-               })
-        ->test("std::pair",
-               [] {
-                   assertT(serialize(std::make_pair(1, 2)), EQ, "std::pair<1,2>", std::string);
-                   assertT(serialize(std::make_pair(1, interval<int>{3, 4})), EQ,
-                           "std::pair<1,[3,4]>", std::string);
-               })
+
+        ->test(
+            "std::pair",
+            [] { assertT(serialize(std::make_pair(1, 2)), EQ, "std::pair<int, int>", std::string); })
         ->test("nullptr",
                [] {
                    assertT(serialize(nullptr), EQ, "0", std::string);
@@ -314,14 +301,12 @@ void reflexive_tests(test::TestSuitesRunner& runner)
                    assertNoExcept(assert(1, EQUALS, 1));
                    assertNoExcept(assert(true, EQUALS, true));
                    assertNoExcept(assert(1.5, LESS, 100.3));
-                   assertNoExcept(assert(2, IN, (interval<int>{1, 3})));
                    assertNoExcept(assert("hello", NE, "world"));
                    assertNoExcept(assert(2, IN, (std::vector<int>{1, 3, 2})));
                    // failing
                    assertException(assert(2, EQUALS, 1), AssertionFailure);
                    assertException(assert(false, EQUALS, true), AssertionFailure);
                    assertException(assert(1002.5, LESS, 100.3), AssertionFailure);
-                   assertException(assert(4, IN, (interval<int>{1, 3})), AssertionFailure);
                    assertException(assert("hello", EQ, "world"), AssertionFailure);
                    assertException(assert(2, IN, (std::vector<int>{1, 3})), AssertionFailure);
                })
@@ -350,15 +335,6 @@ void reflexive_tests(test::TestSuitesRunner& runner)
                    assertException(assertEquals(false, true), AssertionFailure);
                    assertException(assertEquals("b", "a"), AssertionFailure);
                    assertException(assertEquals(1.2, 2.1), AssertionFailure);
-               })
-        ->test("assertInInterval",
-               [] {
-                   // successful
-                   assertNoExcept(assertInInterval(1, 1, 2));
-                   assertNoExcept(assertInInterval(1.0, 1.0, 2.0));
-                   // failing
-                   assertException(assertInInterval(1, 2, 3), AssertionFailure);
-                   assertException(assertInInterval(1.0, 2.0, 3.3), AssertionFailure);
                })
         ->test("assertTrue",
                [] {

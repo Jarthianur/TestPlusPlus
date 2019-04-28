@@ -25,7 +25,6 @@
 #include <algorithm>
 #include <utility>
 
-#include "../util/interval.hpp"
 #include "../util/traits.hpp"
 
 #include "comparators.hpp"
@@ -70,62 +69,6 @@ Comparison in_range(const V& value, const R& range)
     return range.find(value) != std::string::npos ?
                success :
                Comparison(in_range_comp_str, util::serialize(value), util::serialize(range));
-}
-
-/**
- * @brief Check for pair to contain a value, where the value provides an equality
- * operator.
- * @tparam V The value type
- * @tparam R The range/container type
- * @param value The value to check
- * @param range The range/container to search
- * @return whether the value was found
- */
-template<typename V, typename R,
-         typename std::enable_if<std::is_same<R, std::pair<V, V>>::value &&
-                                 util::is_equal_comparable<V, V>::value>::type* = nullptr>
-Comparison in_range(const V& value, const R& range)
-{
-    return value == range.first || value == range.second ?
-               success :
-               Comparison(in_range_comp_str, util::serialize(value), util::serialize(range));
-}
-
-/**
- * @brief Check for pair to contain a value, where the value provides an unequality, but
- * no equality operator.
- * @tparam V The value type
- * @tparam R The range/container type
- * @param value The value to check
- * @param range The range/container to search
- * @return whether the value was found
- */
-template<typename V, typename R,
-         typename std::enable_if<std::is_same<R, std::pair<V, V>>::value &&
-                                 !util::is_equal_comparable<V, V>::value &&
-                                 util::is_unequal_comparable<V, V>::value>::type* = nullptr>
-Comparison in_range(const V& value, const R& range)
-{
-    return value != range.first && value != range.second ?
-               Comparison(in_range_comp_str, util::serialize(value), util::serialize(range)) :
-               success;
-}
-
-/**
- * @brief Check for a value to be in interval's lower and upper bounds.
- * @tparam V The value type
- * @tparam R The range/container type
- * @param value The value to check
- * @param range The range/container to search
- * @return whether the value was found
- */
-template<typename V, typename R,
-         typename std::enable_if<std::is_same<R, util::interval<V>>::value>::type* = nullptr>
-Comparison in_range(const V& value, const R& bounds)
-{
-    return value < bounds.lower || value > bounds.upper ?
-               Comparison(in_range_comp_str, util::serialize(value), util::serialize(bounds)) :
-               success;
 }
 
 }  // namespace comp

@@ -30,7 +30,6 @@
 #include <typeinfo>
 #include <utility>
 
-#include "interval.hpp"
 #include "traits.hpp"
 
 namespace sctf
@@ -72,7 +71,7 @@ static std::string name_for_type()
  */
 template<typename T, typename std::enable_if<is_streamable<std::ostringstream, T>::value &&
                                              !std::is_floating_point<T>::value>::type* = nullptr>
-inline std::string serialize(const T& arg)
+std::string serialize(const T& arg)
 {
     std::ostringstream oss;
     oss << arg;
@@ -87,7 +86,7 @@ inline std::string serialize(const T& arg)
  */
 template<typename T, typename std::enable_if<is_streamable<std::ostringstream, T>::value &&
                                              std::is_floating_point<T>::value>::type* = nullptr>
-inline std::string serialize(const T& arg)
+std::string serialize(const T& arg)
 {
     std::ostringstream oss;
     oss << std::setprecision(std::numeric_limits<T>::max_digits10) << arg;
@@ -102,31 +101,9 @@ inline std::string serialize(const T& arg)
  */
 template<typename T,
          typename std::enable_if<!is_streamable<std::ostringstream, T>::value>::type* = nullptr>
-inline std::string serialize(const T&)
+std::string serialize(const T&)
 {
     return name_for_type<T>();
-}
-
-/**
- * @brief Specialized serialize for strings (dummy).
- * @param arg The string to serialize
- * @return the string
- */
-template<>
-inline std::string serialize(const std::string& arg)
-{
-    return arg;
-}
-
-/**
- * @brief Specialized serialize for C-strings.
- * @param arg The C-string to serialize
- * @return the C-string as string
- */
-template<>
-inline std::string serialize(const char* const& arg)
-{
-    return std::string(arg);
 }
 
 /**
@@ -134,35 +111,9 @@ inline std::string serialize(const char* const& arg)
  * @param unused
  * @return "0"
  */
-template<>
 inline std::string serialize(const std::nullptr_t&)
 {
     return "0";
-}
-
-/**
- * @brief Specialized serialize for pairs.
- * @tparam T The first type inside pair
- * @tparam S The second type inside pair
- * @param arg The pair to serialize
- * @return the pair as string
- */
-template<typename T, typename S>
-inline std::string serialize(const std::pair<T, S>& arg)
-{
-    return std::string("std::pair<") + serialize(arg.first) + "," + serialize(arg.second) + ">";
-}
-
-/**
- * @brief Specialized serialize for intervals.
- * @tparam T The type inside interval
- * @param arg The interval to serialize
- * @return the interval as string
- */
-template<typename T>
-inline std::string serialize(const interval<T>& arg)
-{
-    return std::string("[") + serialize(arg.lower) + "," + serialize(arg.upper) + "]";
 }
 
 /**
@@ -170,7 +121,6 @@ inline std::string serialize(const interval<T>& arg)
  * @param arg The bool to serialize
  * @return the bool as string
  */
-template<>
 inline std::string serialize(const bool& arg)
 {
     return arg ? "true" : "false";
