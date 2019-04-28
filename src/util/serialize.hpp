@@ -73,6 +73,10 @@ static std::string name_for_type()
     {
         name = sig.substr(b + 6);
     }
+    else
+    {
+        name = sig;
+    }
 #endif
     return name;
 }
