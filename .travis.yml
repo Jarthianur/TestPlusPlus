@@ -23,8 +23,8 @@ before_install:
     - export BUILD_DIR=$TRAVIS_BUILD_DIR
 
 install:
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo pip install --upgrade pip; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo pip install spline; fi
+    - sudo pip install --upgrade pip
+    - sudo pip install spline
 
 script:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then spline; fi
