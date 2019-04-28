@@ -12,15 +12,16 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - python-pip
-      - g++-7
+      - g++-8
       - lcov
 
 compiler:
     - gcc
 
 before_install:
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CXX=g++-8; fi
     - lcov --version
-    - g++ --version
+    - $CXX --version
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install libomp; fi
     - mkdir reports
     - export BUILD_DIR=$TRAVIS_BUILD_DIR

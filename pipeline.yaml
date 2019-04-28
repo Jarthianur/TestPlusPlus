@@ -22,7 +22,7 @@ model:
         mkdir -p reports/{{ env.CPP_STD }}
         echo "BUILD SEQUENTIAL TEST BINARIES"
         pushd test
-        g++ -o test_seq -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
+        $CXX -o test_seq -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
         lcov -c -i -d . -o base.info
         echo "RUN SEQUENTIAL TESTS"
         ./test_seq
@@ -32,7 +32,7 @@ model:
         popd
         pushd test_p/
         echo "BUILD PARALLEL TEST BINARIES"
-        g++ -o test_par -fopenmp -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
+        $CXX -o test_par -fopenmp -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
         lcov -c -i -d . -o base.info
         echo "RUN PARALLEL TESTS"
         ./test_par
