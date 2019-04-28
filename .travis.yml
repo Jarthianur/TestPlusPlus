@@ -1,5 +1,4 @@
 os:
-    - linux
     - osx
 
 sudo: required
@@ -19,9 +18,7 @@ compiler:
 
 before_install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker pull debian:sid-slim; fi
-    - # if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update && brew install llvm; fi
-    - clang++ --version
-    - clang-omp
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update && brew install libomp; fi
     - mkdir reports
     - export BUILD_DIR=$TRAVIS_BUILD_DIR
 
@@ -32,7 +29,7 @@ install:
 script:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then spline; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd test; clang++ -o test_seq -std=c++11 main.cpp basic_tests.cpp reflexive_tests.cpp; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then clang++ -o test_par -fopenmp -std=c++11 main.cpp basic_tests.cpp reflexive_tests.cpp; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then clang++ -o test_par -Xpreprocessor -fopenmp -std=c++11 -lomp main.cpp basic_tests.cpp reflexive_tests.cpp; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./test_seq; ./test_par; cd ..; fi
 
 after_success:
