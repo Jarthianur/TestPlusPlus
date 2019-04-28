@@ -143,7 +143,7 @@ void reflexive_tests(test::TestSuitesRunner& runner)
                [] {
                    auto             a  = std::chrono::system_clock::now();
                    TestSuite_shared ts = TestSuite::create("ts", "ctx");
-                   assert(ts->timestamp().time_since_epoch().count(), GT, a);
+                   assert(ts->timestamp(), GT, a);
                    assertT(ts->name(), EQ, "ts", std::string);
                })
         ->test("meta functions",
