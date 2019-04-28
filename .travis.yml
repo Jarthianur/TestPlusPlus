@@ -18,13 +18,13 @@ compiler:
     - clang
 
 before_install:
-    - docker pull debian:sid-slim
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker pull debian:sid-slim; fi
     - mkdir reports
     - export BUILD_DIR=$TRAVIS_BUILD_DIR
 
 install:
-    - sudo pip install --upgrade pip
-    - sudo pip install spline
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo pip install --upgrade pip; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo pip install spline; fi
 
 script:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then spline; fi
