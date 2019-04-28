@@ -16,11 +16,11 @@ addons:
 
 before_install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-        export CXX=g++-8; export GCOV=gcov-8
-        wget -q https://github.com/linux-test-project/lcov/releases/download/v1.14/lcov-1.14.tar.gz
-        tar xf lcov-1.14.tar.gz
-        export LCOV="$PWD/lcov-1.14/bin/lcov --gcov-tool=/usr/bin/$GCOV"
-        $LCOV --version; $GCOV --version; $CXX --version
+        export CXX=g++-8; export GCOV=gcov-8;
+        wget -q https://github.com/linux-test-project/lcov/releases/download/v1.14/lcov-1.14.tar.gz;
+        tar xf lcov-1.14.tar.gz;
+        export LCOV="$PWD/lcov-1.14/bin/lcov --gcov-tool=/usr/bin/$GCOV";
+        $LCOV --version; $GCOV --version; $CXX --version;
       fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install libomp; fi
     - mkdir reports
