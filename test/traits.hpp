@@ -96,10 +96,7 @@ struct streamable
 };
 
 struct not_streamable
-{
-    template<typename S>
-    friend auto operator<<(S& s, const not_streamable&) -> S& = delete;
-};
+{};
 
 template<typename S, typename T,
          typename std::enable_if<!sctf::util::is_streamable<S, T>::value>::type*>
