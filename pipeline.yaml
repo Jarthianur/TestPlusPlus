@@ -56,8 +56,6 @@ model:
         ./test_par
         if [ $? -ne 0 ]; then exit 1; fi
         popd
-    windows_script: |
-        exit 0
 
 pipeline:
   - stage(Testing):
@@ -72,8 +70,3 @@ pipeline:
             {{ model.templates['osx_script']|render(env=env) }}
           tags:
             - osx
-      - shell:
-          script: |
-            {{ model.templates['windows_script']|render(env=env) }}
-          tags:
-            - windows

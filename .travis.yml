@@ -1,43 +1,58 @@
-os:
-    - linux
-    - osx
-    - windows
-
-dist: trusty
-sudo: required
 language: cpp
+install: true
 
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - python-pip
-      - g++-8
+matrix:
+  include:
 
-before_install:
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-        export CXX=g++-8; export GCOV=gcov-8;
-        wget -q https://github.com/linux-test-project/lcov/releases/download/v1.14/lcov-1.14.tar.gz;
-        tar xf lcov-1.14.tar.gz;
-        export LCOV="$PWD/lcov-1.14/bin/lcov --gcov-tool=/usr/bin/$GCOV";
-        $LCOV --version; $GCOV --version; $CXX --version;
-      fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install libomp; fi
-    - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then
-        find "/c/Program Files (x86)/Microsoft Visual Studio/" -name cl.exe -o -name vcvars64.bat;
-      fi
-    - mkdir reports
-
-install:
+  - name: "Linux (gcc)"
+    os: linux
+    dist: trusty
+    sudo: required
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - python-pip
+        - g++-8
+    env:
+    - CXX=g++-8
+    - GCOV=gcov-8
+    install:
+    - wget -q https://github.com/linux-test-project/lcov/releases/download/v1.14/lcov-1.14.tar.gz
+    - tar xf lcov-1.14.tar.gz
+    - export LCOV="$PWD/lcov-1.14/bin/lcov --gcov-tool=/usr/bin/$GCOV"
+    - $LCOV --version
+    - $GCOV --version
+    - $CXX --version
     - sudo pip install --upgrade pip
     - sudo pip install spline
+    - mkdir reports
+    script:
+    - spline --tags=linux
+    after_success:
+    - bash <(curl -s https://codecov.io/bash)
 
-script:
-    - spline --tags=$TRAVIS_OS_NAME
+  - name: "OSX (clang)"
+    os: osx
+    sudo: required
+    install:
+    - brew install libomp
+    - sudo pip install --upgrade pip
+    - sudo pip install spline
+    script:
+    - spline --tags=osx
 
-after_success:
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash <(curl -s https://codecov.io/bash); fi
+  - name: "Windows (MSVC)"
+    os: windows
+    script:
+    - cmd.exe /C '"C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat" && build.bat'
+    - test/cpp11_seq.exe
+    - test/cpp11_par.exe
+    - test/cpp14_seq.exe
+    - test/cpp14_par.exe
+    - test/cpp17_seq.exe
+    - test/cpp17_par.exe
 
 notifications:
     email:
