@@ -83,7 +83,7 @@ public:
     /**
      * @brief Execute all TestCases sequentially.
      */
-    virtual void run() noexcept
+    virtual void run()
     {
         if (m_state == State::DONE) return;
         m_stats.m_num_of_tests = m_testcases.size();
