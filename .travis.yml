@@ -15,13 +15,12 @@ matrix:
         packages:
         - python-pip
         - g++-8
-    env:
-    - CXX=g++-8
-    - GCOV=gcov-8
     install:
     - wget -q https://github.com/linux-test-project/lcov/releases/download/v1.14/lcov-1.14.tar.gz
     - tar xf lcov-1.14.tar.gz
     - export LCOV="$PWD/lcov-1.14/bin/lcov --gcov-tool=/usr/bin/$GCOV"
+    - export CXX=g++-8
+    - export GCOV=gcov-8
     - $LCOV --version
     - $GCOV --version
     - $CXX --version

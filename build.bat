@@ -1,4 +1,4 @@
-REM @echo off
+@echo off
 
 where cl >nul 2>nul
 IF %ERRORLEVEL% NEQ 0 (echo WARNING: cl is not in the path - please set up Visual Studio to do cl builds) && exit 1
