@@ -32,7 +32,7 @@ matrix:
     script:
     - spline --tags=linux
     after_success:
-    - bash <(curl -s https://codecov.io/bash)
+    - bash <(curl -s https://codecov.io/bash) -x $GCOV
 
   - name: "OSX (clang)"
     os: osx
