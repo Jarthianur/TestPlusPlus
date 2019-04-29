@@ -8,6 +8,8 @@ matrix:
     os: linux
     dist: trusty
     sudo: required
+    compiler:
+    - gcc
     addons:
       apt:
         sources:
@@ -35,8 +37,12 @@ matrix:
   - name: "OSX (clang)"
     os: osx
     sudo: required
+    compiler:
+    - clang
     install:
     - brew install libomp
+    - brew install llvm --with-toolchain
+    - clang++ --version
     - sudo pip install --upgrade pip
     - sudo pip install spline
     script:

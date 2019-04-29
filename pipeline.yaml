@@ -1,4 +1,4 @@
-matrix(parallel):
+matrix:
   - name: C++11
     env: 
       CPP_STD: c++11
