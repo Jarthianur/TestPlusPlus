@@ -40,8 +40,7 @@ matrix:
     compiler:
     - clang
     install:
-    - brew install libomp
-    - brew install --with-toolchain llvm
+    - brew install libomp llvm
     - clang++ --version
     - sudo pip install --upgrade pip
     - sudo pip install spline
