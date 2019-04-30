@@ -1,7 +1,10 @@
 # simple-cpp-test-framework
 
-[![Build Status](https://travis-ci.org/Jarthianur/simple-cpp-test-framework.svg?branch=testing)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
-[![codecov](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework/branch/testing/graph/badge.svg)](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework)
+[![Build Status](https://travis-ci.org/Jarthianur/simple-cpp-test-framework.svg?branch=master)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
+[![Linux Build Status](http://badges.herokuapp.com/travis/Jarthianur/simple-cpp-test-framework?env=BADGE=linux&label=linux&branch=dev_code-overwork)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
+[![OSX Build Status](http://badges.herokuapp.com/travis/Jarthianur/simple-cpp-test-framework?env=BADGE=osx&label=osx&branch=dev_code-overwork)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
+[![Windows Build Status](http://badges.herokuapp.com/travis/Jarthianur/simple-cpp-test-framework?env=BADGE=windows&label=windows&branch=dev_code-overwork)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
+[![codecov](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework/branch/master/graph/badge.svg)](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework)
 [![BCH compliance](https://bettercodehub.com/edge/badge/Jarthianur/simple-cpp-test-framework?branch=master)](https://bettercodehub.com/)
 
 A simple C++11, plain STL, header-only testing framework.
