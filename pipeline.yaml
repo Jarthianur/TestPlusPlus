@@ -61,6 +61,20 @@ model:
         test/test_par
 
 pipeline:
+- stage(analysis):
+  - tasks(ordered):
+    - shell:
+        script: |
+          for f in $(find src/ -type f); do
+            diff -u <(cat $f) <($CFMT -style=file $f) || true
+          done &> /tmp/format.diff
+          if [ "$(wc -l /tmp/format.diff | cut -d' ' -f1)" -gt 0 ]; then
+            cat /tmp/format.diff
+            exit 1
+          fi
+        tags:
+        - linux
+
 - stage(build):
   - tasks(ordered):
     - shell:
