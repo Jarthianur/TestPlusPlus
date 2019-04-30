@@ -28,9 +28,8 @@ matrix:
     - $CXX --version
     - sudo pip install --upgrade pip
     - sudo pip install spline
-    - mkdir reports
     script:
-    - spline --tags=linux
+    - spline --tags=linux --strict
     after_success:
     - bash <(curl -s https://codecov.io/bash) -x $GCOV -s reports/ -X gcov
 
@@ -46,7 +45,7 @@ matrix:
     - sudo pip install --upgrade pip
     - sudo pip install spline
     script:
-    - spline --tags=osx
+    - spline --tags=osx --strict
 
   - name: "Windows (MSVC)"
     os: windows

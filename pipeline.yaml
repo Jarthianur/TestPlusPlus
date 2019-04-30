@@ -1,72 +1,92 @@
 matrix:
   - name: C++11
     env: 
-      CPP_STD: c++11
+      cpp_std: c++11
     tags: 
-      - c++11
+    - c++11
   - name: C++14
     env: 
-      CPP_STD: c++14
+      cpp_std: c++14
     tags: 
-      - c++14
+    - c++14
   - name: C++17
     env: 
-      CPP_STD: c++17
+      cpp_std: c++17
     tags: 
-      - c++17
+    - c++17
 
 model:
+  variables:
+    build_dir: build_{{ env.cpp_std }}
   templates:
-    linux_script: |
-        export BUILD_DIR=build_{{ env.CPP_STD }}
+    linux:
+      build_script: |
         mkdir $BUILD_DIR
-        mkdir -p reports/{{ env.CPP_STD }}
+        mkdir -p reports/{{ env.cpp_std }}
         cp -r test src sctf.hpp $BUILD_DIR/
         pushd $BUILD_DIR
         cp -r test test_p
-        echo "BUILD SEQUENTIAL TEST BINARIES"
         pushd test/
-        $CXX -o test_seq -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
+        $CXX -o test_seq -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.cpp_std }} main.cpp basic_tests.cpp reflexive_tests.cpp
+        popd
+        pushd test_p/
+        $CXX -o test_par -fopenmp -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.cpp_std }} main.cpp basic_tests.cpp reflexive_tests.cpp
+        popd
+        popd
+      test_script: |
+        pushd $BUILD_DIR
+        pushd test/
         $LCOV -c -i -d . -o base.info
-        echo "RUN SEQUENTIAL TESTS"
         ./test_seq
-        if [ $? -ne 0 ]; then exit 1; fi
         $LCOV -c -d . -o test.info
         $LCOV -a base.info -a test.info -o seq.info
         popd
         pushd test_p/
-        echo "BUILD PARALLEL TEST BINARIES"
-        $CXX -o test_par -fopenmp -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
         $LCOV -c -i -d . -o base.info
-        echo "RUN PARALLEL TESTS"
         ./test_par
-        if [ $? -ne 0 ]; then exit 1; fi
         $LCOV -c -d . -o test.info
         $LCOV -a base.info -a test.info -o par.info
         popd
         $LCOV -a test/seq.info -a test_p/par.info -o all.info
-        $LCOV -e all.info "$PWD/src/*" -o ../reports/{{ env.CPP_STD }}/lcov.info
+        $LCOV -e all.info "$PWD/src/*" -o ../reports/{{ env.cpp_std }}/lcov.info
         popd
-    osx_script: |
+    osx:
+      build_script: |
         pushd test
-        clang++ -o test_seq -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
-        clang++ -o test_par -Xpreprocessor -fopenmp -std={{ env.CPP_STD }} -lomp main.cpp basic_tests.cpp reflexive_tests.cpp
-        ./test_seq
-        if [ $? -ne 0 ]; then exit 1; fi
-        ./test_par
-        if [ $? -ne 0 ]; then exit 1; fi
+        clang++ -o test_seq -std={{ env.cpp_std }} main.cpp basic_tests.cpp reflexive_tests.cpp
+        clang++ -o test_par -Xpreprocessor -fopenmp -std={{ env.cpp_std }} -lomp main.cpp basic_tests.cpp reflexive_tests.cpp
         popd
+      test_script: |
+        test/test_seq
+        test/test_par
 
 pipeline:
-  - stage(Testing):
-    - tasks(ordered):
-      - shell:
-          script: |
-            {{ model.templates['linux_script']|render(env=env) }}
-          tags:
-            - linux
-      - shell:
-          script: |
-            {{ model.templates['osx_script']|render(env=env) }}
-          tags:
-            - osx
+- stage(build):
+  - tasks(ordered):
+    - shell:
+        script: |
+          BUILD_DIR={{ model.variables.build_dir|render(env=env) }}
+          {{ model.templates.linux.build_script|render(env=env) }}
+        tags:
+        - linux
+
+    - shell:
+        script: |
+          {{ model.templates.osx.build_script|render(env=env) }}
+        tags:
+        - osx
+
+- stage(test):
+  - tasks(ordered):
+    - shell:
+        script: |
+          BUILD_DIR={{ model.variables.build_dir|render(env=env) }}
+          {{ model.templates.linux.test_script|render(env=env) }}
+        tags:
+        - linux
+
+    - shell:
+        script: |
+          {{ model.templates.osx.test_script|render(env=env) }}
+        tags:
+        - osx

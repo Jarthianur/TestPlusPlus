@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/Jarthianur/simple-cpp-test-framework.svg?branch=testing)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
 [![codecov](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework/branch/testing/graph/badge.svg)](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework)
+[![Build Status](https://travis-matrix-badges.herokuapp.com/repos/Jarthianur/simple-cpp-test-framework/branches/master)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
 
 A simple C++11, plain STL, header-only testing framework.
 Featuring great **extendability** and an **easy, but powerful**, **less typing** optimized API.
