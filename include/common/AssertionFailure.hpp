@@ -27,6 +27,8 @@
 
 namespace sctf
 {
+namespace _
+{
 /**
  * @brief Thrown when an assertion fails.
  */
@@ -62,6 +64,7 @@ private:
     const std::string m_msg;
 };
 
+}  // namespace _
 }  // namespace sctf
 
 #endif  // SCTF_SRC_ASSERTIONFAILURE_HPP_

@@ -41,11 +41,9 @@ double epsilon = 0.000001;
 }  // namespace sctf
 
 using namespace sctf;
-using namespace util;
-using namespace test;
-using namespace comp;
+using namespace _;
 
-void reflexive_tests(test::TestSuitesRunner& runner)
+void reflexive_tests(TestSuitesRunner& runner)
 {
     describeParallel("comparators", runner)
         ->test("equals",

@@ -27,17 +27,12 @@
 #include <iostream>
 #include <string>
 
-#include "../testsuite/TestCase.hpp"
-#include "../testsuite/TestStats.hpp"
-#include "../testsuite/TestSuite.hpp"
-#include "../types.h"
+#include "common/types.h"
+#include "reporter/AbstractReporter.hpp"
+#include "testsuite/TestCase.hpp"
+#include "testsuite/TestStats.hpp"
+#include "testsuite/TestSuite.hpp"
 
-#include "AbstractReporter.hpp"
-
-namespace sctf
-{
-namespace rep
-{
 /// @brief HTML table column start tag
 #define TD "<td>"
 
@@ -56,10 +51,12 @@ namespace rep
 /// @brief HTML table head end tag
 #define TH_ "</th>"
 
+namespace sctf
+{
 /**
  * @brief Concrete reporter featuring HTML format.
  */
-class HtmlReporter : public AbstractReporter
+class HtmlReporter : public _::AbstractReporter
 {
 public:
     /**
@@ -100,14 +97,14 @@ private:
     /**
      * @brief Implement AbstractReporter#report_tc
      */
-    void report_tc(const test::TestCase& tc) override
+    void report_tc(const _::TestCase& tc) override
     {
         std::string status;
         switch (tc.state())
         {
-            case test::TestCase::State::ERROR: status = "error"; break;
-            case test::TestCase::State::FAILED: status = "failed"; break;
-            case test::TestCase::State::PASSED: status = "passed"; break;
+            case _::TestCase::State::ERROR: status = "error"; break;
+            case _::TestCase::State::FAILED: status = "failed"; break;
+            case _::TestCase::State::PASSED: status = "passed"; break;
             default: break;
         }
         *this << "<tr class=\"" << status << "\">" << TD << tc.name() << TD_ << TD << tc.context()
@@ -137,16 +134,14 @@ private:
     }
 };
 
-}  // namespace rep
-
 /**
  * @brief Create a HtmlReporter
  * @param stream The stream to use, defaults to stdout
  * @return a shared pointer to the reporter
  */
-inline static rep::AbstractReporter_shared createHtmlReporter(std::ostream& stream = std::cout)
+static AbstractReporter_shared createHtmlReporter(std::ostream& stream = std::cout)
 {
-    return std::make_shared<rep::HtmlReporter>(stream);
+    return std::make_shared<HtmlReporter>(stream);
 }
 
 /**
@@ -154,11 +149,18 @@ inline static rep::AbstractReporter_shared createHtmlReporter(std::ostream& stre
  * @param file The filename to use
  * @return a shared pointer to the reporter
  */
-inline static rep::AbstractReporter_shared createHtmlReporter(const char* file)
+static AbstractReporter_shared createHtmlReporter(const char* file)
 {
-    return std::make_shared<rep::HtmlReporter>(file);
+    return std::make_shared<HtmlReporter>(file);
 }
 
 }  // namespace sctf
+
+#undef TD
+#undef TD_
+#undef TR
+#undef TR_
+#undef TH
+#undef TH_
 
 #endif  // SCTF_SRC_REPORTER_HTMLREPORTER_HPP_

@@ -24,7 +24,7 @@
 
 #include <memory>
 
-#include "../util/serialize.hpp"
+#include "common/serialize.hpp"
 
 #if __cplusplus >= 201703L
 
@@ -42,7 +42,7 @@
 
 namespace sctf
 {
-namespace comp
+namespace _
 {
 /**
  * @brief Result of an actual comparison performed by any comparator.
@@ -127,7 +127,7 @@ using Comparator = Comparison (*)(const V&, const E&);
 constexpr Comparison success = Comparison();
 #endif
 
-}  // namespace comp
+}  // namespace _
 }  // namespace sctf
 
 /**
@@ -141,9 +141,9 @@ constexpr Comparison success = Comparison();
     namespace sctf                       \
     {                                    \
     template<typename V, typename E = V> \
-    static comp::Comparator<V, E> NAME() \
+    static _::Comparator<V, E> NAME()    \
     {                                    \
-        return &comp::COMP<V, E>;        \
+        return &_::COMP<V, E>;           \
     }                                    \
     }
 
@@ -156,20 +156,19 @@ constexpr Comparison success = Comparison();
  * @note In PRED the two elements are named 'value' and 'expect', where 'value' is the
  * actual value and 'expect' is the expected value.
  */
-#define COMPARATOR(NAME, COMPSTR, PRED)                                                          \
-    namespace sctf                                                                               \
-    {                                                                                            \
-    namespace comp                                                                               \
-    {                                                                                            \
-    constexpr const char* NAME##_comp_str = COMPSTR;                                             \
-    template<typename V, typename E = V>                                                         \
-    static Comparison NAME(const V& value, const E& expect)                                      \
-    {                                                                                            \
-        return (PRED) ?                                                                          \
-                   success :                                                                     \
-                   Comparison(NAME##_comp_str, util::serialize(value), util::serialize(expect)); \
-    }                                                                                            \
-    }                                                                                            \
+#define COMPARATOR(NAME, COMPSTR, PRED)                                                         \
+    namespace sctf                                                                              \
+    {                                                                                           \
+    namespace _                                                                                 \
+    {                                                                                           \
+    constexpr const char* NAME##_comp_str = COMPSTR;                                            \
+    template<typename V, typename E = V>                                                        \
+    static Comparison NAME(const V& value, const E& expect)                                     \
+    {                                                                                           \
+        return (PRED) ? success :                                                               \
+                        Comparison(NAME##_comp_str, _::serialize(value), _::serialize(expect)); \
+    }                                                                                           \
+    }                                                                                           \
     }
 
 #endif  // SCTF_SRC_COMPARATOR_COMPARATORS_HPP_

@@ -26,17 +26,12 @@
 #include <iostream>
 #include <string>
 
-#include "../testsuite/TestCase.hpp"
-#include "../testsuite/TestStats.hpp"
-#include "../testsuite/TestSuite.hpp"
-#include "../types.h"
+#include "common/types.h"
+#include "reporter/AbstractReporter.hpp"
+#include "testsuite/TestCase.hpp"
+#include "testsuite/TestStats.hpp"
+#include "testsuite/TestSuite.hpp"
 
-#include "AbstractReporter.hpp"
-
-namespace sctf
-{
-namespace rep
-{
 /// @brief ANSI colors
 #define ANSI_RED "\x1b[31m"
 #define ANSI_GREEN "\x1b[32m"
@@ -46,10 +41,12 @@ namespace rep
 #define ANSI_CYAN "\x1b[36m"
 #define ANSI_RESET "\x1b[0m"
 
+namespace sctf
+{
 /**
  * @brief Concrete reporter featuring , optionally colored, plain text format.
  */
-class PlainTextReporter : public AbstractReporter
+class PlainTextReporter : public _::AbstractReporter
 {
 public:
     /**
@@ -89,7 +86,7 @@ private:
     /**
      * @brief Implement AbstractReporter#report_tc
      */
-    void report_tc(const test::TestCase& tc) override
+    void report_tc(const _::TestCase& tc) override
     {
         *this << SPACE << "Run Testcase [" << tc.name() << "](" << tc.context()
               << "); time = " << tc.duration() << "ms" << LF << XSPACE;
@@ -100,13 +97,13 @@ private:
         }
         switch (tc.state())
         {
-            case test::TestCase::State::ERROR:
+            case _::TestCase::State::ERROR:
                 *this << (m_color ? ANSI_MAGENTA : "") << "ERROR! " << tc.err_msg();
                 break;
-            case test::TestCase::State::FAILED:
+            case _::TestCase::State::FAILED:
                 *this << (m_color ? ANSI_RED : "") << "FAILED! " << tc.err_msg();
                 break;
-            case test::TestCase::State::PASSED:
+            case _::TestCase::State::PASSED:
                 *this << (m_color ? ANSI_GREEN : "") << "PASSED!";
                 break;
             default: break;
@@ -144,18 +141,16 @@ private:
     bool m_out;
 };
 
-}  // namespace rep
-
 /**
  * @brief Create a PlainTextReporter
  * @param stream The stream to use
  * @param color Whether to print colored text
  * @return a shared pointer to the reporter
  */
-inline static rep::AbstractReporter_shared
-    createPlainTextReporter(std::ostream& stream, bool color = false, bool out = false)
+static AbstractReporter_shared createPlainTextReporter(std::ostream& stream, bool color = false,
+                                                       bool out = false)
 {
-    return std::make_shared<rep::PlainTextReporter>(stream, color, out);
+    return std::make_shared<PlainTextReporter>(stream, color, out);
 }
 
 /**
@@ -164,10 +159,9 @@ inline static rep::AbstractReporter_shared
  * @param color Whether to print colored text
  * @return a shared pointer to the reporter
  */
-inline static rep::AbstractReporter_shared createPlainTextReporter(bool color = false,
-                                                                   bool out   = false)
+static AbstractReporter_shared createPlainTextReporter(bool color = false, bool out = false)
 {
-    return std::make_shared<rep::PlainTextReporter>(std::cout, color, out);
+    return std::make_shared<PlainTextReporter>(std::cout, color, out);
 }
 
 /**
@@ -176,12 +170,20 @@ inline static rep::AbstractReporter_shared createPlainTextReporter(bool color = 
  * @param color Whether to print colored text
  * @return a shared pointer to the reporter
  */
-inline static rep::AbstractReporter_shared
-    createPlainTextReporter(const char* file, bool color = false, bool out = false)
+static AbstractReporter_shared createPlainTextReporter(const char* file, bool color = false,
+                                                       bool out = false)
 {
-    return std::make_shared<rep::PlainTextReporter>(file, color, out);
+    return std::make_shared<PlainTextReporter>(file, color, out);
 }
 
 }  // namespace sctf
+
+#undef ANSI_RED
+#undef ANSI_BLUE
+#undef ANSI_CYAN
+#undef ANSI_GREEN
+#undef ANSI_RESET
+#undef ANSI_YELLOW
+#undef ANSI_MAGENTA
 
 #endif  // SCTF_SRC_REPORTER_PLAINTEXTREPORTER_HPP_

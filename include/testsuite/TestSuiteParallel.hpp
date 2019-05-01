@@ -26,9 +26,8 @@
 #include <limits>
 #include <stdexcept>
 
-#include "../util/streambuf_proxy_omp.hpp"
-
-#include "TestSuite.hpp"
+#include "common/streambuf_proxy_omp.hpp"
+#include "testsuite/TestSuite.hpp"
 
 namespace sctf
 {
@@ -70,8 +69,8 @@ public:
         }
         const long tc_size     = static_cast<long>(m_testcases.size());
         m_stats.m_num_of_tests = m_testcases.size();
-        util::streambuf_proxy_omp mt_buf_cout(std::cout);
-        util::streambuf_proxy_omp mt_buf_cerr(std::cerr);
+        _::streambuf_proxy_omp mt_buf_cout(std::cout);
+        _::streambuf_proxy_omp mt_buf_cerr(std::cerr);
         SCTF_EXEC_SILENT(m_setup_func)
 #pragma omp parallel
         {
@@ -83,13 +82,13 @@ public:
             for (long i = 0; i < tc_size; ++i)
             {
                 auto& tc = m_testcases[static_cast<std::size_t>(i)];
-                if (tc.state() != test::TestCase::State::NONE) continue;
+                if (tc.state() != _::TestCase::State::NONE) continue;
                 SCTF_EXEC_SILENT(m_pre_test_func)
                 tc();
                 switch (tc.state())
                 {
-                    case test::TestCase::State::FAILED: ++fails; break;
-                    case test::TestCase::State::ERROR: ++errs; break;
+                    case _::TestCase::State::FAILED: ++fails; break;
+                    case _::TestCase::State::ERROR: ++errs; break;
                     default: break;
                 }
                 tmp += tc.duration();

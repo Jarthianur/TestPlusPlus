@@ -25,13 +25,12 @@
 #include <algorithm>
 #include <utility>
 
-#include "../util/traits.hpp"
-
-#include "comparators.hpp"
+#include "common/traits.hpp"
+#include "comparator/comparators.hpp"
 
 namespace sctf
 {
-namespace comp
+namespace _
 {
 /// @brief The constraint string for in_range.
 constexpr const char* in_range_comp_str = "to be in range of";
@@ -45,13 +44,13 @@ constexpr const char* in_range_comp_str = "to be in range of";
  * @return whether the value was found
  */
 template<typename V, typename R,
-         typename std::enable_if<util::is_iterable<R>::value &&
+         typename std::enable_if<is_iterable<R>::value &&
                                  !std::is_same<R, std::string>::value>::type* = nullptr>
 static Comparison in_range(const V& value, const R& range)
 {
     return std::find(range.begin(), range.end(), value) != range.end() ?
                success :
-               Comparison(in_range_comp_str, util::serialize(value), util::serialize(range));
+               Comparison(in_range_comp_str, serialize(value), serialize(range));
 }
 
 /**
@@ -68,10 +67,10 @@ Comparison in_range(const V& value, const R& range)
 {
     return range.find(value) != std::string::npos ?
                success :
-               Comparison(in_range_comp_str, util::serialize(value), util::serialize(range));
+               Comparison(in_range_comp_str, serialize(value), serialize(range));
 }
 
-}  // namespace comp
+}  // namespace _
 }  // namespace sctf
 
 /**

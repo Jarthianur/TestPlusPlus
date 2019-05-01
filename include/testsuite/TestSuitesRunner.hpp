@@ -28,15 +28,12 @@
 #include <utility>
 #include <vector>
 
-#include "../types.h"
-#include "../util/serialize.hpp"
-
-#include "TestSuite.hpp"
-#include "TestSuiteParallel.hpp"
+#include "common/serialize.hpp"
+#include "common/types.h"
+#include "testsuite/TestSuite.hpp"
+#include "testsuite/TestSuiteParallel.hpp"
 
 namespace sctf
-{
-namespace test
 {
 /**
  * @brief A runner to manage and run TestSuites.
@@ -90,8 +87,6 @@ private:
     std::vector<TestSuite_shared> m_testsuites;
 };
 
-}  // namespace test
-
 /**
  * @brief Describe and register a TestSuite to the given runner.
  * @note All test cases in this suite will be executed in parallel.
@@ -100,9 +95,8 @@ private:
  * @param runner The TestSuitesRunner to register
  * @return a shared pointer to the created TestSuite
  */
-inline static TestSuite_shared describeParallel(const std::string&      name,
-                                                test::TestSuitesRunner& runner,
-                                                const std::string&      context = "")
+inline static TestSuite_shared describeParallel(const std::string& name, TestSuitesRunner& runner,
+                                                const std::string& context = "")
 {
     return runner.register_ts(TestSuiteParallel::create(name, context));
 }
@@ -116,9 +110,9 @@ inline static TestSuite_shared describeParallel(const std::string&      name,
  * @return a shared pointer to the created TestSuite
  */
 template<typename T>
-static TestSuite_shared describeParallel(const std::string& name, test::TestSuitesRunner& runner)
+static TestSuite_shared describeParallel(const std::string& name, TestSuitesRunner& runner)
 {
-    return runner.register_ts(TestSuiteParallel::create(name, util::name_for_type<T>()));
+    return runner.register_ts(TestSuiteParallel::create(name, _::name_for_type<T>()));
 }
 
 /**
@@ -129,7 +123,7 @@ static TestSuite_shared describeParallel(const std::string& name, test::TestSuit
  * @param runner The TestSuitesRunner to register
  * @return a shared pointer to the created TestSuite
  */
-inline static TestSuite_shared describe(const std::string& name, test::TestSuitesRunner& runner,
+inline static TestSuite_shared describe(const std::string& name, TestSuitesRunner& runner,
                                         const std::string& context = "")
 {
     return runner.register_ts(TestSuite::create(name, context));
@@ -144,9 +138,9 @@ inline static TestSuite_shared describe(const std::string& name, test::TestSuite
  * @return a shared pointer to the created TestSuite
  */
 template<typename T>
-static TestSuite_shared describe(const std::string& name, test::TestSuitesRunner& runner)
+static TestSuite_shared describe(const std::string& name, TestSuitesRunner& runner)
 {
-    return runner.register_ts(TestSuite::create(name, util::name_for_type<T>()));
+    return runner.register_ts(TestSuite::create(name, _::name_for_type<T>()));
 }
 
 }  // namespace sctf

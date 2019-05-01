@@ -27,7 +27,7 @@
 
 namespace sctf
 {
-namespace util
+namespace _
 {
 /**
  * @brief Measure time in milliseconds.
@@ -60,7 +60,7 @@ private:
     const std::chrono::steady_clock::time_point _start;
 };
 
-}  // namespace util
+}  // namespace _
 }  // namespace sctf
 
 #endif  // SCTF_SRC_UTIL_DURATION_HPP_

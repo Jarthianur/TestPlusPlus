@@ -36,7 +36,7 @@
 
 namespace sctf
 {
-namespace util
+namespace _
 {
 /**
  * @brief The mt_streambuf class
@@ -83,7 +83,7 @@ protected:
     std::vector<std::stringbuf> m_thd_buffers;
 };
 
-}  // namespace util
+}  // namespace _
 }  // namespace sctf
 
 #ifndef _OPENMP

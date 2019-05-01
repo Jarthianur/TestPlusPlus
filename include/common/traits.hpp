@@ -27,7 +27,7 @@
 
 namespace sctf
 {
-namespace util
+namespace _
 {
 /**
  * @brief Type trait to check for streaming operator compatibility.
@@ -121,7 +121,7 @@ public:
     static const bool value = decltype(test<S, T>(0))::value;
 };
 
-}  // namespace util
+}  // namespace _
 }  // namespace sctf
 
 #endif  // SCTF_SRC_UTIL_TRAITS_HPP_

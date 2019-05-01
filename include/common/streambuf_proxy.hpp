@@ -28,7 +28,7 @@
 
 namespace sctf
 {
-namespace util
+namespace _
 {
 /**
  * @brief The mt_streambuf class
@@ -70,7 +70,7 @@ protected:
     std::stringbuf  m_buffer;
 };
 
-}  // namespace util
+}  // namespace _
 }  // namespace sctf
 
 #endif  // SCTF_SRC_UTIL_STREAMBUF_PROXY_HPP_

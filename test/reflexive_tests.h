@@ -25,8 +25,8 @@
 #define SCTF_EXTERN_EPSILON
 //#define SCTF_EPSILON 0.000001
 
-#include "../sctf.hpp"
+#include "sctf.hpp"
 
-void reflexive_tests(sctf::test::TestSuitesRunner& runner);
+void reflexive_tests(sctf::TestSuitesRunner& runner);
 
 #endif  // TEST_REFLEXIVE_TESTS_H_

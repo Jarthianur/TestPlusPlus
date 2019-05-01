@@ -28,21 +28,18 @@
 #include <iostream>
 #include <string>
 
-#include "../testsuite/TestCase.hpp"
-#include "../testsuite/TestStats.hpp"
-#include "../testsuite/TestSuite.hpp"
-#include "../types.h"
-
-#include "AbstractReporter.hpp"
+#include "common/types.h"
+#include "reporter/AbstractReporter.hpp"
+#include "testsuite/TestCase.hpp"
+#include "testsuite/TestStats.hpp"
+#include "testsuite/TestSuite.hpp"
 
 namespace sctf
-{
-namespace rep
 {
 /**
  * @brief Concrete reporter featuring JUnit like XML format.
  */
-class XmlReporter : public AbstractReporter
+class XmlReporter : public _::AbstractReporter
 {
 public:
     /**
@@ -86,21 +83,21 @@ private:
     /**
      * @brief Implement AbstractReporter#report_tc
      */
-    void report_tc(const test::TestCase& tc) override
+    void report_tc(const _::TestCase& tc) override
     {
         *this << XSPACE << "<testcase name=\"" << tc.name() << "\" classname=\"" << tc.context()
               << "\" time=\"" << tc.duration() << "\"";
         switch (tc.state())
         {
-            case test::TestCase::State::ERROR:
+            case _::TestCase::State::ERROR:
                 *this << ">" << LF << XSPACE << SPACE << "<error message=\"" << tc.err_msg()
                       << "\"></error>" << LF << XSPACE << "</testcase>";
                 break;
-            case test::TestCase::State::FAILED:
+            case _::TestCase::State::FAILED:
                 *this << ">" << LF << XSPACE << SPACE << "<failure message=\"" << tc.err_msg()
                       << "\"></failure>" << LF << XSPACE << "</testcase>";
                 break;
-            case test::TestCase::State::PASSED: *this << "/>"; break;
+            case _::TestCase::State::PASSED: *this << "/>"; break;
             default: break;
         }
         *this << LF;
@@ -126,16 +123,14 @@ private:
     mutable std::size_t m_id = 0;
 };
 
-}  // namespace rep
-
 /**
  * @brief Create a XmlReporter
  * @param stream The stream to use, defaults to stdout
  * @return a shared pointer to the reporter
  */
-inline static rep::AbstractReporter_shared createXmlReporter(std::ostream& stream = std::cout)
+static AbstractReporter_shared createXmlReporter(std::ostream& stream = std::cout)
 {
-    return std::make_shared<rep::XmlReporter>(stream);
+    return std::make_shared<XmlReporter>(stream);
 }
 
 /**
@@ -143,9 +138,9 @@ inline static rep::AbstractReporter_shared createXmlReporter(std::ostream& strea
  * @param file The filename to use
  * @return a shared pointer to the reporter
  */
-inline static rep::AbstractReporter_shared createXmlReporter(const char* file)
+static AbstractReporter_shared createXmlReporter(const char* file)
 {
-    return std::make_shared<rep::XmlReporter>(file);
+    return std::make_shared<XmlReporter>(file);
 }
 
 }  // namespace sctf

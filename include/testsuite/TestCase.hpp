@@ -26,13 +26,13 @@
 #include <string>
 #include <utility>
 
-#include "../AssertionFailure.hpp"
-#include "../types.h"
-#include "../util/duration.hpp"
+#include "common/AssertionFailure.hpp"
+#include "common/duration.hpp"
+#include "common/types.h"
 
 namespace sctf
 {
-namespace test
+namespace _
 {
 /**
  * @brief Represent a testcase.
@@ -113,7 +113,7 @@ public:
     void operator()()
     {
         if (m_state != State::NONE) return;
-        util::duration dur;
+        struct duration dur;
         try
         {
             m_test_func();
@@ -250,7 +250,7 @@ private:
     std::string m_cerr;
 };
 
-}  // namespace test
+}  // namespace _
 }  // namespace sctf
 
 #endif  // SCTF_SRC_TESTSUITE_TESTCASE_HPP_

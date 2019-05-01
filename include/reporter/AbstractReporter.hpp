@@ -29,14 +29,14 @@
 #include <utility>
 #include <vector>
 
-#include "../testsuite/TestStats.hpp"
-#include "../testsuite/TestSuite.hpp"
-#include "../testsuite/TestSuitesRunner.hpp"
-#include "../types.h"
+#include "common/types.h"
+#include "testsuite/TestStats.hpp"
+#include "testsuite/TestSuite.hpp"
+#include "testsuite/TestSuitesRunner.hpp"
 
 namespace sctf
 {
-namespace rep
+namespace _
 {
 /**
  * @def LF
@@ -66,7 +66,7 @@ public:
      * @note Executes runner's pending TestSuite.
      * @return the sum of failed tests and errors
      */
-    std::size_t report(test::TestSuitesRunner& runner)
+    std::size_t report(TestSuitesRunner& runner)
     {
         m_abs_errs  = 0;
         m_abs_fails = 0;
@@ -135,7 +135,7 @@ protected:
      * @brief Generate report for a given TestCase.
      * @param tc The TestCase
      */
-    virtual void report_tc(const test::TestCase& tc) = 0;
+    virtual void report_tc(const TestCase& tc) = 0;
 
     /**
      * @brief Generate the intro of a report.
@@ -209,7 +209,7 @@ private:
     double m_abs_time = 0;
 };
 
-}  // namespace rep
+}  // namespace _
 }  // namespace sctf
 
 #endif  // SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_
