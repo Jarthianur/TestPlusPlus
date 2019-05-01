@@ -23,7 +23,6 @@
 #define SCTF_SRC_UTIL_DURATION_HPP_
 
 #include <chrono>
-#include <cstdint>
 
 namespace sctf
 {
@@ -36,13 +35,9 @@ namespace _
 struct duration final
 {
     /**
-     * @brief Constructor
+     * @brief Set fixed start timepoint on construction.
      */
     duration() : _start(std::chrono::steady_clock::now()) {}
-
-    /**
-     * @brief Destructor
-     */
     ~duration() noexcept {}
 
     /**

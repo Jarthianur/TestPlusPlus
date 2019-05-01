@@ -52,65 +52,67 @@ public:
         return TestSuite_shared(new TestSuiteParallel(name, context));
     }
 
-    /**
-     * @brief Destructor
-     */
-    ~TestSuiteParallel() noexcept = default;
+    ~TestSuiteParallel() noexcept override = default;
 
     /**
      * @brief Execute all TestCases in parallel.
      */
     void run() override
     {
-        if (m_state == State::DONE) return;
-        if (m_testcases.size() > std::numeric_limits<long>::max())
+        if (m_state != State::DONE)
         {
-            throw std::overflow_error("Too many testcases! Size would overflow loop variant.");
-        }
-        const long tc_size     = static_cast<long>(m_testcases.size());
-        m_stats.m_num_of_tests = m_testcases.size();
-        _::streambuf_proxy_omp mt_buf_cout(std::cout);
-        _::streambuf_proxy_omp mt_buf_cerr(std::cerr);
-        SCTF_EXEC_SILENT(m_setup_func)
+            if (m_testcases.size() > std::numeric_limits<long>::max())
+            {
+                throw std::overflow_error("Too many testcases! Size would overflow loop variant.");
+            }
+            const long tc_size     = static_cast<long>(m_testcases.size());
+            m_stats.m_num_of_tests = m_testcases.size();
+            _::streambuf_proxy_omp mt_buf_cout(std::cout);
+            _::streambuf_proxy_omp mt_buf_cerr(std::cerr);
+
+            SCTF_EXEC_SILENT(m_setup_func)
 #pragma omp parallel
-        {
-            double      tmp   = 0.0;
-            std::size_t fails = 0;
-            std::size_t errs  = 0;
-            // OpenMP 2 compatible - MSVC not supporting higher version
+            {
+                double      tmp   = 0.0;
+                std::size_t fails = 0;
+                std::size_t errs  = 0;
+                // OpenMP 2 compatible - MSVC not supporting higher version
 #pragma omp for schedule(dynamic)
-            for (long i = 0; i < tc_size; ++i)
-            {
-                auto& tc = m_testcases[static_cast<std::size_t>(i)];
-                if (tc.state() != _::TestCase::State::NONE) continue;
-                SCTF_EXEC_SILENT(m_pre_test_func)
-                tc();
-                switch (tc.state())
+                for (long i = 0; i < tc_size; ++i)
                 {
-                    case _::TestCase::State::FAILED: ++fails; break;
-                    case _::TestCase::State::ERROR: ++errs; break;
-                    default: break;
+                    auto& tc = m_testcases[static_cast<std::size_t>(i)];
+                    if (tc.state() == _::TestCase::State::NONE)
+                    {
+                        SCTF_EXEC_SILENT(m_pre_test_func)
+                        tc();
+                        switch (tc.state())
+                        {
+                            case _::TestCase::State::FAILED: ++fails; break;
+                            case _::TestCase::State::ERROR: ++errs; break;
+                            default: break;
+                        }
+                        tmp += tc.duration();
+                        SCTF_EXEC_SILENT(m_post_test_func)
+                        tc.set_cout(mt_buf_cout.str());
+                        tc.set_cerr(mt_buf_cerr.str());
+                        mt_buf_cout.clear();
+                        mt_buf_cerr.clear();
+                    }
                 }
-                tmp += tc.duration();
-                SCTF_EXEC_SILENT(m_post_test_func)
-                tc.set_cout(mt_buf_cout.str());
-                tc.set_cerr(mt_buf_cerr.str());
-                mt_buf_cout.clear();
-                mt_buf_cerr.clear();
-            }
 #pragma omp atomic
-            m_stats.m_num_of_fails += fails;
+                m_stats.m_num_of_fails += fails;
 #pragma omp atomic
-            m_stats.m_num_of_errs += errs;
+                m_stats.m_num_of_errs += errs;
 #pragma omp critical
-            {
-                if (m_time < tmp)
                 {
-                    m_time = tmp;
+                    if (m_time < tmp)
+                    {
+                        m_time = tmp;
+                    }
                 }
             }
+            m_state = State::DONE;
         }
-        m_state = State::DONE;
     }
 
 private:

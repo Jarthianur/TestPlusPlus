@@ -23,13 +23,11 @@
 #define SCTF_SRC_UTIL_SERIALIZE_HPP_
 
 #include <algorithm>
-#include <cstddef>
 #include <iomanip>
 #include <limits>
 #include <sstream>
 #include <string>
 #include <typeinfo>
-#include <utility>
 
 #include "common/traits.hpp"
 

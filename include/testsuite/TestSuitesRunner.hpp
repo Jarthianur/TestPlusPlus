@@ -22,10 +22,8 @@
 #ifndef SCTF_SRC_TESTSUITE_TESTSUITESRUNNER_HPP_
 #define SCTF_SRC_TESTSUITE_TESTSUITESRUNNER_HPP_
 
-#include <cstdint>
-#include <stdexcept>
+#include <algorithm>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "common/serialize.hpp"
@@ -41,14 +39,7 @@ namespace sctf
 class TestSuitesRunner
 {
 public:
-    /**
-     * @brief Constructor
-     */
-    TestSuitesRunner() = default;
-
-    /**
-     * @brief Destructor
-     */
+    TestSuitesRunner()           = default;
     ~TestSuitesRunner() noexcept = default;
 
     /**
@@ -67,10 +58,7 @@ public:
      */
     void run() noexcept
     {
-        for (TestSuite_shared& ts : m_testsuites)
-        {
-            ts->run();
-        }
+        std::for_each(m_testsuites.begin(), m_testsuites.end(), [](auto& ts) { ts->run(); });
     }
 
     /**

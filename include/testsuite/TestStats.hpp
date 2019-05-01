@@ -37,14 +37,7 @@ namespace _
 class TestStats
 {
 public:
-    /**
-     * @brief Constructor
-     */
-    TestStats() = default;
-
-    /**
-     * @brief Destructor
-     */
+    TestStats()           = default;
     ~TestStats() noexcept = default;
 
     /**

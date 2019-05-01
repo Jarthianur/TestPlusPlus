@@ -70,9 +70,6 @@ public:
           m_test_func(std::move(other.m_test_func))
     {}
 
-    /**
-     * @brief Destructor
-     */
     ~TestCase() noexcept = default;
 
     /**
@@ -94,7 +91,7 @@ public:
     /**
      * @brief The test state.
      */
-    enum class State : std::int32_t
+    enum class State : std::int_fast8_t
     {
         /// not yet executed
         NONE,
@@ -179,21 +176,37 @@ public:
         return m_context;
     }
 
+    /**
+     * @brief Set the captured output from stdout.
+     * @param str The output
+     */
     inline void set_cout(const std::string& str)
     {
         m_cout = str;
     }
 
+    /**
+     * @brief Set the captured output from stderr.
+     * @param str The output
+     */
     inline void set_cerr(const std::string& str)
     {
         m_cerr = str;
     }
 
+    /**
+     * @brief Get the output from stdout.
+     * @return The output
+     */
     inline const std::string& cout() const
     {
         return m_cout;
     }
 
+    /**
+     * @brief Get the output from stderr.
+     * @return The output
+     */
     inline const std::string& cerr() const
     {
         return m_cerr;
@@ -228,25 +241,28 @@ private:
         m_err_msg = error;
     }
 
-    /// @brief The testcase name.
+    /// @brief The testcase name
     std::string m_name;
 
-    /// @brief The testcase context.
+    /// @brief The testcase context
     std::string m_context;
 
-    /// @brief The test state.
+    /// @brief The test state
     State m_state = State::NONE;
 
-    /// @brief The duration in milliseconds.
+    /// @brief The duration in milliseconds
     double m_duration = 0.0;
 
-    /// @brief The error message.
+    /// @brief The error message
     std::string m_err_msg;
 
-    /// @brief The test function.
+    /// @brief The test function
     test_function m_test_func;
 
+    /// @brief The coutput from stdout
     std::string m_cout;
+
+    /// @brief The coutput from stderr
     std::string m_cerr;
 };
 

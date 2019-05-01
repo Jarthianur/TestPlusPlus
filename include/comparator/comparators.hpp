@@ -46,15 +46,8 @@ namespace _
 {
 /**
  * @brief Result of an actual comparison performed by any comparator.
- *
- * Boolean convertible, thus checkable in conditions.
- * Dereferencing operator for access of the error message.
- *
- * !!! The error message may only be accessed, if the Comparison returns false to
- * conditions !!!
- *
- * @note As of C++17/14 optionals are available in the STL, so they are used
- * conditionally.
+ * @note The error message may only be accessed, if the Comparison returns false to
+ * conditions.
  */
 struct Comparison final
 {
@@ -171,6 +164,12 @@ constexpr Comparison success = Comparison();
     }                                                                                           \
     }
 
+/**
+ * @def SCTF_SET_EPSILON
+ * @brief Define the epsilon value used by equality comparison of floating point numbers.
+ * @note Only used when SCTF_EXTERN_EPSILON is defined.
+ * @param E The epsilon value
+ */
 #define SCTF_SET_EPSILON(E) \
     namespace sctf          \
     {                       \

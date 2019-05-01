@@ -67,10 +67,7 @@ public:
         : AbstractReporter(fname), m_color(color), m_out(out)
     {}
 
-    /**
-     * @brief Destructor
-     */
-    ~PlainTextReporter() noexcept = default;
+    ~PlainTextReporter() noexcept override = default;
 
 private:
     /**
@@ -88,12 +85,12 @@ private:
      */
     void report_tc(const _::TestCase& tc) override
     {
-        *this << SPACE << "Run Testcase [" << tc.name() << "](" << tc.context()
-              << "); time = " << tc.duration() << "ms" << LF << XSPACE;
+        *this << SCTF_SPACE << "Run Testcase [" << tc.name() << "](" << tc.context()
+              << "); time = " << tc.duration() << "ms" << SCTF_LF << SCTF_XSPACE;
         if (m_out)
         {
-            *this << "stdout = '" << tc.cout() << '\'' << LF << XSPACE;
-            *this << "stderr = '" << tc.cerr() << '\'' << LF << XSPACE;
+            *this << "stdout = '" << tc.cout() << '\'' << SCTF_LF << SCTF_XSPACE;
+            *this << "stderr = '" << tc.cerr() << '\'' << SCTF_LF << SCTF_XSPACE;
         }
         switch (tc.state())
         {
@@ -108,7 +105,7 @@ private:
                 break;
             default: break;
         }
-        *this << (m_color ? ANSI_RESET : "") << LF;
+        *this << (m_color ? ANSI_RESET : "") << SCTF_LF;
     }
 
     /**
@@ -132,12 +129,13 @@ private:
         *this << "Result:: passed: " << abs_tests() - abs_fails() - abs_errs() << "/" << abs_tests()
               << " ; failed: " << abs_fails() << "/" << abs_tests() << " ; errors: " << abs_errs()
               << "/" << abs_tests() << " ; time = " << abs_time() << "ms"
-              << (m_color ? ANSI_RESET : "") << LF;
+              << (m_color ? ANSI_RESET : "") << SCTF_LF;
     }
 
-    /// @brief Use colors flag.
+    /// @brief Use colors.
     bool m_color;
 
+    /// @brief Report captured output for testcases.
     bool m_out;
 };
 

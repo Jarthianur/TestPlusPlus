@@ -71,10 +71,7 @@ public:
      */
     explicit HtmlReporter(const char* fname) : AbstractReporter(fname) {}
 
-    /**
-     * @brief Destructor
-     */
-    ~HtmlReporter() noexcept = default;
+    ~HtmlReporter() noexcept override = default;
 
 private:
     /**

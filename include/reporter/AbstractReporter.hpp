@@ -34,26 +34,26 @@
 #include "testsuite/TestSuite.hpp"
 #include "testsuite/TestSuitesRunner.hpp"
 
+/**
+ * @def SCTF_LF
+ * @brief Line feed
+ */
+#ifdef _WIN32
+#    define SCTF_LF "\r\n"
+#else
+#    define SCTF_LF "\n"
+#endif
+
+/// @brief Spacing with two spaces
+#define SCTF_SPACE "  "
+
+/// @brief Spacing with four spaces
+#define SCTF_XSPACE "    "
+
 namespace sctf
 {
 namespace _
 {
-/**
- * @def LF
- * @brief Line feed
- */
-#ifdef _WIN32
-#    define LF "\r\n"
-#else
-#    define LF "\n"
-#endif
-
-/// @brief Spacing with two spaces
-#define SPACE "  "
-
-/// @brief Spacing with four spaces
-#define XSPACE "    "
-
 /**
  * @brief Report testsuites in a format specified by concrete reporter types.
  */
@@ -114,9 +114,6 @@ protected:
         }
     }
 
-    /**
-     * @brief Destructor
-     */
     virtual ~AbstractReporter() noexcept = default;
 
     /**

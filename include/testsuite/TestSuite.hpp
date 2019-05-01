@@ -22,6 +22,7 @@
 #ifndef SCTF_SRC_TESTSUITE_TESTSUITE_HPP_
 #define SCTF_SRC_TESTSUITE_TESTSUITE_HPP_
 
+#include <algorithm>
 #include <chrono>
 #include <cstddef>
 #include <functional>
@@ -74,9 +75,6 @@ public:
         return TestSuite_shared(new TestSuite(name, context));
     }
 
-    /**
-     * @brief Destructor
-     */
     virtual ~TestSuite() noexcept = default;
 
     /**
@@ -84,30 +82,39 @@ public:
      */
     virtual void run()
     {
-        if (m_state == State::DONE) return;
-        m_stats.m_num_of_tests = m_testcases.size();
-        _::streambuf_proxy buf_cout(std::cout);
-        _::streambuf_proxy buf_cerr(std::cerr);
-        SCTF_EXEC_SILENT(m_setup_func)
-        for (_::TestCase& tc : m_testcases)
+        if (m_state != State::DONE)
         {
-            if (tc.state() != _::TestCase::State::NONE) continue;
-            SCTF_EXEC_SILENT(m_pre_test_func)
-            tc();
-            switch (tc.state())
-            {
-                case _::TestCase::State::FAILED: ++m_stats.m_num_of_fails; break;
-                case _::TestCase::State::ERROR: ++m_stats.m_num_of_errs; break;
-                default: break;
-            }
-            m_time += tc.duration();
-            SCTF_EXEC_SILENT(m_post_test_func)
-            tc.set_cout(buf_cout.str());
-            tc.set_cerr(buf_cerr.str());
-            buf_cout.clear();
-            buf_cerr.clear();
+            m_stats.m_num_of_tests = m_testcases.size();
+            _::streambuf_proxy buf_cout(std::cout);
+            _::streambuf_proxy buf_cerr(std::cerr);
+
+            SCTF_EXEC_SILENT(m_setup_func)
+            std::for_each(m_testcases.begin(), m_testcases.end(),
+                          [this, &buf_cerr, &buf_cout](auto& tc) {
+                              if (tc.state() == _::TestCase::State::NONE)
+                              {
+                                  SCTF_EXEC_SILENT(m_pre_test_func)
+                                  tc();
+                                  switch (tc.state())
+                                  {
+                                      case _::TestCase::State::FAILED:
+                                          ++m_stats.m_num_of_fails;
+                                          break;
+                                      case _::TestCase::State::ERROR:
+                                          ++m_stats.m_num_of_errs;
+                                          break;
+                                      default: break;
+                                  }
+                                  m_time += tc.duration();
+                                  SCTF_EXEC_SILENT(m_post_test_func)
+                                  tc.set_cout(buf_cout.str());
+                                  tc.set_cerr(buf_cerr.str());
+                                  buf_cout.clear();
+                                  buf_cerr.clear();
+                              }
+                          });
+            m_state = State::DONE;
         }
-        m_state = State::DONE;
     }
 
     /**
