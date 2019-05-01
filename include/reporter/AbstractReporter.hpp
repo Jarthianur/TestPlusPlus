@@ -77,7 +77,7 @@ public:
         runner.run();
         begin_report();
         std::for_each(runner.testsuites().begin(), runner.testsuites().end(),
-                      [this](const auto& ts) {
+                      [this](const TestSuite_shared& ts) {
                           m_abs_errs += ts->statistics().errors();
                           m_abs_fails += ts->statistics().failures();
                           m_abs_tests += ts->statistics().tests();
@@ -123,7 +123,7 @@ protected:
     inline virtual void report_ts(const TestSuite_shared ts)
     {
         std::for_each(ts->testcases().begin(), ts->testcases().end(),
-                      [this](const auto& tc) { report_tc(tc); });
+                      [this](const _::TestCase& tc) { report_tc(tc); });
     }
 
     /**

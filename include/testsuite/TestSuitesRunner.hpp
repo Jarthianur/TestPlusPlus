@@ -58,7 +58,8 @@ public:
      */
     void run() noexcept
     {
-        std::for_each(m_testsuites.begin(), m_testsuites.end(), [](auto& ts) { ts->run(); });
+        std::for_each(m_testsuites.begin(), m_testsuites.end(),
+                      [](TestSuite_shared& ts) { ts->run(); });
     }
 
     /**

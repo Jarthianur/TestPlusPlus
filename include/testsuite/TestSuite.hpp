@@ -90,7 +90,7 @@ public:
 
             SCTF_EXEC_SILENT(m_setup_func)
             std::for_each(m_testcases.begin(), m_testcases.end(),
-                          [this, &buf_cerr, &buf_cout](auto& tc) {
+                          [this, &buf_cerr, &buf_cout](_::TestCase& tc) {
                               if (tc.state() == _::TestCase::State::NONE)
                               {
                                   SCTF_EXEC_SILENT(m_pre_test_func)
