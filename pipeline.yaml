@@ -27,7 +27,7 @@ model:
     - target: test_seq
       cxx_args: ""
     - target: test_par
-      cxx_args: -Xpreprocessor -fopenmp -lomp
+      cxx_args: "-Xpreprocessor -fopenmp -lomp"
   templates:
     linux:
       build_script: |
@@ -49,7 +49,7 @@ model:
         clang++ -o {{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../include $(echo *.cpp)
         popd
       test_script: |
-        test/{{ item.target }}
+        ./test/{{ item.target }}
 
 pipeline:
 - stage(analysis):
@@ -111,7 +111,7 @@ pipeline:
             echo -en ' -a {{ entry.target }}/{{ entry.target }}.info' >> .targets
           {% endfor %}
           $LCOV $(cat .targets) -o all.info
-          $LCOV -e all.info "$PWD/src/*" -o ../reports/{{ env.cpp_std }}/lcov.info
+          $LCOV -e all.info "$(dirname $PWD)/include/*" -o ../reports/{{ env.cpp_std }}/lcov.info
           popd
         tags:
         - linux
