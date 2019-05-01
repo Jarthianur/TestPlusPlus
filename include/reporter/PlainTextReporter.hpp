@@ -75,7 +75,7 @@ private:
      */
     void report_ts(const TestSuite_shared ts) override
     {
-        *this << "Run Testsuite [" << ts->name() << "]; time = " << ts->time() << "ms" << LF;
+        *this << "Run Testsuite [" << ts->name() << "]; time = " << ts->time() << "ms" << SCTF_LF;
 
         AbstractReporter::report_ts(ts);
     }

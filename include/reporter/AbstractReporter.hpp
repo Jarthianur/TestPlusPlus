@@ -22,6 +22,7 @@
 #ifndef SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_
 #define SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_
 
+#include <algorithm>
 #include <cstddef>
 #include <fstream>
 #include <memory>
@@ -75,15 +76,14 @@ public:
 
         runner.run();
         begin_report();
-        const std::vector<TestSuite_shared>& testsuites = runner.testsuites();
-        for (const TestSuite_shared& ts : testsuites)
-        {
-            m_abs_errs += ts->statistics().errors();
-            m_abs_fails += ts->statistics().failures();
-            m_abs_tests += ts->statistics().tests();
-            m_abs_time += ts->time();
-            report_ts(ts);
-        }
+        std::for_each(runner.testsuites().begin(), runner.testsuites().end(),
+                      [this](const auto& ts) {
+                          m_abs_errs += ts->statistics().errors();
+                          m_abs_fails += ts->statistics().failures();
+                          m_abs_tests += ts->statistics().tests();
+                          m_abs_time += ts->time();
+                          report_ts(ts);
+                      });
         end_report();
         return m_abs_errs + m_abs_fails;
     }
@@ -122,10 +122,8 @@ protected:
      */
     inline virtual void report_ts(const TestSuite_shared ts)
     {
-        for (auto& tc : ts->testcases())
-        {
-            report_tc(tc);
-        }
+        std::for_each(ts->testcases().begin(), ts->testcases().end(),
+                      [this](const auto& tc) { report_tc(tc); });
     }
 
     /**
