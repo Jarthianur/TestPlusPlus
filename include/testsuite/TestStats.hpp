@@ -29,7 +29,7 @@ namespace sctf
 class TestSuite;
 class TestSuiteParallel;
 
-namespace test
+namespace _
 {
 /**
  * @brief Statistics for test results.
@@ -37,14 +37,7 @@ namespace test
 class TestStats
 {
 public:
-    /**
-     * @brief Constructor
-     */
-    TestStats() = default;
-
-    /**
-     * @brief Destructor
-     */
+    TestStats()           = default;
     ~TestStats() noexcept = default;
 
     /**
@@ -97,7 +90,7 @@ private:
     std::size_t m_num_of_errs = 0;
 };
 
-}  // namespace test
+}  // namespace _
 }  // namespace sctf
 
 #endif  // SCTF_SRC_TESTSUITE_TESTSTATS_HPP_

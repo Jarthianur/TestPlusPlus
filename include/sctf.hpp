@@ -22,16 +22,17 @@
 #ifndef SCTF_SCTF_HPP_
 #define SCTF_SCTF_HPP_
 
-#include "src/assert.hpp"
-#include "src/comparator/equals.hpp"
-#include "src/comparator/greaterthan.hpp"
-#include "src/comparator/inrange.hpp"
-#include "src/comparator/lessthan.hpp"
-#include "src/comparator/unequals.hpp"
-#include "src/reporter/HtmlReporter.hpp"
-#include "src/reporter/PlainTextReporter.hpp"
-#include "src/reporter/XmlReporter.hpp"
-#include "src/testsuite/TestSuitesRunner.hpp"
-#include "src/types.h"
+#include "common/types.h"
+#include "comparator/equals.hpp"
+#include "comparator/greaterthan.hpp"
+#include "comparator/inrange.hpp"
+#include "comparator/lessthan.hpp"
+#include "comparator/unequals.hpp"
+#include "reporter/HtmlReporter.hpp"
+#include "reporter/PlainTextReporter.hpp"
+#include "reporter/XmlReporter.hpp"
+#include "testsuite/TestSuitesRunner.hpp"
+
+#include "assert.hpp"
 
 #endif  // SCTF_SCTF_HPP_

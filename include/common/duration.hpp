@@ -23,11 +23,10 @@
 #define SCTF_SRC_UTIL_DURATION_HPP_
 
 #include <chrono>
-#include <cstdint>
 
 namespace sctf
 {
-namespace util
+namespace _
 {
 /**
  * @brief Measure time in milliseconds.
@@ -36,13 +35,9 @@ namespace util
 struct duration final
 {
     /**
-     * @brief Constructor
+     * @brief Set fixed start timepoint on construction.
      */
     duration() : _start(std::chrono::steady_clock::now()) {}
-
-    /**
-     * @brief Destructor
-     */
     ~duration() noexcept {}
 
     /**
@@ -60,7 +55,7 @@ private:
     const std::chrono::steady_clock::time_point _start;
 };
 
-}  // namespace util
+}  // namespace _
 }  // namespace sctf
 
 #endif  // SCTF_SRC_UTIL_DURATION_HPP_

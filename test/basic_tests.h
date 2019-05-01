@@ -22,7 +22,7 @@
 #ifndef TEST_BASIC_TESTS_H_
 #define TEST_BASIC_TESTS_H_
 
-#include "../sctf.hpp"
+#include "sctf.hpp"
 
 void basic_tests();
 

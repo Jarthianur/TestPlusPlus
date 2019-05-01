@@ -32,20 +32,12 @@
 
 #include "traits.hpp"
 
-namespace sctf
-{
-namespace comp
-{
-double epsilon = 0.000001;
-}  // namespace comp
-}  // namespace sctf
+SCTF_SET_EPSILON(0.000001)
 
 using namespace sctf;
-using namespace util;
-using namespace test;
-using namespace comp;
+using namespace _;
 
-void reflexive_tests(test::TestSuitesRunner& runner)
+void reflexive_tests(TestSuitesRunner& runner)
 {
     describeParallel("comparators", runner)
         ->test("equals",

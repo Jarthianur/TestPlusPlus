@@ -22,6 +22,7 @@
 #ifndef SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_
 #define SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_
 
+#include <algorithm>
 #include <cstddef>
 #include <fstream>
 #include <memory>
@@ -29,31 +30,31 @@
 #include <utility>
 #include <vector>
 
-#include "../testsuite/TestStats.hpp"
-#include "../testsuite/TestSuite.hpp"
-#include "../testsuite/TestSuitesRunner.hpp"
-#include "../types.h"
+#include "common/types.h"
+#include "testsuite/TestStats.hpp"
+#include "testsuite/TestSuite.hpp"
+#include "testsuite/TestSuitesRunner.hpp"
 
-namespace sctf
-{
-namespace rep
-{
 /**
- * @def LF
+ * @def SCTF_LF
  * @brief Line feed
  */
 #ifdef _WIN32
-#    define LF "\r\n"
+#    define SCTF_LF "\r\n"
 #else
-#    define LF "\n"
+#    define SCTF_LF "\n"
 #endif
 
 /// @brief Spacing with two spaces
-#define SPACE "  "
+#define SCTF_SPACE "  "
 
 /// @brief Spacing with four spaces
-#define XSPACE "    "
+#define SCTF_XSPACE "    "
 
+namespace sctf
+{
+namespace _
+{
 /**
  * @brief Report testsuites in a format specified by concrete reporter types.
  */
@@ -66,7 +67,7 @@ public:
      * @note Executes runner's pending TestSuite.
      * @return the sum of failed tests and errors
      */
-    std::size_t report(test::TestSuitesRunner& runner)
+    std::size_t report(TestSuitesRunner& runner)
     {
         m_abs_errs  = 0;
         m_abs_fails = 0;
@@ -75,15 +76,14 @@ public:
 
         runner.run();
         begin_report();
-        const std::vector<TestSuite_shared>& testsuites = runner.testsuites();
-        for (const TestSuite_shared& ts : testsuites)
-        {
-            m_abs_errs += ts->statistics().errors();
-            m_abs_fails += ts->statistics().failures();
-            m_abs_tests += ts->statistics().tests();
-            m_abs_time += ts->time();
-            report_ts(ts);
-        }
+        std::for_each(runner.testsuites().begin(), runner.testsuites().end(),
+                      [this](const TestSuite_shared& ts) {
+                          m_abs_errs += ts->statistics().errors();
+                          m_abs_fails += ts->statistics().failures();
+                          m_abs_tests += ts->statistics().tests();
+                          m_abs_time += ts->time();
+                          report_ts(ts);
+                      });
         end_report();
         return m_abs_errs + m_abs_fails;
     }
@@ -114,9 +114,6 @@ protected:
         }
     }
 
-    /**
-     * @brief Destructor
-     */
     virtual ~AbstractReporter() noexcept = default;
 
     /**
@@ -125,17 +122,15 @@ protected:
      */
     inline virtual void report_ts(const TestSuite_shared ts)
     {
-        for (auto& tc : ts->testcases())
-        {
-            report_tc(tc);
-        }
+        std::for_each(ts->testcases().begin(), ts->testcases().end(),
+                      [this](const _::TestCase& tc) { report_tc(tc); });
     }
 
     /**
      * @brief Generate report for a given TestCase.
      * @param tc The TestCase
      */
-    virtual void report_tc(const test::TestCase& tc) = 0;
+    virtual void report_tc(const TestCase& tc) = 0;
 
     /**
      * @brief Generate the intro of a report.
@@ -209,7 +204,7 @@ private:
     double m_abs_time = 0;
 };
 
-}  // namespace rep
+}  // namespace _
 }  // namespace sctf
 
 #endif  // SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_

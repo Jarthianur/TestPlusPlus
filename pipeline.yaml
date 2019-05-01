@@ -1,72 +1,119 @@
 matrix:
   - name: C++11
     env: 
-      CPP_STD: c++11
+      cpp_std: c++11
     tags: 
-      - c++11
+    - c++11
   - name: C++14
     env: 
-      CPP_STD: c++14
+      cpp_std: c++14
     tags: 
-      - c++14
+    - c++14
   - name: C++17
     env: 
-      CPP_STD: c++17
+      cpp_std: c++17
     tags: 
-      - c++17
+    - c++17
 
 model:
+  variables:
+    build_dir: build_{{ env.cpp_std }}
+    linux:
+    - target: test_seq
+      cxx_args: ""
+    - target: test_par
+      cxx_args: -fopenmp
+    osx:
+    - target: test_seq
+      cxx_args: ""
+    - target: test_par
+      cxx_args: "-Xpreprocessor -fopenmp -lomp"
   templates:
-    linux_script: |
-        export BUILD_DIR=build_{{ env.CPP_STD }}
-        mkdir $BUILD_DIR
-        mkdir -p reports/{{ env.CPP_STD }}
-        cp -r test src sctf.hpp $BUILD_DIR/
-        pushd $BUILD_DIR
-        cp -r test test_p
-        echo "BUILD SEQUENTIAL TEST BINARIES"
-        pushd test/
-        $CXX -o test_seq -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
+    linux:
+      build_script: |
+        mkdir -p $BUILD_DIR
+        cp -r test $BUILD_DIR/{{ item.target }}
+        pushd $BUILD_DIR/{{ item.target }}
+        $CXX -o {{ item.target }} {{ item.cxx_args }} -g -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.cpp_std }} -I../../include $(echo -en *.cpp)
+        popd
+      test_script: |
+        pushd $BUILD_DIR/{{ item.target }}
         $LCOV -c -i -d . -o base.info
-        echo "RUN SEQUENTIAL TESTS"
-        ./test_seq
-        if [ $? -ne 0 ]; then exit 1; fi
+        ./{{ item.target }}
         $LCOV -c -d . -o test.info
-        $LCOV -a base.info -a test.info -o seq.info
+        $LCOV -a base.info -a test.info -o {{ item.target }}.info
         popd
-        pushd test_p/
-        echo "BUILD PARALLEL TEST BINARIES"
-        $CXX -o test_par -fopenmp -g3 -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
-        $LCOV -c -i -d . -o base.info
-        echo "RUN PARALLEL TESTS"
-        ./test_par
-        if [ $? -ne 0 ]; then exit 1; fi
-        $LCOV -c -d . -o test.info
-        $LCOV -a base.info -a test.info -o par.info
-        popd
-        $LCOV -a test/seq.info -a test_p/par.info -o all.info
-        $LCOV -e all.info "$PWD/src/*" -o ../reports/{{ env.CPP_STD }}/lcov.info
-        popd
-    osx_script: |
+    osx:
+      build_script: |
         pushd test
-        clang++ -o test_seq -std={{ env.CPP_STD }} main.cpp basic_tests.cpp reflexive_tests.cpp
-        clang++ -o test_par -Xpreprocessor -fopenmp -std={{ env.CPP_STD }} -lomp main.cpp basic_tests.cpp reflexive_tests.cpp
-        ./test_seq
-        if [ $? -ne 0 ]; then exit 1; fi
-        ./test_par
-        if [ $? -ne 0 ]; then exit 1; fi
+        clang++ -o {{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../include $(echo -en *.cpp)
         popd
+      test_script: |
+        echo "./test/{{ item.target }}"
+        ./test/{{ item.target }}
 
 pipeline:
-  - stage(Testing):
-    - tasks(ordered):
-      - shell:
-          script: |
-            {{ model.templates['linux_script']|render(env=env) }}
-          tags:
-            - linux
-      - shell:
-          script: |
-            {{ model.templates['osx_script']|render(env=env) }}
-          tags:
-            - osx
+- stage(analysis):
+  - tasks(ordered):
+    - shell:
+        script: |
+          for f in $(find include/ -type f); do
+            diff -u <(cat $f) <($CFMT -style=file $f) || true
+          done &> /tmp/format.diff
+          if [ "$(wc -l /tmp/format.diff | cut -d' ' -f1)" -gt 0 ]; then
+            cat /tmp/format.diff
+            exit 1
+          fi
+        tags:
+        - linux
+
+- stage(build):
+  - tasks(ordered):
+    - shell:
+        script: |
+          BUILD_DIR={{ model.variables.build_dir|render(env=env) }}
+          {{ model.templates.linux.build_script|render(env=env, item=item) }}
+        with: "{{ model.variables.linux }}"
+        tags:
+        - linux
+
+    - shell:
+        script: |
+          {{ model.templates.osx.build_script|render(env=env, item=item) }}
+        with: "{{ model.variables.osx }}"
+        tags:
+        - osx
+
+- stage(test):
+  - tasks(ordered):
+    - shell:
+        script: |
+          BUILD_DIR={{ model.variables.build_dir|render(env=env) }}
+          {{ model.templates.linux.test_script|render(env=env, item=item) }}
+        with: "{{ model.variables.linux }}"
+        tags:
+        - linux
+
+    - shell:
+        script: |
+          {{ model.templates.osx.test_script|render(env=env, item=item) }}
+        with: "{{ model.variables.osx }}"
+        tags:
+        - osx
+
+- stage(report):
+  - tasks(ordered):
+    - shell:
+        script: |
+          mkdir -p reports/{{ env.cpp_std }}
+          pushd {{ model.variables.build_dir|render(env=env) }}
+          echo -en "" > .targets
+          {% for entry in model.variables.linux %}
+            echo -en ' -a {{ entry.target }}/{{ entry.target }}.info' >> .targets
+          {% endfor %}
+          $LCOV $(cat .targets) -o all.info
+          $LCOV -e all.info "$(dirname $PWD)/include/*" -o ../reports/{{ env.cpp_std }}/lcov.info
+          popd
+        tags:
+        - linux
+        - report

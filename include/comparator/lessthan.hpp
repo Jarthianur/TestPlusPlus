@@ -19,41 +19,20 @@
  }
  */
 
-#ifndef SCTF_SRC_TYPES_H_
-#define SCTF_SRC_TYPES_H_
+#ifndef SCTF_SRC_COMPARATOR_LESS_HPP_
+#define SCTF_SRC_COMPARATOR_LESS_HPP_
 
-#include <functional>
-#include <memory>
-
-namespace sctf
-{
-namespace test
-{
-/**
- * @typedef test_function
- * @brief Function schema passed to tests.
- */
-using test_function = std::function<void()>;
-
-}  // namespace test
+#include "comparator/comparators.hpp"
 
 /**
- * @typedef TestSuite_shared
- * @brief Shared ptr to TestSuite.
+ * Define a less comparator.
  */
-class TestSuite;
-using TestSuite_shared = std::shared_ptr<TestSuite>;
+COMPARATOR(less_than, "to be less than", value < expect)
 
-namespace rep
-{
 /**
- * @typedef AbstractReporter_shared
- * @brief Shared ptr to AbstractReporter
+ * Provide a Comparator shortwrite.
  */
-class AbstractReporter;
-using AbstractReporter_shared = std::shared_ptr<AbstractReporter>;
+PROVIDE_COMPARATOR(less_than, LESS)
+PROVIDE_COMPARATOR(less_than, LT)
 
-}  // namespace rep
-}  // namespace sctf
-
-#endif  // SCTF_SRC_TYPES_H_
+#endif  // SCTF_SRC_COMPARATOR_LESS_HPP_

@@ -23,19 +23,17 @@
 #define SCTF_SRC_UTIL_SERIALIZE_HPP_
 
 #include <algorithm>
-#include <cstddef>
 #include <iomanip>
 #include <limits>
 #include <sstream>
 #include <string>
 #include <typeinfo>
-#include <utility>
 
-#include "traits.hpp"
+#include "common/traits.hpp"
 
 namespace sctf
 {
-namespace util
+namespace _
 {
 /**
  * @brief Resolve a more or less pretty type name.
@@ -144,7 +142,7 @@ inline std::string serialize(const bool& arg)
     return arg ? "true" : "false";
 }
 
-}  // namespace util
+}  // namespace _
 }  // namespace sctf
 
 #endif  // SCTF_SRC_UTIL_SERIALIZE_HPP_

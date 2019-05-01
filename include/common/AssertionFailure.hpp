@@ -27,6 +27,8 @@
 
 namespace sctf
 {
+namespace _
+{
 /**
  * @brief Thrown when an assertion fails.
  */
@@ -34,7 +36,7 @@ class AssertionFailure : public std::exception
 {
 public:
     /**
-     * @brief Constructor
+     * @brief Construct an AssertionFailure.
      * @param msg The base error message
      * @param file The source file where the assertion took place
      * @param line The source line of the assertion
@@ -43,10 +45,7 @@ public:
         : std::exception(), m_msg(msg + " at " + file + ":" + std::to_string(line))
     {}
 
-    /**
-     * @brief Destructor
-     */
-    ~AssertionFailure() noexcept = default;
+    virtual ~AssertionFailure() noexcept override = default;
 
     /**
      * @brief Get the error message.
@@ -62,6 +61,7 @@ private:
     const std::string m_msg;
 };
 
+}  // namespace _
 }  // namespace sctf
 
 #endif  // SCTF_SRC_ASSERTIONFAILURE_HPP_

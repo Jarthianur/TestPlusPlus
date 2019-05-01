@@ -28,49 +28,80 @@
 
 namespace sctf
 {
-namespace util
+namespace _
 {
 /**
- * @brief The mt_streambuf class
+ * @brief Streambuffer proxy to capture everything sent to a stream.
  */
 class streambuf_proxy : public std::streambuf
 {
 public:
+    /**
+     * @brief Switch the underlying buffer on construction.
+     * @param stream The stream to capture
+     */
     streambuf_proxy(std::ostream& stream) : m_orig_buf(stream.rdbuf(this)), m_orig_stream(stream) {}
 
+    /**
+     * @brief Restore the original streambuffer on destruction.
+     */
     virtual ~streambuf_proxy() noexcept override
     {
         m_orig_stream.rdbuf(m_orig_buf);
     }
 
+    /**
+     * @brief Get the current buffer content.
+     * @return the buffer content as string
+     */
     std::string str() const
     {
         return m_buffer.str();
     }
 
+    /**
+     * @brief Clear the buffer.
+     */
     void clear()
     {
         m_buffer.str("");
     }
 
 protected:
+    /**
+     * @brief Write a single character into the buffer.
+     * @param c The character to write
+     * @return the character on success, else EOF
+     */
     virtual int_type overflow(int_type c) override
     {
         return m_buffer.sputc(std::stringbuf::traits_type::to_char_type(c));
     }
 
+    /**
+     * @brief Write a character sequence into the buffer.
+     * @param s The character sequence
+     * @param n The length of the sequence
+     * @return The number of characters written
+     */
     virtual std::streamsize xsputn(const char* s, std::streamsize n) override
     {
         return m_buffer.sputn(s, n);
     }
 
     // private:
+
+    /// @brief The original underlying buffer of the captured stream
     std::streambuf* m_orig_buf;
-    std::ostream&   m_orig_stream;
-    std::stringbuf  m_buffer;
+
+    /// @brief The captured stream
+    std::ostream& m_orig_stream;
+
+    /// @brief The internal buffer
+    std::stringbuf m_buffer;
 };
 
-}  // namespace util
+}  // namespace _
 }  // namespace sctf
 
 #endif  // SCTF_SRC_UTIL_STREAMBUF_PROXY_HPP_

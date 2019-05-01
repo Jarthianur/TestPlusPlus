@@ -1,7 +1,7 @@
 *
 !*/
 !.github/**
-!/src/**
+!/include/**
 !/test/**
 !.clang-format
 !.gitattributes
@@ -10,5 +10,4 @@
 !LICENSE
 !pipeline.yaml
 !README.md
-!sctf.hpp
 !build.bat
