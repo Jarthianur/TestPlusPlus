@@ -116,4 +116,3 @@ pipeline:
           popd
         tags:
         - linux
-        - report

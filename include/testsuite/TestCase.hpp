@@ -235,7 +235,7 @@ private:
      * @brief Fail this test with an error.
      * @param error The error msg
      */
-    inline void erroneous(const std::string& error = "")
+    inline void erroneous(const std::string& error = "unknown error")
     {
         m_state   = State::ERROR;
         m_err_msg = error;
