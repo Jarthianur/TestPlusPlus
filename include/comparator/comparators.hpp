@@ -171,4 +171,13 @@ constexpr Comparison success = Comparison();
     }                                                                                           \
     }
 
+#define SCTF_SET_EPSILON(E) \
+    namespace sctf          \
+    {                       \
+    namespace _             \
+    {                       \
+    double epsilon = E;     \
+    }                       \
+    }
+
 #endif  // SCTF_SRC_COMPARATOR_COMPARATORS_HPP_

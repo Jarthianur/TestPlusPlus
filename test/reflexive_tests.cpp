@@ -32,13 +32,7 @@
 
 #include "traits.hpp"
 
-namespace sctf
-{
-namespace comp
-{
-double epsilon = 0.000001;
-}  // namespace comp
-}  // namespace sctf
+SCTF_SET_EPSILON(0.000001)
 
 using namespace sctf;
 using namespace _;
