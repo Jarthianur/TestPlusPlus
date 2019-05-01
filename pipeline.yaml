@@ -46,9 +46,12 @@ model:
     osx:
       build_script: |
         pushd test
+        echo "clang++ -o {{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../include $(echo *.cpp)"
         clang++ -o {{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../include $(echo *.cpp)
         popd
       test_script: |
+        echo ./test/{{ item.target }}
+        ls -la
         ./test/{{ item.target }}
 
 pipeline:
