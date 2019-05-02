@@ -399,85 +399,40 @@ void reflexive_tests(TestSuitesRunner& runner)
         });
 
     describe<TestSuite>("test output capture", runner)
-        ->test<_::streambuf_proxy>("single thread",
-                                   [] {
-                                       auto ts = TestSuite::create("ts", "ctx");
-                                       ts->test("1", [] {
-                                           std::cout << "out from 1";
-                                           std::cerr << "err from 1";
-                                       });
-                                       ts->test("2", [] {
-                                           std::cout << "out from 2";
-                                           std::cerr << "err from 2";
-                                       });
-                                       ts->run();
-                                       auto& tc1 = ts->testcases().at(0);
-                                       auto& tc2 = ts->testcases().at(1);
-
-                                       assertT(tc1.cout(), EQ, "out from 1", std::string);
-                                       assertT(tc1.cerr(), EQ, "err from 1", std::string);
-                                       assertT(tc2.cout(), EQ, "out from 2", std::string);
-                                       assertT(tc2.cerr(), EQ, "err from 2", std::string);
-                                   })
+        ->test<_::streambuf_proxy>(
+            "single thread",
+            [] {
+                auto ts = TestSuite::create("ts", "ctx");
+                for (int i = 1; i < 9; ++i)
+                {
+                    ts->test(serialize(i), [i] {
+                        std::cout << 'o' << "ut from " << i;
+                        std::cerr << 'e' << "rr from " << i;
+                    });
+                }
+                ts->run();
+                for (unsigned long i = 0; i < ts->testcases().size(); ++i)
+                {
+                    const auto& tc = ts->testcases().at(i);
+                    assertEquals(tc.cout(), std::string("out from ") + serialize(i));
+                    assertEquals(tc.cerr(), std::string("err from ") + serialize(i));
+                }
+            })
         ->test<_::streambuf_proxy_omp>("multi thread", [] {
             auto ts = TestSuiteParallel::create("ts", "ctx");
-            ts->test("1", [] {
-                std::cout << "out from 1";
-                std::cerr << "err from 1";
-            });
-            ts->test("2", [] {
-                std::cout << "out from 2";
-                std::cerr << "err from 2";
-            });
-            ts->test("3", [] {
-                std::cout << "out from 3";
-                std::cerr << "err from 3";
-            });
-            ts->test("4", [] {
-                std::cout << "out from 4";
-                std::cerr << "err from 4";
-            });
-            ts->test("5", [] {
-                std::cout << "out from 5";
-                std::cerr << "err from 5";
-            });
-            ts->test("6", [] {
-                std::cout << "out from 6";
-                std::cerr << "err from 6";
-            });
-            ts->test("7", [] {
-                std::cout << "out from 7";
-                std::cerr << "err from 7";
-            });
-            ts->test("8", [] {
-                std::cout << "out from 8";
-                std::cerr << "err from 8";
-            });
+            for (int i = 1; i < 9; ++i)
+            {
+                ts->test(serialize(i), [i] {
+                    std::cout << 'o' << "ut from " << i;
+                    std::cerr << 'e' << "rr from " << i;
+                });
+            }
             ts->run();
-            auto& tc1 = ts->testcases().at(0);
-            auto& tc2 = ts->testcases().at(1);
-            auto& tc3 = ts->testcases().at(2);
-            auto& tc4 = ts->testcases().at(3);
-            auto& tc5 = ts->testcases().at(4);
-            auto& tc6 = ts->testcases().at(5);
-            auto& tc7 = ts->testcases().at(6);
-            auto& tc8 = ts->testcases().at(7);
-
-            assertT(tc1.cout(), EQ, "out from 1", std::string);
-            assertT(tc1.cerr(), EQ, "err from 1", std::string);
-            assertT(tc2.cout(), EQ, "out from 2", std::string);
-            assertT(tc2.cerr(), EQ, "err from 2", std::string);
-            assertT(tc3.cout(), EQ, "out from 3", std::string);
-            assertT(tc3.cerr(), EQ, "err from 3", std::string);
-            assertT(tc4.cout(), EQ, "out from 4", std::string);
-            assertT(tc4.cerr(), EQ, "err from 4", std::string);
-            assertT(tc5.cout(), EQ, "out from 5", std::string);
-            assertT(tc5.cerr(), EQ, "err from 5", std::string);
-            assertT(tc6.cout(), EQ, "out from 6", std::string);
-            assertT(tc6.cerr(), EQ, "err from 6", std::string);
-            assertT(tc7.cout(), EQ, "out from 7", std::string);
-            assertT(tc7.cerr(), EQ, "err from 7", std::string);
-            assertT(tc8.cout(), EQ, "out from 8", std::string);
-            assertT(tc8.cerr(), EQ, "err from 8", std::string);
+            for (unsigned long i = 0; i < ts->testcases().size(); ++i)
+            {
+                const auto& tc = ts->testcases().at(i);
+                assertEquals(tc.cout(), std::string("out from ") + serialize(i));
+                assertEquals(tc.cerr(), std::string("err from ") + serialize(i));
+            }
         });
 }
