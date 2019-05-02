@@ -414,8 +414,8 @@ void reflexive_tests(TestSuitesRunner& runner)
                 for (unsigned long i = 0; i < ts->testcases().size(); ++i)
                 {
                     const auto& tc = ts->testcases().at(i);
-                    assertEquals(tc.cout(), std::string("out from ") + serialize(i));
-                    assertEquals(tc.cerr(), std::string("err from ") + serialize(i));
+                    assertEquals(tc.cout(), std::string("out from ") + serialize(i + 1));
+                    assertEquals(tc.cerr(), std::string("err from ") + serialize(i + 1));
                 }
             })
         ->test<_::streambuf_proxy_omp>("multi thread", [] {
@@ -431,8 +431,8 @@ void reflexive_tests(TestSuitesRunner& runner)
             for (unsigned long i = 0; i < ts->testcases().size(); ++i)
             {
                 const auto& tc = ts->testcases().at(i);
-                assertEquals(tc.cout(), std::string("out from ") + serialize(i));
-                assertEquals(tc.cerr(), std::string("err from ") + serialize(i));
+                assertEquals(tc.cout(), std::string("out from ") + serialize(i + 1));
+                assertEquals(tc.cerr(), std::string("err from ") + serialize(i + 1));
             }
         });
 }
