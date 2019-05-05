@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_SRC_COMPARATOR_CONTAINS_HPP_
-#define SCTF_SRC_COMPARATOR_CONTAINS_HPP_
+#ifndef SCTF_COMPARATOR_CONTAINS_HPP_
+#define SCTF_COMPARATOR_CONTAINS_HPP_
 
 #include <algorithm>
 #include <utility>
@@ -46,11 +46,11 @@ constexpr const char* in_range_comp_str = "to be in range of";
 template<typename V, typename R,
          typename std::enable_if<is_iterable<R>::value &&
                                  !std::is_same<R, std::string>::value>::type* = nullptr>
-static Comparison in_range(const V& value, const R& range)
+static comparison in_range(const V& value, const R& range)
 {
     return std::find(range.begin(), range.end(), value) != range.end() ?
                success :
-               Comparison(in_range_comp_str, serialize(value), serialize(range));
+               comparison(in_range_comp_str, to_string(value), to_string(range));
 }
 
 /**
@@ -63,11 +63,11 @@ static Comparison in_range(const V& value, const R& range)
  */
 template<typename V, typename R = V,
          typename std::enable_if<std::is_same<R, std::string>::value>::type* = nullptr>
-Comparison in_range(const V& value, const R& range)
+comparison in_range(const V& value, const R& range)
 {
     return range.find(value) != std::string::npos ?
                success :
-               Comparison(in_range_comp_str, serialize(value), serialize(range));
+               comparison(in_range_comp_str, to_string(value), to_string(range));
 }
 
 }  // namespace _
@@ -79,4 +79,4 @@ Comparison in_range(const V& value, const R& range)
 PROVIDE_COMPARATOR(in_range, IN_RANGE)
 PROVIDE_COMPARATOR(in_range, IN)
 
-#endif  // SCTF_SRC_COMPARATOR_CONTAINS_HPP_
+#endif  // SCTF_COMPARATOR_CONTAINS_HPP_

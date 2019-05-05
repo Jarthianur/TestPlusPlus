@@ -19,18 +19,18 @@
  }
  */
 
-#ifndef SCTF_SRC_REPORTER_PLAINTEXTREPORTER_HPP_
-#define SCTF_SRC_REPORTER_PLAINTEXTREPORTER_HPP_
+#ifndef SCTF_REPORTER_PLAINTEXT_REPORTER_HPP_
+#define SCTF_REPORTER_PLAINTEXT_REPORTER_HPP_
 
 #include <cstddef>
 #include <iostream>
 #include <string>
 
 #include "common/types.h"
-#include "reporter/AbstractReporter.hpp"
-#include "testsuite/TestCase.hpp"
-#include "testsuite/TestStats.hpp"
-#include "testsuite/TestSuite.hpp"
+#include "reporter/abstract_reporter.hpp"
+#include "testsuite/testcase.hpp"
+#include "testsuite/statistics.hpp"
+#include "testsuite/testsuite.hpp"
 
 /// @brief ANSI colors
 #define ANSI_RED "\x1b[31m"
@@ -46,7 +46,7 @@ namespace sctf
 /**
  * @brief Concrete reporter featuring , optionally colored, plain text format.
  */
-class PlainTextReporter : public _::AbstractReporter
+class plaintext_reporter : public _::abstract_reporter
 {
 public:
     /**
@@ -54,8 +54,8 @@ public:
      * @param stream The stream to write to
      * @param color Whether to print colored text
      */
-    explicit PlainTextReporter(std::ostream& stream, bool color = false, bool out = false)
-        : AbstractReporter(stream), m_color(color), m_out(out)
+    explicit plaintext_reporter(std::ostream& stream, bool color = false, bool out = false)
+        : abstract_reporter(stream), m_color(color), m_out(out)
     {}
 
     /**
@@ -63,27 +63,27 @@ public:
      * @param fname The file to write to
      * @param color Whether to print colored text
      */
-    explicit PlainTextReporter(const char* fname, bool color = false, bool out = false)
-        : AbstractReporter(fname), m_color(color), m_out(out)
+    explicit plaintext_reporter(const char* fname, bool color = false, bool out = false)
+        : abstract_reporter(fname), m_color(color), m_out(out)
     {}
 
-    ~PlainTextReporter() noexcept override = default;
+    ~plaintext_reporter() noexcept override = default;
 
 private:
     /**
      * @brief Implement AbstractReporter#report_ts
      */
-    void report_ts(const TestSuite_shared ts) override
+    void report_ts(const testsuite_shared ts) override
     {
         *this << "Run Testsuite [" << ts->name() << "]; time = " << ts->time() << "ms" << SCTF_LF;
 
-        AbstractReporter::report_ts(ts);
+        abstract_reporter::report_ts(ts);
     }
 
     /**
      * @brief Implement AbstractReporter#report_tc
      */
-    void report_tc(const _::TestCase& tc) override
+    void report_tc(const _::testcase& tc) override
     {
         *this << SCTF_SPACE << "Run Testcase [" << tc.name() << "](" << tc.context()
               << "); time = " << tc.duration() << "ms" << SCTF_LF << SCTF_XSPACE;
@@ -94,13 +94,13 @@ private:
         }
         switch (tc.state())
         {
-            case _::TestCase::State::ERROR:
+            case _::testcase::result::ERROR:
                 *this << (m_color ? ANSI_MAGENTA : "") << "ERROR! " << tc.err_msg();
                 break;
-            case _::TestCase::State::FAILED:
+            case _::testcase::result::FAILED:
                 *this << (m_color ? ANSI_RED : "") << "FAILED! " << tc.err_msg();
                 break;
-            case _::TestCase::State::PASSED:
+            case _::testcase::result::PASSED:
                 *this << (m_color ? ANSI_GREEN : "") << "PASSED!";
                 break;
             default: break;
@@ -145,10 +145,10 @@ private:
  * @param color Whether to print colored text
  * @return a shared pointer to the reporter
  */
-static AbstractReporter_shared createPlainTextReporter(std::ostream& stream, bool color = false,
-                                                       bool out = false)
+static reporter_shared createPlainTextReporter(std::ostream& stream, bool color = false,
+                                               bool out = false)
 {
-    return std::make_shared<PlainTextReporter>(stream, color, out);
+    return std::make_shared<plaintext_reporter>(stream, color, out);
 }
 
 /**
@@ -157,9 +157,9 @@ static AbstractReporter_shared createPlainTextReporter(std::ostream& stream, boo
  * @param color Whether to print colored text
  * @return a shared pointer to the reporter
  */
-static AbstractReporter_shared createPlainTextReporter(bool color = false, bool out = false)
+static reporter_shared createPlainTextReporter(bool color = false, bool out = false)
 {
-    return std::make_shared<PlainTextReporter>(std::cout, color, out);
+    return std::make_shared<plaintext_reporter>(std::cout, color, out);
 }
 
 /**
@@ -168,10 +168,10 @@ static AbstractReporter_shared createPlainTextReporter(bool color = false, bool 
  * @param color Whether to print colored text
  * @return a shared pointer to the reporter
  */
-static AbstractReporter_shared createPlainTextReporter(const char* file, bool color = false,
-                                                       bool out = false)
+static reporter_shared createPlainTextReporter(const char* file, bool color = false,
+                                               bool out = false)
 {
-    return std::make_shared<PlainTextReporter>(file, color, out);
+    return std::make_shared<plaintext_reporter>(file, color, out);
 }
 
 }  // namespace sctf
@@ -184,4 +184,4 @@ static AbstractReporter_shared createPlainTextReporter(const char* file, bool co
 #undef ANSI_YELLOW
 #undef ANSI_MAGENTA
 
-#endif  // SCTF_SRC_REPORTER_PLAINTEXTREPORTER_HPP_
+#endif  // SCTF_REPORTER_PLAINTEXT_REPORTER_HPP_

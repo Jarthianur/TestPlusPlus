@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_SRC_COMPARATOR_EQUALS_HPP_
-#define SCTF_SRC_COMPARATOR_EQUALS_HPP_
+#ifndef SCTF_COMPARATOR_EQUALS_HPP_
+#define SCTF_COMPARATOR_EQUALS_HPP_
 
 #include <algorithm>
 #include <cmath>
@@ -50,10 +50,10 @@ constexpr const char* equals_comp_str = "to be equals";
 template<typename V, typename E = V,
          typename std::enable_if<!std::is_floating_point<V>::value &&
                                  is_equal_comparable<V, E>::value>::type* = nullptr>
-static Comparison equals(const V& value, const E& expect)
+static comparison equals(const V& value, const E& expect)
 {
     return value == expect ? success :
-                             Comparison(equals_comp_str, serialize(value), serialize(expect));
+                             comparison(equals_comp_str, to_string(value), to_string(expect));
 }
 
 /**
@@ -70,9 +70,9 @@ template<typename V, typename E = V,
          typename std::enable_if<!std::is_floating_point<V>::value &&
                                  !is_equal_comparable<V, E>::value &&
                                  is_unequal_comparable<V, E>::value>::type* = nullptr>
-static Comparison equals(const V& value, const E& expect)
+static comparison equals(const V& value, const E& expect)
 {
-    return value != expect ? Comparison(equals_comp_str, serialize(value), serialize(expect)) :
+    return value != expect ? comparison(equals_comp_str, to_string(value), to_string(expect)) :
                              success;
 }
 
@@ -88,7 +88,7 @@ static Comparison equals(const V& value, const E& expect)
 template<typename V, typename E = V,
          typename std::enable_if<std::is_floating_point<V>::value &&
                                  std::is_floating_point<E>::value>::type* = nullptr>
-Comparison equals(const V& value, const E& expect)
+comparison equals(const V& value, const E& expect)
 {
 #ifdef SCTF_EPSILON
     static V epsilon_ = SCTF_EPSILON;
@@ -100,7 +100,7 @@ Comparison equals(const V& value, const E& expect)
 #endif
     return (std::abs(value - expect) <= std::max(std::abs(value), std::abs(expect)) * epsilon_) ?
                success :
-               Comparison(equals_comp_str, serialize(value), serialize(expect));
+               comparison(equals_comp_str, to_string(value), to_string(expect));
 }
 
 }  // namespace _
@@ -112,4 +112,4 @@ Comparison equals(const V& value, const E& expect)
 PROVIDE_COMPARATOR(equals, EQUALS)
 PROVIDE_COMPARATOR(equals, EQ)
 
-#endif  // SCTF_SRC_COMPARATOR_EQUALS_HPP_
+#endif  // SCTF_COMPARATOR_EQUALS_HPP_

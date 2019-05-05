@@ -19,14 +19,14 @@
  }
  */
 
-#ifndef SCTF_SRC_TESTSUITE_TESTCASE_HPP_
-#define SCTF_SRC_TESTSUITE_TESTCASE_HPP_
+#ifndef SCTF_TESTSUITE_TESTCASE_HPP_
+#define SCTF_TESTSUITE_TESTCASE_HPP_
 
 #include <cstdint>
 #include <string>
 #include <utility>
 
-#include "common/AssertionFailure.hpp"
+#include "common/assertion_failure.hpp"
 #include "common/duration.hpp"
 #include "common/types.h"
 
@@ -41,11 +41,11 @@ namespace _
  * fails and respectively passes if not. The state is stored with an error message in case
  * of failure.
  */
-class TestCase
+class testcase
 {
 public:
-    TestCase(const TestCase&) = delete;
-    TestCase& operator=(const TestCase&) = delete;
+    testcase(const testcase&) = delete;
+    testcase& operator=(const testcase&) = delete;
 
     /**
      * @brief Constructor
@@ -53,7 +53,7 @@ public:
      * @param context The context of the test function
      * @param t_func The test function
      */
-    TestCase(const std::string& name, const std::string& context, test_function&& t_func)
+    testcase(const std::string& name, const std::string& context, test_function&& t_func)
         : m_name(name), m_context("test." + context), m_test_func(std::move(t_func))
     {}
 
@@ -61,7 +61,7 @@ public:
      * @brief Move-constructor
      * @param other The other TestCase
      */
-    TestCase(TestCase&& other)
+    testcase(testcase&& other)
         : m_name(std::move(other.m_name)),
           m_context(std::move(other.m_context)),
           m_state(other.m_state),
@@ -70,14 +70,14 @@ public:
           m_test_func(std::move(other.m_test_func))
     {}
 
-    ~TestCase() noexcept = default;
+    ~testcase() noexcept = default;
 
     /**
      * @brief Move-assignment
      * @param other The other TestCase
      * @return this
      */
-    TestCase& operator=(TestCase&& other)
+    testcase& operator=(testcase&& other)
     {
         m_name      = std::move(other.m_name);
         m_context   = std::move(other.m_context);
@@ -91,7 +91,7 @@ public:
     /**
      * @brief The test state.
      */
-    enum class State : std::int_fast8_t
+    enum class result : std::int_fast8_t
     {
         /// not yet executed
         NONE,
@@ -109,14 +109,14 @@ public:
      */
     void operator()()
     {
-        if (m_state != State::NONE) return;
+        if (m_state != result::NONE) return;
         struct duration dur;
         try
         {
             m_test_func();
             pass();
         }
-        catch (const AssertionFailure& e)
+        catch (const assertion_failure& e)
         {
             fail(e.what());
         }
@@ -135,7 +135,7 @@ public:
      * @brief Get the TestState.
      * @return the test state
      */
-    inline State state() const
+    inline result state() const
     {
         return m_state;
     }
@@ -218,7 +218,7 @@ private:
      */
     inline void pass()
     {
-        m_state = State::PASSED;
+        m_state = result::PASSED;
     }
 
     /**
@@ -227,7 +227,7 @@ private:
      */
     inline void fail(const char* msg)
     {
-        m_state   = State::FAILED;
+        m_state   = result::FAILED;
         m_err_msg = msg;
     }
 
@@ -237,7 +237,7 @@ private:
      */
     inline void erroneous(const std::string& error = "unknown error")
     {
-        m_state   = State::ERROR;
+        m_state   = result::ERROR;
         m_err_msg = error;
     }
 
@@ -248,7 +248,7 @@ private:
     std::string m_context;
 
     /// @brief The test state
-    State m_state = State::NONE;
+    result m_state = result::NONE;
 
     /// @brief The duration in milliseconds
     double m_duration = 0.0;
@@ -269,4 +269,4 @@ private:
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_SRC_TESTSUITE_TESTCASE_HPP_
+#endif  // SCTF_TESTSUITE_TESTCASE_HPP_

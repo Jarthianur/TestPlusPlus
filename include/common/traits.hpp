@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_SRC_UTIL_TRAITS_HPP_
-#define SCTF_SRC_UTIL_TRAITS_HPP_
+#ifndef SCTF_COMMON_TRAITS_HPP_
+#define SCTF_COMMON_TRAITS_HPP_
 
 #include <iterator>
 #include <type_traits>
@@ -124,4 +124,4 @@ public:
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_SRC_UTIL_TRAITS_HPP_
+#endif  // SCTF_COMMON_TRAITS_HPP_

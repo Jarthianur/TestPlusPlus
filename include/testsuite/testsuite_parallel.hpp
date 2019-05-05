@@ -19,15 +19,15 @@
  }
  */
 
-#ifndef SCTF_SRC_TESTSUITE_TESTSUITEPARALLEL_HPP_
-#define SCTF_SRC_TESTSUITE_TESTSUITEPARALLEL_HPP_
+#ifndef SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP_
+#define SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP_
 
 #include <iostream>
 #include <limits>
 #include <stdexcept>
 
 #include "common/streambuf_proxy_omp.hpp"
-#include "testsuite/TestSuite.hpp"
+#include "testsuite/testsuite.hpp"
 
 namespace sctf
 {
@@ -35,11 +35,10 @@ namespace sctf
  * @brief Testsuite class for managing parallel testcases.
  * @note Non-copyable
  */
-class TestSuiteParallel : public TestSuite
+class testsuite_parallel : public testsuite
 {
 public:
-    TestSuiteParallel(const TestSuiteParallel&) = delete;
-    TestSuiteParallel& operator=(const TestSuiteParallel&) = delete;
+    ~testsuite_parallel() noexcept override = default;
 
     /**
      * @brief Create a TestSuiteParallel.
@@ -47,19 +46,17 @@ public:
      * @param context The context
      * @return a shared pointer to the created TestSuiteParallel
      */
-    static TestSuite_shared create(const std::string& name, const std::string& context)
+    static testsuite_shared create(const std::string& name, const std::string& context)
     {
-        return TestSuite_shared(new TestSuiteParallel(name, context));
+        return testsuite_shared(new testsuite_parallel(name, context));
     }
-
-    ~TestSuiteParallel() noexcept override = default;
 
     /**
      * @brief Execute all TestCases in parallel.
      */
     void run() override
     {
-        if (m_state != State::DONE)
+        if (m_state != execution_state::DONE)
         {
             if (m_testcases.size() > std::numeric_limits<long>::max())
             {
@@ -81,14 +78,14 @@ public:
                 for (long i = 0; i < tc_size; ++i)
                 {
                     auto& tc = m_testcases[static_cast<std::size_t>(i)];
-                    if (tc.state() == _::TestCase::State::NONE)
+                    if (tc.state() == _::testcase::result::NONE)
                     {
                         SCTF_EXEC_SILENT(m_pre_test_func)
                         tc();
                         switch (tc.state())
                         {
-                            case _::TestCase::State::FAILED: ++fails; break;
-                            case _::TestCase::State::ERROR: ++errs; break;
+                            case _::testcase::result::FAILED: ++fails; break;
+                            case _::testcase::result::ERROR: ++errs; break;
                             default: break;
                         }
                         tmp += tc.duration();
@@ -111,7 +108,7 @@ public:
                     }
                 }
             }
-            m_state = State::DONE;
+            m_state = execution_state::DONE;
         }
     }
 
@@ -121,11 +118,11 @@ private:
      * @param name The name/description
      * @param context The context description
      */
-    TestSuiteParallel(const std::string& name, const std::string& context)
-        : TestSuite(name, context)
+    testsuite_parallel(const std::string& name, const std::string& context)
+        : testsuite(name, context)
     {}
 };
 
 }  // namespace sctf
 
-#endif  // SCTF_SRC_TESTSUITE_TESTSUITEPARALLEL_HPP_
+#endif  // SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP_

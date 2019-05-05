@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_SRC_ASSERTIONFAILURE_HPP_
-#define SCTF_SRC_ASSERTIONFAILURE_HPP_
+#ifndef SCTF_COMMON_ASSERTION_FAILURE_HPP_
+#define SCTF_COMMON_ASSERTION_FAILURE_HPP_
 
 #include <exception>
 #include <string>
@@ -30,22 +30,22 @@ namespace sctf
 namespace _
 {
 /**
- * @brief Thrown when an assertion fails.
+ * @brief Thrown if an assertion fails.
  */
-class AssertionFailure : public std::exception
+class assertion_failure : public std::exception
 {
 public:
     /**
-     * @brief Construct an AssertionFailure.
+     * @brief Constructor.
      * @param msg The base error message
      * @param file The source file where the assertion took place
      * @param line The source line of the assertion
      */
-    AssertionFailure(const std::string& msg, const char* file, int line)
+    assertion_failure(const std::string& msg, const char* file, int line)
         : std::exception(), m_msg(msg + " at " + file + ":" + std::to_string(line))
     {}
 
-    virtual ~AssertionFailure() noexcept override = default;
+    virtual ~assertion_failure() noexcept override = default;
 
     /**
      * @brief Get the error message.
@@ -64,4 +64,4 @@ private:
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_SRC_ASSERTIONFAILURE_HPP_
+#endif  // SCTF_COMMON_ASSERTION_FAILURE_HPP_

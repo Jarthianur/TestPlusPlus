@@ -24,14 +24,14 @@
 
 #include "common/types.h"
 #include "comparator/equals.hpp"
-#include "comparator/greaterthan.hpp"
+#include "comparator/greater.hpp"
 #include "comparator/inrange.hpp"
-#include "comparator/lessthan.hpp"
+#include "comparator/less.hpp"
 #include "comparator/unequals.hpp"
-#include "reporter/HtmlReporter.hpp"
-#include "reporter/PlainTextReporter.hpp"
-#include "reporter/XmlReporter.hpp"
-#include "testsuite/TestSuitesRunner.hpp"
+#include "reporter/html_reporter.hpp"
+#include "reporter/plaintext_reporter.hpp"
+#include "reporter/xml_reporter.hpp"
+#include "testsuite/runner.hpp"
 
 #include "assert.hpp"
 

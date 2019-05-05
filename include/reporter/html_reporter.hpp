@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_SRC_REPORTER_HTMLREPORTER_HPP_
-#define SCTF_SRC_REPORTER_HTMLREPORTER_HPP_
+#ifndef SCTF_REPORTER_HTML_REPORTER_HPP_
+#define SCTF_REPORTER_HTML_REPORTER_HPP_
 
 #include <cstddef>
 #include <fstream>
@@ -28,10 +28,10 @@
 #include <string>
 
 #include "common/types.h"
-#include "reporter/AbstractReporter.hpp"
-#include "testsuite/TestCase.hpp"
-#include "testsuite/TestStats.hpp"
-#include "testsuite/TestSuite.hpp"
+#include "reporter/abstract_reporter.hpp"
+#include "testsuite/testcase.hpp"
+#include "testsuite/statistics.hpp"
+#include "testsuite/testsuite.hpp"
 
 /// @brief HTML table column start tag
 #define TD "<td>"
@@ -56,28 +56,28 @@ namespace sctf
 /**
  * @brief Concrete reporter featuring HTML format.
  */
-class HtmlReporter : public _::AbstractReporter
+class html_reporter : public _::abstract_reporter
 {
 public:
     /**
      * @brief Constructor
      * @param stream The stream to write to
      */
-    explicit HtmlReporter(std::ostream& stream) : AbstractReporter(stream) {}
+    explicit html_reporter(std::ostream& stream) : abstract_reporter(stream) {}
 
     /**
      * @brief Constructor
      * @param fname The file to write to
      */
-    explicit HtmlReporter(const char* fname) : AbstractReporter(fname) {}
+    explicit html_reporter(const char* fname) : abstract_reporter(fname) {}
 
-    ~HtmlReporter() noexcept override = default;
+    ~html_reporter() noexcept override = default;
 
 private:
     /**
      * @brief Implement AbstractReporter#report_ts
      */
-    void report_ts(const TestSuite_shared ts) override
+    void report_ts(const testsuite_shared ts) override
     {
         *this << "<h3>" << ts->name() << "</h3>"
               << "<p>Tests: " << ts->statistics().tests()
@@ -86,7 +86,7 @@ private:
               << "ms</p><table><thead>" << TR << TH << "Name" << TH_ << TH << "Context" << TH_ << TH
               << "Time" << TH_ << TH << "Status" << TH_ << TR_ << "</thead><tbody>";
 
-        AbstractReporter::report_ts(ts);
+        abstract_reporter::report_ts(ts);
 
         *this << "</tbody></table>";
     }
@@ -94,14 +94,14 @@ private:
     /**
      * @brief Implement AbstractReporter#report_tc
      */
-    void report_tc(const _::TestCase& tc) override
+    void report_tc(const _::testcase& tc) override
     {
         std::string status;
         switch (tc.state())
         {
-            case _::TestCase::State::ERROR: status = "error"; break;
-            case _::TestCase::State::FAILED: status = "failed"; break;
-            case _::TestCase::State::PASSED: status = "passed"; break;
+            case _::testcase::result::ERROR: status = "error"; break;
+            case _::testcase::result::FAILED: status = "failed"; break;
+            case _::testcase::result::PASSED: status = "passed"; break;
             default: break;
         }
         *this << "<tr class=\"" << status << "\">" << TD << tc.name() << TD_ << TD << tc.context()
@@ -136,9 +136,9 @@ private:
  * @param stream The stream to use, defaults to stdout
  * @return a shared pointer to the reporter
  */
-static AbstractReporter_shared createHtmlReporter(std::ostream& stream = std::cout)
+static reporter_shared createHtmlReporter(std::ostream& stream = std::cout)
 {
-    return std::make_shared<HtmlReporter>(stream);
+    return std::make_shared<html_reporter>(stream);
 }
 
 /**
@@ -146,9 +146,9 @@ static AbstractReporter_shared createHtmlReporter(std::ostream& stream = std::co
  * @param file The filename to use
  * @return a shared pointer to the reporter
  */
-static AbstractReporter_shared createHtmlReporter(const char* file)
+static reporter_shared createHtmlReporter(const char* file)
 {
-    return std::make_shared<HtmlReporter>(file);
+    return std::make_shared<html_reporter>(file);
 }
 
 }  // namespace sctf
@@ -160,4 +160,4 @@ static AbstractReporter_shared createHtmlReporter(const char* file)
 #undef TH
 #undef TH_
 
-#endif  // SCTF_SRC_REPORTER_HTMLREPORTER_HPP_
+#endif  // SCTF_REPORTER_HTML_REPORTER_HPP_

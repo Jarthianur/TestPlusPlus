@@ -19,20 +19,20 @@
  }
  */
 
-#ifndef SCTF_SRC_COMPARATOR_LESS_HPP_
-#define SCTF_SRC_COMPARATOR_LESS_HPP_
+#ifndef SCTF_COMPARATOR_GREATER_HPP_
+#define SCTF_COMPARATOR_GREATER_HPP_
 
 #include "comparator/comparators.hpp"
 
 /**
- * Define a less comparator.
+ * Define a greater comparator
  */
-COMPARATOR(less_than, "to be less than", value < expect)
+COMPARATOR(greater_than, "to be greater than", value > expect)
 
 /**
  * Provide a Comparator shortwrite.
  */
-PROVIDE_COMPARATOR(less_than, LESS)
-PROVIDE_COMPARATOR(less_than, LT)
+PROVIDE_COMPARATOR(greater_than, GREATER)
+PROVIDE_COMPARATOR(greater_than, GT)
 
-#endif  // SCTF_SRC_COMPARATOR_LESS_HPP_
+#endif  // SCTF_COMPARATOR_GREATER_HPP_

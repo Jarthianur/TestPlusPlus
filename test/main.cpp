@@ -29,7 +29,7 @@ using namespace sctf;
 
 int main(int, char**)
 {
-    TestSuitesRunner runner;
+    runner runner;
     auto             rep = createPlainTextReporter(true);
 
     try

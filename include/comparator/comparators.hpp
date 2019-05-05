@@ -19,12 +19,12 @@
  }
  */
 
-#ifndef SCTF_SRC_COMPARATOR_COMPARATORS_HPP_
-#define SCTF_SRC_COMPARATOR_COMPARATORS_HPP_
+#ifndef SCTF_COMPARATOR_COMPARATORS_HPP_
+#define SCTF_COMPARATOR_COMPARATORS_HPP_
 
 #include <memory>
 
-#include "common/serialize.hpp"
+#include "common/stringify.hpp"
 
 #if __cplusplus >= 201703L
 
@@ -49,12 +49,12 @@ namespace _
  * @note The error message may only be accessed, if the Comparison returns false to
  * conditions.
  */
-struct Comparison final
+struct comparison final
 {
 #if __cplusplus >= 201402L
-    constexpr Comparison() : _failure(STD_NULLOPT) {}
+    constexpr comparison() : _failure(STD_NULLOPT) {}
 
-    Comparison(const std::string& comp_str, const std::string& value, const std::string& expect)
+    comparison(const std::string& comp_str, const std::string& value, const std::string& expect)
         : _failure("Expected '" + value + "' " + comp_str + " '" + expect + "'")
     {}
 
@@ -71,9 +71,9 @@ struct Comparison final
 private:
     const STD_OPTIONAL<std::string> _failure;
 #else
-    constexpr Comparison() : _success(true) {}
+    constexpr comparison() : _success(true) {}
 
-    Comparison(const std::string& comp_str, const std::string& value, const std::string& expect)
+    comparison(const std::string& comp_str, const std::string& value, const std::string& expect)
         : _success(false)
     {
         std::string msg;
@@ -105,19 +105,19 @@ private:
 };
 
 /**
- * @typedef Comparator
+ * @typedef comparator
  * @brief Function pointer to function comparing two elements
  * @tparam V The left hand type
  * @tparam E The right hand type
  */
 template<typename V, typename E = V>
-using Comparator = Comparison (*)(const V&, const E&);
+using comparator = comparison (*)(const V&, const E&);
 
-/// @brief Default successful Comparison.
+/// @brief Default successful comparison.
 #if __cplusplus >= 201402L
-#    define success Comparison()
+#    define success comparison()
 #else
-constexpr Comparison success = Comparison();
+constexpr comparison success = comparison();
 #endif
 
 }  // namespace _
@@ -134,7 +134,7 @@ constexpr Comparison success = Comparison();
     namespace sctf                       \
     {                                    \
     template<typename V, typename E = V> \
-    static _::Comparator<V, E> NAME()    \
+    static _::comparator<V, E> NAME()    \
     {                                    \
         return &_::COMP<V, E>;           \
     }                                    \
@@ -156,10 +156,10 @@ constexpr Comparison success = Comparison();
     {                                                                                           \
     constexpr const char* NAME##_comp_str = COMPSTR;                                            \
     template<typename V, typename E = V>                                                        \
-    static Comparison NAME(const V& value, const E& expect)                                     \
+    static comparison NAME(const V& value, const E& expect)                                     \
     {                                                                                           \
         return (PRED) ? success :                                                               \
-                        Comparison(NAME##_comp_str, _::serialize(value), _::serialize(expect)); \
+                        comparison(NAME##_comp_str, _::to_string(value), _::to_string(expect)); \
     }                                                                                           \
     }                                                                                           \
     }
@@ -179,4 +179,4 @@ constexpr Comparison success = Comparison();
     }                       \
     }
 
-#endif  // SCTF_SRC_COMPARATOR_COMPARATORS_HPP_
+#endif  // SCTF_COMPARATOR_COMPARATORS_HPP_

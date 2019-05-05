@@ -37,7 +37,7 @@ SCTF_SET_EPSILON(0.000001)
 using namespace sctf;
 using namespace _;
 
-void reflexive_tests(TestSuitesRunner& runner)
+void reflexive_tests(runner& runner)
 {
     describeParallel("comparators", runner)
         ->test("equals",
@@ -52,7 +52,7 @@ void reflexive_tests(TestSuitesRunner& runner)
                    assertTrue(!equals(unequal_comparable(true), unequal_comparable(false)));
                    assertTrue(!equals(1.1, 2.0));
                    assertTrue(!equals(1.1f, 2.0f));
-                   Comparison c = equals(1, 2);
+                   comparison c = equals(1, 2);
                    assertTrue(!c);
                    assertT(*c, EQ, "Expected '1' to be equals '2'", std::string);
                })
@@ -64,7 +64,7 @@ void reflexive_tests(TestSuitesRunner& runner)
                    assertTrue(!greater_than(1, 2));
                    assertTrue(!greater_than(ordinal(false), ordinal()));
                    assertTrue(!greater_than(2.1, 3.9));
-                   Comparison c = greater_than(1, 2);
+                   comparison c = greater_than(1, 2);
                    assertTrue(!c);
                    assertT(*c, EQ, "Expected '1' to be greater than '2'", std::string);
                })
@@ -83,7 +83,7 @@ void reflexive_tests(TestSuitesRunner& runner)
                    assertTrue(!less_than(2, 1));
                    assertTrue(!less_than(ordinal(false), ordinal()));
                    assertTrue(!less_than(3.9, 2.1));
-                   Comparison c = less_than(2, 1);
+                   comparison c = less_than(2, 1);
                    assertTrue(!c);
                    assertT(*c, EQ, "Expected '2' to be less than '1'", std::string);
                })
@@ -98,13 +98,13 @@ void reflexive_tests(TestSuitesRunner& runner)
             assertTrue(!unequals(unequal_comparable(false), unequal_comparable()));
             assertTrue(!unequals(2.0, 2.0));
             assertTrue(!unequals(1.1f, 1.1f));
-            Comparison c = unequals(1, 1);
+            comparison c = unequals(1, 1);
             assertTrue(!c);
             assertT(*c, EQ, "Expected '1' to be unequals '1'", std::string);
         });
 
-    describe<TestSuiteParallel>("TestSuiteParallel", runner)->test("parallel run", [] {
-        TestSuite_shared ts = TestSuiteParallel::create("ts", "ctx");
+    describe<testsuite_parallel>("TestSuiteParallel", runner)->test("parallel run", [] {
+        testsuite_shared ts = testsuite_parallel::create("ts", "ctx");
         ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
         ts->test("", [] { assertTrue(false); });
         ts->test("", [] { throw std::logic_error(""); });
@@ -123,24 +123,24 @@ void reflexive_tests(TestSuitesRunner& runner)
         }
         assertEquals(ts->time(), t);
 #endif
-        const TestStats& stat = ts->statistics();
+        const statistics& stat = ts->statistics();
         assertEquals(stat.tests(), 6);
         assertEquals(stat.errors(), 2);
         assertEquals(stat.failures(), 2);
         assertEquals(stat.successes(), 2);
     });
 
-    describe<TestSuite>("TestSuite", runner)
+    describe<testsuite>("TestSuite", runner)
         ->test("creation",
                [] {
                    auto             a  = std::chrono::system_clock::now();
-                   TestSuite_shared ts = TestSuite::create("ts", "ctx");
+                   testsuite_shared ts = testsuite::create("ts", "ctx");
                    assert(ts->timestamp(), GT, a);
                    assertT(ts->name(), EQ, "ts", std::string);
                })
         ->test("meta functions",
                [] {
-                   TestSuite_shared ts = TestSuite::create("ts", "ctx");
+                   testsuite_shared ts = testsuite::create("ts", "ctx");
                    int              i  = 0;
                    ts->setup([&i] { i = 1; });
                    ts->after([&i] { ++i; });
@@ -148,9 +148,9 @@ void reflexive_tests(TestSuitesRunner& runner)
                    ts->test("tc1", [] {});
                    ts->test("tc2", "ctx2", [] {});
                    ts->test<int>("tc3", [] {});
-                   const TestCase& tc1 = ts->testcases().at(0);
-                   const TestCase& tc2 = ts->testcases().at(1);
-                   const TestCase& tc3 = ts->testcases().at(2);
+                   const testcase& tc1 = ts->testcases().at(0);
+                   const testcase& tc2 = ts->testcases().at(1);
+                   const testcase& tc3 = ts->testcases().at(2);
                    assertT(tc1.context(), EQ, "test.ctx", std::string);
                    assertT(tc2.context(), EQ, "test.ctx2", std::string);
                    assertT(tc3.context(), EQ, "test.int", std::string);
@@ -158,12 +158,12 @@ void reflexive_tests(TestSuitesRunner& runner)
                    assertEquals(i, 1);
                })
         ->test("running", [] {
-            TestSuite_shared ts = TestSuite::create("ts", "ctx");
+            testsuite_shared ts = testsuite::create("ts", "ctx");
             ts->test("", [] {});
             ts->test("", [] { assertTrue(false); });
             ts->test("", [] { throw std::logic_error(""); });
             ts->run();
-            const TestStats& stat = ts->statistics();
+            const statistics& stat = ts->statistics();
             assertEquals(stat.tests(), 3);
             assertEquals(stat.errors(), 1);
             assertEquals(stat.failures(), 1);
@@ -185,39 +185,39 @@ void reflexive_tests(TestSuitesRunner& runner)
             assertEquals(t, ts->time());
         });
 
-    describe<TestCase>("TestCase", runner)
+    describe<testcase>("TestCase", runner)
         ->test("creation",
                [] {
-                   TestCase tc("t1", "ctx", [] {});
-                   assertEquals(tc.state(), TestCase::State::NONE);
+                   testcase tc("t1", "ctx", [] {});
+                   assertEquals(tc.state(), testcase::result::NONE);
                    assertT(tc.context(), EQ, "test.ctx", std::string);
                    assertT(tc.name(), EQ, "t1", std::string);
                })
         ->test("successful execution",
                [] {
-                   TestCase tc("t1", "ctx", [] {});
+                   testcase tc("t1", "ctx", [] {});
                    tc();
-                   assertEquals(tc.state(), TestCase::State::PASSED);
+                   assertEquals(tc.state(), testcase::result::PASSED);
                    assert(tc.duration(), GT, 0.0);
                    assertZero(tc.err_msg().size());
                })
         ->test("failed execution",
                [] {
-                   TestCase tc("t1", "ctx", [] { assertTrue(false); });
+                   testcase tc("t1", "ctx", [] { assertTrue(false); });
                    tc();
-                   assertEquals(tc.state(), TestCase::State::FAILED);
+                   assertEquals(tc.state(), testcase::result::FAILED);
                    assert(tc.duration(), GT, 0.0);
                })
         ->test("erroneous execution", [] {
-            TestCase tc("t1", "ctx", [] { throw std::logic_error("err"); });
+            testcase tc("t1", "ctx", [] { throw std::logic_error("err"); });
             tc();
-            assertEquals(tc.state(), TestCase::State::ERROR);
+            assertEquals(tc.state(), testcase::result::ERROR);
             assert(tc.duration(), GT, 0.0);
             assertT(tc.err_msg(), EQ, "err", std::string);
 
-            TestCase tc2("t2", "ctx", [] { throw 1; });
+            testcase tc2("t2", "ctx", [] { throw 1; });
             tc2();
-            assertEquals(tc2.state(), TestCase::State::ERROR);
+            assertEquals(tc2.state(), testcase::result::ERROR);
             assert(tc2.duration(), GT, 0.0);
             assertT(tc2.err_msg(), EQ, "unknown error", std::string);
         });
@@ -225,33 +225,33 @@ void reflexive_tests(TestSuitesRunner& runner)
     describeParallel("serialize", runner)
         ->test("bool",
                [] {
-                   assertT(serialize(true), EQ, "true", std::string);
-                   assertT(serialize(false), EQ, "false", std::string);
+                   assertT(to_string(true), EQ, "true", std::string);
+                   assertT(to_string(false), EQ, "false", std::string);
                })
 
         ->test("std::pair",
-               [] { assertT("pair<int,int>", IN, serialize(std::make_pair(1, 2)), std::string); })
+               [] { assertT("pair<int,int>", IN, to_string(std::make_pair(1, 2)), std::string); })
         ->test("nullptr",
                [] {
-                   assertT(serialize(nullptr), EQ, "0", std::string);
-                   assertT(serialize(NULL), EQ, "0", std::string);
+                   assertT(to_string(nullptr), EQ, "0", std::string);
+                   assertT(to_string(NULL), EQ, "0", std::string);
                })
         ->test("string/cstring",
                [] {
                    std::string str("cstring");
-                   assertEquals(serialize(str), str);
-                   assertEquals(serialize("cstring"), str);
+                   assertEquals(to_string(str), str);
+                   assertEquals(to_string("cstring"), str);
                    const char* cstr = "cstring";
-                   assertEquals(serialize(cstr), str);
+                   assertEquals(to_string(cstr), str);
                })
         ->test("floating-point",
                [] {
-                   assertT("1.123", IN, serialize(1.123f), std::string);
-                   assertT("1.123", IN, serialize(1.123), std::string);
+                   assertT("1.123", IN, to_string(1.123f), std::string);
+                   assertT("1.123", IN, to_string(1.123), std::string);
                })
         ->test("not streamable",
-               [] { assertT(serialize(not_streamable()), EQ, "not_streamable", std::string); })
-        ->test("streamable", [] { assertT(serialize(1), EQ, "1", std::string); });
+               [] { assertT(to_string(not_streamable()), EQ, "not_streamable", std::string); })
+        ->test("streamable", [] { assertT(to_string(1), EQ, "1", std::string); });
 
     describeParallel("test traits", runner)
         ->test("is_streamable",
@@ -298,11 +298,11 @@ void reflexive_tests(TestSuitesRunner& runner)
                    assertNoExcept(assert("hello", NE, "world"));
                    assertNoExcept(assert(2, IN, (std::vector<int>{1, 3, 2})));
                    // failing
-                   assertException(assert(2, EQUALS, 1), AssertionFailure);
-                   assertException(assert(false, EQUALS, true), AssertionFailure);
-                   assertException(assert(1002.5, LESS, 100.3), AssertionFailure);
-                   assertException(assert("hello", EQ, "world"), AssertionFailure);
-                   assertException(assert(2, IN, (std::vector<int>{1, 3})), AssertionFailure);
+                   assertException(assert(2, EQUALS, 1), assertion_failure);
+                   assertException(assert(false, EQUALS, true), assertion_failure);
+                   assertException(assert(1002.5, LESS, 100.3), assertion_failure);
+                   assertException(assert("hello", EQ, "world"), assertion_failure);
+                   assertException(assert(2, IN, (std::vector<int>{1, 3})), assertion_failure);
                })
         ->test("assertT",
                [] {
@@ -312,10 +312,10 @@ void reflexive_tests(TestSuitesRunner& runner)
                    assertNoExcept(assertT(1.5, LESS, 100.3, double));
                    assertNoExcept(assertT("hello", NE, "world", std::string));
                    // failing
-                   assertException(assertT(2, EQUALS, 1, unsigned int), AssertionFailure);
-                   assertException(assertT(false, EQUALS, true, bool), AssertionFailure);
-                   assertException(assertT(1002.5, LESS, 100.3, double), AssertionFailure);
-                   assertException(assertT("hello", EQ, "world", std::string), AssertionFailure);
+                   assertException(assertT(2, EQUALS, 1, unsigned int), assertion_failure);
+                   assertException(assertT(false, EQUALS, true, bool), assertion_failure);
+                   assertException(assertT(1002.5, LESS, 100.3, double), assertion_failure);
+                   assertException(assertT("hello", EQ, "world", std::string), assertion_failure);
                })
         ->test("assertEquals",
                [] {
@@ -325,10 +325,10 @@ void reflexive_tests(TestSuitesRunner& runner)
                    assertNoExcept(assertEquals("", ""));
                    assertNoExcept(assertEquals(1.1, 1.1));
                    // failing
-                   assertException(assertEquals(1, 2), AssertionFailure);
-                   assertException(assertEquals(false, true), AssertionFailure);
-                   assertException(assertEquals("b", "a"), AssertionFailure);
-                   assertException(assertEquals(1.2, 2.1), AssertionFailure);
+                   assertException(assertEquals(1, 2), assertion_failure);
+                   assertException(assertEquals(false, true), assertion_failure);
+                   assertException(assertEquals("b", "a"), assertion_failure);
+                   assertException(assertEquals(1.2, 2.1), assertion_failure);
                })
         ->test("assertTrue",
                [] {
@@ -336,8 +336,8 @@ void reflexive_tests(TestSuitesRunner& runner)
                    assertNoExcept(assertTrue(true));
                    assertNoExcept(assertTrue(1 == 1));
                    // failing
-                   assertException(assertTrue(false), AssertionFailure);
-                   assertException(assertTrue(1 == 2), AssertionFailure);
+                   assertException(assertTrue(false), assertion_failure);
+                   assertException(assertTrue(1 == 2), assertion_failure);
                })
         ->test("assertFalse",
                [] {
@@ -345,8 +345,8 @@ void reflexive_tests(TestSuitesRunner& runner)
                    assertNoExcept(assertFalse(false));
                    assertNoExcept(assertFalse(1 == 2));
                    // failing
-                   assertException(assertFalse(true), AssertionFailure);
-                   assertException(assertFalse(1 == 1), AssertionFailure);
+                   assertException(assertFalse(true), assertion_failure);
+                   assertException(assertFalse(1 == 1), assertion_failure);
                })
         ->test("assertNotNull",
                [] {
@@ -358,8 +358,8 @@ void reflexive_tests(TestSuitesRunner& runner)
                    assertNoExcept(assertNotNull(&d));
                    assertNoExcept(assertNotNull(&s));
                    // failing
-                   assertException(assertNotNull(nullptr), AssertionFailure);
-                   assertException(assertNotNull(NULL), AssertionFailure);
+                   assertException(assertNotNull(nullptr), assertion_failure);
+                   assertException(assertNotNull(NULL), assertion_failure);
                })
         ->test("assertZero",
                [] {
@@ -367,26 +367,26 @@ void reflexive_tests(TestSuitesRunner& runner)
                    assertNoExcept(assertZero(0));
                    assertNoExcept(assertZero(0.0));
                    // failing
-                   assertException(assertZero(1), AssertionFailure);
-                   assertException(assertZero(0.1), AssertionFailure);
+                   assertException(assertZero(1), assertion_failure);
+                   assertException(assertZero(0.1), assertion_failure);
                })
         ->test("assertException",
                [] {
                    // successful
                    assertNoExcept(assertException(throw std::logic_error(""), std::logic_error));
                    // failing
-                   assertException(assertException(return, std::logic_error), AssertionFailure);
+                   assertException(assertException(return, std::logic_error), assertion_failure);
                    assertException(assertException(throw std::runtime_error(""), std::logic_error),
-                                   AssertionFailure);
-                   assertException(assertException(throw 1, std::logic_error), AssertionFailure);
+                                   assertion_failure);
+                   assertException(assertException(throw 1, std::logic_error), assertion_failure);
                })
         ->test("assertNoExcept",
                [] {
                    // successful
                    assertNoExcept(assertNoExcept(return ));
                    // failing
-                   assertException(assertNoExcept(throw std::runtime_error("")), AssertionFailure);
-                   assertException(assertNoExcept(throw 1), AssertionFailure);
+                   assertException(assertNoExcept(throw std::runtime_error("")), assertion_failure);
+                   assertException(assertNoExcept(throw 1), assertion_failure);
                })
         ->test("assertPerformance", [] {
             // successful
@@ -394,18 +394,18 @@ void reflexive_tests(TestSuitesRunner& runner)
             // failing
             assertException(
                 assertPerformance(std::this_thread::sleep_for(std::chrono::milliseconds(100)), 10),
-                AssertionFailure);
-            assertException(assertPerformance(throw 1, 100), AssertionFailure);
+                assertion_failure);
+            assertException(assertPerformance(throw 1, 100), assertion_failure);
         });
 
-    describe<TestSuite>("test output capture", runner)
+    describe<testsuite>("test output capture", runner)
         ->test<_::streambuf_proxy>(
             "single thread",
             [] {
-                auto ts = TestSuite::create("ts", "ctx");
+                auto ts = testsuite::create("ts", "ctx");
                 for (int i = 1; i < 9; ++i)
                 {
-                    ts->test(serialize(i), [i] {
+                    ts->test(to_string(i), [i] {
                         std::cout << 'o' << "ut from " << i;
                         std::cerr << 'e' << "rr from " << i;
                     });
@@ -414,15 +414,15 @@ void reflexive_tests(TestSuitesRunner& runner)
                 for (unsigned long i = 0; i < ts->testcases().size(); ++i)
                 {
                     const auto& tc = ts->testcases().at(i);
-                    assertEquals(tc.cout(), std::string("out from ") + serialize(i + 1));
-                    assertEquals(tc.cerr(), std::string("err from ") + serialize(i + 1));
+                    assertEquals(tc.cout(), std::string("out from ") + to_string(i + 1));
+                    assertEquals(tc.cerr(), std::string("err from ") + to_string(i + 1));
                 }
             })
         ->test<_::streambuf_proxy_omp>("multi thread", [] {
-            auto ts = TestSuiteParallel::create("ts", "ctx");
+            auto ts = testsuite_parallel::create("ts", "ctx");
             for (int i = 1; i < 9; ++i)
             {
-                ts->test(serialize(i), [i] {
+                ts->test(to_string(i), [i] {
                     std::cout << 'o' << "ut from " << i;
                     std::cerr << 'e' << "rr from " << i;
                 });
@@ -431,8 +431,8 @@ void reflexive_tests(TestSuitesRunner& runner)
             for (unsigned long i = 0; i < ts->testcases().size(); ++i)
             {
                 const auto& tc = ts->testcases().at(i);
-                assertEquals(tc.cout(), std::string("out from ") + serialize(i + 1));
-                assertEquals(tc.cerr(), std::string("err from ") + serialize(i + 1));
+                assertEquals(tc.cout(), std::string("out from ") + to_string(i + 1));
+                assertEquals(tc.cerr(), std::string("err from ") + to_string(i + 1));
             }
         });
 }

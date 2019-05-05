@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_SRC_UTIL_SERIALIZE_HPP_
-#define SCTF_SRC_UTIL_SERIALIZE_HPP_
+#ifndef SCTF_COMMON_STRINGIFY_HPP_
+#define SCTF_COMMON_STRINGIFY_HPP_
 
 #include <algorithm>
 #include <iomanip>
@@ -87,7 +87,7 @@ static std::string name_for_type()
  */
 template<typename T, typename std::enable_if<is_streamable<std::ostringstream, T>::value &&
                                              !std::is_floating_point<T>::value>::type* = nullptr>
-std::string serialize(const T& arg)
+std::string to_string(const T& arg)
 {
     std::ostringstream oss;
     oss << arg;
@@ -102,7 +102,7 @@ std::string serialize(const T& arg)
  */
 template<typename T, typename std::enable_if<is_streamable<std::ostringstream, T>::value &&
                                              std::is_floating_point<T>::value>::type* = nullptr>
-std::string serialize(const T& arg)
+std::string to_string(const T& arg)
 {
     std::ostringstream oss;
     oss << std::setprecision(std::numeric_limits<T>::max_digits10) << arg;
@@ -117,7 +117,7 @@ std::string serialize(const T& arg)
  */
 template<typename T,
          typename std::enable_if<!is_streamable<std::ostringstream, T>::value>::type* = nullptr>
-std::string serialize(const T&)
+std::string to_string(const T&)
 {
     return name_for_type<T>();
 }
@@ -127,7 +127,7 @@ std::string serialize(const T&)
  * @param unused
  * @return "0"
  */
-inline std::string serialize(const std::nullptr_t&)
+inline std::string to_string(const std::nullptr_t&)
 {
     return "0";
 }
@@ -137,7 +137,7 @@ inline std::string serialize(const std::nullptr_t&)
  * @param arg The bool to serialize
  * @return the bool as string
  */
-inline std::string serialize(const bool& arg)
+inline std::string to_string(const bool& arg)
 {
     return arg ? "true" : "false";
 }
@@ -145,4 +145,4 @@ inline std::string serialize(const bool& arg)
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_SRC_UTIL_SERIALIZE_HPP_
+#endif  // SCTF_COMMON_STRINGIFY_HPP_

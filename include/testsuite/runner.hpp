@@ -19,35 +19,35 @@
  }
  */
 
-#ifndef SCTF_SRC_TESTSUITE_TESTSUITESRUNNER_HPP_
-#define SCTF_SRC_TESTSUITE_TESTSUITESRUNNER_HPP_
+#ifndef SCTF_TESTSUITE_RUNNER_HPP_
+#define SCTF_TESTSUITE_RUNNER_HPP_
 
 #include <algorithm>
 #include <string>
 #include <vector>
 
-#include "common/serialize.hpp"
+#include "common/stringify.hpp"
 #include "common/types.h"
-#include "testsuite/TestSuite.hpp"
-#include "testsuite/TestSuiteParallel.hpp"
+#include "testsuite/testsuite.hpp"
+#include "testsuite/testsuite_parallel.hpp"
 
 namespace sctf
 {
 /**
  * @brief A runner to manage and run TestSuites.
  */
-class TestSuitesRunner
+class runner
 {
 public:
-    TestSuitesRunner()           = default;
-    ~TestSuitesRunner() noexcept = default;
+    runner()           = default;
+    ~runner() noexcept = default;
 
     /**
      * @brief Register a TestSuite.
      * @param ts A shared ptr to the TestSuite
      * @return a shared pointer to the TestSuite
      */
-    TestSuite_shared register_ts(TestSuite_shared ts)
+    testsuite_shared register_ts(testsuite_shared ts)
     {
         m_testsuites.push_back(ts);
         return ts;
@@ -59,21 +59,21 @@ public:
     void run() noexcept
     {
         std::for_each(m_testsuites.begin(), m_testsuites.end(),
-                      [](TestSuite_shared& ts) { ts->run(); });
+                      [](testsuite_shared& ts) { ts->run(); });
     }
 
     /**
      * @brief Get the TestSuites.
      * @return the testsuites
      */
-    const std::vector<TestSuite_shared>& testsuites()
+    const std::vector<testsuite_shared>& testsuites()
     {
         return m_testsuites;
     }
 
 private:
     /// @brief The registered TestSuites.
-    std::vector<TestSuite_shared> m_testsuites;
+    std::vector<testsuite_shared> m_testsuites;
 };
 
 /**
@@ -84,10 +84,10 @@ private:
  * @param runner The TestSuitesRunner to register
  * @return a shared pointer to the created TestSuite
  */
-inline static TestSuite_shared describeParallel(const std::string& name, TestSuitesRunner& runner,
+inline static testsuite_shared describeParallel(const std::string& name, runner& runner,
                                                 const std::string& context = "")
 {
-    return runner.register_ts(TestSuiteParallel::create(name, context));
+    return runner.register_ts(testsuite_parallel::create(name, context));
 }
 
 /**
@@ -99,9 +99,9 @@ inline static TestSuite_shared describeParallel(const std::string& name, TestSui
  * @return a shared pointer to the created TestSuite
  */
 template<typename T>
-static TestSuite_shared describeParallel(const std::string& name, TestSuitesRunner& runner)
+static testsuite_shared describeParallel(const std::string& name, runner& runner)
 {
-    return runner.register_ts(TestSuiteParallel::create(name, _::name_for_type<T>()));
+    return runner.register_ts(testsuite_parallel::create(name, _::name_for_type<T>()));
 }
 
 /**
@@ -112,10 +112,10 @@ static TestSuite_shared describeParallel(const std::string& name, TestSuitesRunn
  * @param runner The TestSuitesRunner to register
  * @return a shared pointer to the created TestSuite
  */
-inline static TestSuite_shared describe(const std::string& name, TestSuitesRunner& runner,
+inline static testsuite_shared describe(const std::string& name, runner& runner,
                                         const std::string& context = "")
 {
-    return runner.register_ts(TestSuite::create(name, context));
+    return runner.register_ts(testsuite::create(name, context));
 }
 
 /**
@@ -127,11 +127,11 @@ inline static TestSuite_shared describe(const std::string& name, TestSuitesRunne
  * @return a shared pointer to the created TestSuite
  */
 template<typename T>
-static TestSuite_shared describe(const std::string& name, TestSuitesRunner& runner)
+static testsuite_shared describe(const std::string& name, runner& runner)
 {
-    return runner.register_ts(TestSuite::create(name, _::name_for_type<T>()));
+    return runner.register_ts(testsuite::create(name, _::name_for_type<T>()));
 }
 
 }  // namespace sctf
 
-#endif  // SCTF_SRC_TESTSUITE_TESTSUITESRUNNER_HPP_
+#endif  // SCTF_TESTSUITE_RUNNER_HPP_

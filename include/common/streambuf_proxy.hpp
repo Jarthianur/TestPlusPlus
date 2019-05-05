@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_SRC_UTIL_STREAMBUF_PROXY_HPP_
-#define SCTF_SRC_UTIL_STREAMBUF_PROXY_HPP_
+#ifndef SCTF_COMMON_STREAMBUF_PROXY_HPP_
+#define SCTF_COMMON_STREAMBUF_PROXY_HPP_
 
 #include <ostream>
 #include <sstream>
@@ -104,4 +104,4 @@ protected:
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_SRC_UTIL_STREAMBUF_PROXY_HPP_
+#endif  // SCTF_COMMON_STREAMBUF_PROXY_HPP_

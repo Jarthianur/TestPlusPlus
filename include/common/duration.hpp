@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_SRC_UTIL_DURATION_HPP_
-#define SCTF_SRC_UTIL_DURATION_HPP_
+#ifndef SCTF_COMMON_DURATION_HPP_
+#define SCTF_COMMON_DURATION_HPP_
 
 #include <chrono>
 
@@ -58,4 +58,4 @@ private:
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_SRC_UTIL_DURATION_HPP_
+#endif  // SCTF_COMMON_DURATION_HPP_

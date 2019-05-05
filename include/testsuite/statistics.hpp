@@ -19,26 +19,26 @@
  }
  */
 
-#ifndef SCTF_SRC_TESTSUITE_TESTSTATS_HPP_
-#define SCTF_SRC_TESTSUITE_TESTSTATS_HPP_
+#ifndef SCTF_TESTSUITE_STATISTICS_HPP_
+#define SCTF_TESTSUITE_STATISTICS_HPP_
 
 #include <cstddef>
 
 namespace sctf
 {
-class TestSuite;
-class TestSuiteParallel;
+class testsuite;
+class testsuite_parallel;
 
 namespace _
 {
 /**
  * @brief Statistics for test results.
  */
-class TestStats
+class statistics
 {
 public:
-    TestStats()           = default;
-    ~TestStats() noexcept = default;
+    statistics()           = default;
+    ~statistics() noexcept = default;
 
     /**
      * @brief Get the number of all tests.
@@ -77,8 +77,8 @@ public:
     }
 
 private:
-    friend sctf::TestSuite;
-    friend sctf::TestSuiteParallel;
+    friend sctf::testsuite;
+    friend sctf::testsuite_parallel;
 
     /// @brief The number of tests.
     std::size_t m_num_of_tests = 0;
@@ -93,4 +93,4 @@ private:
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_SRC_TESTSUITE_TESTSTATS_HPP_
+#endif  // SCTF_TESTSUITE_STATISTICS_HPP_

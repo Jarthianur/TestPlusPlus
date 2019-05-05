@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_SRC_REPORTER_XMLREPORTER_HPP_
-#define SCTF_SRC_REPORTER_XMLREPORTER_HPP_
+#ifndef SCTF_REPORTER_XML_REPORTER_HPP_
+#define SCTF_REPORTER_XML_REPORTER_HPP_
 
 #include <chrono>
 #include <cstddef>
@@ -29,38 +29,38 @@
 #include <string>
 
 #include "common/types.h"
-#include "reporter/AbstractReporter.hpp"
-#include "testsuite/TestCase.hpp"
-#include "testsuite/TestStats.hpp"
-#include "testsuite/TestSuite.hpp"
+#include "reporter/abstract_reporter.hpp"
+#include "testsuite/testcase.hpp"
+#include "testsuite/statistics.hpp"
+#include "testsuite/testsuite.hpp"
 
 namespace sctf
 {
 /**
  * @brief Concrete reporter featuring JUnit like XML format.
  */
-class XmlReporter : public _::AbstractReporter
+class xml_reporter : public _::abstract_reporter
 {
 public:
     /**
      * @brief Constructor
      * @param stream The stream to write to
      */
-    explicit XmlReporter(std::ostream& stream) : AbstractReporter(stream) {}
+    explicit xml_reporter(std::ostream& stream) : abstract_reporter(stream) {}
 
     /**
      * @brief Constructor
      * @param fname The file to write to
      */
-    explicit XmlReporter(const char* fname) : AbstractReporter(fname) {}
+    explicit xml_reporter(const char* fname) : abstract_reporter(fname) {}
 
-    ~XmlReporter() noexcept override = default;
+    ~xml_reporter() noexcept override = default;
 
 private:
     /**
      * @brief Implement AbstractReporter#report_ts
      */
-    void report_ts(const TestSuite_shared ts) override
+    void report_ts(const testsuite_shared ts) override
     {
         std::time_t stamp = std::chrono::system_clock::to_time_t(ts->timestamp());
         char        buff[128];
@@ -72,7 +72,7 @@ private:
               << "\" skipped=\"0\" time=\"" << ts->time() << "\" timestamp=\"" << buff << "\">"
               << SCTF_LF;
 
-        AbstractReporter::report_ts(ts);
+        abstract_reporter::report_ts(ts);
 
         *this << SCTF_SPACE << "</testsuite>" << SCTF_LF;
     }
@@ -80,21 +80,21 @@ private:
     /**
      * @brief Implement AbstractReporter#report_tc
      */
-    void report_tc(const _::TestCase& tc) override
+    void report_tc(const _::testcase& tc) override
     {
         *this << SCTF_XSPACE << "<testcase name=\"" << tc.name() << "\" classname=\""
               << tc.context() << "\" time=\"" << tc.duration() << "\"";
         switch (tc.state())
         {
-            case _::TestCase::State::ERROR:
+            case _::testcase::result::ERROR:
                 *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<error message=\""
                       << tc.err_msg() << "\"></error>" << SCTF_LF << SCTF_XSPACE << "</testcase>";
                 break;
-            case _::TestCase::State::FAILED:
+            case _::testcase::result::FAILED:
                 *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<failure message=\""
                       << tc.err_msg() << "\"></failure>" << SCTF_LF << SCTF_XSPACE << "</testcase>";
                 break;
-            case _::TestCase::State::PASSED: *this << "/>"; break;
+            case _::testcase::result::PASSED: *this << "/>"; break;
             default: break;
         }
         *this << SCTF_LF;
@@ -126,9 +126,9 @@ private:
  * @param stream The stream to use, defaults to stdout
  * @return a shared pointer to the reporter
  */
-static AbstractReporter_shared createXmlReporter(std::ostream& stream = std::cout)
+static reporter_shared createXmlReporter(std::ostream& stream = std::cout)
 {
-    return std::make_shared<XmlReporter>(stream);
+    return std::make_shared<xml_reporter>(stream);
 }
 
 /**
@@ -136,11 +136,11 @@ static AbstractReporter_shared createXmlReporter(std::ostream& stream = std::cou
  * @param file The filename to use
  * @return a shared pointer to the reporter
  */
-static AbstractReporter_shared createXmlReporter(const char* file)
+static reporter_shared createXmlReporter(const char* file)
 {
-    return std::make_shared<XmlReporter>(file);
+    return std::make_shared<xml_reporter>(file);
 }
 
 }  // namespace sctf
 
-#endif  // SCTF_SRC_REPORTER_XMLREPORTER_HPP_
+#endif  // SCTF_REPORTER_XML_REPORTER_HPP_

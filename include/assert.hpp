@@ -19,12 +19,12 @@
  }
  */
 
-#ifndef SCTF_SRC_ASSERT_HPP_
-#define SCTF_SRC_ASSERT_HPP_
+#ifndef SCTF_ASSERT_HPP_
+#define SCTF_ASSERT_HPP_
 
-#include "common/AssertionFailure.hpp"
+#include "common/assertion_failure.hpp"
 #include "common/duration.hpp"
-#include "common/serialize.hpp"
+#include "common/stringify.hpp"
 #include "common/types.h"
 #include "comparator/comparators.hpp"
 #include "comparator/equals.hpp"
@@ -143,13 +143,13 @@ namespace _
  * @throw AssertionFailure if the assertion failed.
  */
 template<typename V, typename E = V>
-static void _assertStatement(const V& value, const E& expect, Comparator<V, E> comp,
+static void _assertStatement(const V& value, const E& expect, comparator<V, E> comp,
                              const char* file, int line)
 {
-    Comparison res = (*comp)(value, expect);
+    comparison res = (*comp)(value, expect);
     if (!res)
     {
-        throw AssertionFailure(*res, file, line);
+        throw assertion_failure(*res, file, line);
     }
 }
 
@@ -174,14 +174,14 @@ static void _assertException(const test_function& func, const char* file, int li
     }
     catch (const std::exception& e)
     {
-        throw AssertionFailure(std::string("Wrong exception thrown, caught '") + serialize(e) + "'",
-                               file, line);
+        throw assertion_failure(
+            std::string("Wrong exception thrown, caught '") + to_string(e) + "'", file, line);
     }
     catch (...)
     {
-        throw AssertionFailure("Wrong exception thrown", file, line);
+        throw assertion_failure("Wrong exception thrown", file, line);
     }
-    throw AssertionFailure(
+    throw assertion_failure(
         std::string("No exception thrown, expected '") + name_for_type<T>() + "'", file, line);
 }
 
@@ -200,12 +200,12 @@ static void _assertNoExcept(const test_function& func, const char* file, int lin
     }
     catch (const std::exception& e)
     {
-        throw AssertionFailure(std::string("Expected no exception, caught '") + serialize(e) + "'",
-                               file, line);
+        throw assertion_failure(std::string("Expected no exception, caught '") + to_string(e) + "'",
+                                file, line);
     }
     catch (...)
     {
-        throw AssertionFailure("Expected no exception", file, line);
+        throw assertion_failure("Expected no exception", file, line);
     }
 }
 
@@ -224,21 +224,21 @@ static void _assertPerformance(const test_function& func, double max_millis, con
         double dur_ms = dur.get();
         if (dur_ms > max_millis)
         {
-            throw AssertionFailure(std::string("runtime > ") + serialize(max_millis) + "ms", file,
-                                   line);
+            throw assertion_failure(std::string("runtime > ") + to_string(max_millis) + "ms", file,
+                                    line);
         }
     }
     catch (const std::exception& e)
     {
-        throw AssertionFailure(e.what(), file, line);
+        throw assertion_failure(e.what(), file, line);
     }
     catch (...)
     {
-        throw AssertionFailure("Unknown exception thrown", file, line);
+        throw assertion_failure("Unknown exception thrown", file, line);
     }
 }
 
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_SRC_ASSERT_HPP_
+#endif  // SCTF_ASSERT_HPP_

@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_SRC_TYPES_H_
-#define SCTF_SRC_TYPES_H_
+#ifndef SCTF_COMMON_TYPES_H_
+#define SCTF_COMMON_TYPES_H_
 
 #include <functional>
 #include <memory>
@@ -29,7 +29,7 @@ namespace sctf
 {
 namespace _
 {
-class AbstractReporter;
+class abstract_reporter;
 
 /**
  * @typedef test_function
@@ -43,15 +43,15 @@ using test_function = std::function<void()>;
  * @typedef AbstractReporter_shared
  * @brief Shared ptr to AbstractReporter
  */
-using AbstractReporter_shared = std::shared_ptr<_::AbstractReporter>;
+using reporter_shared = std::shared_ptr<_::abstract_reporter>;
 
 /**
  * @typedef TestSuite_shared
  * @brief Shared ptr to TestSuite.
  */
-class TestSuite;
-using TestSuite_shared = std::shared_ptr<TestSuite>;
+class testsuite;
+using testsuite_shared = std::shared_ptr<testsuite>;
 
 }  // namespace sctf
 
-#endif  // SCTF_SRC_TYPES_H_
+#endif  // SCTF_COMMON_TYPES_H_
