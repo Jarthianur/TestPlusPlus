@@ -28,8 +28,8 @@
 
 #include "common/types.h"
 #include "reporter/abstract_reporter.hpp"
-#include "testsuite/testcase.hpp"
 #include "testsuite/statistics.hpp"
+#include "testsuite/testcase.hpp"
 #include "testsuite/testsuite.hpp"
 
 /// @brief ANSI colors

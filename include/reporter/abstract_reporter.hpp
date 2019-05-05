@@ -31,9 +31,9 @@
 #include <vector>
 
 #include "common/types.h"
+#include "testsuite/runner.hpp"
 #include "testsuite/statistics.hpp"
 #include "testsuite/testsuite.hpp"
-#include "testsuite/runner.hpp"
 
 /**
  * @def SCTF_LF
