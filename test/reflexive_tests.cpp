@@ -37,9 +37,9 @@ SCTF_SET_EPSILON(0.000001)
 using namespace sctf;
 using namespace _;
 
-void reflexive_tests(runner& runner)
+void reflexive_tests()
 {
-    describeParallel("comparators", runner)
+    describeParallel("comparators")
         ->test("equals",
                [] {
                    assertFalse(!equals(1, 1));
@@ -103,7 +103,7 @@ void reflexive_tests(runner& runner)
             assertT(*c, EQ, "Expected '1' to be unequals '1'", std::string);
         });
 
-    describe<testsuite_parallel>("TestSuiteParallel", runner)->test("parallel run", [] {
+    describe<testsuite_parallel>("TestSuiteParallel")->test("parallel run", [] {
         testsuite_shared ts = testsuite_parallel::create("ts", "ctx");
         ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
         ts->test("", [] { assertTrue(false); });
@@ -130,7 +130,7 @@ void reflexive_tests(runner& runner)
         assertEquals(stat.successes(), 2);
     });
 
-    describe<testsuite>("TestSuite", runner)
+    describe<testsuite>("TestSuite")
         ->test("creation",
                [] {
                    auto             a  = std::chrono::system_clock::now();
@@ -185,7 +185,7 @@ void reflexive_tests(runner& runner)
             assertEquals(t, ts->time());
         });
 
-    describe<testcase>("TestCase", runner)
+    describe<testcase>("TestCase")
         ->test("creation",
                [] {
                    testcase tc("t1", "ctx", [] {});
@@ -224,7 +224,7 @@ void reflexive_tests(runner& runner)
             assertT(tc2.err_msg(), EQ, "unknown error", std::string);
         });
 
-    describeParallel("serialize", runner)
+    describeParallel("serialize")
         ->test("bool",
                [] {
                    assertT(to_string(true), EQ, "true", std::string);
@@ -255,7 +255,7 @@ void reflexive_tests(runner& runner)
                [] { assertT(to_string(not_streamable()), EQ, "not_streamable", std::string); })
         ->test("streamable", [] { assertT(to_string(1), EQ, "1", std::string); });
 
-    describeParallel("test traits", runner)
+    describeParallel("test traits")
         ->test("is_streamable",
                [] {
                    assertNoExcept((throw_if_not_streamable<std::ostringstream, streamable>()));
@@ -290,7 +290,7 @@ void reflexive_tests(runner& runner)
                             std::logic_error);
         });
 
-    describeParallel("test assertions", runner)
+    describeParallel("test assertions")
         ->test("assert",
                [] {
                    // successful
@@ -400,7 +400,7 @@ void reflexive_tests(runner& runner)
             assertException(assertPerformance(throw 1, 100), assertion_failure);
         });
 
-    describe<testsuite>("test output capture", runner)
+    describe<testsuite>("test output capture")
         ->test<_::streambuf_proxy>(
             "single thread",
             [] {

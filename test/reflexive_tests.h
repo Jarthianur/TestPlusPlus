@@ -27,6 +27,6 @@
 
 #include "sctf.hpp"
 
-void reflexive_tests(sctf::runner& runner);
+void reflexive_tests();
 
 #endif  // TEST_REFLEXIVE_TESTS_H_

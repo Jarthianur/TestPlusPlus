@@ -29,9 +29,8 @@ using namespace sctf;
 
 int main(int, char**)
 {
-    runner runner;
-    auto   rep  = createPlainTextReporter(true, true);
-    auto   repx = createXmlReporter("test.xml");
+    auto rep  = createPlainTextReporter(true, true);
+    auto repx = createXmlReporter("test.xml");
 
     try
     {
@@ -49,7 +48,7 @@ int main(int, char**)
     }
     std::cout << "Basic tests have succeeded!" << std::endl;
 
-    reflexive_tests(runner);
+    reflexive_tests();
 
-    return rep->report(runner) + repx->report(runner) > 0 ? 1 : 0;
+    return rep->report() + repx->report() > 0 ? 1 : 0;
 }

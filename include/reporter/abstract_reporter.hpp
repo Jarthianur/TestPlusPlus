@@ -68,7 +68,7 @@ public:
      * @note Executes runner's pending TestSuite.
      * @return the sum of failed tests and errors
      */
-    std::size_t report(runner& runner)
+    std::size_t report(runner& runner = runner::default_instance())
     {
         m_abs_errs  = 0;
         m_abs_fails = 0;

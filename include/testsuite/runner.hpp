@@ -71,6 +71,16 @@ public:
         return m_testsuites;
     }
 
+    /**
+     * @brief Get an instance of a runner, which is used as default.
+     * @return the default runner instance
+     */
+    static runner& default_instance()
+    {
+        static runner r;
+        return r;
+    }
+
 private:
     /// @brief The registered TestSuites.
     std::vector<testsuite_shared> m_testsuites;
@@ -84,7 +94,8 @@ private:
  * @param runner The TestSuitesRunner to register
  * @return a shared pointer to the created TestSuite
  */
-inline static testsuite_shared describeParallel(const std::string& name, runner& runner,
+inline static testsuite_shared describeParallel(const std::string& name,
+                                                runner& runner = runner::default_instance(),
                                                 const std::string& context = "")
 {
     return runner.register_ts(testsuite_parallel::create(name, context));
@@ -99,7 +110,8 @@ inline static testsuite_shared describeParallel(const std::string& name, runner&
  * @return a shared pointer to the created TestSuite
  */
 template<typename T>
-static testsuite_shared describeParallel(const std::string& name, runner& runner)
+static testsuite_shared describeParallel(const std::string& name,
+                                         runner&            runner = runner::default_instance())
 {
     return runner.register_ts(testsuite_parallel::create(name, _::name_for_type<T>()));
 }
@@ -112,7 +124,8 @@ static testsuite_shared describeParallel(const std::string& name, runner& runner
  * @param runner The TestSuitesRunner to register
  * @return a shared pointer to the created TestSuite
  */
-inline static testsuite_shared describe(const std::string& name, runner& runner,
+inline static testsuite_shared describe(const std::string& name,
+                                        runner&            runner  = runner::default_instance(),
                                         const std::string& context = "")
 {
     return runner.register_ts(testsuite::create(name, context));
@@ -127,7 +140,8 @@ inline static testsuite_shared describe(const std::string& name, runner& runner,
  * @return a shared pointer to the created TestSuite
  */
 template<typename T>
-static testsuite_shared describe(const std::string& name, runner& runner)
+static testsuite_shared describe(const std::string& name,
+                                 runner&            runner = runner::default_instance())
 {
     return runner.register_ts(testsuite::create(name, _::name_for_type<T>()));
 }
