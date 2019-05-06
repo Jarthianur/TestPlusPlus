@@ -9,3 +9,5 @@
 !LICENSE
 !README.md
 !build.bat
+!.travis.yml
+!pipeline.yaml
