@@ -99,13 +99,8 @@ public:
                 m_stats.m_num_of_fails += fails;
 #pragma omp atomic
                 m_stats.m_num_of_errs += errs;
-#pragma omp critical
-                {
-                    if (m_time < tmp)
-                    {
-                        m_time = tmp;
-                    }
-                }
+#pragma omp atomic
+                m_time = std::max(m_time, tmp);
             }
             m_state = execution_state::DONE;
         }
