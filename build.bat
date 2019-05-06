@@ -2,12 +2,13 @@
 
 where cl >nul 2>nul
 IF %ERRORLEVEL% NEQ 0 (echo ERROR: cl is not in PATH) && exit 1
-
+set CL_ARGS=/GS /Zi /Od /W3 /WX /wd4996 /FC /EHsc /nologo /I..\include
+set CL_FILES=main.cpp reflexive_tests.cpp basic_tests.cpp
 pushd test
-cl /GS /W3 /Zi /Od /FC /EHsc /nologo /I..\include                    main.cpp reflexive_tests.cpp basic_tests.cpp /link /out:cpp11_seq.exe
-cl /GS /W3 /Zi /Od /FC /EHsc /nologo /I..\include            /openmp main.cpp reflexive_tests.cpp basic_tests.cpp /link /out:cpp11_par.exe
-cl /GS /W3 /Zi /Od /FC /EHsc /nologo /I..\include /std:c++14         main.cpp reflexive_tests.cpp basic_tests.cpp /link /out:cpp14_seq.exe
-cl /GS /W3 /Zi /Od /FC /EHsc /nologo /I..\include /std:c++14 /openmp main.cpp reflexive_tests.cpp basic_tests.cpp /link /out:cpp14_par.exe
-cl /GS /W3 /Zi /Od /FC /EHsc /nologo /I..\include /std:c++17         main.cpp reflexive_tests.cpp basic_tests.cpp /link /out:cpp17_seq.exe
-cl /GS /W3 /Zi /Od /FC /EHsc /nologo /I..\include /std:c++17 /openmp main.cpp reflexive_tests.cpp basic_tests.cpp /link /out:cpp17_par.exe
+cl %CL_ARGS%                    %CL_FILES% /link /out:cpp11_seq.exe
+cl %CL_ARGS%            /openmp %CL_FILES% /link /out:cpp11_par.exe
+cl %CL_ARGS% /std:c++14         %CL_FILES% /link /out:cpp14_seq.exe
+cl %CL_ARGS% /std:c++14 /openmp %CL_FILES% /link /out:cpp14_par.exe
+cl %CL_ARGS% /std:c++17         %CL_FILES% /link /out:cpp17_seq.exe
+cl %CL_ARGS% /std:c++17 /openmp %CL_FILES% /link /out:cpp17_par.exe
 popd
