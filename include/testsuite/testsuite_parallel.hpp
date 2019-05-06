@@ -95,12 +95,12 @@ public:
                         mt_buf_cerr.clear();
                     }
                 }
-#pragma omp atomic
-                m_stats.m_num_of_fails += fails;
-#pragma omp atomic
-                m_stats.m_num_of_errs += errs;
-#pragma omp atomic
-                m_time = std::max(m_time, tmp);
+#pragma omp critical
+                {
+                    m_stats.m_num_of_fails += fails;
+                    m_stats.m_num_of_errs += errs;
+                    m_time = std::max(m_time, tmp);
+                }
             }
             m_state = execution_state::DONE;
         }
