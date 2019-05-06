@@ -19,54 +19,56 @@
  }
  */
 
-#ifndef SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_
-#define SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_
+#ifndef SCTF_REPORTER_ABSTRACT_REPORTER_HPP_
+#define SCTF_REPORTER_ABSTRACT_REPORTER_HPP_
 
+#include <algorithm>
 #include <cstddef>
 #include <fstream>
-#include <memory>
+#include <ostream>
 #include <stdexcept>
-#include <utility>
 #include <vector>
 
-#include "../testsuite/TestStats.hpp"
-#include "../testsuite/TestSuite.hpp"
-#include "../testsuite/TestSuitesRunner.hpp"
-#include "../types.h"
+#include "common/types.h"
+#include "testsuite/runner.hpp"
+#include "testsuite/statistics.hpp"
+#include "testsuite/testsuite.hpp"
 
-namespace sctf
-{
-namespace rep
-{
 /**
- * @def LF
+ * @def SCTF_LF
  * @brief Line feed
  */
 #ifdef _WIN32
-#    define LF "\r\n"
+#    define SCTF_LF "\r\n"
 #else
-#    define LF "\n"
+#    define SCTF_LF "\n"
 #endif
 
 /// @brief Spacing with two spaces
-#define SPACE "  "
+#define SCTF_SPACE "  "
 
 /// @brief Spacing with four spaces
-#define XSPACE "    "
+#define SCTF_XSPACE "    "
 
+namespace sctf
+{
+namespace _
+{
 /**
  * @brief Report testsuites in a format specified by concrete reporter types.
  */
-class AbstractReporter
+class abstract_reporter
 {
 public:
+    virtual ~abstract_reporter() noexcept = default;
+
     /**
      * @brief Generate report.
      * @param runner The TestSuitesRunner to generate reports for
      * @note Executes runner's pending TestSuite.
      * @return the sum of failed tests and errors
      */
-    std::size_t report(test::TestSuitesRunner& runner)
+    std::size_t report(runner& runner = runner::default_instance())
     {
         m_abs_errs  = 0;
         m_abs_fails = 0;
@@ -75,38 +77,31 @@ public:
 
         runner.run();
         begin_report();
-        const std::vector<TestSuite_shared>& testsuites = runner.testsuites();
-        for (const TestSuite_shared& ts : testsuites)
-        {
-            m_abs_errs += ts->statistics().errors();
-            m_abs_fails += ts->statistics().failures();
-            m_abs_tests += ts->statistics().tests();
-            m_abs_time += ts->time();
-            report_ts(ts);
-        }
+        std::for_each(runner.testsuites().begin(), runner.testsuites().end(),
+                      [this](const testsuite_shared& ts) {
+                          m_abs_errs += ts->statistics().errors();
+                          m_abs_fails += ts->statistics().failures();
+                          m_abs_tests += ts->statistics().tests();
+                          m_abs_time += ts->time();
+                          report_ts(ts);
+                      });
         end_report();
         return m_abs_errs + m_abs_fails;
     }
 
 protected:
-    /// @brief The output file stream
-    std::ofstream m_out_file;
-
-    /// @brief The output stream reference
-    std::ostream& mr_out_stream;
-
     /**
      * @brief Constructor
      * @param stream The out-stream to report to
      */
-    explicit AbstractReporter(std::ostream& stream) : mr_out_stream(stream) {}
+    explicit abstract_reporter(std::ostream& stream) : mr_out_stream(stream) {}
 
     /**
      * @brief Constructor
      * @param fname The filename where to report to
      * @throw std::runtime_error if the file cannot be opened for writing
      */
-    explicit AbstractReporter(const char* fname) : m_out_file(fname), mr_out_stream(m_out_file)
+    explicit abstract_reporter(const char* fname) : m_out_file(fname), mr_out_stream(m_out_file)
     {
         if (!mr_out_stream)
         {
@@ -115,27 +110,20 @@ protected:
     }
 
     /**
-     * @brief Destructor
-     */
-    virtual ~AbstractReporter() noexcept = default;
-
-    /**
      * @brief Generate report for a given TestSuite.
      * @param ts The TestSuite
      */
-    inline virtual void report_ts(const TestSuite_shared ts)
+    inline virtual void report_ts(const testsuite_shared ts)
     {
-        for (auto& tc : ts->testcases())
-        {
-            report_tc(tc);
-        }
+        std::for_each(ts->testcases().begin(), ts->testcases().end(),
+                      [this](const _::testcase& tc) { report_tc(tc); });
     }
 
     /**
      * @brief Generate report for a given TestCase.
      * @param tc The TestCase
      */
-    virtual void report_tc(const test::TestCase& tc) = 0;
+    virtual void report_tc(const testcase& tc) = 0;
 
     /**
      * @brief Generate the intro of a report.
@@ -159,43 +147,12 @@ protected:
         return mr_out_stream;
     }
 
-    /**
-     * @brief Get the absolute amount of tests for current report.
-     * @return the absolute tests
-     */
-    inline std::size_t abs_tests() const
-    {
-        return m_abs_tests;
-    }
+    /// @brief The output file stream
+    std::ofstream m_out_file;
 
-    /**
-     * @brief Get the absolute amount of failed tests for current report.
-     * @return the absolute tests
-     */
-    inline std::size_t abs_fails() const
-    {
-        return m_abs_fails;
-    }
+    /// @brief The output stream reference
+    std::ostream& mr_out_stream;
 
-    /**
-     * @brief Get the absolute amount of erroneous tests for current report.
-     * @return the absolute tests
-     */
-    inline std::size_t abs_errs() const
-    {
-        return m_abs_errs;
-    }
-
-    /**
-     * @brief Get the absolute amount of time for current report.
-     * @return the absolute time
-     */
-    inline double abs_time() const
-    {
-        return m_abs_time;
-    }
-
-private:
     /// @brief The amount of tests.
     std::size_t m_abs_tests = 0;
 
@@ -209,7 +166,7 @@ private:
     double m_abs_time = 0;
 };
 
-}  // namespace rep
+}  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_SRC_REPORTER_ABSTRACTREPORTER_HPP_
+#endif  // SCTF_REPORTER_ABSTRACT_REPORTER_HPP_

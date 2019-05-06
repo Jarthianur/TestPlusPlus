@@ -19,23 +19,23 @@
  }
  */
 
-#ifndef SCTF_SRC_TESTSUITE_TESTSUITE_HPP_
-#define SCTF_SRC_TESTSUITE_TESTSUITE_HPP_
+#ifndef SCTF_TESTSUITE_TESTSUITE_HPP_
+#define SCTF_TESTSUITE_TESTSUITE_HPP_
 
+#include <algorithm>
 #include <chrono>
-#include <cstddef>
 #include <functional>
-#include <iterator>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "../types.h"
-#include "../util/serialize.hpp"
-
-#include "TestCase.hpp"
-#include "TestStats.hpp"
+#include "common/streambuf_proxy.hpp"
+#include "common/stringify.hpp"
+#include "common/types.h"
+#include "testsuite/statistics.hpp"
+#include "testsuite/testcase.hpp"
 
 /// @brief Call a functor silently, catching all exceptions and only if it points to a
 /// target.
@@ -56,11 +56,10 @@ namespace sctf
  * @brief Testsuite class for managing sequential testcases.
  * @note Not-copyable
  */
-class TestSuite : public std::enable_shared_from_this<TestSuite>
+class testsuite : public std::enable_shared_from_this<testsuite>
 {
 public:
-    TestSuite(const TestSuite&) = delete;
-    TestSuite& operator=(const TestSuite&) = delete;
+    virtual ~testsuite() noexcept = default;
 
     /**
      * @brief Create a TestSuite.
@@ -68,39 +67,49 @@ public:
      * @param context The context
      * @return a shared pointer to the created TestSuite
      */
-    static TestSuite_shared create(const std::string& name, const std::string& context)
+    static testsuite_shared create(const std::string& name, const std::string& context)
     {
-        return TestSuite_shared(new TestSuite(name, context));
+        return testsuite_shared(new testsuite(name, context));
     }
-
-    /**
-     * @brief Destructor
-     */
-    virtual ~TestSuite() noexcept = default;
 
     /**
      * @brief Execute all TestCases sequentially.
      */
-    virtual void run() noexcept
+    virtual void run()
     {
-        if (m_state == State::DONE) return;
-        m_stats.m_num_of_tests = m_testcases.size();
-        SCTF_EXEC_SILENT(m_setup_func)
-        for (test::TestCase& tc : m_testcases)
+        if (m_state != execution_state::DONE)
         {
-            if (tc.state() != test::TestCase::State::NONE) continue;
-            SCTF_EXEC_SILENT(m_pre_test_func)
-            tc();
-            switch (tc.state())
-            {
-                case test::TestCase::State::FAILED: ++m_stats.m_num_of_fails; break;
-                case test::TestCase::State::ERROR: ++m_stats.m_num_of_errs; break;
-                default: break;
-            }
-            m_time += tc.duration();
-            SCTF_EXEC_SILENT(m_post_test_func)
+            m_stats.m_num_of_tests = m_testcases.size();
+            _::streambuf_proxy buf_cout(std::cout);
+            _::streambuf_proxy buf_cerr(std::cerr);
+
+            SCTF_EXEC_SILENT(m_setup_func)
+            std::for_each(m_testcases.begin(), m_testcases.end(),
+                          [this, &buf_cerr, &buf_cout](_::testcase& tc) {
+                              if (tc.state() == _::testcase::result::NONE)
+                              {
+                                  SCTF_EXEC_SILENT(m_pre_test_func)
+                                  tc();
+                                  switch (tc.state())
+                                  {
+                                      case _::testcase::result::FAILED:
+                                          ++m_stats.m_num_of_fails;
+                                          break;
+                                      case _::testcase::result::ERROR:
+                                          ++m_stats.m_num_of_errs;
+                                          break;
+                                      default: break;
+                                  }
+                                  m_time += tc.duration();
+                                  SCTF_EXEC_SILENT(m_post_test_func)
+                                  tc.set_cout(buf_cout.str());
+                                  tc.set_cerr(buf_cerr.str());
+                                  buf_cout.clear();
+                                  buf_cerr.clear();
+                              }
+                          });
+            m_state = execution_state::DONE;
         }
-        m_state = State::DONE;
     }
 
     /**
@@ -111,10 +120,10 @@ public:
      * @return this as shared pointer
      */
     template<typename T>
-    TestSuite_shared test(const std::string& name, test::test_function&& t_func)
+    testsuite_shared test(const std::string& name, _::test_function&& t_func)
     {
-        m_testcases.push_back(test::TestCase(name, util::name_for_type<T>(), std::move(t_func)));
-        m_state = State::PENDING;
+        m_testcases.push_back(_::testcase(name, _::name_for_type<T>(), std::move(t_func)));
+        m_state = execution_state::PENDING;
         return shared_from_this();
     }
 
@@ -125,11 +134,11 @@ public:
      * @param t_func The test function
      * @return this as shared pointer
      */
-    TestSuite_shared test(const std::string& name, const std::string& context,
-                          test::test_function&& t_func)
+    testsuite_shared test(const std::string& name, const std::string& context,
+                          _::test_function&& t_func)
     {
-        m_testcases.push_back(test::TestCase(name, context, std::move(t_func)));
-        m_state = State::PENDING;
+        m_testcases.push_back(_::testcase(name, context, std::move(t_func)));
+        m_state = execution_state::PENDING;
         return shared_from_this();
     }
 
@@ -140,10 +149,10 @@ public:
      * @param t_func The test function
      * @return this as shared pointer
      */
-    TestSuite_shared test(const std::string& name, test::test_function&& t_func)
+    testsuite_shared test(const std::string& name, _::test_function&& t_func)
     {
-        m_testcases.push_back(test::TestCase(name, m_context, std::move(t_func)));
-        m_state = State::PENDING;
+        m_testcases.push_back(_::testcase(name, m_context, std::move(t_func)));
+        m_state = execution_state::PENDING;
         return shared_from_this();
     }
 
@@ -153,7 +162,7 @@ public:
      * @param t_func The function
      * @return this as shared pointer
      */
-    TestSuite_shared setup(test::test_function&& t_func)
+    testsuite_shared setup(_::test_function&& t_func)
     {
         m_setup_func = std::move(t_func);
         return shared_from_this();
@@ -165,7 +174,7 @@ public:
      * @param t_func The function
      * @return this as shared pointer
      */
-    TestSuite_shared before(test::test_function&& t_func)
+    testsuite_shared before(_::test_function&& t_func)
     {
         m_pre_test_func = std::move(t_func);
         return shared_from_this();
@@ -177,7 +186,7 @@ public:
      * @param t_func The function
      * @return this as shared pointer
      */
-    TestSuite_shared after(test::test_function&& t_func)
+    testsuite_shared after(_::test_function&& t_func)
     {
         m_post_test_func = std::move(t_func);
         return shared_from_this();
@@ -205,7 +214,7 @@ public:
      * @brief Get the test statistics.
      * @return the TestStats
      */
-    inline const test::TestStats& statistics() const
+    inline const _::statistics& statistics() const
     {
         return m_stats;
     }
@@ -223,7 +232,7 @@ public:
      * @brief Get the TestCases.
      * @return the test cases
      */
-    inline const std::vector<test::TestCase>& testcases() const
+    inline const std::vector<_::testcase>& testcases() const
     {
         return m_testcases;
     }
@@ -232,7 +241,7 @@ protected:
     /**
      * @brief The state of all testcases.
      */
-    enum class State : std::int32_t
+    enum class execution_state : std::int_fast8_t
     {
         /// Still testcases to execute
         PENDING,
@@ -245,7 +254,7 @@ protected:
      * @param name The name/description
      * @param context The context description
      */
-    TestSuite(const std::string& name, const std::string& context)
+    testsuite(const std::string& name, const std::string& context)
         : m_name(name), m_context(context), m_timestamp(std::chrono::system_clock::now())
     {}
 
@@ -262,24 +271,24 @@ protected:
     double m_time = 0.0;
 
     /// @brief The test statistics.
-    test::TestStats m_stats;
+    _::statistics m_stats;
 
     /// @brief The testcases.
-    std::vector<test::TestCase> m_testcases;
+    std::vector<_::testcase> m_testcases;
 
     /// @brief The execution state.
-    State m_state = State::PENDING;
+    execution_state m_state = execution_state::PENDING;
 
     /// @brief The optional setup function, executed once before all testcases.
-    test::test_function m_setup_func;
+    _::test_function m_setup_func;
 
     /// @brief The optional pre-test function, executed before each testcase.
-    test::test_function m_pre_test_func;
+    _::test_function m_pre_test_func;
 
     /// @brief The optional post-test function, executed after each testcase.
-    test::test_function m_post_test_func;
+    _::test_function m_post_test_func;
 };
 
 }  // namespace sctf
 
-#endif  // SCTF_SRC_TESTSUITE_TESTSUITE_HPP_
+#endif  // SCTF_TESTSUITE_TESTSUITE_HPP_

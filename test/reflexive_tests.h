@@ -22,8 +22,11 @@
 #ifndef TEST_REFLEXIVE_TESTS_H_
 #define TEST_REFLEXIVE_TESTS_H_
 
-#include "../sctf.hpp"
+#define SCTF_EXTERN_EPSILON
+//#define SCTF_EPSILON 0.000001
 
-void reflexive_tests(sctf::test::TestSuitesRunner& runner);
+#include "sctf.hpp"
+
+void reflexive_tests();
 
 #endif  // TEST_REFLEXIVE_TESTS_H_

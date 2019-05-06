@@ -19,41 +19,20 @@
  }
  */
 
-#ifndef SCTF_SRC_TYPES_H_
-#define SCTF_SRC_TYPES_H_
+#ifndef SCTF_SCTF_HPP_
+#define SCTF_SCTF_HPP_
 
-#include <functional>
-#include <memory>
+#include "common/types.h"
+#include "comparator/equals.hpp"
+#include "comparator/greater.hpp"
+#include "comparator/inrange.hpp"
+#include "comparator/less.hpp"
+#include "comparator/unequals.hpp"
+#include "reporter/html_reporter.hpp"
+#include "reporter/plaintext_reporter.hpp"
+#include "reporter/xml_reporter.hpp"
+#include "testsuite/runner.hpp"
 
-namespace sctf
-{
-namespace test
-{
-/**
- * @typedef test_function
- * @brief Function schema passed to tests.
- */
-using test_function = std::function<void()>;
+#include "assert.hpp"
 
-}  // namespace test
-
-/**
- * @typedef TestSuite_shared
- * @brief Shared ptr to TestSuite.
- */
-class TestSuite;
-using TestSuite_shared = std::shared_ptr<TestSuite>;
-
-namespace rep
-{
-/**
- * @typedef AbstractReporter_shared
- * @brief Shared ptr to AbstractReporter
- */
-class AbstractReporter;
-using AbstractReporter_shared = std::shared_ptr<AbstractReporter>;
-
-}  // namespace rep
-}  // namespace sctf
-
-#endif  // SCTF_SRC_TYPES_H_
+#endif  // SCTF_SCTF_HPP_

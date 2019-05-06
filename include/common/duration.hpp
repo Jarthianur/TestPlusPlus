@@ -19,38 +19,43 @@
  }
  */
 
-#ifndef SCTF_SRC_UTIL_INTERVAL_HPP_
-#define SCTF_SRC_UTIL_INTERVAL_HPP_
+#ifndef SCTF_COMMON_DURATION_HPP_
+#define SCTF_COMMON_DURATION_HPP_
 
-#include "traits.hpp"
+#include <chrono>
 
 namespace sctf
 {
-namespace util
+namespace _
 {
 /**
- * @brief A utility used for bounds checking for in_range comparator.
- * @tparam T The type used as bounds
- * @note T must provide ordinal relation with operators < and >.
+ * @brief Measure time in milliseconds.
+ * @note The start timepoint is fixed upon construction.
  */
-template<typename T, typename std::enable_if<is_ordinal<T>::value>::type* = nullptr>
-struct interval final
+struct duration final
 {
     /**
-     * @brief Constructor
-     * @param l The lower bounds
-     * @param u The upper bounds
+     * @brief Set fixed start timepoint on construction.
      */
-    interval(const T& l, const T& u) : lower(l), upper(u) {}
+    duration() : _start(std::chrono::steady_clock::now()) {}
+    ~duration() noexcept {}
 
-    /// @brief The lower bounds
-    const T lower;
+    /**
+     * @brief Get the actual duration since start time in milliseconds.
+     * @return the milliseconds
+     */
+    double get()
+    {
+        return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - _start)
+            .count();
+    }
 
-    /// @brief The upper bounds
-    const T upper;
+private:
+    /// @brief start timepoint
+    const std::chrono::steady_clock::time_point _start;
 };
 
-}  // namespace util
+}  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_SRC_UTIL_INTERVAL_HPP_
+#endif  // SCTF_COMMON_DURATION_HPP_

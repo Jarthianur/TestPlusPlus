@@ -19,12 +19,12 @@
  }
  */
 
-#ifndef SCTF_SRC_COMPARATOR_COMPARATORS_HPP_
-#define SCTF_SRC_COMPARATOR_COMPARATORS_HPP_
+#ifndef SCTF_COMPARATOR_COMPARATORS_HPP_
+#define SCTF_COMPARATOR_COMPARATORS_HPP_
 
 #include <memory>
 
-#include "../util/serialize.hpp"
+#include "common/stringify.hpp"
 
 #if __cplusplus >= 201703L
 
@@ -42,26 +42,19 @@
 
 namespace sctf
 {
-namespace comp
+namespace _
 {
 /**
  * @brief Result of an actual comparison performed by any comparator.
- *
- * Boolean convertible, thus checkable in conditions.
- * Dereferencing operator for access of the error message.
- *
- * !!! The error message may only be accessed, if the Comparison returns false to
- * conditions !!!
- *
- * @note As of C++17/14 optionals are available in the STL, so they are used
- * conditionally.
+ * @note The error message may only be accessed, if the Comparison returns false to
+ * conditions.
  */
-struct Comparison final
+struct comparison final
 {
 #if __cplusplus >= 201402L
-    constexpr Comparison() : _failure(STD_NULLOPT) {}
+    constexpr comparison() : _failure(STD_NULLOPT) {}
 
-    Comparison(const std::string& comp_str, const std::string& value, const std::string& expect)
+    comparison(const std::string& comp_str, const std::string& value, const std::string& expect)
         : _failure("Expected '" + value + "' " + comp_str + " '" + expect + "'")
     {}
 
@@ -78,9 +71,9 @@ struct Comparison final
 private:
     const STD_OPTIONAL<std::string> _failure;
 #else
-    constexpr Comparison() : _success(true) {}
+    constexpr comparison() : _success(true) {}
 
-    Comparison(const std::string& comp_str, const std::string& value, const std::string& expect)
+    comparison(const std::string& comp_str, const std::string& value, const std::string& expect)
         : _success(false)
     {
         std::string msg;
@@ -112,64 +105,84 @@ private:
 };
 
 /**
- * @typedef Comparator
+ * @typedef comparator
  * @brief Function pointer to function comparing two elements
  * @tparam V The left hand type
  * @tparam E The right hand type
  */
 template<typename V, typename E = V>
-using Comparator = Comparison (*)(const V&, const E&);
+using comparator = comparison (*)(const V&, const E&);
 
-/// @brief Default successful Comparison.
+/// @brief Default successful comparison.
 #if __cplusplus >= 201402L
-#    define success Comparison()
+#    define success comparison()
 #else
-constexpr Comparison success = Comparison();
+constexpr comparison success = comparison();
 #endif
 
-}  // namespace comp
+#ifdef SCTF_EPSILON
+static double epsilon = SCTF_EPSILON;
+#elif defined(SCTF_EXTERN_EPSILON)
+extern double epsilon;
+#endif
+
+}  // namespace _
 }  // namespace sctf
 
 /**
  * @def PROVIDE_COMPARATOR
  * @brief Provide a shortwrite function which returns the address of the respective
- * Comparator.
- * @param COMP The Comparator function
+ * comparator.
+ * @param COMP The comparator function
  * @param NAME The final name, usually COMP in uppercase
  */
 #define PROVIDE_COMPARATOR(COMP, NAME)   \
     namespace sctf                       \
     {                                    \
     template<typename V, typename E = V> \
-    static comp::Comparator<V, E> NAME() \
+    static _::comparator<V, E> NAME()    \
     {                                    \
-        return &comp::COMP<V, E>;        \
+        return &_::COMP<V, E>;           \
     }                                    \
     }
 
 /**
  * @def COMPARATOR
- * @brief Create a Comparator function.
+ * @brief Create a comparator function.
  * @param NAME The final name of this function
  * @param COMPSTR A string representing the comparison constraint, like "to be equals"
  * @param PRED The comparison predicate as code
  * @note In PRED the two elements are named 'value' and 'expect', where 'value' is the
  * actual value and 'expect' is the expected value.
  */
-#define COMPARATOR(NAME, COMPSTR, PRED)                                                          \
-    namespace sctf                                                                               \
-    {                                                                                            \
-    namespace comp                                                                               \
-    {                                                                                            \
-    constexpr const char* NAME##_comp_str = COMPSTR;                                             \
-    template<typename V, typename E = V>                                                         \
-    static Comparison NAME(const V& value, const E& expect)                                      \
-    {                                                                                            \
-        return (PRED) ?                                                                          \
-                   success :                                                                     \
-                   Comparison(NAME##_comp_str, util::serialize(value), util::serialize(expect)); \
-    }                                                                                            \
-    }                                                                                            \
+#define COMPARATOR(NAME, COMPSTR, PRED)                                                   \
+    namespace sctf                                                                        \
+    {                                                                                     \
+    namespace _                                                                           \
+    {                                                                                     \
+    constexpr const char* NAME##_comp_str = COMPSTR;                                      \
+    template<typename V, typename E = V>                                                  \
+    static comparison NAME(const V& value, const E& expect)                               \
+    {                                                                                     \
+        return (PRED) ? success :                                                         \
+                        comparison(NAME##_comp_str, to_string(value), to_string(expect)); \
+    }                                                                                     \
+    }                                                                                     \
     }
 
-#endif  // SCTF_SRC_COMPARATOR_COMPARATORS_HPP_
+/**
+ * @def SCTF_SET_EPSILON
+ * @brief Define the epsilon value used by equality comparison of floating point numbers.
+ * @note Only used when SCTF_EXTERN_EPSILON is defined.
+ * @param E The epsilon value
+ */
+#define SCTF_SET_EPSILON(E) \
+    namespace sctf          \
+    {                       \
+    namespace _             \
+    {                       \
+    double epsilon = E;     \
+    }                       \
+    }
+
+#endif  // SCTF_COMPARATOR_COMPARATORS_HPP_

@@ -19,19 +19,20 @@
  }
  */
 
-#ifndef SCTF_SCTF_HPP_
-#define SCTF_SCTF_HPP_
+#ifndef SCTF_COMPARATOR_GREATER_HPP_
+#define SCTF_COMPARATOR_GREATER_HPP_
 
-#include "src/assert.hpp"
-#include "src/comparator/equals.hpp"
-#include "src/comparator/greaterthan.hpp"
-#include "src/comparator/inrange.hpp"
-#include "src/comparator/lessthan.hpp"
-#include "src/comparator/unequals.hpp"
-#include "src/reporter/HtmlReporter.hpp"
-#include "src/reporter/PlainTextReporter.hpp"
-#include "src/reporter/XmlReporter.hpp"
-#include "src/testsuite/TestSuitesRunner.hpp"
-#include "src/types.h"
+#include "comparator/comparators.hpp"
 
-#endif  // SCTF_SCTF_HPP_
+/**
+ * Define a greater comparator
+ */
+COMPARATOR(greater_than, "to be greater than", value > expect)
+
+/**
+ * Provide a Comparator shortwrite.
+ */
+PROVIDE_COMPARATOR(greater_than, GREATER)
+PROVIDE_COMPARATOR(greater_than, GT)
+
+#endif  // SCTF_COMPARATOR_GREATER_HPP_

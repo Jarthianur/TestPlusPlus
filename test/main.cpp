@@ -21,31 +21,34 @@
 
 #include <iostream>
 
-#include "../sctf.hpp"
 #include "basic_tests.h"
 #include "reflexive_tests.h"
+#include "sctf.hpp"
 
 using namespace sctf;
 
 int main(int, char**)
 {
-    test::TestSuitesRunner runner;
-    auto rep = createPlainTextReporter(true);
+    auto rep  = createPlainTextReporter(true, true);
+    auto repx = createXmlReporter("test.xml");
+
     try
     {
         basic_tests();
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         std::cout << "Basic tests have failed! [" << e.what() << "]" << std::endl;
         return 1;
     }
-    catch(...)
+    catch (...)
     {
         std::cout << "Basic tests have failed!" << std::endl;
         return 1;
     }
     std::cout << "Basic tests have succeeded!" << std::endl;
-    reflexive_tests(runner);
-    return rep->report(runner) > 0 ? 1 : 0;
+
+    reflexive_tests();
+
+    return rep->report() + repx->report() > 0 ? 1 : 0;
 }

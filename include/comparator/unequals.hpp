@@ -19,20 +19,19 @@
  }
  */
 
-#ifndef SCTF_SRC_COMPARATOR_UNEQUALS_HPP_
-#define SCTF_SRC_COMPARATOR_UNEQUALS_HPP_
+#ifndef SCTF_COMPARATOR_UNEQUALS_HPP_
+#define SCTF_COMPARATOR_UNEQUALS_HPP_
 
 #include <algorithm>
 #include <cmath>
 #include <limits>
 
-#include "../util/traits.hpp"
-
-#include "comparators.hpp"
+#include "common/traits.hpp"
+#include "comparator/comparators.hpp"
 
 namespace sctf
 {
-namespace comp
+namespace _
 {
 /// @brief The constraint string for unequals.
 constexpr const char* unequals_comp_str = "to be unequals";
@@ -47,14 +46,11 @@ constexpr const char* unequals_comp_str = "to be unequals";
  * @param expect The expected value
  * @return true if value is unequals expect, else false
  */
-template<typename V, typename E = V,
-         typename std::enable_if<not std::is_floating_point<V>::value and
-                                 util::is_unequal_comparable<V, E>::value>::type* = nullptr>
-static Comparison unequals(const V& value, const E& expect)
+template<typename V, typename E = V, ENABLE_IF(NOT IS_FLOAT(V) AND IS_UNEQUAL_COMPARABLE(V, E))>
+static comparison unequals(const V& value, const E& expect)
 {
-    return value != expect ?
-               success :
-               Comparison(unequals_comp_str, util::serialize(value), util::serialize(expect));
+    return value != expect ? success :
+                             comparison(unequals_comp_str, to_string(value), to_string(expect));
 }
 
 /**
@@ -68,14 +64,12 @@ static Comparison unequals(const V& value, const E& expect)
  * @return true if value is unequals expect, else false
  */
 template<typename V, typename E = V,
-         typename std::enable_if<not std::is_floating_point<V>::value and
-                                 not util::is_unequal_comparable<V, E>::value and
-                                 util::is_equal_comparable<V, E>::value>::type* = nullptr>
-static Comparison unequals(const V& value, const E& expect)
+         ENABLE_IF(NOT IS_FLOAT(V) AND NOT IS_UNEQUAL_COMPARABLE(V, E)
+                       AND                 IS_EQUAL_COMPARABLE(V, E))>
+static comparison unequals(const V& value, const E& expect)
 {
-    return value == expect ?
-               Comparison(unequals_comp_str, util::serialize(value), util::serialize(expect)) :
-               success;
+    return value == expect ? comparison(unequals_comp_str, to_string(value), to_string(expect)) :
+                             success;
 }
 
 /**
@@ -87,22 +81,20 @@ static Comparison unequals(const V& value, const E& expect)
  * @param expect The expected value
  * @return true if value is unequals expect, else false
  */
-template<typename V, typename E = V,
-         typename std::enable_if<std::is_floating_point<V>::value and
-                                 std::is_floating_point<E>::value>::type* = nullptr>
-Comparison unequals(const V& value, const E& expect)
+template<typename V, typename E = V, ENABLE_IF(IS_FLOAT(V) AND IS_FLOAT(E))>
+comparison unequals(const V& value, const E& expect)
 {
-#ifdef SCTF_CUSTOM_EPSILON
-    static V epsilon = SCTF_CUSTOM_EPSILON;
+#if defined(SCTF_EXTERN_EPSILON) || defined(SCTF_EPSILON)
+    static V epsilon_ = static_cast<V>(epsilon);
 #else
-    static V epsilon = std::numeric_limits<V>::epsilon();
+    static V epsilon_ = std::numeric_limits<V>::epsilon();
 #endif
-    return (std::abs(value - expect) <= std::max(std::abs(value), std::abs(expect)) * epsilon) ?
-               Comparison(unequals_comp_str, util::serialize(value), util::serialize(expect)) :
+    return (std::abs(value - expect) <= std::max(std::abs(value), std::abs(expect)) * epsilon_) ?
+               comparison(unequals_comp_str, to_string(value), to_string(expect)) :
                success;
 }
 
-}  // namespace comp
+}  // namespace _
 }  // namespace sctf
 
 /**
@@ -111,4 +103,4 @@ Comparison unequals(const V& value, const E& expect)
 PROVIDE_COMPARATOR(unequals, UNEQUALS)
 PROVIDE_COMPARATOR(unequals, NE)
 
-#endif  // SCTF_SRC_COMPARATOR_UNEQUALS_HPP_
+#endif  // SCTF_COMPARATOR_UNEQUALS_HPP_

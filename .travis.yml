@@ -1,29 +1,72 @@
-sudo: required
+language: cpp
+install: true
 
-services:
-    - docker
+matrix:
+  include:
 
-language: minimal
-
-addons:
-  apt:
-    packages:
-      - python-pip
-
-before_install:
-    - docker pull debian:sid-slim
-    - mkdir reports
-    - export BUILD_DIR=$TRAVIS_BUILD_DIR
-
-install:
+  - name: "Linux (gcc)"
+    os: linux
+    dist: xenial
+    sudo: required
+    compiler:
+    - gcc
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - python-pip
+        - g++-8
+        - clang-format-6.0
+    env:
+    - BADGE=linux
+    install:
+    - export CXX=g++-8
+    - export GCOV=gcov-8
+    - export CFMT=clang-format-6.0
+    - wget -q https://github.com/linux-test-project/lcov/releases/download/v1.14/lcov-1.14.tar.gz
+    - tar xf lcov-1.14.tar.gz
+    - export LCOV="$PWD/lcov-1.14/bin/lcov --gcov-tool=/usr/bin/$GCOV"
+    - $LCOV --version
+    - $GCOV --version
+    - $CXX --version
+    - $CFMT --version
     - sudo pip install --upgrade pip
     - sudo pip install spline
+    script:
+    - spline --tags=linux --strict
+    after_success:
+    - bash <(curl -s https://codecov.io/bash) -x $GCOV -s reports/ -X gcov
 
-script:
-    - spline
+  - name: "OSX (clang)"
+    os: osx
+    osx_image: xcode10.2
+    sudo: required
+    compiler:
+    - clang
+    env:
+    - BADGE=osx
+    install:
+    - brew install libomp
+    - clang++ --version
+    - sudo pip install --upgrade pip
+    - sudo pip install spline
+    script:
+    - spline --tags=osx --strict
 
-after_success:
-    - bash <(curl -s https://codecov.io/bash)
+  - name: "Windows (MSVC)"
+    os: windows
+    env:
+    - BADGE=windows
+    script:
+    - cmd.exe /C '"C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat" && build.bat'
+    - test/cpp11_seq.exe
+    - test/cpp11_par.exe
+    - test/cpp14_seq.exe
+    - test/cpp14_par.exe
+    - test/cpp17_seq.exe
+    - test/cpp17_par.exe
+    - cat test.xml
 
 notifications:
     email:
