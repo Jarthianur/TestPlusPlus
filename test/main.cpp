@@ -30,7 +30,8 @@ using namespace sctf;
 int main(int, char**)
 {
     runner runner;
-    auto   rep = createPlainTextReporter(true, true);
+    auto   rep  = createPlainTextReporter(true, true);
+    auto   repx = createXmlReporter("test.xml");
 
     try
     {
@@ -50,5 +51,5 @@ int main(int, char**)
 
     reflexive_tests(runner);
 
-    return rep->report(runner) > 0 ? 1 : 0;
+    return rep->report(runner) + repx->report(runner) > 0 ? 1 : 0;
 }

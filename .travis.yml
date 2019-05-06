@@ -66,6 +66,7 @@ matrix:
     - test/cpp14_par.exe
     - test/cpp17_seq.exe
     - test/cpp17_par.exe
+    - type test\test.xml
 
 notifications:
     email:

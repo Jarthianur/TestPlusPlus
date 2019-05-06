@@ -42,6 +42,7 @@ model:
         ./{{ item.target }}
         $LCOV -c -d . -o test.info
         $LCOV -a base.info -a test.info -o {{ item.target }}.info
+        cat test.xml
         popd
     osx:
       build_script: |
@@ -51,6 +52,7 @@ model:
       test_script: |
         echo "./test/{{ item.target }}"
         ./test/{{ item.target }}
+        cat test.xml
 
 pipeline:
 - stage(analysis):
