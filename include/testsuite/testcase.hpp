@@ -56,7 +56,9 @@ public:
      * @param t_func The test function
      */
     testcase(const std::string& name, const std::string& context, test_function&& t_func)
-        : m_name(name), m_context("test." + context), m_test_func(std::move(t_func))
+        : m_name(name),
+          m_context(context.empty() ? "test" : context.substr().insert(0, "test.")),
+          m_test_func(std::move(t_func))
     {}
 
     /**

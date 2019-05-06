@@ -189,8 +189,10 @@ void reflexive_tests(runner& runner)
         ->test("creation",
                [] {
                    testcase tc("t1", "ctx", [] {});
+                   testcase tc2("t2", "", [] {});
                    assertEquals(tc.state(), testcase::result::NONE);
                    assertT(tc.context(), EQ, "test.ctx", std::string);
+                   assertT(tc2.context(), EQ, "test", std::string);
                    assertT(tc.name(), EQ, "t1", std::string);
                })
         ->test("successful execution",
