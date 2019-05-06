@@ -25,6 +25,8 @@
 #include <exception>
 #include <string>
 
+#include "common/types.h"
+
 namespace sctf
 {
 namespace _
@@ -41,8 +43,8 @@ public:
      * @param file The source file where the assertion took place
      * @param line The source line of the assertion
      */
-    assertion_failure(const std::string& msg, const char* file, int line)
-        : std::exception(), m_msg(msg + " at " + file + ":" + std::to_string(line))
+    assertion_failure(const std::string& msg, const location& loc)
+        : std::exception(), m_msg(msg + " at " + loc.file + ":" + std::to_string(loc.line))
     {}
 
     virtual ~assertion_failure() noexcept override = default;
@@ -56,7 +58,7 @@ public:
         return m_msg.c_str();
     }
 
-private:
+protected:
     /// @brief The error message
     const std::string m_msg;
 };

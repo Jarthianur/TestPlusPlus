@@ -45,9 +45,9 @@
  * @param COMP The Comparator
  * @param EXPECT The expected value
  */
-#define assert(VALUE, COMP, EXPECT)                                                               \
-    sctf::_::_assertStatement(VALUE, EXPECT, COMP<decltype(VALUE), decltype(EXPECT)>(), __FILE__, \
-                              __LINE__)
+#define assert(VALUE, COMP, EXPECT)                                                     \
+    sctf::_::_assertStatement(VALUE, EXPECT, COMP<decltype(VALUE), decltype(EXPECT)>(), \
+                              sctf::_::location{__FILE__, __LINE__})
 
 /**
  * @def assertT(VALUE, EXPECT, COMP, TYPE)
@@ -58,8 +58,9 @@
  * @param EXPECT The expected value
  * @param TYPE The value type
  */
-#define assertT(VALUE, COMP, EXPECT, TYPE) \
-    sctf::_::_assertStatement<TYPE, TYPE>(VALUE, EXPECT, COMP<TYPE, TYPE>(), __FILE__, __LINE__)
+#define assertT(VALUE, COMP, EXPECT, TYPE)                                   \
+    sctf::_::_assertStatement<TYPE, TYPE>(VALUE, EXPECT, COMP<TYPE, TYPE>(), \
+                                          sctf::_::location{__FILE__, __LINE__})
 
 /**
  * @def assertEquals(VALUE, EXPECT)
@@ -74,25 +75,28 @@
  * @brief Assert wrapper. Test value to be true.
  * @param VALUE The value
  */
-#define assertTrue(VALUE) \
-    sctf::_::_assertStatement<bool>(VALUE, true, sctf::EQUALS<bool>(), __FILE__, __LINE__)
+#define assertTrue(VALUE)                                              \
+    sctf::_::_assertStatement<bool>(VALUE, true, sctf::EQUALS<bool>(), \
+                                    sctf::_::location{__FILE__, __LINE__})
 
 /**
  * @def assertFalse(VALUE)
  * @brief Assert wrapper. Test value to be false.
  * @param VALUE The value
  */
-#define assertFalse(VALUE) \
-    sctf::_::_assertStatement<bool>(VALUE, false, sctf::EQUALS<bool>(), __FILE__, __LINE__)
+#define assertFalse(VALUE)                                              \
+    sctf::_::_assertStatement<bool>(VALUE, false, sctf::EQUALS<bool>(), \
+                                    sctf::_::location{__FILE__, __LINE__})
 
 /**
  * @def assertNotNull(VALUE)
  * @brief Assert wrapper. Test value to be not nullptr.
  * @param VALUE The value
  */
-#define assertNotNull(VALUE)                                            \
-    sctf::_::_assertStatement(static_cast<void* const>(VALUE), nullptr, \
-                              sctf::UNEQUALS<void* const, std::nullptr_t>(), __FILE__, __LINE__)
+#define assertNotNull(VALUE)                                                 \
+    sctf::_::_assertStatement(static_cast<void* const>(VALUE), nullptr,      \
+                              sctf::UNEQUALS<void* const, std::nullptr_t>(), \
+                              sctf::_::location{__FILE__, __LINE__})
 
 /**
  * @def assertZero(VALUE, TYPE)
@@ -102,7 +106,8 @@
  */
 #define assertZero(VALUE)                                             \
     sctf::_::_assertStatement(VALUE, static_cast<decltype(VALUE)>(0), \
-                              sctf::EQUALS<decltype(VALUE)>(), __FILE__, __LINE__)
+                              sctf::EQUALS<decltype(VALUE)>(),        \
+                              sctf::_::location{__FILE__, __LINE__})
 
 /**
  * @def assertException(FUNC, TYPE)
@@ -111,14 +116,15 @@
  * @param TYPE The exception type
  */
 #define assertException(FUNC, TYPE) \
-    sctf::_::_assertException<TYPE>([&] { FUNC; }, __FILE__, __LINE__)
+    sctf::_::_assertException<TYPE>([&] { FUNC; }, sctf::_::location{__FILE__, __LINE__})
 
 /**
  * @def assertNoExcept(FUNC)
  * @brief Assert no exception wrapper. Test for FUNC not to throw any exception.
  * @param FUNC The function call
  */
-#define assertNoExcept(FUNC) sctf::_::_assertNoExcept([&] { FUNC; }, __FILE__, __LINE__)
+#define assertNoExcept(FUNC) \
+    sctf::_::_assertNoExcept([&] { FUNC; }, sctf::_::location{__FILE__, __LINE__})
 
 /**
  * @def assertPerformance(FUNC, MILLIS)
@@ -127,7 +133,7 @@
  * @param MILLIS The max amount of milliseconds
  */
 #define assertPerformance(FUNC, MILLIS) \
-    sctf::_::_assertPerformance([&] { FUNC; }, MILLIS, __FILE__, __LINE__)
+    sctf::_::_assertPerformance([&] { FUNC; }, MILLIS, sctf::_::location{__FILE__, __LINE__})
 
 namespace sctf
 {
@@ -144,12 +150,12 @@ namespace _
  */
 template<typename V, typename E = V>
 static void _assertStatement(const V& value, const E& expect, comparator<V, E> comp,
-                             const char* file, int line)
+                             const location& loc)
 {
     comparison res = (*comp)(value, expect);
     if (!res)
     {
-        throw assertion_failure(*res, file, line);
+        throw assertion_failure(*res, loc);
     }
 }
 
@@ -162,7 +168,7 @@ static void _assertStatement(const V& value, const E& expect, comparator<V, E> c
  * @throw AssertionFailure if any other or no exception is caught at all.
  */
 template<typename T>
-static void _assertException(const test_function& func, const char* file, int line)
+static void _assertException(const test_function& func, const location& loc)
 {
     try
     {
@@ -175,14 +181,14 @@ static void _assertException(const test_function& func, const char* file, int li
     catch (const std::exception& e)
     {
         throw assertion_failure(
-            std::string("Wrong exception thrown, caught '") + to_string(e) + "'", file, line);
+            std::string("Wrong exception thrown, caught '") + to_string(e) + "'", loc);
     }
     catch (...)
     {
-        throw assertion_failure("Wrong exception thrown", file, line);
+        throw assertion_failure("Wrong exception thrown", loc);
     }
     throw assertion_failure(
-        std::string("No exception thrown, expected '") + name_for_type<T>() + "'", file, line);
+        std::string("No exception thrown, expected '") + name_for_type<T>() + "'", loc);
 }
 
 /**
@@ -192,7 +198,7 @@ static void _assertException(const test_function& func, const char* file, int li
  * @param line The source line in file
  * @throw AssertionFailure if any exception is caught.
  */
-static void _assertNoExcept(const test_function& func, const char* file, int line)
+static void _assertNoExcept(const test_function& func, const location& loc)
 {
     try
     {
@@ -201,11 +207,11 @@ static void _assertNoExcept(const test_function& func, const char* file, int lin
     catch (const std::exception& e)
     {
         throw assertion_failure(std::string("Expected no exception, caught '") + to_string(e) + "'",
-                                file, line);
+                                loc);
     }
     catch (...)
     {
-        throw assertion_failure("Expected no exception", file, line);
+        throw assertion_failure("Expected no exception", loc);
     }
 }
 
@@ -214,8 +220,7 @@ static void _assertNoExcept(const test_function& func, const char* file, int lin
  * @param func The test function
  * @param max_millis The max duration in milliseconds
  */
-static void _assertPerformance(const test_function& func, double max_millis, const char* file,
-                               int line)
+static void _assertPerformance(const test_function& func, double max_millis, const location& loc)
 {
     try
     {
@@ -224,17 +229,16 @@ static void _assertPerformance(const test_function& func, double max_millis, con
         double dur_ms = dur.get();
         if (dur_ms > max_millis)
         {
-            throw assertion_failure(std::string("runtime > ") + to_string(max_millis) + "ms", file,
-                                    line);
+            throw assertion_failure(std::string("runtime > ") + to_string(max_millis) + "ms", loc);
         }
     }
     catch (const std::exception& e)
     {
-        throw assertion_failure(e.what(), file, line);
+        throw assertion_failure(e.what(), loc);
     }
     catch (...)
     {
-        throw assertion_failure("Unknown exception thrown", file, line);
+        throw assertion_failure("Unknown exception thrown", loc);
     }
 }
 

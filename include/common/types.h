@@ -37,6 +37,15 @@ class abstract_reporter;
  */
 using test_function = std::function<void()>;
 
+/**
+ * @brief A wrapper for code locations.
+ */
+struct location final
+{
+    const char* file;
+    const int   line;
+};
+
 }  // namespace _
 
 /**
