@@ -1,11 +1,11 @@
 *
-!.github/
-!.github/*
-!src/
-!src/*
+!*/
+!.github/**
+!/include/**
+!/test/**
 !.clang-format
 !.gitattributes
 !.gitignore
 !LICENSE
 !README.md
-!sctf.hpp
+!build.bat
