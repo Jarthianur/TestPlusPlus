@@ -25,7 +25,6 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
-#include <type_traits>
 
 #include "common/traits.hpp"
 #include "comparator/comparators.hpp"
@@ -47,9 +46,7 @@ constexpr const char* equals_comp_str = "to be equals";
  * @param expect The expected value
  * @return true if value is equals expect, else false
  */
-template<typename V, typename E = V,
-         typename std::enable_if<!std::is_floating_point<V>::value &&
-                                 is_equal_comparable<V, E>::value>::type* = nullptr>
+template<typename V, typename E = V, ENABLE_IF(NOT IS_FLOAT(V) AND IS_EQUAL_COMPARABLE(V, E))>
 static comparison equals(const V& value, const E& expect)
 {
     return value == expect ? success :
@@ -67,9 +64,8 @@ static comparison equals(const V& value, const E& expect)
  * @return true if value is equals expect, else false
  */
 template<typename V, typename E = V,
-         typename std::enable_if<!std::is_floating_point<V>::value &&
-                                 !is_equal_comparable<V, E>::value &&
-                                 is_unequal_comparable<V, E>::value>::type* = nullptr>
+         ENABLE_IF(NOT IS_FLOAT(V) AND NOT IS_EQUAL_COMPARABLE(V, E)
+                       AND                 IS_UNEQUAL_COMPARABLE(V, E))>
 static comparison equals(const V& value, const E& expect)
 {
     return value != expect ? comparison(equals_comp_str, to_string(value), to_string(expect)) :
@@ -85,9 +81,7 @@ static comparison equals(const V& value, const E& expect)
  * @param expect The expected value
  * @return true if value is equals expect, else false
  */
-template<typename V, typename E = V,
-         typename std::enable_if<std::is_floating_point<V>::value &&
-                                 std::is_floating_point<E>::value>::type* = nullptr>
+template<typename V, typename E = V, ENABLE_IF(IS_FLOAT(V) AND IS_FLOAT(E))>
 comparison equals(const V& value, const E& expect)
 {
 #ifdef SCTF_EPSILON

@@ -23,10 +23,7 @@
 #define SCTF_REPORTER_XML_REPORTER_HPP_
 
 #include <chrono>
-#include <cstddef>
 #include <ctime>
-#include <iostream>
-#include <string>
 
 #include "common/types.h"
 #include "reporter/abstract_reporter.hpp"
@@ -42,6 +39,8 @@ namespace sctf
 class xml_reporter : public _::abstract_reporter
 {
 public:
+    ~xml_reporter() noexcept override = default;
+
     /**
      * @brief Constructor
      * @param stream The stream to write to
@@ -54,9 +53,7 @@ public:
      */
     explicit xml_reporter(const char* fname) : abstract_reporter(fname) {}
 
-    ~xml_reporter() noexcept override = default;
-
-private:
+protected:
     /**
      * @brief Implement AbstractReporter#report_ts
      */

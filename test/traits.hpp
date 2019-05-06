@@ -30,55 +30,6 @@
  * Helpers for traits
  */
 
-struct void_type;
-struct streamable;
-struct not_streamable;
-struct iterable;
-struct not_iterable;
-struct ordinal;
-struct not_ordinal;
-struct equal_comparable;
-struct equal_unequal_comparable;
-struct not_equal_comparable;
-struct unequal_comparable;
-struct not_unequal_comparable;
-
-template<typename S, typename T,
-         typename std::enable_if<!sctf::_::is_streamable<S, T>::value>::type* = nullptr>
-void throw_if_not_streamable();
-
-template<typename S, typename T,
-         typename std::enable_if<sctf::_::is_streamable<S, T>::value>::type* = nullptr>
-void throw_if_not_streamable();
-
-template<typename T, typename std::enable_if<!sctf::_::is_iterable<T>::value>::type* = nullptr>
-void throw_if_not_iterable();
-
-template<typename T, typename std::enable_if<sctf::_::is_iterable<T>::value>::type* = nullptr>
-void throw_if_not_iterable();
-
-template<typename T, typename std::enable_if<!sctf::_::is_ordinal<T>::value>::type* = nullptr>
-void throw_if_not_ordinal();
-
-template<typename T, typename std::enable_if<sctf::_::is_ordinal<T>::value>::type* = nullptr>
-void throw_if_not_ordinal();
-
-template<typename T,
-         typename std::enable_if<!sctf::_::is_equal_comparable<T, T>::value>::type* = nullptr>
-void throw_if_not_equal_comparable();
-
-template<typename T,
-         typename std::enable_if<sctf::_::is_equal_comparable<T, T>::value>::type* = nullptr>
-void throw_if_not_equal_comparable();
-
-template<typename T,
-         typename std::enable_if<!sctf::_::is_unequal_comparable<T, T>::value>::type* = nullptr>
-void throw_if_not_unequal_comparable();
-
-template<typename T,
-         typename std::enable_if<sctf::_::is_unequal_comparable<T, T>::value>::type* = nullptr>
-void throw_if_not_unequal_comparable();
-
 // void type
 
 struct void_type
@@ -98,15 +49,13 @@ struct streamable
 struct not_streamable
 {};
 
-template<typename S, typename T,
-         typename std::enable_if<!sctf::_::is_streamable<S, T>::value>::type*>
+template<typename S, typename T, ENABLE_IF(NOT IS_STREAMABLE(T, S))>
 void throw_if_not_streamable()
 {
     throw std::logic_error("Given type is not streamable");
 }
 
-template<typename S, typename T,
-         typename std::enable_if<sctf::_::is_streamable<S, T>::value>::type*>
+template<typename S, typename T, ENABLE_IF(IS_STREAMABLE(T, S))>
 void throw_if_not_streamable()
 {}
 
@@ -163,13 +112,13 @@ struct not_iterable
     }
 };
 
-template<typename T, typename std::enable_if<!sctf::_::is_iterable<T>::value>::type*>
+template<typename T, ENABLE_IF(NOT IS_ITERABLE(T))>
 void throw_if_not_iterable()
 {
     throw std::logic_error("Given type is not streamable");
 }
 
-template<typename T, typename std::enable_if<sctf::_::is_iterable<T>::value>::type*>
+template<typename T, ENABLE_IF(IS_ITERABLE(T))>
 void throw_if_not_iterable()
 {}
 
@@ -201,13 +150,13 @@ struct not_ordinal
     bool operator>(const ordinal&) const noexcept = delete;
 };
 
-template<typename T, typename std::enable_if<!sctf::_::is_ordinal<T>::value>::type*>
+template<typename T, ENABLE_IF(NOT IS_ORDINAL(T))>
 void throw_if_not_ordinal()
 {
     throw std::logic_error("Given type is not ordinal");
 }
 
-template<typename T, typename std::enable_if<sctf::_::is_ordinal<T>::value>::type*>
+template<typename T, ENABLE_IF(IS_ORDINAL(T))>
 void throw_if_not_ordinal()
 {}
 
@@ -253,13 +202,13 @@ struct not_equal_comparable
     bool operator==(const equal_comparable&) const noexcept = delete;
 };
 
-template<typename T, typename std::enable_if<!sctf::_::is_equal_comparable<T, T>::value>::type*>
+template<typename T, ENABLE_IF(NOT IS_EQUAL_COMPARABLE(T, T))>
 void throw_if_not_equal_comparable()
 {
     throw std::logic_error("Given type is not equal-comparable");
 }
 
-template<typename T, typename std::enable_if<sctf::_::is_equal_comparable<T, T>::value>::type*>
+template<typename T, ENABLE_IF(IS_EQUAL_COMPARABLE(T, T))>
 void throw_if_not_equal_comparable()
 {}
 
@@ -285,13 +234,13 @@ struct not_unequal_comparable
     bool operator!=(const unequal_comparable&) const noexcept = delete;
 };
 
-template<typename T, typename std::enable_if<!sctf::_::is_unequal_comparable<T, T>::value>::type*>
+template<typename T, ENABLE_IF(NOT IS_UNEQUAL_COMPARABLE(T, T))>
 void throw_if_not_unequal_comparable()
 {
     throw std::logic_error("Given type is not unequal-comparable");
 }
 
-template<typename T, typename std::enable_if<sctf::_::is_unequal_comparable<T, T>::value>::type*>
+template<typename T, ENABLE_IF(IS_UNEQUAL_COMPARABLE(T, T))>
 void throw_if_not_unequal_comparable()
 {}
 

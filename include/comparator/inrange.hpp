@@ -23,7 +23,6 @@
 #define SCTF_COMPARATOR_CONTAINS_HPP_
 
 #include <algorithm>
-#include <utility>
 
 #include "common/traits.hpp"
 #include "comparator/comparators.hpp"
@@ -43,9 +42,7 @@ constexpr const char* in_range_comp_str = "to be in range of";
  * @param range The range/container to search
  * @return whether the value was found
  */
-template<typename V, typename R,
-         typename std::enable_if<is_iterable<R>::value &&
-                                 !std::is_same<R, std::string>::value>::type* = nullptr>
+template<typename V, typename R, ENABLE_IF(IS_ITERABLE(R) AND NOT IS_TYPE(R, std::string))>
 static comparison in_range(const V& value, const R& range)
 {
     return std::find(range.begin(), range.end(), value) != range.end() ?
@@ -61,8 +58,7 @@ static comparison in_range(const V& value, const R& range)
  * @param range The range/container to search
  * @return whether the value was found
  */
-template<typename V, typename R = V,
-         typename std::enable_if<std::is_same<R, std::string>::value>::type* = nullptr>
+template<typename V, typename R = V, ENABLE_IF(IS_TYPE(R, std::string))>
 comparison in_range(const V& value, const R& range)
 {
     return range.find(value) != std::string::npos ?

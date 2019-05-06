@@ -22,11 +22,6 @@
 #ifndef SCTF_REPORTER_HTML_REPORTER_HPP_
 #define SCTF_REPORTER_HTML_REPORTER_HPP_
 
-#include <cstddef>
-#include <fstream>
-#include <iostream>
-#include <string>
-
 #include "common/types.h"
 #include "reporter/abstract_reporter.hpp"
 #include "testsuite/statistics.hpp"
@@ -59,6 +54,8 @@ namespace sctf
 class html_reporter : public _::abstract_reporter
 {
 public:
+    ~html_reporter() noexcept override = default;
+
     /**
      * @brief Constructor
      * @param stream The stream to write to
@@ -71,9 +68,7 @@ public:
      */
     explicit html_reporter(const char* fname) : abstract_reporter(fname) {}
 
-    ~html_reporter() noexcept override = default;
-
-private:
+protected:
     /**
      * @brief Implement AbstractReporter#report_ts
      */
@@ -125,8 +120,8 @@ private:
      */
     void end_report() override
     {
-        *this << "<footer><h3>Summary</h3><p>Tests: " << abs_tests() << " Failures: " << abs_fails()
-              << " Errors: " << abs_errs() << " Time: " << abs_time()
+        *this << "<footer><h3>Summary</h3><p>Tests: " << m_abs_tests << " Failures: " << m_abs_fails
+              << " Errors: " << m_abs_errs << " Time: " << m_abs_time
               << "ms</p></footer></body></html>";
     }
 };

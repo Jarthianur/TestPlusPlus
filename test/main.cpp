@@ -30,7 +30,7 @@ using namespace sctf;
 int main(int, char**)
 {
     runner runner;
-    auto             rep = createPlainTextReporter(true);
+    auto   rep = createPlainTextReporter(true, true);
 
     try
     {

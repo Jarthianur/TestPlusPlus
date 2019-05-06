@@ -47,6 +47,8 @@ public:
     testcase(const testcase&) = delete;
     testcase& operator=(const testcase&) = delete;
 
+    ~testcase() noexcept = default;
+
     /**
      * @brief Constructor
      * @param name The name/description of the test case
@@ -69,8 +71,6 @@ public:
           m_err_msg(std::move(other.m_err_msg)),
           m_test_func(std::move(other.m_test_func))
     {}
-
-    ~testcase() noexcept = default;
 
     /**
      * @brief Move-assignment

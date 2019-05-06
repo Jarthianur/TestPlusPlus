@@ -25,6 +25,22 @@
 #include <iterator>
 #include <type_traits>
 
+/**
+ * Template enable_if convenience wrappers.
+ */
+#define ENABLE_IF(C) typename std::enable_if<C>::type* = nullptr
+#define AND &&
+#define OR ||
+#define NOT !
+#define IS(T, ...) (T<__VA_ARGS__>::value)
+#define IS_TYPE(T, R) (IS(std::is_same, T, R))
+#define IS_FLOAT(T) (IS(std::is_floating_point, T))
+#define IS_STREAMABLE(T, S) (IS(sctf::_::is_streamable, S, T))
+#define IS_ITERABLE(T) (IS(sctf::_::is_iterable, T))
+#define IS_ORDINAL(T) (IS(sctf::_::is_ordinal, T))
+#define IS_EQUAL_COMPARABLE(T, R) (IS(sctf::_::is_equal_comparable, T, R))
+#define IS_UNEQUAL_COMPARABLE(T, R) (IS(sctf::_::is_unequal_comparable, T, R))
+
 namespace sctf
 {
 namespace _

@@ -25,9 +25,8 @@
 #include <algorithm>
 #include <cstddef>
 #include <fstream>
-#include <memory>
+#include <ostream>
 #include <stdexcept>
-#include <utility>
 #include <vector>
 
 #include "common/types.h"
@@ -61,6 +60,8 @@ namespace _
 class abstract_reporter
 {
 public:
+    virtual ~abstract_reporter() noexcept = default;
+
     /**
      * @brief Generate report.
      * @param runner The TestSuitesRunner to generate reports for
@@ -89,12 +90,6 @@ public:
     }
 
 protected:
-    /// @brief The output file stream
-    std::ofstream m_out_file;
-
-    /// @brief The output stream reference
-    std::ostream& mr_out_stream;
-
     /**
      * @brief Constructor
      * @param stream The out-stream to report to
@@ -113,8 +108,6 @@ protected:
             throw std::runtime_error("Could not open file.");
         }
     }
-
-    virtual ~abstract_reporter() noexcept = default;
 
     /**
      * @brief Generate report for a given TestSuite.
@@ -154,43 +147,12 @@ protected:
         return mr_out_stream;
     }
 
-    /**
-     * @brief Get the absolute amount of tests for current report.
-     * @return the absolute tests
-     */
-    inline std::size_t abs_tests() const
-    {
-        return m_abs_tests;
-    }
+    /// @brief The output file stream
+    std::ofstream m_out_file;
 
-    /**
-     * @brief Get the absolute amount of failed tests for current report.
-     * @return the absolute tests
-     */
-    inline std::size_t abs_fails() const
-    {
-        return m_abs_fails;
-    }
+    /// @brief The output stream reference
+    std::ostream& mr_out_stream;
 
-    /**
-     * @brief Get the absolute amount of erroneous tests for current report.
-     * @return the absolute tests
-     */
-    inline std::size_t abs_errs() const
-    {
-        return m_abs_errs;
-    }
-
-    /**
-     * @brief Get the absolute amount of time for current report.
-     * @return the absolute time
-     */
-    inline double abs_time() const
-    {
-        return m_abs_time;
-    }
-
-private:
     /// @brief The amount of tests.
     std::size_t m_abs_tests = 0;
 

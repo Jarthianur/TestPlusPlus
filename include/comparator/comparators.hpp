@@ -126,8 +126,8 @@ constexpr comparison success = comparison();
 /**
  * @def PROVIDE_COMPARATOR
  * @brief Provide a shortwrite function which returns the address of the respective
- * Comparator.
- * @param COMP The Comparator function
+ * comparator.
+ * @param COMP The comparator function
  * @param NAME The final name, usually COMP in uppercase
  */
 #define PROVIDE_COMPARATOR(COMP, NAME)   \
@@ -142,26 +142,26 @@ constexpr comparison success = comparison();
 
 /**
  * @def COMPARATOR
- * @brief Create a Comparator function.
+ * @brief Create a comparator function.
  * @param NAME The final name of this function
  * @param COMPSTR A string representing the comparison constraint, like "to be equals"
  * @param PRED The comparison predicate as code
  * @note In PRED the two elements are named 'value' and 'expect', where 'value' is the
  * actual value and 'expect' is the expected value.
  */
-#define COMPARATOR(NAME, COMPSTR, PRED)                                                         \
-    namespace sctf                                                                              \
-    {                                                                                           \
-    namespace _                                                                                 \
-    {                                                                                           \
-    constexpr const char* NAME##_comp_str = COMPSTR;                                            \
-    template<typename V, typename E = V>                                                        \
-    static comparison NAME(const V& value, const E& expect)                                     \
-    {                                                                                           \
-        return (PRED) ? success :                                                               \
-                        comparison(NAME##_comp_str, _::to_string(value), _::to_string(expect)); \
-    }                                                                                           \
-    }                                                                                           \
+#define COMPARATOR(NAME, COMPSTR, PRED)                                                   \
+    namespace sctf                                                                        \
+    {                                                                                     \
+    namespace _                                                                           \
+    {                                                                                     \
+    constexpr const char* NAME##_comp_str = COMPSTR;                                      \
+    template<typename V, typename E = V>                                                  \
+    static comparison NAME(const V& value, const E& expect)                               \
+    {                                                                                     \
+        return (PRED) ? success :                                                         \
+                        comparison(NAME##_comp_str, to_string(value), to_string(expect)); \
+    }                                                                                     \
+    }                                                                                     \
     }
 
 /**

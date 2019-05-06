@@ -22,10 +22,6 @@
 #ifndef SCTF_REPORTER_PLAINTEXT_REPORTER_HPP_
 #define SCTF_REPORTER_PLAINTEXT_REPORTER_HPP_
 
-#include <cstddef>
-#include <iostream>
-#include <string>
-
 #include "common/types.h"
 #include "reporter/abstract_reporter.hpp"
 #include "testsuite/statistics.hpp"
@@ -49,6 +45,8 @@ namespace sctf
 class plaintext_reporter : public _::abstract_reporter
 {
 public:
+    ~plaintext_reporter() noexcept override = default;
+
     /**
      * @brief Constructor
      * @param stream The stream to write to
@@ -67,9 +65,7 @@ public:
         : abstract_reporter(fname), m_color(color), m_out(out)
     {}
 
-    ~plaintext_reporter() noexcept override = default;
-
-private:
+protected:
     /**
      * @brief Implement AbstractReporter#report_ts
      */
@@ -118,7 +114,7 @@ private:
      */
     void end_report() override
     {
-        if (abs_fails() >= (abs_tests() + 1) / 2)
+        if (m_abs_fails >= (m_abs_tests + 1) / 2)
         {
             *this << (m_color ? ANSI_YELLOW : "");
         }
@@ -126,9 +122,9 @@ private:
         {
             *this << (m_color ? ANSI_CYAN : "");
         }
-        *this << "Result:: passed: " << abs_tests() - abs_fails() - abs_errs() << "/" << abs_tests()
-              << " ; failed: " << abs_fails() << "/" << abs_tests() << " ; errors: " << abs_errs()
-              << "/" << abs_tests() << " ; time = " << abs_time() << "ms"
+        *this << "Result:: passed: " << m_abs_tests - m_abs_fails - m_abs_errs << "/" << m_abs_tests
+              << " ; failed: " << m_abs_fails << "/" << m_abs_tests << " ; errors: " << m_abs_errs
+              << "/" << m_abs_tests << " ; time = " << m_abs_time << "ms"
               << (m_color ? ANSI_RESET : "") << SCTF_LF;
     }
 

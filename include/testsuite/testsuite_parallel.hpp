@@ -22,7 +22,6 @@
 #ifndef SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP_
 #define SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP_
 
-#include <iostream>
 #include <limits>
 #include <stdexcept>
 
