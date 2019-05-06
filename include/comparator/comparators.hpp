@@ -120,6 +120,12 @@ using comparator = comparison (*)(const V&, const E&);
 constexpr comparison success = comparison();
 #endif
 
+#ifdef SCTF_EPSILON
+static double epsilon = SCTF_EPSILON;
+#elif defined(SCTF_EXTERN_EPSILON)
+extern double epsilon;
+#endif
+
 }  // namespace _
 }  // namespace sctf
 

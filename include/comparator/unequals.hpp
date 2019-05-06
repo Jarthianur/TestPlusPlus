@@ -84,11 +84,8 @@ static comparison unequals(const V& value, const E& expect)
 template<typename V, typename E = V, ENABLE_IF(IS_FLOAT(V) AND IS_FLOAT(E))>
 comparison unequals(const V& value, const E& expect)
 {
-#ifdef SCTF_EPSILON
-    static V epsilon_ = SCTF_EPSILON;
-#elif defined(SCTF_EXTERN_EPSILON)
-    extern double epsilon;
-    static V      epsilon_ = static_cast<V>(epsilon);
+#if defined(SCTF_EXTERN_EPSILON) || defined(SCTF_EPSILON)
+    static V epsilon_ = static_cast<V>(epsilon);
 #else
     static V epsilon_ = std::numeric_limits<V>::epsilon();
 #endif
