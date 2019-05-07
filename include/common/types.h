@@ -46,6 +46,27 @@ struct location final
     const int   line;
 };
 
+template<typename T>
+struct singleton final
+{
+    static T& instance()
+    {
+        static T instance;
+        return instance;
+    }
+};
+
+class test_module
+{
+public:
+    test_module()                   = default;
+    virtual ~test_module() noexcept = default;
+    virtual void setup()            = 0;
+
+protected:
+    const char* m_ctx;
+};
+
 }  // namespace _
 
 /**

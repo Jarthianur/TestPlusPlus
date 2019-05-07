@@ -53,6 +53,12 @@ public:
         return ts;
     }
 
+    void register_module(_::test_module* mod)
+    {
+        m_testmodules.push_back(mod);
+        mod->setup();
+    }
+
     /**
      * @brief Run TestSuites.
      */
@@ -84,6 +90,8 @@ public:
 private:
     /// @brief The registered TestSuites.
     std::vector<testsuite_shared> m_testsuites;
+
+    std::vector<_::test_module*> m_testmodules;
 };
 
 /**
