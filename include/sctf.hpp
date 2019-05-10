@@ -36,4 +36,17 @@
 
 #include "assert.hpp"
 
+/**
+ * @def SCTF_DEFAULT_MAIN(REPORTER)
+ * @brief Define a default main function, which executes and reports all tests registered to the
+ * default runner.
+ * @param REPORTER The reporter creation function invocation
+ * @return the number of failed and erroneous tests
+ */
+#define SCTF_DEFAULT_MAIN(REPORTER)                        \
+    int main(int argc, char** argv)                        \
+    {                                                      \
+        return static_cast<int>(sctf::REPORTER->report()); \
+    }
+
 #endif  // SCTF_SCTF_HPP

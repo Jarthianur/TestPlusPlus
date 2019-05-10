@@ -49,109 +49,57 @@ protected:
 }  // namespace sctf
 
 /**
- * @def TEST_MODULE(NAME, FN)
+ * @def TEST_MODULE(NAME, FN, ...)
  * @brief Define a test module for OO testing approach.
  * Invoke this macro to create and instantiate a test module. The resulting module is bound to a
  * single testsuite.
  * @param NAME The name of this module (not a string!), preferably like test_myClass
  * @param FN The test function body, which is a block of calls to `test(...)`
+ * @param ... Allows to optionally pass a runner
  */
-#define TEST_MODULE(NAME, FN)                                       \
-    class NAME : public sctf::_::test_module                        \
-    {                                                               \
-    public:                                                         \
-        NAME() : sctf::_::test_module(sctf::describe(#NAME, #NAME)) \
-        {                                                           \
-            FN;                                                     \
-        }                                                           \
-        ~NAME() noexcept override = default;                        \
-    };                                                              \
-    namespace sctf                                                  \
-    {                                                               \
-    namespace _                                                     \
-    {                                                               \
-    static const auto& mods_##NAME = singleton<NAME>::instance();   \
-    }                                                               \
+#define TEST_MODULE(NAME, FN, ...)                                                 \
+    class NAME : public sctf::_::test_module                                       \
+    {                                                                              \
+    public:                                                                        \
+        NAME() : sctf::_::test_module(sctf::describe(#NAME, #NAME, ##__VA_ARGS__)) \
+        {                                                                          \
+            FN;                                                                    \
+        }                                                                          \
+        ~NAME() noexcept override = default;                                       \
+    };                                                                             \
+    namespace sctf                                                                 \
+    {                                                                              \
+    namespace _                                                                    \
+    {                                                                              \
+    static const auto& mods_##NAME = singleton<NAME>::instance();                  \
+    }                                                                              \
     }
 
 /**
- * @def TEST_MODULE_PARALLEL(NAME, FN)
+ * @def TEST_MODULE_PARALLEL(NAME, FN, ...)
  * @brief Define a test module for OO testing approach. Tests will run in parallel.
  * Invoke this macro to create and instantiate a test module. The resulting module is bound to a
  * single testsuite.
  * @param NAME The name of this module (not a string!), preferably like test_myClass
  * @param FN The test function body, which is a block of calls to `test(...)`
+ * @param ... Allows to optionally pass a runner
  */
-#define TEST_MODULE_PARALLEL(NAME, FN)                                      \
-    class NAME : public sctf::_::test_module                                \
-    {                                                                       \
-    public:                                                                 \
-        NAME() : sctf::_::test_module(sctf::describeParallel(#NAME, #NAME)) \
-        {                                                                   \
-            FN;                                                             \
-        }                                                                   \
-        ~NAME() noexcept override = default;                                \
-    };                                                                      \
-    namespace sctf                                                          \
-    {                                                                       \
-    namespace _                                                             \
-    {                                                                       \
-    static const auto& modp_##NAME = singleton<NAME>::instance();           \
-    }                                                                       \
-    }
-
-/**
- * @def TEST_MODULE_R(NAME, FN, RUNNER)
- * @brief Define a test module for OO testing approach.
- * Invoke this macro to create and instantiate a test module. The resulting module is bound to a
- * single testsuite, wich is registered to the given runner.
- * @param NAME The name of this module (not a string!), preferably like test_myClass
- * @param FN The test function body, which is a block of calls to `test(...)`
- * @param RUNNER The runner to register this module to
- */
-#define TEST_MODULE_R(NAME, FN, RUNNER)                                     \
-    class NAME : public sctf::_::test_module                                \
-    {                                                                       \
-    public:                                                                 \
-        NAME() : sctf::_::test_module(sctf::describe(#NAME, #NAME, RUNNER)) \
-        {                                                                   \
-            FN;                                                             \
-        }                                                                   \
-        ~NAME() noexcept override = default;                                \
-    };                                                                      \
-    namespace sctf                                                          \
-    {                                                                       \
-    namespace _                                                             \
-    {                                                                       \
-    static const auto& mods_##NAME = singleton<NAME>::instance();           \
-    }                                                                       \
-    }
-
-/**
- * @def TEST_MODULE_PARALLEL_R(NAME, FN, RUNNER)
- * @brief Define a test module for OO testing approach. Tests will run in parallel.
- * Invoke this macro to create and instantiate a test module. The resulting module is bound to a
- * single testsuite, wich is registered to the given runner.
- * @param NAME The name of this module (not a string!), preferably like test_myClass
- * @param FN The test function body, which is a block of calls to `test(...)`
- * @param RUNNER The runner to register this module to
- */
-#define TEST_MODULE_PARALLEL_R(NAME, FN, RUNNER)                                    \
-    class NAME : public sctf::_::test_module                                        \
-    {                                                                               \
-    public:                                                                         \
-        NAME() : sctf::_::test_module(sctf::describeParallel(#NAME, #NAME, RUNNER)) \
-        {                                                                           \
-            FN;                                                                     \
-        }                                                                           \
-        ~NAME() noexcept override = default;                                        \
-    };                                                                              \
-    namespace sctf                                                                  \
-    {                                                                               \
-    namespace _                                                                     \
-    {                                                                               \
-    static const auto& modp_##NAME = singleton<NAME>::instance();                   \
-    }                                                                               \
+#define TEST_MODULE_PARALLEL(NAME, FN, ...)                                                \
+    class NAME : public sctf::_::test_module                                               \
+    {                                                                                      \
+    public:                                                                                \
+        NAME() : sctf::_::test_module(sctf::describeParallel(#NAME, #NAME, ##__VA_ARGS__)) \
+        {                                                                                  \
+            FN;                                                                            \
+        }                                                                                  \
+        ~NAME() noexcept override = default;                                               \
+    };                                                                                     \
+    namespace sctf                                                                         \
+    {                                                                                      \
+    namespace _                                                                            \
+    {                                                                                      \
+    static const auto& modp_##NAME = singleton<NAME>::instance();                          \
+    }                                                                                      \
     }
 
 #endif  // SCTF_TESTSUITE_TESTMODULE_HPP
