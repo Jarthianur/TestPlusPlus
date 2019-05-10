@@ -56,7 +56,7 @@ static const char* name_for_type()
     name.erase(std::remove(name.begin(), name.end(), ' '), name.end());
 #else
     const std::string sig(typeid(T).name());
-    const auto        b = sig.find("struct ");
+    auto              b = sig.find("struct ");
     if (b != std::string::npos)
     {
         name = sig.substr(b + 7);
