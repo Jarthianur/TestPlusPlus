@@ -19,21 +19,20 @@
  }
  */
 
-#ifndef SCTF_TESTSUITE_TESTSUITE_HPP_
-#define SCTF_TESTSUITE_TESTSUITE_HPP_
+#ifndef SCTF_TESTSUITE_TESTSUITE_HPP
+#define SCTF_TESTSUITE_TESTSUITE_HPP
 
 #include <algorithm>
 #include <chrono>
 #include <functional>
 #include <iostream>
 #include <memory>
-#include <string>
 #include <utility>
 #include <vector>
 
 #include "common/streambuf_proxy.hpp"
 #include "common/stringify.hpp"
-#include "common/types.h"
+#include "common/types.hpp"
 #include "testsuite/statistics.hpp"
 #include "testsuite/testcase.hpp"
 
@@ -67,7 +66,7 @@ public:
      * @param context The context
      * @return a shared pointer to the created TestSuite
      */
-    static testsuite_shared create(const std::string& name, const std::string& context)
+    static testsuite_shared create(const char* name, const char* context)
     {
         return testsuite_shared(new testsuite(name, context));
     }
@@ -120,7 +119,7 @@ public:
      * @return this as shared pointer
      */
     template<typename T>
-    testsuite_shared test(const std::string& name, _::test_function&& t_func)
+    testsuite_shared test(const char* name, _::test_function&& t_func)
     {
         m_testcases.push_back(_::testcase(name, _::name_for_type<T>(), std::move(t_func)));
         m_state = execution_state::PENDING;
@@ -134,8 +133,7 @@ public:
      * @param t_func The test function
      * @return this as shared pointer
      */
-    testsuite_shared test(const std::string& name, const std::string& context,
-                          _::test_function&& t_func)
+    testsuite_shared test(const char* name, const char* context, _::test_function&& t_func)
     {
         m_testcases.push_back(_::testcase(name, context, std::move(t_func)));
         m_state = execution_state::PENDING;
@@ -149,7 +147,7 @@ public:
      * @param t_func The test function
      * @return this as shared pointer
      */
-    testsuite_shared test(const std::string& name, _::test_function&& t_func)
+    testsuite_shared test(const char* name, _::test_function&& t_func)
     {
         m_testcases.push_back(_::testcase(name, m_context, std::move(t_func)));
         m_state = execution_state::PENDING;
@@ -196,7 +194,7 @@ public:
      * @brief Get the testsuite name.
      * @return The name
      */
-    inline const std::string& name() const
+    inline const char* name() const
     {
         return m_name;
     }
@@ -254,15 +252,15 @@ protected:
      * @param name The name/description
      * @param context The context description
      */
-    testsuite(const std::string& name, const std::string& context)
+    testsuite(const char* name, const char* context)
         : m_name(name), m_context(context), m_timestamp(std::chrono::system_clock::now())
     {}
 
     /// @brief The name/description
-    const std::string m_name;
+    const char* m_name;
 
     /// @brief The context description.
-    const std::string m_context;
+    const char* m_context;
 
     /// @brief The start timestamp
     const std::chrono::system_clock::time_point m_timestamp;
@@ -291,4 +289,4 @@ protected:
 
 }  // namespace sctf
 
-#endif  // SCTF_TESTSUITE_TESTSUITE_HPP_
+#endif  // SCTF_TESTSUITE_TESTSUITE_HPP

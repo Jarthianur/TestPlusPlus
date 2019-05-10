@@ -31,7 +31,7 @@ class Failure : public std::exception
 public:
     Failure(const char* msg) : std::exception(), m_msg(msg) {}
 
-    ~Failure() noexcept = default;
+    ~Failure() noexcept override = default;
 
     const char* what() const noexcept override
     {

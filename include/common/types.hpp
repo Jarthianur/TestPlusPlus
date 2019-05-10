@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_COMMON_TYPES_H_
-#define SCTF_COMMON_TYPES_H_
+#ifndef SCTF_COMMON_TYPES_HPP
+#define SCTF_COMMON_TYPES_HPP
 
 #include <functional>
 #include <memory>
@@ -56,17 +56,6 @@ struct singleton final
     }
 };
 
-class test_module
-{
-public:
-    test_module()                   = default;
-    virtual ~test_module() noexcept = default;
-    virtual void setup()            = 0;
-
-protected:
-    const char* m_ctx;
-};
-
 }  // namespace _
 
 /**
@@ -84,4 +73,4 @@ using testsuite_shared = std::shared_ptr<testsuite>;
 
 }  // namespace sctf
 
-#endif  // SCTF_COMMON_TYPES_H_
+#endif  // SCTF_COMMON_TYPES_HPP

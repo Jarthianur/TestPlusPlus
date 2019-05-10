@@ -19,10 +19,10 @@
  }
  */
 
-#ifndef SCTF_REPORTER_PLAINTEXT_REPORTER_HPP_
-#define SCTF_REPORTER_PLAINTEXT_REPORTER_HPP_
+#ifndef SCTF_REPORTER_PLAINTEXT_REPORTER_HPP
+#define SCTF_REPORTER_PLAINTEXT_REPORTER_HPP
 
-#include "common/types.h"
+#include "common/types.hpp"
 #include "reporter/abstract_reporter.hpp"
 #include "testsuite/statistics.hpp"
 #include "testsuite/testcase.hpp"
@@ -180,4 +180,4 @@ static reporter_shared createPlainTextReporter(const char* file, bool color = fa
 #undef ANSI_YELLOW
 #undef ANSI_MAGENTA
 
-#endif  // SCTF_REPORTER_PLAINTEXT_REPORTER_HPP_
+#endif  // SCTF_REPORTER_PLAINTEXT_REPORTER_HPP

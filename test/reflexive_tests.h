@@ -29,4 +29,6 @@
 
 void reflexive_tests();
 
+TEST_MODULE(test_module_, { test("test", [] { assertTrue(true); }); })
+
 #endif  // TEST_REFLEXIVE_TESTS_H_

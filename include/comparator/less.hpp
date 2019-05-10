@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_COMPARATOR_LESS_HPP_
-#define SCTF_COMPARATOR_LESS_HPP_
+#ifndef SCTF_COMPARATOR_LESS_HPP
+#define SCTF_COMPARATOR_LESS_HPP
 
 #include "comparator/comparators.hpp"
 
@@ -35,4 +35,4 @@ COMPARATOR(less_than, "to be less than", value < expect)
 PROVIDE_COMPARATOR(less_than, LESS)
 PROVIDE_COMPARATOR(less_than, LT)
 
-#endif  // SCTF_COMPARATOR_LESS_HPP_
+#endif  // SCTF_COMPARATOR_LESS_HPP

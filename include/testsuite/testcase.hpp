@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_TESTSUITE_TESTCASE_HPP_
-#define SCTF_TESTSUITE_TESTCASE_HPP_
+#ifndef SCTF_TESTSUITE_TESTCASE_HPP
+#define SCTF_TESTSUITE_TESTCASE_HPP
 
 #include <cstdint>
 #include <string>
@@ -28,7 +28,7 @@
 
 #include "common/assertion_failure.hpp"
 #include "common/duration.hpp"
-#include "common/types.h"
+#include "common/types.hpp"
 
 namespace sctf
 {
@@ -55,10 +55,8 @@ public:
      * @param context The context of the test function
      * @param t_func The test function
      */
-    testcase(const std::string& name, const std::string& context, test_function&& t_func)
-        : m_name(name),
-          m_context(context.empty() ? "test" : context.substr().insert(0, "test.")),
-          m_test_func(std::move(t_func))
+    testcase(const char* name, const char* context, test_function&& t_func)
+        : m_name(name), m_context(context), m_test_func(std::move(t_func))
     {}
 
     /**
@@ -66,8 +64,8 @@ public:
      * @param other The other TestCase
      */
     testcase(testcase&& other)
-        : m_name(std::move(other.m_name)),
-          m_context(std::move(other.m_context)),
+        : m_name(other.m_name),
+          m_context(other.m_context),
           m_state(other.m_state),
           m_duration(other.m_duration),
           m_err_msg(std::move(other.m_err_msg)),
@@ -81,8 +79,8 @@ public:
      */
     testcase& operator=(testcase&& other)
     {
-        m_name      = std::move(other.m_name);
-        m_context   = std::move(other.m_context);
+        m_name      = other.m_name;
+        m_context   = other.m_context;
         m_state     = other.m_state;
         m_duration  = other.m_duration;
         m_err_msg   = std::move(other.m_err_msg);
@@ -164,7 +162,7 @@ public:
      * @brief Get the name.
      * @return the name
      */
-    inline const std::string& name() const
+    inline const char* name() const
     {
         return m_name;
     }
@@ -173,7 +171,7 @@ public:
      * @brief Get the context.
      * @return the context
      */
-    inline const std::string& context() const
+    inline const char* context() const
     {
         return m_context;
     }
@@ -237,17 +235,17 @@ private:
      * @brief Fail this test with an error.
      * @param error The error msg
      */
-    inline void erroneous(const std::string& error = "unknown error")
+    inline void erroneous(const char* error = "unknown error")
     {
         m_state   = result::ERROR;
         m_err_msg = error;
     }
 
     /// @brief The testcase name
-    std::string m_name;
+    const char* m_name;
 
     /// @brief The testcase context
-    std::string m_context;
+    const char* m_context;
 
     /// @brief The test state
     result m_state = result::NONE;
@@ -258,17 +256,17 @@ private:
     /// @brief The error message
     std::string m_err_msg;
 
-    /// @brief The test function
-    test_function m_test_func;
-
     /// @brief The coutput from stdout
     std::string m_cout;
 
     /// @brief The coutput from stderr
     std::string m_cerr;
+
+    /// @brief The test function
+    test_function m_test_func;
 };
 
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_TESTSUITE_TESTCASE_HPP_
+#endif  // SCTF_TESTSUITE_TESTCASE_HPP

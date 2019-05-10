@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_REPORTER_ABSTRACT_REPORTER_HPP_
-#define SCTF_REPORTER_ABSTRACT_REPORTER_HPP_
+#ifndef SCTF_REPORTER_ABSTRACT_REPORTER_HPP
+#define SCTF_REPORTER_ABSTRACT_REPORTER_HPP
 
 #include <algorithm>
 #include <cstddef>
@@ -29,7 +29,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "common/types.h"
+#include "common/types.hpp"
 #include "testsuite/runner.hpp"
 #include "testsuite/statistics.hpp"
 #include "testsuite/testsuite.hpp"
@@ -169,4 +169,4 @@ protected:
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_REPORTER_ABSTRACT_REPORTER_HPP_
+#endif  // SCTF_REPORTER_ABSTRACT_REPORTER_HPP

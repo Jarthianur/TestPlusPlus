@@ -19,29 +19,66 @@
  }
  */
 
-#ifndef SCTF_TESTSUITE_TESTMODULE_HPP_
-#define SCTF_TESTSUITE_TESTMODULE_HPP_
+#ifndef SCTF_TESTSUITE_TESTMODULE_HPP
+#define SCTF_TESTSUITE_TESTMODULE_HPP
 
-#include "common/types.h"
+#include "common/types.hpp"
 #include "testsuite/runner.hpp"
 
-#define TEST_MODULE(NAME, FN)                                 \
-    namespace sctf                                            \
-    {                                                         \
-    class NAME : public _::test_module                        \
-    {                                                         \
-    public:                                                   \
-        NAME() : _::test_module(), m_ctx(#NAME)               \
-        {                                                     \
-            runner::default_instance().register_module(this); \
-        }                                                     \
-        ~NAME() noexcept override = default;                  \
-        void setup() override                                 \
-        {                                                     \
-            FN;                                               \
-        }                                                     \
-    };                                                        \
-    static auto& s_##NAME = _::singleton<NAME>::instance();   \
+namespace sctf
+{
+namespace _
+{
+class test_module
+{
+protected:
+    test_module(const testsuite_shared& ts) : m_ts(ts) {}
+    virtual ~test_module() noexcept = default;
+
+    inline void test(const char* name, _::test_function&& fn)
+    {
+        m_ts->test(name, std::move(fn));
     }
 
-#endif  // SCTF_TESTSUITE_TESTMODULE_HPP_
+    testsuite_shared m_ts;
+};
+}  // namespace _
+}  // namespace sctf
+
+#define TEST_MODULE(NAME, FN)                                       \
+    class NAME : public sctf::_::test_module                        \
+    {                                                               \
+    public:                                                         \
+        NAME() : sctf::_::test_module(sctf::describe(#NAME, #NAME)) \
+        {                                                           \
+            FN;                                                     \
+        }                                                           \
+        ~NAME() noexcept override = default;                        \
+    };                                                              \
+    namespace sctf                                                  \
+    {                                                               \
+    namespace _                                                     \
+    {                                                               \
+    static const auto& mods_##NAME = singleton<NAME>::instance();   \
+    }                                                               \
+    }
+
+#define TEST_MODULE_PARALLEL(NAME, FN)                                      \
+    class NAME : public sctf::_::test_module                                \
+    {                                                                       \
+    public:                                                                 \
+        NAME() : sctf::_::test_module(sctf::describeParallel(#NAME, #NAME)) \
+        {                                                                   \
+            FN;                                                             \
+        }                                                                   \
+        ~NAME() noexcept override = default;                                \
+    };                                                                      \
+    namespace sctf                                                          \
+    {                                                                       \
+    namespace _                                                             \
+    {                                                                       \
+    static const auto& modp_##NAME = singleton<NAME>::instance();           \
+    }                                                                       \
+    }
+
+#endif  // SCTF_TESTSUITE_TESTMODULE_HPP

@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP_
-#define SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP_
+#ifndef SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP
+#define SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP
 
 #include <limits>
 #include <stdexcept>
@@ -45,7 +45,7 @@ public:
      * @param context The context
      * @return a shared pointer to the created TestSuiteParallel
      */
-    static testsuite_shared create(const std::string& name, const std::string& context)
+    static testsuite_shared create(const char* name, const char* context)
     {
         return testsuite_shared(new testsuite_parallel(name, context));
     }
@@ -112,11 +112,9 @@ private:
      * @param name The name/description
      * @param context The context description
      */
-    testsuite_parallel(const std::string& name, const std::string& context)
-        : testsuite(name, context)
-    {}
+    testsuite_parallel(const char* name, const char* context) : testsuite(name, context) {}
 };
 
 }  // namespace sctf
 
-#endif  // SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP_
+#endif  // SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP

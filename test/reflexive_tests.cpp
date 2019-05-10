@@ -151,9 +151,9 @@ void reflexive_tests()
                    const testcase& tc1 = ts->testcases().at(0);
                    const testcase& tc2 = ts->testcases().at(1);
                    const testcase& tc3 = ts->testcases().at(2);
-                   assertT(tc1.context(), EQ, "test.ctx", std::string);
-                   assertT(tc2.context(), EQ, "test.ctx2", std::string);
-                   assertT(tc3.context(), EQ, "test.int", std::string);
+                   assertT(tc1.context(), EQ, "ctx", std::string);
+                   assertT(tc2.context(), EQ, "ctx2", std::string);
+                   assertT(tc3.context(), EQ, "int", std::string);
                    ts->run();
                    assertEquals(i, 1);
                })
@@ -191,8 +191,8 @@ void reflexive_tests()
                    testcase tc("t1", "ctx", [] {});
                    testcase tc2("t2", "", [] {});
                    assertEquals(tc.state(), testcase::result::NONE);
-                   assertT(tc.context(), EQ, "test.ctx", std::string);
-                   assertT(tc2.context(), EQ, "test", std::string);
+                   assertT(tc.context(), EQ, "ctx", std::string);
+                   assertT(tc2.context(), EQ, "", std::string);
                    assertT(tc.name(), EQ, "t1", std::string);
                })
         ->test("successful execution",
@@ -407,7 +407,7 @@ void reflexive_tests()
                 auto ts = testsuite::create("ts", "ctx");
                 for (int i = 1; i < 9; ++i)
                 {
-                    ts->test(to_string(i), [i] {
+                    ts->test("capture", [i] {
                         std::cout << 'o' << "ut from " << i;
                         std::cerr << 'e' << "rr from " << i;
                     });
@@ -424,7 +424,7 @@ void reflexive_tests()
             auto ts = testsuite_parallel::create("ts", "ctx");
             for (int i = 1; i < 9; ++i)
             {
-                ts->test(to_string(i), [i] {
+                ts->test("capture", [i] {
                     std::cout << 'o' << "ut from " << i;
                     std::cerr << 'e' << "rr from " << i;
                 });

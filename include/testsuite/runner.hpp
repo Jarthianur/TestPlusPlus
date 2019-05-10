@@ -19,15 +19,14 @@
  }
  */
 
-#ifndef SCTF_TESTSUITE_RUNNER_HPP_
-#define SCTF_TESTSUITE_RUNNER_HPP_
+#ifndef SCTF_TESTSUITE_RUNNER_HPP
+#define SCTF_TESTSUITE_RUNNER_HPP
 
 #include <algorithm>
-#include <string>
 #include <vector>
 
 #include "common/stringify.hpp"
-#include "common/types.h"
+#include "common/types.hpp"
 #include "testsuite/testsuite.hpp"
 #include "testsuite/testsuite_parallel.hpp"
 
@@ -51,12 +50,6 @@ public:
     {
         m_testsuites.push_back(ts);
         return ts;
-    }
-
-    void register_module(_::test_module* mod)
-    {
-        m_testmodules.push_back(mod);
-        mod->setup();
     }
 
     /**
@@ -90,8 +83,6 @@ public:
 private:
     /// @brief The registered TestSuites.
     std::vector<testsuite_shared> m_testsuites;
-
-    std::vector<_::test_module*> m_testmodules;
 };
 
 /**
@@ -102,9 +93,8 @@ private:
  * @param runner The TestSuitesRunner to register
  * @return a shared pointer to the created TestSuite
  */
-inline static testsuite_shared describeParallel(const std::string& name,
-                                                runner& runner = runner::default_instance(),
-                                                const std::string& context = "")
+inline static testsuite_shared describeParallel(const char* name, const char* context = "main",
+                                                runner& runner = runner::default_instance())
 {
     return runner.register_ts(testsuite_parallel::create(name, context));
 }
@@ -118,8 +108,8 @@ inline static testsuite_shared describeParallel(const std::string& name,
  * @return a shared pointer to the created TestSuite
  */
 template<typename T>
-static testsuite_shared describeParallel(const std::string& name,
-                                         runner&            runner = runner::default_instance())
+static testsuite_shared describeParallel(const char* name,
+                                         runner&     runner = runner::default_instance())
 {
     return runner.register_ts(testsuite_parallel::create(name, _::name_for_type<T>()));
 }
@@ -132,9 +122,8 @@ static testsuite_shared describeParallel(const std::string& name,
  * @param runner The TestSuitesRunner to register
  * @return a shared pointer to the created TestSuite
  */
-inline static testsuite_shared describe(const std::string& name,
-                                        runner&            runner  = runner::default_instance(),
-                                        const std::string& context = "")
+inline static testsuite_shared describe(const char* name, const char* context = "main",
+                                        runner& runner = runner::default_instance())
 {
     return runner.register_ts(testsuite::create(name, context));
 }
@@ -148,12 +137,11 @@ inline static testsuite_shared describe(const std::string& name,
  * @return a shared pointer to the created TestSuite
  */
 template<typename T>
-static testsuite_shared describe(const std::string& name,
-                                 runner&            runner = runner::default_instance())
+static testsuite_shared describe(const char* name, runner& runner = runner::default_instance())
 {
     return runner.register_ts(testsuite::create(name, _::name_for_type<T>()));
 }
 
 }  // namespace sctf
 
-#endif  // SCTF_TESTSUITE_RUNNER_HPP_
+#endif  // SCTF_TESTSUITE_RUNNER_HPP

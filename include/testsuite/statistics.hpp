@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_TESTSUITE_STATISTICS_HPP_
-#define SCTF_TESTSUITE_STATISTICS_HPP_
+#ifndef SCTF_TESTSUITE_STATISTICS_HPP
+#define SCTF_TESTSUITE_STATISTICS_HPP
 
 #include <cstddef>
 
@@ -76,7 +76,7 @@ public:
         return m_num_of_errs;
     }
 
-private:
+protected:
     friend sctf::testsuite;
     friend sctf::testsuite_parallel;
 
@@ -93,4 +93,4 @@ private:
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_TESTSUITE_STATISTICS_HPP_
+#endif  // SCTF_TESTSUITE_STATISTICS_HPP

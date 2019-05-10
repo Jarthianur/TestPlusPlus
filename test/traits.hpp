@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef TEST_TRAITS_HPP_
-#define TEST_TRAITS_HPP_
+#ifndef TEST_TRAITS_HPP
+#define TEST_TRAITS_HPP
 
 #include <stdexcept>
 
@@ -244,4 +244,4 @@ template<typename T, ENABLE_IF(IS_UNEQUAL_COMPARABLE(T, T))>
 void throw_if_not_unequal_comparable()
 {}
 
-#endif  // TEST_TRAITS_HPP_
+#endif  // TEST_TRAITS_HPP
