@@ -29,6 +29,11 @@
 
 void reflexive_tests();
 
-TEST_MODULE(test_module_, { test("test", [] { assertTrue(true); }); })
+TEST_MODULE(test_sequential_module, { test("test", [] { assertTrue(true); }); })
+
+TEST_MODULE_PARALLEL(test_parallel_module, {
+    test("1", [] { assertTrue(true); });
+    test("2", [] { assertTrue(true); });
+})
 
 #endif  // TEST_REFLEXIVE_TESTS_H_
