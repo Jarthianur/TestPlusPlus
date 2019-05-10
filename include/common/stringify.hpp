@@ -54,13 +54,8 @@ static const char* name_for_type()
     const std::string sig(__PRETTY_FUNCTION__);
     std::cout << __LINE__ << ": " << sig << std::endl;
     std::size_t b = sig.rfind("T = ") + 4;
-#    ifdef __clang__
-    name = sig.substr(b, sig.rfind(']') - b);
+    name          = sig.substr(b, sig.rfind(']') - b);
     std::cout << __LINE__ << ": " << name << std::endl;
-#    else
-    name = sig.substr(b, sig.find(';', b) - b);
-    std::cout << __LINE__ << ": " << name << std::endl;
-#    endif
     name.erase(std::remove(name.begin(), name.end(), ' '), name.end());
     std::cout << __LINE__ << ": " << name << std::endl;
 #else
