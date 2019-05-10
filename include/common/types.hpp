@@ -46,6 +46,9 @@ struct location final
     const int   line;
 };
 
+/**
+ * @brief A singleton pattern implementation.
+ */
 template<typename T>
 struct singleton final
 {

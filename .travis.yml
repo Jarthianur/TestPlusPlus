@@ -4,7 +4,7 @@ install: true
 matrix:
   include:
 
-  - name: "Linux (gcc-8)"
+  - name: "Linux (gcc)"
     os: linux
     dist: xenial
     sudo: required
@@ -23,74 +23,6 @@ matrix:
     install:
     - export CXX=g++-8
     - export GCOV=gcov-8
-    - export CFMT=clang-format-6.0
-    - wget -q https://github.com/linux-test-project/lcov/releases/download/v1.14/lcov-1.14.tar.gz
-    - tar xf lcov-1.14.tar.gz
-    - export LCOV="$PWD/lcov-1.14/bin/lcov --gcov-tool=/usr/bin/$GCOV"
-    - $LCOV --version
-    - $GCOV --version
-    - $CXX --version
-    - $CFMT --version
-    - sudo pip install --upgrade pip
-    - sudo pip install spline
-    script:
-    - spline --tags=linux --strict
-    after_success:
-    - bash <(curl -s https://codecov.io/bash) -x $GCOV -s reports/ -X gcov
-
-  - name: "Linux (gcc-7)"
-    os: linux
-    dist: xenial
-    sudo: required
-    compiler:
-    - gcc
-    addons:
-      apt:
-        sources:
-        - ubuntu-toolchain-r-test
-        packages:
-        - python-pip
-        - g++-7
-        - clang-format-6.0
-    env:
-    - BADGE=linux
-    install:
-    - export CXX=g++-7
-    - export GCOV=gcov-7
-    - export CFMT=clang-format-6.0
-    - wget -q https://github.com/linux-test-project/lcov/releases/download/v1.14/lcov-1.14.tar.gz
-    - tar xf lcov-1.14.tar.gz
-    - export LCOV="$PWD/lcov-1.14/bin/lcov --gcov-tool=/usr/bin/$GCOV"
-    - $LCOV --version
-    - $GCOV --version
-    - $CXX --version
-    - $CFMT --version
-    - sudo pip install --upgrade pip
-    - sudo pip install spline
-    script:
-    - spline --tags=linux --strict
-    after_success:
-    - bash <(curl -s https://codecov.io/bash) -x $GCOV -s reports/ -X gcov
-
-  - name: "Linux (gcc-6)"
-    os: linux
-    dist: xenial
-    sudo: required
-    compiler:
-    - gcc
-    addons:
-      apt:
-        sources:
-        - ubuntu-toolchain-r-test
-        packages:
-        - python-pip
-        - g++-6
-        - clang-format-6.0
-    env:
-    - BADGE=linux
-    install:
-    - export CXX=g++-6
-    - export GCOV=gcov-6
     - export CFMT=clang-format-6.0
     - wget -q https://github.com/linux-test-project/lcov/releases/download/v1.14/lcov-1.14.tar.gz
     - tar xf lcov-1.14.tar.gz

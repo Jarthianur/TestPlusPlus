@@ -24,7 +24,6 @@
 
 #include <algorithm>
 #include <iomanip>
-#include <iostream>
 #include <limits>
 #include <sstream>
 #include <string>
@@ -32,7 +31,7 @@
 #include <utility>
 
 #include "common/traits.hpp"
-//#undef __clang__
+
 namespace sctf
 {
 namespace _
@@ -52,15 +51,12 @@ static const char* name_for_type()
     }
 #if defined(__GNUG__) || defined(__clang__)
     const std::string sig(__PRETTY_FUNCTION__);
-    std::cout << __LINE__ << ": " << sig << std::endl;
-    std::size_t b = sig.rfind("T = ") + 4;
-    name          = sig.substr(b, sig.rfind(']') - b);
-    std::cout << __LINE__ << ": " << name << std::endl;
+    const auto        b = sig.rfind("T = ") + 4;
+    name                = sig.substr(b, sig.rfind(']') - b);
     name.erase(std::remove(name.begin(), name.end(), ' '), name.end());
-    std::cout << __LINE__ << ": " << name << std::endl;
 #else
     const std::string sig(typeid(T).name());
-    std::size_t       b = sig.find("struct ");
+    const auto        b = sig.find("struct ");
     if (b != std::string::npos)
     {
         name = sig.substr(b + 7);
