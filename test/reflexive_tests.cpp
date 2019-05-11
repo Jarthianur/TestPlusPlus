@@ -133,7 +133,8 @@ void reflexive_tests()
     describe<testsuite>("TestSuite")
         ->test("creation",
                [] {
-                   auto             a  = std::chrono::system_clock::now();
+                   auto a = std::chrono::system_clock::now();
+                   std::this_thread::sleep_for(std::chrono::seconds(1));
                    testsuite_shared ts = testsuite::create("ts", "ctx");
                    assert(ts->timestamp(), GT, a);
                    assertT(ts->name(), EQ, "ts", std::string);
