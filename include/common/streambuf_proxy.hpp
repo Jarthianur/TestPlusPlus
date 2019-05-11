@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_COMMON_STREAMBUF_PROXY_HPP_
-#define SCTF_COMMON_STREAMBUF_PROXY_HPP_
+#ifndef SCTF_COMMON_STREAMBUF_PROXY_HPP
+#define SCTF_COMMON_STREAMBUF_PROXY_HPP
 
 #include <ostream>
 #include <sstream>
@@ -89,8 +89,6 @@ protected:
         return m_buffer.sputn(s, n);
     }
 
-    // private:
-
     /// @brief The original underlying buffer of the captured stream
     std::streambuf* m_orig_buf;
 
@@ -104,4 +102,4 @@ protected:
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_COMMON_STREAMBUF_PROXY_HPP_
+#endif  // SCTF_COMMON_STREAMBUF_PROXY_HPP

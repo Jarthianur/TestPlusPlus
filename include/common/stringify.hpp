@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_COMMON_STRINGIFY_HPP_
-#define SCTF_COMMON_STRINGIFY_HPP_
+#ifndef SCTF_COMMON_STRINGIFY_HPP
+#define SCTF_COMMON_STRINGIFY_HPP
 
 #include <algorithm>
 #include <iomanip>
@@ -28,6 +28,7 @@
 #include <sstream>
 #include <string>
 #include <typeinfo>
+#include <utility>
 
 #include "common/traits.hpp"
 
@@ -41,30 +42,25 @@ namespace _
  * @return the typename as string
  */
 template<typename T>
-static std::string name_for_type()
+static const char* name_for_type()
 {
     static thread_local std::string name;
     if (name.length() > 0)
     {
-        return name;
+        return name.c_str();
     }
 #if defined(__GNUG__) || defined(__clang__)
     const std::string sig(__PRETTY_FUNCTION__);
-    std::size_t       b = sig.rfind("T = ") + 4;
-#    ifdef __clang__
-    name = sig.substr(b, sig.rfind(']') - b);
-#    else
-    name = sig.substr(b, sig.find(';', b) - b);
-#    endif
+    const auto        b = sig.rfind("T = ") + 4;
+    name                = sig.substr(b, sig.rfind(']') - b);
     name.erase(std::remove(name.begin(), name.end(), ' '), name.end());
-    name.shrink_to_fit();
 #else
     const std::string sig(typeid(T).name());
-    std::size_t       b = sig.find("struct ");
+    auto              b = sig.find("struct ");
     if (b != std::string::npos)
     {
         name = sig.substr(b + 7);
-        return name;
+        return name.c_str();
     }
     b = sig.find("class ");
     if (b != std::string::npos)
@@ -73,10 +69,10 @@ static std::string name_for_type()
     }
     else
     {
-        name = sig;
+        name = std::move(sig);
     }
 #endif
-    return name;
+    return name.c_str();
 }
 
 /**
@@ -142,4 +138,4 @@ inline std::string to_string(const bool& arg)
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_COMMON_STRINGIFY_HPP_
+#endif  // SCTF_COMMON_STRINGIFY_HPP

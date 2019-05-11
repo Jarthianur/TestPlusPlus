@@ -19,13 +19,13 @@
  }
  */
 
-#ifndef SCTF_COMMON_ASSERTION_FAILURE_HPP_
-#define SCTF_COMMON_ASSERTION_FAILURE_HPP_
+#ifndef SCTF_COMMON_ASSERTION_FAILURE_HPP
+#define SCTF_COMMON_ASSERTION_FAILURE_HPP
 
 #include <exception>
 #include <string>
 
-#include "common/types.h"
+#include "common/types.hpp"
 
 namespace sctf
 {
@@ -66,4 +66,4 @@ protected:
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_COMMON_ASSERTION_FAILURE_HPP_
+#endif  // SCTF_COMMON_ASSERTION_FAILURE_HPP

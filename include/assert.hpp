@@ -19,13 +19,13 @@
  }
  */
 
-#ifndef SCTF_ASSERT_HPP_
-#define SCTF_ASSERT_HPP_
+#ifndef SCTF_ASSERT_HPP
+#define SCTF_ASSERT_HPP
 
 #include "common/assertion_failure.hpp"
 #include "common/duration.hpp"
 #include "common/stringify.hpp"
-#include "common/types.h"
+#include "common/types.hpp"
 #include "comparator/comparators.hpp"
 #include "comparator/equals.hpp"
 #include "comparator/inrange.hpp"
@@ -245,4 +245,4 @@ static void _assertPerformance(const test_function& func, double max_millis, con
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_ASSERT_HPP_
+#endif  // SCTF_ASSERT_HPP

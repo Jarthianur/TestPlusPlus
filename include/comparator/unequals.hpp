@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_COMPARATOR_UNEQUALS_HPP_
-#define SCTF_COMPARATOR_UNEQUALS_HPP_
+#ifndef SCTF_COMPARATOR_UNEQUALS_HPP
+#define SCTF_COMPARATOR_UNEQUALS_HPP
 
 #include <algorithm>
 #include <cmath>
@@ -103,4 +103,4 @@ comparison unequals(const V& value, const E& expect)
 PROVIDE_COMPARATOR(unequals, UNEQUALS)
 PROVIDE_COMPARATOR(unequals, NE)
 
-#endif  // SCTF_COMPARATOR_UNEQUALS_HPP_
+#endif  // SCTF_COMPARATOR_UNEQUALS_HPP

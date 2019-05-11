@@ -19,10 +19,10 @@
  }
  */
 
-#ifndef SCTF_SCTF_HPP_
-#define SCTF_SCTF_HPP_
+#ifndef SCTF_SCTF_HPP
+#define SCTF_SCTF_HPP
 
-#include "common/types.h"
+#include "common/types.hpp"
 #include "comparator/equals.hpp"
 #include "comparator/greater.hpp"
 #include "comparator/inrange.hpp"
@@ -32,7 +32,21 @@
 #include "reporter/plaintext_reporter.hpp"
 #include "reporter/xml_reporter.hpp"
 #include "testsuite/runner.hpp"
+#include "testsuite/testmodule.hpp"
 
 #include "assert.hpp"
 
-#endif  // SCTF_SCTF_HPP_
+/**
+ * @def SCTF_DEFAULT_MAIN(REPORTER)
+ * @brief Define a default main function, which executes and reports all tests registered to the
+ * default runner.
+ * @param REPORTER The reporter creation function invocation
+ * @return the number of failed and erroneous tests
+ */
+#define SCTF_DEFAULT_MAIN(REPORTER)                        \
+    int main(int argc, char** argv)                        \
+    {                                                      \
+        return static_cast<int>(sctf::REPORTER->report()); \
+    }
+
+#endif  // SCTF_SCTF_HPP

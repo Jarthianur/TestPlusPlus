@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_COMPARATOR_CONTAINS_HPP_
-#define SCTF_COMPARATOR_CONTAINS_HPP_
+#ifndef SCTF_COMPARATOR_CONTAINS_HPP
+#define SCTF_COMPARATOR_CONTAINS_HPP
 
 #include <algorithm>
 
@@ -75,4 +75,4 @@ comparison in_range(const V& value, const R& range)
 PROVIDE_COMPARATOR(in_range, IN_RANGE)
 PROVIDE_COMPARATOR(in_range, IN)
 
-#endif  // SCTF_COMPARATOR_CONTAINS_HPP_
+#endif  // SCTF_COMPARATOR_CONTAINS_HPP

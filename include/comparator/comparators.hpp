@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_COMPARATOR_COMPARATORS_HPP_
-#define SCTF_COMPARATOR_COMPARATORS_HPP_
+#ifndef SCTF_COMPARATOR_COMPARATORS_HPP
+#define SCTF_COMPARATOR_COMPARATORS_HPP
 
 #include <memory>
 
@@ -29,14 +29,18 @@
 #if __cplusplus >= 201703L
 
 #    include <optional>
-#    define STD_OPTIONAL std::optional
-#    define STD_NULLOPT std::nullopt
+using std::nullopt;
+using std::optional;
 
 #elif __cplusplus >= 201402L
 
 #    include <experimental/optional>
-#    define STD_OPTIONAL std::experimental::optional
-#    define STD_NULLOPT std::experimental::nullopt
+using std::experimental::nullopt;
+using std::experimental::optional;
+
+#else
+
+#    include <cstring>
 
 #endif
 
@@ -52,9 +56,9 @@ namespace _
 struct comparison final
 {
 #if __cplusplus >= 201402L
-    constexpr comparison() : _failure(STD_NULLOPT) {}
+    constexpr comparison() : _failure(nullopt) {}
 
-    comparison(const std::string& comp_str, const std::string& value, const std::string& expect)
+    comparison(const char* comp_str, const std::string& value, const std::string& expect)
         : _failure("Expected '" + value + "' " + comp_str + " '" + expect + "'")
     {}
 
@@ -68,16 +72,16 @@ struct comparison final
         return *_failure;
     }
 
-private:
-    const STD_OPTIONAL<std::string> _failure;
+protected:
+    const optional<std::string> _failure;
 #else
     constexpr comparison() : _success(true) {}
 
-    comparison(const std::string& comp_str, const std::string& value, const std::string& expect)
+    comparison(const char* comp_str, const std::string& value, const std::string& expect)
         : _success(false)
     {
         std::string msg;
-        msg.reserve(15 + comp_str.length() + value.length() + expect.length());
+        msg.reserve(15 + std::strlen(comp_str) + value.length() + expect.length());
         msg = "Expected '";
         msg.append(value).append("' ").append(comp_str).append(" '").append(expect).append("'");
         error() = msg;
@@ -93,7 +97,7 @@ private:
         return error();
     }
 
-private:
+protected:
     const bool _success;
 
     std::string& error() const
@@ -123,7 +127,7 @@ constexpr comparison success = comparison();
 #ifdef SCTF_EPSILON
 static double epsilon = SCTF_EPSILON;
 #elif defined(SCTF_EXTERN_EPSILON)
-extern double epsilon;
+extern double        epsilon;
 #endif
 
 }  // namespace _
@@ -185,4 +189,4 @@ extern double epsilon;
     }                       \
     }
 
-#endif  // SCTF_COMPARATOR_COMPARATORS_HPP_
+#endif  // SCTF_COMPARATOR_COMPARATORS_HPP

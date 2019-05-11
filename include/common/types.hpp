@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_COMMON_TYPES_H_
-#define SCTF_COMMON_TYPES_H_
+#ifndef SCTF_COMMON_TYPES_HPP
+#define SCTF_COMMON_TYPES_HPP
 
 #include <functional>
 #include <memory>
@@ -46,6 +46,19 @@ struct location final
     const int   line;
 };
 
+/**
+ * @brief A singleton pattern implementation.
+ */
+template<typename T>
+struct singleton final
+{
+    static T& instance()
+    {
+        static T instance;
+        return instance;
+    }
+};
+
 }  // namespace _
 
 /**
@@ -63,4 +76,4 @@ using testsuite_shared = std::shared_ptr<testsuite>;
 
 }  // namespace sctf
 
-#endif  // SCTF_COMMON_TYPES_H_
+#endif  // SCTF_COMMON_TYPES_HPP

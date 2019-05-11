@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_COMMON_DURATION_HPP_
-#define SCTF_COMMON_DURATION_HPP_
+#ifndef SCTF_COMMON_DURATION_HPP
+#define SCTF_COMMON_DURATION_HPP
 
 #include <chrono>
 
@@ -50,7 +50,7 @@ struct duration final
             .count();
     }
 
-private:
+protected:
     /// @brief start timepoint
     const std::chrono::steady_clock::time_point _start;
 };
@@ -58,4 +58,4 @@ private:
 }  // namespace _
 }  // namespace sctf
 
-#endif  // SCTF_COMMON_DURATION_HPP_
+#endif  // SCTF_COMMON_DURATION_HPP
