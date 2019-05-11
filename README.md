@@ -8,27 +8,27 @@
 [![BCH compliance](https://bettercodehub.com/edge/badge/Jarthianur/simple-cpp-test-framework?branch=master)](https://bettercodehub.com/)
 
 **This is a simple header-only unit testing framework for C++11/14/17.**
-Featuring great **extendability** and an **easy, but powerful** API optimized for **less typing**.
-**Test reports** are generated in a specified format, according to the chosen reporter.
-Additionally it serves the capability to **parallelize** tests, using *OpenMP*.
+Featuring great **extendability** and an **easy, but powerful and modular** API. **Test reports** are generated in a specified format, according to the chosen reporter. Additionally it serves the capability to **parallelize** tests, using *OpenMP*.
 
-*So why actually writing a new unit-testing framework?* Except for the reason of learning how to do and self-development in C++, there is something I don't really like about many other ones. Excessive use of macros and unflexible testing methods. Yes this framework utilizes macros too, but they are neither required, nor part of the program logic. They just reduce the workload of typing and wrap functions in a usefull way.
+*So why actually writing a new unit-testing framework?* Except for the reason of learning how to do, I tried a modular approach instead of just throwing some assertions into magic macros. Yes this framework utilizes macros too, but they are neither required, nor part of the program logic. They just reduce the workload of typing and wrap stuff in a usefull way.
 Even test code should be regular code and also look like that. The next point is extendability. You will see later how easy it is to define new, or modify existing logic of this framework, to adjust it to your needs. There is no need to provide an ultra large allmighty framework, as some basic stuff is commonly enough and every project specific logic can be added easily.
 
 ## Contents
 
 - [simple-cpp-test-framework](#simple-cpp-test-framework)
   - [Contents](#contents)
-  - [Concept of Simplicity](#concept-of-simplicity)
+  - [Basic Architecture](#basic-architecture)
   - [Some Words About Parallelization](#some-words-about-parallelization)
   - [Feature Set](#feature-set)
     - [Reporters](#reporters)
-    - [Testsuite Executions](#testsuite-executions)
+    - [Testsuites](#testsuites)
     - [Comparators](#comparators)
     - [Assertions](#assertions)
+    - [Test Modules](#test-modules)
   - [Usage](#usage)
     - [Floats](#floats)
-    - [Example](#example)
+    - [Example (functional)](#example-functional)
+    - [Example (OO)](#example-oo)
   - [Extending](#extending)
     - [of reporters](#of-reporters)
     - [of comparators](#of-comparators)
@@ -36,23 +36,16 @@ Even test code should be regular code and also look like that. The next point is
   - [Contributing](#contributing)
       - [Footnote](#footnote)
 
-## Concept of Simplicity
+## Basic Architecture
 
-The great extendability comes from its simple structure. Also wrapping is done using macros.
-Yes usually macros are evil, but in this case they are more usefull and reduce writing overhead a lot.
-To gefine a new generic comparator two lines of code are necessary, one macro call for defining the comparator and one for providing a shortwrite.
-As many projects define their own types and classes, which also need to be tested, one can easily specialize any comparator template to fit to their needs.
+The great extendability comes from its simple structure and modularity. There are two approaches, functional and object oriented. There is the runner, which runs the testsuites. The testsuites contain testcases and the testcases contain any logic plus assertions. Then there are reporters, which generate a report at the end. Assertions utilize comparators, or do their internal checks. For the functional approach, just describe a testsuite and add tests to it. For the OO approach define a test module.
 
-Want the reports in a custom format? So then implement the *abstract_reporter* interface.
-Extensive testing is hard enough, so one should not struggle with too complex frameworks. As well as customization may be the key to make a simple framework a powerful framework. Hence the structure is kept that simple, to make it highly customizable and extendable.
 
 ## Some Words About Parallelization
 
-This testing framework serves the capability of parallelizing tests, using OpenMP.  
-It may reduce test durations massively. Nevertheless this feature should be used carefully.
-That means tests, running in parallel, *must* be completely independent from each other. But this fact may also be used to test components' threadsafety.
-Also consider, spawning threads has some overhead. Thus there is no point in running just a few, anyway fast, tests in parallel.  
-Of course, when executed in parallel, a test suites total time is the max time of all threads.
+This testing framework serves the capability of parallelizing tests, using OpenMP. It may reduce test durations massively. Nevertheless this feature should be used carefully.
+That means tests, running in parallel, *must* be completely independent from each other. But this fact may also be used to test a components' threadsafety.
+Also consider, spawning threads has some overhead. Thus there is no point in running just a few, anyway fast, tests in parallel.
 
 ## Feature Set
 
@@ -66,22 +59,22 @@ Of course, when executed in parallel, a test suites total time is the max time o
 | xml_reporter       | Produces JUnit like XML format. The result may be published to any visualizer, e.g. in a jenkins environment.                                                                       |
 | html_reporter      | Produces a single HTML file, which is a minimal standalone website showing the test results more or less beautiful.                                                                 |
 
-### Testsuite Executions
+### Testsuites
 
-**Note:** The argument *runner* of all *describe* functions is always the instance where to register the *TestSuite*. It is optional if you just need one. The argument *t_func* of all *test*,*setup*,*before*,*after* methods is always a void function without arguments, preferably a lambda expression. Calls to those methods are chainable. It is possible to add tests after the runner has run, thus run tests partially, and run it again. Already executed tests will be skipped.
+**Note:** The argument *runner* of all *describe* functions is always the instance where to register the *TestSuite*. It is optional if you just need one. The argument *func* of all *test*,*setup*,*before*,*after* methods is always a void function without arguments, preferably a lambda expression. Calls to those methods are chainable. It is possible to add tests after the runner has run, thus run tests partially, and run it again. Already executed tests will be skipped.
 
-| Call                 | Arguments             | Description                                                                                                                                          | Example                                               |
-| -------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| describe             | name, runner, context | Describe a testsuite with *name* and *context*, where context defaults to an empty string.                                                           | `describe("ts1", runner, "Component")...`             |
-| describe\<T>         | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T.                                                                  | `describe<Component>("ts2", runner)...`               |
-| describeParallel     | name, runner, context | Describe a testsuite with *name* and *context*, where context defaults to an empty string. Tests inside this testsuite will be executed in parallel. | `describeParallel("ts3", runner, "Component")...`     |
-| describeParallel\<T> | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T. Tests inside this testsuite will be executed in parallel.        | `describeParallel<Component>("ts2", runner)...`       |
-| test                 | name, context, t_func | Create a testcase on a testsuite with *name* and *context*.                                                                                          | `...->test("test1", "Component::func", [](){...})...` |
-| test                 | name, t_func          | Create a testcase on a testsuite with *name*, the context is inherited from the testsuite.                                                           | `...->test("test2", [](){...})...`                    |
-| test\<T>             | name, t_func          | Create a testcase on a testsuite with *name*. The context is taken as the class-/typename of T.                                                      | `...->test<Component>("test3", [](){...})...`         |
-| setup                | t_func                | Set a *setup* function, which will be executed once before all testcases. Exceptions thrown by the given function will get ignored.                  | `...->setup([&]{ x = 10; ... })...`                   |
-| before               | t_func                | Set a *pre-test* function, which will be executed before each testcase. Exceptions thrown by the given function will get ignored.                    | `...->before([&]{ x = 10; ... })...`                  |
-| after                | t_func                | Set a *post-test* function, which will be executed after each testcase. Exceptions thrown by the given function will get ignored.                    | `...->after([&]{ x = 10; ... })...`                   |
+| Call                 | Arguments             | Description                                                                                                                                          | Example                                             |
+| -------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| describe             | name, context, runner | Describe a testsuite with *name* and *context*, where context defaults to "main".                                                                    | `describe("ts1", "Component")...`                   |
+| describe\<T>         | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T.                                                                  | `describe<Component>("ts2")...`                     |
+| describeParallel     | name, context, runner | Describe a testsuite with *name* and *context*, where context defaults to an empty string. Tests inside this testsuite will be executed in parallel. | `describeParallel("ts3", "Component")...`           |
+| describeParallel\<T> | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T. Tests inside this testsuite will be executed in parallel.        | `describeParallel<Component>("ts2")...`             |
+| test                 | name, context, func   | Create a testcase on a testsuite with *name* and *context*.                                                                                          | `...->test("test1", "Component::func", []{...})...` |
+| test                 | name, func            | Create a testcase on a testsuite with *name*, the context is inherited from the testsuite.                                                           | `...->test("test2", []{...})...`                    |
+| test\<T>             | name, func            | Create a testcase on a testsuite with *name*. The context is taken as the class-/typename of T.                                                      | `...->test<Component>("test3", []{...})...`         |
+| setup                | func                  | Set a *setup* function, which will be executed once before all testcases. Exceptions thrown by the given function will get ignored.                  | `...->setup([&]{ x = 10; ... })...`                 |
+| before               | func                  | Set a *pre-test* function, which will be executed before each testcase. Exceptions thrown by the given function will get ignored.                    | `...->before([&]{ x = 10; ... })...`                |
+| after                | func                  | Set a *post-test* function, which will be executed after each testcase. Exceptions thrown by the given function will get ignored.                    | `...->after([&]{ x = 10; ... })...`                 |
 
 ### Comparators
 
@@ -112,6 +105,17 @@ Of course, when executed in parallel, a test suites total time is the max time o
 | assertNoExcept    | FUNC                      | Assert FUNC not to throw any exception.                                                                             | `assertNoExcept(int i = 0);`                                     |
 | assertPerformance | FUNC, MILLIS              | Assert FUNC to run in MILLIS milliseconds at maximum. The FUNC call is not interrupted, if the time exceeds MILLIS. | `assertPerformance(call(), 5);`                                  |
 
+### Test Modules
+
+The idea of test modules is to bind tests to an object instead of calling describes and tests directly, or in functions. In combination with the *SCTF_DEFAULT_MAIN(...)* macro, this allows to define tests with minimal effort.
+
+**Note:** *NAME* is just the name of the module, not a string. It is encouraged to apply a naming scheme like *test_myClass*. *FN* is a block of invacations to the *test* method you already know from the testsuites, but here it is not chainable and no template version is available. Also the context is taken from the modules name. *RUNNER* is optional if you only use the default runner.
+
+| Syntax               | Parameters       | Description                                                                                                                          | Example                                                                                                     |
+| -------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| TEST_MODULE          | NAME, FN, RUNNER | Define a test module. It is basically an object that binds a testsuite to its context.                                               | `TEST_MODULE(test_myClass,{test("myClass::function",[]{myClass mc;assertTrue(mc.function());});})`          |
+| TEST_MODULE_PARALLEL | NAME, FN, RUNNER | Define a test module where all tests will run in parallel. It is basically an object that binds a parallel testsuite to its context. | `TEST_MODULE_PARALLEL(test_myClass,{test("myClass::function",[]{myClass mc;assertTrue(mc.function());});})` |
+
 ## Usage
 
 This framework is header-only. To use it, just inlude the *sctf.hpp* header file, either from source, what requires the include path set correctly, or the single file version from releases. In order to use the parallelization capability, you need to enable OpenMP at compilation. Have a look at the build pipeline, how this can be done for different platforms. As the asserts are wrapped with macros, statements inside assert statements, that have commata itself, must be written in braces.
@@ -120,7 +124,7 @@ This framework is header-only. To use it, just inlude the *sctf.hpp* header file
 
 As floating-point comparison relies on a so called epsilon, we use the machine epsilon by default. But this may lead into false-negative test results, as it could be too accurate. In order to use a custom epsilon, there are two ways to achieve this. First, you can provide a macro in each compilation unit, which is called `SCTF_EPSILON` with a satisfying value (like 0.000001). A compiler invocation could look like "`g++ -std=c++0x test.cpp -fopenmp -DSCTF_EPSILON=0.000001`". Or you provide it before including *sctf.hpp* like in the [example](#example) below. The second way, is to provide it as an extern variable. Therefor define `SCTF_EXTERN_EPSILON` before including *sctf.hpp* and than call the `SCTF_SET_EPSILON` macro with a satisfying value in the compilation unit (cpp file). The latter one allows more fine grained control over the required epsilon value.
 
-### Example
+### Example (functional)
 
 ```cpp
 // ...
@@ -176,6 +180,29 @@ int main(int argc, char** argv)
         });
     return rep->report();
 }
+```
+
+### Example (OO)
+
+```cpp
+
+#include "sctf.hpp"
+
+class myClass {
+    bool function() {return true;}
+};
+
+TEST_MODULE(test_myClass, {
+    test("myClass::function", [] {
+        myClass my;
+        assertTrue(my.function());
+    });
+    test("some other test", [] {
+        assertEquals(1, 1);
+    });
+})
+
+SCTF_DEFAULT_MAIN(createPlainTextReporter(true, true))
 ```
 
 ## Extending
