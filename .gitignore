@@ -12,3 +12,4 @@
 !.travis.yml
 !pipeline.yaml
 !.bettercodehub.yml
+!*.sh
