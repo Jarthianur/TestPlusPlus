@@ -43,9 +43,10 @@
  * @param REPORTER The reporter creation function invocation
  * @return the number of failed and erroneous tests
  */
-#define SCTF_DEFAULT_MAIN(REPORTER)                        \
-    int main(int argc, char** argv)                        \
+#define SCTF_DEFAULT_MAIN(REPORTER, ...)                   \
+    int main(int /*argc*/, char** /*argv*/)                \
     {                                                      \
+        __VA_ARGS__;                                       \
         return static_cast<int>(sctf::REPORTER->report()); \
     }
 
