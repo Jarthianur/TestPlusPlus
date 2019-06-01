@@ -192,6 +192,8 @@ class myClass {
     bool function() {return true;}
 };
 
+void init() { /* dispatch your functional describe calls here */ }
+
 TEST_MODULE(test_myClass, {
     test("myClass::function", [] {
         myClass my;
@@ -202,7 +204,8 @@ TEST_MODULE(test_myClass, {
     });
 })
 
-SCTF_DEFAULT_MAIN(createPlainTextReporter(true, true))
+SCTF_DEFAULT_MAIN(createPlainTextReporter(true, true), init())
+// SCTF_DEFAULT_MAIN(createPlainTextReporter(true, true))
 ```
 
 ## Extending
