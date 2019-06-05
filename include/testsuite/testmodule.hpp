@@ -43,6 +43,21 @@ protected:
         m_ts->test(name, std::move(fn));
     }
 
+    inline void setup(_::test_function&& fn)
+    {
+        m_ts->setup(std::move(fn));
+    }
+
+    inline void before(_::test_function&& fn)
+    {
+        m_ts->before(std::move(fn));
+    }
+
+    inline void after(_::test_function&& fn)
+    {
+        m_ts->after(std::move(fn));
+    }
+
     testsuite_shared m_ts;
 };
 }  // namespace _
