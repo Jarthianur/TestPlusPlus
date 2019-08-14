@@ -1,44 +1,51 @@
 # simple-cpp-test-framework
 
-[![Build Status](https://travis-ci.org/Jarthianur/simple-cpp-test-framework.svg?branch=testing)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
-[![codecov](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework/branch/testing/graph/badge.svg)](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework)
+[![Build Status](https://travis-ci.org/Jarthianur/simple-cpp-test-framework.svg?branch=master)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
+[![Linux Build Status](http://badges.herokuapp.com/travis/Jarthianur/simple-cpp-test-framework?env=BADGE=linux&label=linux&branch=master)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
+[![OSX Build Status](http://badges.herokuapp.com/travis/Jarthianur/simple-cpp-test-framework?env=BADGE=osx&label=osx&branch=master)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
+[![Windows Build Status](http://badges.herokuapp.com/travis/Jarthianur/simple-cpp-test-framework?env=BADGE=windows&label=windows&branch=master)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
+[![codecov](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework/branch/master/graph/badge.svg)](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework)
+[![BCH compliance](https://bettercodehub.com/edge/badge/Jarthianur/simple-cpp-test-framework?branch=master)](https://bettercodehub.com/)
 
-A simple C++11, plain STL, header-only testing framework.
-Featuring great **extendability** and an **easy, but powerful**, **less typing** optimized API.
-**Test reports** are generated in a specified format, according to the chosen reporter.
-Additionally it serves the capability to **parallelize** testruns, using *OpenMP*.
+**This is a simple header-only unit testing framework for C++11/14/17.**
+Featuring great **extendability** and an **easy, but powerful and modular** API. **Test reports** are generated in a specified format, according to the chosen reporter. Additionally it serves the capability to **parallelize** tests, using *OpenMP*.
 
-*So why actually writing a new unit-testing framework?* Except for the reason of learning how to do and self-development in C++, there is something I don't really like about many other ones. Excessive use of macros and unflexible testing methods. Yes this framework utilizes macros too, but they are neither required, nor part of the program logic. They just reduce the workload of typing and wrap functions in a usefull way.
+*So why actually writing a new unit-testing framework?* Except for the reason of learning how to do, I tried a modular approach instead of just throwing some assertions into magic macros. Yes this framework utilizes macros too, but they are neither required, nor part of the program logic. They just reduce the workload of typing and wrap stuff in a usefull way.
 Even test code should be regular code and also look like that. The next point is extendability. You will see later how easy it is to define new, or modify existing logic of this framework, to adjust it to your needs. There is no need to provide an ultra large allmighty framework, as some basic stuff is commonly enough and every project specific logic can be added easily.
 
 ## Contents
 
-+ [Concept](#concept-of-simplicity)
-+ [Parallelization](#some-words-about-parallelization)
-+ [Feature Set](#feature-set)
-+ [Usage](#usage)
-+ [Example](#example)
-+ [Extending](#extending)
-+ [Contributing](#contributing)
-+ [Footnote](#footnote)
+- [simple-cpp-test-framework](#simple-cpp-test-framework)
+  - [Contents](#contents)
+  - [Basic Architecture](#basic-architecture)
+  - [Some Words About Parallelization](#some-words-about-parallelization)
+  - [Feature Set](#feature-set)
+    - [Reporters](#reporters)
+    - [Testsuites](#testsuites)
+    - [Comparators](#comparators)
+    - [Assertions](#assertions)
+    - [Test Modules](#test-modules)
+  - [Usage](#usage)
+    - [Floats](#floats)
+    - [Example (functional)](#example-functional)
+    - [Example (OO)](#example-oo)
+  - [Extending](#extending)
+    - [of reporters](#of-reporters)
+    - [of comparators](#of-comparators)
+    - [Stringify values](#stringify-values)
+  - [Contributing](#contributing)
+      - [Footnote](#footnote)
 
-## Concept of Simplicity
+## Basic Architecture
 
-The great extendability comes from its simple structure. Also wrapping is done using macros.
-Yes usually macros are evil, but in this case they are more usefull and reduce writing overhead a lot.
-To gefine a new generic comparator two lines of code are necessary, one macro call for defining the comparator and one for providing a shortwrite.
-As many projects define their own types and classes, which also need to be tested, one can easily specialize any comparator template to fit to their needs.
+The great extendability comes from its simple structure and modularity. There are two approaches, functional and object oriented. There is the runner, which runs the testsuites. The testsuites contain testcases and the testcases contain any logic plus assertions. Then there are reporters, which generate a report at the end. Assertions utilize comparators, or do their internal checks. For the functional approach, just describe a testsuite and add tests to it. For the OO approach define a test module.
 
-Want the reports in a custom format? So then implement the *AbstractReporter* interface.
-Extensive testing is hard enough, so one should not struggle with too complex frameworks. As well as customization may be the key to make a simple framework a powerful framework. Hence the structure is kept that simple, to make it highly customizable and extendable.
 
 ## Some Words About Parallelization
 
-This testing framework serves the capability of parallelizing tests, using OpenMP.  
-It may reduce test durations massively. Nevertheless this feature should be used carefully.
-That means tests, running in parallel, *must* be completely independent from each other. But this fact may also be used to test components' threadsafety.
-Also consider, spawning threads has some overhead. Thus there is no point in running just a few, anyway fast, tests in parallel.  
-Of course, when executed in parallel, a test suites total time is the max time of all threads.
+This testing framework serves the capability of parallelizing tests, using OpenMP. It may reduce test durations massively. Nevertheless this feature should be used carefully.
+That means tests, running in parallel, *must* be completely independent from each other. But this fact may also be used to test a components' threadsafety.
+Also consider, spawning threads has some overhead. Thus there is no point in running just a few, anyway fast, tests in parallel.
 
 ## Feature Set
 
@@ -46,84 +53,106 @@ Of course, when executed in parallel, a test suites total time is the max time o
 
 **Note:** Every reporter has its factory method, which is always like `createNAME(...)`, where *NAME* is the reporter class name.
 
-| Reporter          | Description                                                                                                         |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------- |
-| PlainTextReporter | Produces plain text, which is aimed for human-readable console output. Optionally ANSI colors can be enabled.       |
-| XmlReporter       | Produces JUnit like XML format. The result may be published to any visualizer, e.g. in a jenkins environment.       |
-| HtmlReporter      | Produces a single HTML file, which is a minimal standalone website showing the test results more or less beautiful. |
+| Reporter           | Description                                                                                                                                                                         |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| plaintext_reporter | Produces plain text, which is aimed for human-readable console output. Optionally ANSI colors can be enabled. Also optionally is reporting of captured output to stdout and stderr. |
+| xml_reporter       | Produces JUnit like XML format. The result may be published to any visualizer, e.g. in a jenkins environment.                                                                       |
+| html_reporter      | Produces a single HTML file, which is a minimal standalone website showing the test results more or less beautiful.                                                                 |
 
-### Testsuite Executions
+### Testsuites
 
-**Note:** The argument *runner* of all *describe* functions is always the *TestSuitesRunner* where to register the *TestSuite*. The argument *t_func* of all *test*,*setup*,*before*,*after* methods is always a void function without arguments, preferably a lambda expression. Calls to those methods are chainable. It is possible to add tests after the runner has run, thus run tests partially, and run it again. Already executed tests will be skipped.
+**Note:** The argument *runner* of all *describe* functions is always the instance where to register the *TestSuite*. It is optional if you just need one. The argument *func* of all *test*,*setup*,*before*,*after* methods is always a void function without arguments, preferably a lambda expression. Calls to those methods are chainable. It is possible to add tests after the runner has run, thus run tests partially, and run it again. Already executed tests will be skipped.
 
-| Call                | Arguments             | Description                                                                                                                                          | Example                                               |
-| ------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| describe            | name, runner, context | Describe a testsuite with *name* and *context*, where context defaults to an empty string.                                                           | `describe("ts1", runner, "Component")...`             |
-| describe<T>         | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T.                                                                  | `describe<Component>("ts2", runner)...`               |
-| describeParallel    | name, runner, context | Describe a testsuite with *name* and *context*, where context defaults to an empty string. Tests inside this testsuite will be executed in parallel. | `describeParallel("ts3", runner, "Component")...`     |
-| describeParallel<T> | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T. Tests inside this testsuite will be executed in parallel.        | `describeParallel<Component>("ts2", runner)...`       |
-| test                | name, context, t_func | Create a testcase on a testsuite with *name* and *context*.                                                                                          | `...->test("test1", "Component::func", [](){...})...` |
-| test                | name, t_func          | Create a testcase on a testsuite with *name*, the context is inherited from the testsuite.                                                           | `...->test("test2", [](){...})...`                    |
-| test<T>             | name, t_func          | Create a testcase on a testsuite with *name*. The context is taken as the class-/typename of T.                                                      | `...->test<Component>("test3", [](){...})...`         |
-| setup               | t_func                | Set a *setup* function, which will be executed once before all testcases. Exceptions thrown by the given function will get ignored.                  | `...->setup([&]{ x = 10; ... })...`                   |
-| before              | t_func                | Set a *pre-test* function, which will be executed before each testcase. Exceptions thrown by the given function will get ignored.                    | `...->before([&]{ x = 10; ... })...`                  |
-| after               | t_func                | Set a *post-test* function, which will be executed after each testcase. Exceptions thrown by the given function will get ignored.                    | `...->after([&]{ x = 10; ... })...`                   |
+| Call                 | Arguments             | Description                                                                                                                                          | Example                                             |
+| -------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| describe             | name, context, runner | Describe a testsuite with *name* and *context*, where context defaults to "main".                                                                    | `describe("ts1", "Component")...`                   |
+| describe\<T>         | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T.                                                                  | `describe<Component>("ts2")...`                     |
+| describeParallel     | name, context, runner | Describe a testsuite with *name* and *context*, where context defaults to an empty string. Tests inside this testsuite will be executed in parallel. | `describeParallel("ts3", "Component")...`           |
+| describeParallel\<T> | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T. Tests inside this testsuite will be executed in parallel.        | `describeParallel<Component>("ts2")...`             |
+| test                 | name, context, func   | Create a testcase on a testsuite with *name* and *context*.                                                                                          | `...->test("test1", "Component::func", []{...})...` |
+| test                 | name, func            | Create a testcase on a testsuite with *name*, the context is inherited from the testsuite.                                                           | `...->test("test2", []{...})...`                    |
+| test\<T>             | name, func            | Create a testcase on a testsuite with *name*. The context is taken as the class-/typename of T.                                                      | `...->test<Component>("test3", []{...})...`         |
+| setup                | func                  | Set a *setup* function, which will be executed once before all testcases. Exceptions thrown by the given function will get ignored.                  | `...->setup([&]{ x = 10; ... })...`                 |
+| before               | func                  | Set a *pre-test* function, which will be executed before each testcase. Exceptions thrown by the given function will get ignored.                    | `...->before([&]{ x = 10; ... })...`                |
+| after                | func                  | Set a *post-test* function, which will be executed after each testcase. Exceptions thrown by the given function will get ignored.                    | `...->after([&]{ x = 10; ... })...`                 |
 
 ### Comparators
 
-**Note:** While the *Comparator* names the function itself, the *Shortwrite* is what you actually write in code.
+**Note:** While the *comparator* names the function itself, the *shortwrite* is what you actually write in code.
 
-| Comparator   | Shortwrite(s) | Description                                                                                                                                                                                                                                                                                                                                  |
-| ------------ | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| equals       | EQUALS, EQ    | Compare two values to be equal, using `operator ==`.                                                                                                                                                                                                                                                                                         |
-| unequals     | UNEQUALS, NE  | Compare two values not to be equal, using `operator !=`.                                                                                                                                                                                                                                                                                     |
-| greater_than | GREATER, GT   | Compare one value to be greater than another, using `operator >`.                                                                                                                                                                                                                                                                            |
-| less_than    | LESS, LT      | Compare one value to be less than another, using `operator <`.                                                                                                                                                                                                                                                                               |
-| in_range     | IN_RANGE, IN  | Check a value to be in range of any container. This means for containers to contain the value, for strings to contain a substring and for pairs to have it as one of the values. For the utility type [Interval](src/util/Interval.hpp), given lower and upper bounds, a value is then checked to be in this interval, including the bounds. |
+| Comparator   | Shortwrite(s) | Description                                                                                                                                          |
+| ------------ | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| equals       | EQUALS, EQ    | Compare two values to be equal, using `operator ==`.                                                                                                 |
+| unequals     | UNEQUALS, NE  | Compare two values not to be equal, using `operator !=`.                                                                                             |
+| greater_than | GREATER, GT   | Compare one value to be greater than another, using `operator >`.                                                                                    |
+| less_than    | LESS, LT      | Compare one value to be less than another, using `operator <`.                                                                                       |
+| in_range     | IN_RANGE, IN  | Check a value to be in range of any container. This means for containers (C++ "ranges") to contain the value and for strings to contain a substring. |
 
 ### Assertions
 
 **Note:** VALUE means the actual value you want to check. EXPECT means the expected value. COMP means the comparator. TYPE means a certain type, or class. FUNC means a function call, or instruction and is wrapped in a lambda with captions as reference. Hence FUNC can be a single instruction, or multiple split by `;`.
 
-| Assertion         | Parameters                | Description                                                                                                               | Example                                                          |
-| ----------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| assert            | VALUE, COMP, EXPECT       | Common assert. Assert successfull comparison of VALUE and EXPECT with COMP.                                               | `assert(1, LT, 1);`                                              |
-| assertT           | VALUE, COMP, EXPECT, TYPE | Same as *assert*, but parameters are specialized to TYPE, which allows implicit conversions.                              | `assertT("hell", IN, "hello", std::string);`                     |
-| assertEquals      | VALUE, EXPECT             | Wrapper for *assert* using *EQUALS* comparator.                                                                           | `assertEquals(1, 1);`                                            |
-| assertInInterval  | VALUE, LOWER, UPPER       | Wrapper for *assert* using *IN_RANGE* and an Interval with LOWER and UPPER as bounds. Check VALUE to be in this interval. | `assertInInterval(2, 1, 3);`                                     |
-| assertTrue        | VALUE                     | Assert VALUE to be *true*.                                                                                                | `assertTrue(true);`                                              |
-| assertFalse       | VALUE                     | Assert VALUE to be *false*.                                                                                               | `assertFalse(false);`                                            |
-| assertNotNull     | VALUE                     | Assert VALUE not to be *nullptr*.                                                                                         | `assertNotNull(&var);`                                           |
-| assertZero        | VALUE                     | Assert VALUE to be *0*, where the type of *0* will match VALUE's.                                                         | `assertZero(0.0);`                                               |
-| assertException   | FUNC, TYPE                | Assert FUNC to throw an exception of TYPE.                                                                                | `assertException(throw std::logic_error(""), std::logic_error);` |
-| assertNoExcept    | FUNC                      | Assert FUNC not to throw any exception.                                                                                   | `assertNoExcept(int i = 0);`                                     |
-| assertPerformance | FUNC, MILLIS              | Assert FUNC to run in MILLIS milliseconds at maximum. The FUNC call is not interrupted, if the time exceeds MILLIS.       | `assertPerformance(call(), 5);`                                  |
+| Assertion         | Parameters                | Description                                                                                                         | Example                                                          |
+| ----------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| assert            | VALUE, COMP, EXPECT       | Common assert. Assert successfull comparison of VALUE and EXPECT with COMP.                                         | `assert(1, LT, 1);`                                              |
+| assertT           | VALUE, COMP, EXPECT, TYPE | Same as *assert*, but parameters are specialized to TYPE, which allows implicit conversions.                        | `assertT("hell", IN, "hello", std::string);`                     |
+| assertEquals      | VALUE, EXPECT             | Wrapper for *assert* using *EQUALS* comparator.                                                                     | `assertEquals(1, 1);`                                            |
+| assertTrue        | VALUE                     | Assert VALUE to be *true*.                                                                                          | `assertTrue(true);`                                              |
+| assertFalse       | VALUE                     | Assert VALUE to be *false*.                                                                                         | `assertFalse(false);`                                            |
+| assertNotNull     | VALUE                     | Assert VALUE not to be *nullptr*.                                                                                   | `assertNotNull(&var);`                                           |
+| assertZero        | VALUE                     | Assert VALUE to be *0*, where the type of *0* will match VALUE's.                                                   | `assertZero(0.0);`                                               |
+| assertException   | FUNC, TYPE                | Assert FUNC to throw an exception of TYPE.                                                                          | `assertException(throw std::logic_error(""), std::logic_error);` |
+| assertNoExcept    | FUNC                      | Assert FUNC not to throw any exception.                                                                             | `assertNoExcept(int i = 0);`                                     |
+| assertPerformance | FUNC, MILLIS              | Assert FUNC to run in MILLIS milliseconds at maximum. The FUNC call is not interrupted, if the time exceeds MILLIS. | `assertPerformance(call(), 5);`                                  |
 
+### Test Modules
+
+The idea of test modules is to bind tests to an object instead of calling describes and tests directly, or in functions. In combination with the *SCTF_DEFAULT_MAIN(...)* macro, this allows to define tests with minimal effort.
+
+**Note:** *NAME* is just the name of the module, not a string. It is encouraged to apply a naming scheme like *test_myClass*. *FN* is a block of invacations to the *test* method you already know from the testsuites, but here it is not chainable and no template version is available. Also the context is taken from the modules name. *RUNNER* is optional if you only use the default runner.
+
+| Syntax               | Parameters       | Description                                                                                                                          | Example                                                                                                     |
+| -------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| TEST_MODULE          | NAME, FN, RUNNER | Define a test module. It is basically an object that binds a testsuite to its context.                                               | `TEST_MODULE(test_myClass,{test("myClass::function",[]{myClass mc;assertTrue(mc.function());});})`          |
+| TEST_MODULE_PARALLEL | NAME, FN, RUNNER | Define a test module where all tests will run in parallel. It is basically an object that binds a parallel testsuite to its context. | `TEST_MODULE_PARALLEL(test_myClass,{test("myClass::function",[]{myClass mc;assertTrue(mc.function());});})` |
 
 ## Usage
 
-This framework is header-only. To use it, just inlude the *sctf.hpp* header file.  
-In order to use the parallelization capability compile and link the test code with *'-fopenmp'* flag. As the asserts are wrapped with macros, statements inside assert statements, that have commata itself, must be written in braces.
-As floating-point comparison relies on an, so called, epsilon, we use the machine epsilon by default. But this may lead into false-negative test results, as it could be too accurate. In order to provide a custom epsilon, provide a macro in each compilation unit, which is called `SCTF_CUSTOM_EPSILON` and set it to a satisfying value (like 0.000001).
-A compiler invocation could look like "`g++ -std=c++0x test.cpp -fopenmp -DSCTF_CUSTOM_EPSILON=0.000001`".
+This framework is header-only. To use it, just inlude the *sctf.hpp* header file, either from source, what requires the include path set correctly, or the single file version from releases. In order to use the parallelization capability, you need to enable OpenMP at compilation. Have a look at the build pipeline, how this can be done for different platforms. As the asserts are wrapped with macros, statements inside assert statements, that have commata itself, must be written in braces.
 
-### Example
+### Floats
+
+As floating-point comparison relies on a so called epsilon, we use the machine epsilon by default. But this may lead into false-negative test results, as it could be too accurate. In order to use a custom epsilon, there are two ways to achieve this. First, you can provide a macro in each compilation unit, which is called `SCTF_EPSILON` with a satisfying value (like 0.000001). A compiler invocation could look like "`g++ -std=c++0x test.cpp -fopenmp -DSCTF_EPSILON=0.000001`". Or you provide it before including *sctf.hpp* like in the [example](#example) below. The second way, is to provide it as an extern variable. Therefor define `SCTF_EXTERN_EPSILON` before including *sctf.hpp* and than call the `SCTF_SET_EPSILON` macro with a satisfying value in the compilation unit (cpp file). The latter one allows more fine grained control over the required epsilon value.
+
+### Example (functional)
 
 ```cpp
 // ...
+/* 1st way for custom epsilon
+#define SCTF_EPSILON 0.000001
+*/
+/* 2nd way for custom epsilon
+#define SCTF_EXTERN_EPSILON
+...
+*/
+
 #include "sctf.hpp"
+
+/*
+...
+SCTF_SET_EPSILON(0.001)
+*/
 
 using namespace sctf;
 
 int main(int argc, char** argv)
 {
-    test::TestSuitesRunner runner;
-    auto rep = createPlainTextReporter(true);
+    auto rep = createPlainTextReporter(true, true);
     int x;
-    describe("test", runner)
+    describe("test")
         ->setup([&]{ x = 10; })
         ->test("1",
-               [&]() {
+               [&] {
                    assert(x+1, EQ, 11);
                    assertFalse(false);
                    assertT("hell", IN, "hello", std::string);
@@ -132,7 +161,7 @@ int main(int argc, char** argv)
                    assertNotNull(nullptr);
                })
         ->test("2",
-               []() {
+               [] {
                    assertEquals(0, 0);
                    assertZero(0.0);
                    assertTrue(true);
@@ -140,26 +169,52 @@ int main(int argc, char** argv)
                    assert(6, IN_RANGE, (std::pair<int, int>(1, 5)));
                })
         ->test("3",
-               []() {
+               [] {
                    assert('w', IN, std::string("world"));
                    assertInInterval(2, 1, 3);
                    assert(std::string(""), IN, std::vector<std::string>{""});
                    assert(1, IN, (util::Interval<int>{1, 2}));
                })
-        ->test("4", []() {
+        ->test("4", [] {
             assertException(throw std::logic_error(""), std::logic_error);
         });
-    return rep->report(runner);
+    return rep->report();
 }
+```
+
+### Example (OO)
+
+```cpp
+
+#include "sctf.hpp"
+
+class myClass {
+    bool function() {return true;}
+};
+
+void init() { /* dispatch your functional describe calls here */ }
+
+TEST_MODULE(test_myClass, {
+    test("myClass::function", [] {
+        myClass my;
+        assertTrue(my.function());
+    });
+    test("some other test", [] {
+        assertEquals(1, 1);
+    });
+})
+
+SCTF_DEFAULT_MAIN(createPlainTextReporter(true, true), init())
+// SCTF_DEFAULT_MAIN(createPlainTextReporter(true, true))
 ```
 
 ## Extending
 
-### Reporters
+### of reporters
 
-To add a new reporter just implement the [AbstractReporter](src/reporter/AbstractReporter.hpp) interface. Therefor create a class in *sctf::rep* namespace and inherit from *AbstractReporter*. Have a look at the preimplemented reporters, how this is exactly done.
+To add a new reporter just implement the [abstract_reporter](include/reporter/abstract_reporter.hpp) interface. Have a look at the preimplemented reporters, how this is exactly done.
 
-### Comparators
+### of comparators
 
 To add a new comparator you basically just need to invoke two macros.
 For example:
@@ -171,36 +226,36 @@ PROVIDE_COMPARATOR(pred, PRE)
 
 This will create a generic comparator function for you. The syntax is as follows:
 `COMPARATOR(NAME, CONSTRAINT, PREDICATE)`, where *NAME* is the function name. *CONSTRAINT* is a string representing what it does and is used for reporting. *PREDICATE* is the actual comparison.
-If you need some more complex comparators, have a look at the [in_range](src/comparator/inrange.hpp) to see how it is implemented.
+If you need some more complex comparators, have a look at the [in_range](include/comparator/inrange.hpp) to see how it is implemented.
 
 To specialize a comparator for custom types, which do not provide a respective operator, just specialize the comparator template. For example:
 
 ```cpp
 namespace sctf {
-namespace comp {
+namespace _ {
     template<>
     Comparison equals<Custom>(const Custom& value, const Custom& expect)
     {
         return value.hash() == expect.hash()
                ? success
-               : Comparison(equals_comp_str, util::serialize(value),
-                            util::serialize(expect));
+               : Comparison(equals_comp_str, to_string(value),
+                            to_string(expect));
     }
 }
 }
 ```
 
-### Serialization
+### Stringify values
 
-To allow proper reporting, every asserted value/type needs to be serialized, or stringified somehow. If you need to serialize custom types in a certain way, just specialize the [serialize](src/util/serialize.hpp) template. For example:
+To allow proper reporting, every asserted value/type needs to be stringified somehow. This framework has an approach to convert every value to string if possible, else the typename is used. If you need to handle custom types in a certain way, just specialize the [to_string](include/common/stringify.hpp) template. For example:
 
 ```cpp
 namespace sctf
 {
-namespace util
+namespace _
 {
     template<>
-    inline std::string serialize<Custom>(const Custom& arg)
+    inline std::string to_string<Custom>(const Custom& arg)
     {
         return arg.get_id();
     }
@@ -210,33 +265,8 @@ namespace util
 
 ## Contributing
 
-Contribution to this project is always welcome. To keep the framework clean, we have branches for different purposes.
-Generally the *master* branch is the release branch, which consists only of the framework sources and some necessary files, like the license etc. and is always coherent to the latest release.
-The *release-candidate* branch contains the newest framework code, waiting for to be released.
-The *testing* branch is not only the development branch, but also contains the actual tests for this framework and a CI setup.
-The *gh-pages* branch is used for the GitHub page and contains examples, documentation etc.
-
-### Workflow
-
-Whenever a change is made to the code, these change must be made against the *testing* branch. If and only if those changes pass through the CI run, a merge to *testing* and *release-candidate* is allowed. When merging to *master* or *release-candidate* it must be assured that only changes to the actual framework are applied, neither tests, nor CI files, nor docs - with some exceptions - should appear there.
-Altough this looks kinda complicated, the basic idea behind it is to sepparate contents.
-So *testing* is basically a copy of *release-candidate*, but contains tests and CI setup. Hence they should always correlate to each other.
-
-So here is the basic workflow.
-
-+ Checkout a new branch based on current *testing*
-+ Provide your changes
-+ Create a PR from your branch to *testing*
-+ Iff the status is green and the PR is approved, do merge
-+ Create a PR from *testing* to *release-candidate*
-+ Assure only changes to the actual framework code or README is applied to *release-candidate*
-+ Iff this is assured and approved, do merge and keep *testing*
-+ Tag and push from *release-candidate* a new version (rc) accordingly
-+ Create a PR from *release-candidate* to *master*
-+ Iff the rc is approved, do merge and keep *release-candidate*
-+ Tag and push from *master* a new release version accordingly
-+ Adjust the docs in *gh-pages* if necessary
+Contribution to this project is always welcome.
 
 #### Footnote
 
-I (Jarthianur) have implemented this framework, intentionally, to test my own C++ projects, with an fundamental and extendable API. Nevertheless anybody, finding this framework useful, may use, or even extend and contribute to it.
+I have implemented this framework, intentionally, to test my own C++ projects, with an fundamental and extendable API. Nevertheless anybody, finding this framework useful, may use, or even extend and contribute to it.
