@@ -115,7 +115,7 @@ void reflexive_tests()
         int c = 200;
         /* workaround: see https://github.com/Jarthianur/simple-cpp-test-framework/issues/25 for
            details */
-#    if __cplusplus >= 201703L && defined(__clang__)
+#    ifdef __clang__
         c = 250;
 #    endif
         assertPerformance(ts->run(), c);
