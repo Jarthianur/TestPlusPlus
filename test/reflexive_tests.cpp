@@ -23,7 +23,6 @@
 
 #include <chrono>
 #include <cstddef>
-#include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -106,40 +105,21 @@ void reflexive_tests()
 
     describe<testsuite_parallel>("TestSuiteParallel")->test("parallel run", [] {
         testsuite_shared ts = testsuite_parallel::create("ts", "ctx");
-        ts->test("", [] { 
-            #ifdef _OPENMP
-            std::cout << "RUN ON THREAD " << omp_get_thread_num() << " OF " << omp_get_num_threads() << std::endl;
-            #endif
-            std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
-        ts->test("", [] {
-            #ifdef _OPENMP
-            std::cout << "RUN ON THREAD " << omp_get_thread_num() << " OF " << omp_get_num_threads() << std::endl;
-            #endif
-             assertTrue(false); });
-        ts->test("", [] { 
-            #ifdef _OPENMP
-            std::cout << "RUN ON THREAD " << omp_get_thread_num() << " OF " << omp_get_num_threads() << std::endl;
-            #endif
-            throw std::logic_error(""); });
-        ts->test("", [] {
-            #ifdef _OPENMP
-            std::cout << "RUN ON THREAD " << omp_get_thread_num() << " OF " << omp_get_num_threads() << std::endl;
-            #endif
-             std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
-        ts->test("", [] {
-            #ifdef _OPENMP
-            std::cout << "RUN ON THREAD " << omp_get_thread_num() << " OF " << omp_get_num_threads() << std::endl;
-            #endif
-             assertTrue(false); });
-        ts->test("", [] { 
-            #ifdef _OPENMP
-            std::cout << "RUN ON THREAD " << omp_get_thread_num() << " OF " << omp_get_num_threads() << std::endl;
-            #endif
-            throw std::logic_error(""); });
+        ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
+        ts->test("", [] { assertTrue(false); });
+        ts->test("", [] { throw std::logic_error(""); });
+        ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
+        ts->test("", [] { assertTrue(false); });
+        ts->test("", [] { throw std::logic_error(""); });
 #ifdef _OPENMP
-        std::cout << "MAX THREADS: " << omp_get_max_threads() << std::endl;
-        assertPerformance(ts->run(), 200);
-        assert(ts->time(), LT, 200);
+        int c = 200;
+        /* workaround: see https://github.com/Jarthianur/simple-cpp-test-framework/issues/25 for
+           details */
+#    if __cplusplus >= 201703L && defined(__clang__)
+        c = 250;
+#    endif
+        assertPerformance(ts->run(), c);
+        assert(ts->time(), LT, c);
 #else
         ts->run();
         double t = 0.0;
