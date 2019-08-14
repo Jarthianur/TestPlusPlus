@@ -23,6 +23,7 @@
 
 #include <chrono>
 #include <cstddef>
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -105,13 +106,38 @@ void reflexive_tests()
 
     describe<testsuite_parallel>("TestSuiteParallel")->test("parallel run", [] {
         testsuite_shared ts = testsuite_parallel::create("ts", "ctx");
-        ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
-        ts->test("", [] { assertTrue(false); });
-        ts->test("", [] { throw std::logic_error(""); });
-        ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
-        ts->test("", [] { assertTrue(false); });
-        ts->test("", [] { throw std::logic_error(""); });
+        ts->test("", [] { 
+            #ifdef _OPENMP
+            std::cout << "RUN ON THREAD " << omp_get_thread_num() << " OF " << omp_get_num_threads() << std::endl;
+            #endif
+            std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
+        ts->test("", [] {
+            #ifdef _OPENMP
+            std::cout << "RUN ON THREAD " << omp_get_thread_num() << " OF " << omp_get_num_threads() << std::endl;
+            #endif
+             assertTrue(false); });
+        ts->test("", [] { 
+            #ifdef _OPENMP
+            std::cout << "RUN ON THREAD " << omp_get_thread_num() << " OF " << omp_get_num_threads() << std::endl;
+            #endif
+            throw std::logic_error(""); });
+        ts->test("", [] {
+            #ifdef _OPENMP
+            std::cout << "RUN ON THREAD " << omp_get_thread_num() << " OF " << omp_get_num_threads() << std::endl;
+            #endif
+             std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
+        ts->test("", [] {
+            #ifdef _OPENMP
+            std::cout << "RUN ON THREAD " << omp_get_thread_num() << " OF " << omp_get_num_threads() << std::endl;
+            #endif
+             assertTrue(false); });
+        ts->test("", [] { 
+            #ifdef _OPENMP
+            std::cout << "RUN ON THREAD " << omp_get_thread_num() << " OF " << omp_get_num_threads() << std::endl;
+            #endif
+            throw std::logic_error(""); });
 #ifdef _OPENMP
+        std::cout << "MAX THREADS: " << omp_get_max_threads() << std::endl;
         assertPerformance(ts->run(), 200);
         assert(ts->time(), LT, 200);
 #else
