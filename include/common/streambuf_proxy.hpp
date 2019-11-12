@@ -40,7 +40,8 @@ public:
      * @brief Switch the underlying buffer on construction.
      * @param stream The stream to capture
      */
-    streambuf_proxy(std::ostream& stream) : m_orig_buf(stream.rdbuf(this)), m_orig_stream(stream) {}
+    streambuf_proxy(std::ostream& stream_) : m_orig_buf(stream_.rdbuf(this)), m_orig_stream(stream_)
+    {}
 
     /**
      * @brief Restore the original streambuffer on destruction.
@@ -73,9 +74,9 @@ protected:
      * @param c The character to write
      * @return the character on success, else EOF
      */
-    virtual int_type overflow(int_type c) override
+    virtual int_type overflow(int_type c_) override
     {
-        return m_buffer.sputc(std::stringbuf::traits_type::to_char_type(c));
+        return m_buffer.sputc(std::stringbuf::traits_type::to_char_type(c_));
     }
 
     /**
@@ -84,9 +85,9 @@ protected:
      * @param n The length of the sequence
      * @return The number of characters written
      */
-    virtual std::streamsize xsputn(const char* s, std::streamsize n) override
+    virtual std::streamsize xsputn(char const* s_, std::streamsize n_) override
     {
-        return m_buffer.sputn(s, n);
+        return m_buffer.sputn(s_, n_);
     }
 
     /// @brief The original underlying buffer of the captured stream
@@ -98,7 +99,6 @@ protected:
     /// @brief The internal buffer
     std::stringbuf m_buffer;
 };
-
 }  // namespace _
 }  // namespace sctf
 

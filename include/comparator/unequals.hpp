@@ -47,10 +47,10 @@ constexpr const char* unequals_comp_str = "to be unequals";
  * @return true if value is unequals expect, else false
  */
 template<typename V, typename E = V, ENABLE_IF(NOT IS_FLOAT(V) AND IS_UNEQUAL_COMPARABLE(V, E))>
-static comparison unequals(const V& value, const E& expect)
+static comparison unequals(V const& val_, E const& expect_)
 {
-    return value != expect ? success :
-                             comparison(unequals_comp_str, to_string(value), to_string(expect));
+    return val_ != expect_ ? SUCCESS :
+                             comparison(unequals_comp_str, to_string(val_), to_string(expect_));
 }
 
 /**
@@ -66,10 +66,10 @@ static comparison unequals(const V& value, const E& expect)
 template<typename V, typename E = V,
          ENABLE_IF(NOT IS_FLOAT(V) AND NOT IS_UNEQUAL_COMPARABLE(V, E)
                        AND                 IS_EQUAL_COMPARABLE(V, E))>
-static comparison unequals(const V& value, const E& expect)
+static comparison unequals(const V& val_, const E& expect_)
 {
-    return value == expect ? comparison(unequals_comp_str, to_string(value), to_string(expect)) :
-                             success;
+    return val_ == expect_ ? comparison(unequals_comp_str, to_string(val_), to_string(expect_)) :
+                             SUCCESS;
 }
 
 /**
@@ -82,18 +82,17 @@ static comparison unequals(const V& value, const E& expect)
  * @return true if value is unequals expect, else false
  */
 template<typename V, typename E = V, ENABLE_IF(IS_FLOAT(V) AND IS_FLOAT(E))>
-comparison unequals(const V& value, const E& expect)
+comparison unequals(const V& val_, const E& expect_)
 {
 #if defined(SCTF_EXTERN_EPSILON) || defined(SCTF_EPSILON)
     static V epsilon_ = static_cast<V>(epsilon);
 #else
     static V epsilon_ = std::numeric_limits<V>::epsilon();
 #endif
-    return (std::abs(value - expect) <= std::max(std::abs(value), std::abs(expect)) * epsilon_) ?
-               comparison(unequals_comp_str, to_string(value), to_string(expect)) :
-               success;
+    return (std::abs(val_ - expect_) <= std::max(std::abs(val_), std::abs(expect_)) * epsilon_) ?
+               comparison(unequals_comp_str, to_string(val_), to_string(expect_)) :
+               SUCCESS;
 }
-
 }  // namespace _
 }  // namespace sctf
 

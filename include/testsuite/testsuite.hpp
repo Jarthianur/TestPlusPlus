@@ -66,9 +66,9 @@ public:
      * @param context The context
      * @return a shared pointer to the created TestSuite
      */
-    static testsuite_shared create(const char* name, const char* context)
+    static testsuite_shared create(char const* name_, char const* ctx_)
     {
-        return testsuite_shared(new testsuite(name, context));
+        return testsuite_shared(new testsuite(name_, ctx_));
     }
 
     /**
@@ -84,12 +84,12 @@ public:
 
             SCTF_EXEC_SILENT(m_setup_func)
             std::for_each(m_testcases.begin(), m_testcases.end(),
-                          [this, &buf_cerr, &buf_cout](_::testcase& tc) {
-                              if (tc.state() == _::testcase::result::NONE)
+                          [this, &buf_cerr, &buf_cout](_::testcase& tc_) {
+                              if (tc_.state() == _::testcase::result::NONE)
                               {
                                   SCTF_EXEC_SILENT(m_pre_test_func)
-                                  tc();
-                                  switch (tc.state())
+                                  tc_();
+                                  switch (tc_.state())
                                   {
                                       case _::testcase::result::FAILED:
                                           ++m_stats.m_num_of_fails;
@@ -99,10 +99,10 @@ public:
                                           break;
                                       default: break;
                                   }
-                                  m_time += tc.duration();
+                                  m_time += tc_.duration();
                                   SCTF_EXEC_SILENT(m_post_test_func)
-                                  tc.set_cout(buf_cout.str());
-                                  tc.set_cerr(buf_cerr.str());
+                                  tc_.set_cout(buf_cout.str());
+                                  tc_.set_cerr(buf_cerr.str());
                                   buf_cout.clear();
                                   buf_cerr.clear();
                               }
@@ -119,9 +119,9 @@ public:
      * @return this as shared pointer
      */
     template<typename T>
-    testsuite_shared test(const char* name, _::test_function&& t_func)
+    testsuite_shared test(char const* name_, _::test_function&& fn_)
     {
-        m_testcases.push_back(_::testcase(name, _::name_for_type<T>(), std::move(t_func)));
+        m_testcases.push_back(_::testcase(name_, _::name_for_type<T>(), std::move(fn_)));
         m_state = execution_state::PENDING;
         return shared_from_this();
     }
@@ -133,9 +133,9 @@ public:
      * @param t_func The test function
      * @return this as shared pointer
      */
-    testsuite_shared test(const char* name, const char* context, _::test_function&& t_func)
+    testsuite_shared test(char const* name_, char const* ctx_, _::test_function&& fn_)
     {
-        m_testcases.push_back(_::testcase(name, context, std::move(t_func)));
+        m_testcases.push_back(_::testcase(name_, ctx_, std::move(fn_)));
         m_state = execution_state::PENDING;
         return shared_from_this();
     }
@@ -147,9 +147,9 @@ public:
      * @param t_func The test function
      * @return this as shared pointer
      */
-    testsuite_shared test(const char* name, _::test_function&& t_func)
+    testsuite_shared test(char const* name_, _::test_function&& fn_)
     {
-        m_testcases.push_back(_::testcase(name, m_context, std::move(t_func)));
+        m_testcases.push_back(_::testcase(name_, m_context, std::move(fn_)));
         m_state = execution_state::PENDING;
         return shared_from_this();
     }
@@ -160,9 +160,9 @@ public:
      * @param t_func The function
      * @return this as shared pointer
      */
-    testsuite_shared setup(_::test_function&& t_func)
+    testsuite_shared setup(_::test_function&& fn_)
     {
-        m_setup_func = std::move(t_func);
+        m_setup_func = std::move(fn_);
         return shared_from_this();
     }
 
@@ -172,9 +172,9 @@ public:
      * @param t_func The function
      * @return this as shared pointer
      */
-    testsuite_shared before(_::test_function&& t_func)
+    testsuite_shared before(_::test_function&& fn_)
     {
-        m_pre_test_func = std::move(t_func);
+        m_pre_test_func = std::move(fn_);
         return shared_from_this();
     }
 
@@ -184,9 +184,9 @@ public:
      * @param t_func The function
      * @return this as shared pointer
      */
-    testsuite_shared after(_::test_function&& t_func)
+    testsuite_shared after(_::test_function&& fn_)
     {
-        m_post_test_func = std::move(t_func);
+        m_post_test_func = std::move(fn_);
         return shared_from_this();
     }
 
@@ -194,7 +194,7 @@ public:
      * @brief Get the testsuite name.
      * @return The name
      */
-    inline const char* name() const
+    inline char const* name() const
     {
         return m_name;
     }
@@ -203,7 +203,7 @@ public:
      * @brief Get the testsuite timestamp.
      * @return The timestamp
      */
-    inline const std::chrono::system_clock::time_point& timestamp() const
+    inline std::chrono::system_clock::time_point const& timestamp() const
     {
         return m_timestamp;
     }
@@ -212,7 +212,7 @@ public:
      * @brief Get the test statistics.
      * @return the TestStats
      */
-    inline const _::statistics& statistics() const
+    inline _::statistics const& statistics() const
     {
         return m_stats;
     }
@@ -230,7 +230,7 @@ public:
      * @brief Get the TestCases.
      * @return the test cases
      */
-    inline const std::vector<_::testcase>& testcases() const
+    inline std::vector<_::testcase> const& testcases() const
     {
         return m_testcases;
     }
@@ -252,18 +252,18 @@ protected:
      * @param name The name/description
      * @param context The context description
      */
-    testsuite(const char* name, const char* context)
-        : m_name(name), m_context(context), m_timestamp(std::chrono::system_clock::now())
+    testsuite(char const* name_, char const* ctx_)
+        : m_name(name_), m_context(ctx_), m_timestamp(std::chrono::system_clock::now())
     {}
 
     /// @brief The name/description
-    const char* m_name;
+    char const* m_name;
 
     /// @brief The context description.
-    const char* m_context;
+    char const* m_context;
 
     /// @brief The start timestamp
-    const std::chrono::system_clock::time_point m_timestamp;
+    std::chrono::system_clock::time_point const m_timestamp;
 
     /// @brief The accumulated runtime of all tests.
     double m_time = 0.0;

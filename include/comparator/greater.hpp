@@ -27,7 +27,7 @@
 /**
  * Define a greater comparator
  */
-COMPARATOR(greater_than, "to be greater than", value > expect)
+COMPARATOR(greater_than, "to be greater than", actual_value > expected_value)
 
 /**
  * Provide a Comparator shortwrite.

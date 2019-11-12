@@ -43,14 +43,14 @@ void test_traits()
         throw_if_not_streamable<std::ostringstream, void_type>();
         throw Failure("Given type should be not streamable");
     }
-    catch (const std::logic_error&)
+    catch (std::logic_error const&)
     {}
     try
     {
         throw_if_not_streamable<std::ostringstream, not_streamable>();
         throw Failure("Given type should be not streamable");
     }
-    catch (const std::logic_error&)
+    catch (std::logic_error const&)
     {}
 
     // is_iterable
@@ -60,14 +60,14 @@ void test_traits()
         throw_if_not_iterable<void_type>();
         throw Failure("Given type should be not iterable");
     }
-    catch (const std::logic_error&)
+    catch (std::logic_error const&)
     {}
     try
     {
         throw_if_not_iterable<not_iterable>();
         throw Failure("Given type should be not iterable");
     }
-    catch (const std::logic_error&)
+    catch (std::logic_error const&)
     {}
 
     // is_ordinal
@@ -77,14 +77,14 @@ void test_traits()
         throw_if_not_ordinal<void_type>();
         throw Failure("Given type should be not ordinal");
     }
-    catch (const std::logic_error&)
+    catch (std::logic_error const&)
     {}
     try
     {
         throw_if_not_ordinal<not_ordinal>();
         throw Failure("Given type should be not ordinal");
     }
-    catch (const std::logic_error&)
+    catch (std::logic_error const&)
     {}
 
     // is_equal_comparable
@@ -94,14 +94,14 @@ void test_traits()
         throw_if_not_equal_comparable<void_type>();
         throw Failure("Given type should be not equal-comparable");
     }
-    catch (const std::logic_error&)
+    catch (std::logic_error const&)
     {}
     try
     {
         throw_if_not_equal_comparable<not_equal_comparable>();
         throw Failure("Given type should be not equal-comparable");
     }
-    catch (const std::logic_error&)
+    catch (std::logic_error const&)
     {}
 
     // is_unequal_comparable
@@ -111,13 +111,13 @@ void test_traits()
         throw_if_not_unequal_comparable<void_type>();
         throw Failure("Given type should be not unequal-comparable");
     }
-    catch (const std::logic_error&)
+    catch (std::logic_error const&)
     {}
     try
     {
         throw_if_not_unequal_comparable<not_unequal_comparable>();
         throw Failure("Given type should be not unequal-comparable");
     }
-    catch (const std::logic_error&)
+    catch (std::logic_error const&)
     {}
 }

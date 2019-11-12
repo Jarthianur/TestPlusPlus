@@ -29,7 +29,7 @@ namespace sctf
 {
 namespace _
 {
-class abstract_reporter;
+class reporter;
 
 /**
  * @typedef test_function
@@ -40,10 +40,10 @@ using test_function = std::function<void()>;
 /**
  * @brief A wrapper for code locations.
  */
-struct location final
+struct code_location final
 {
-    const char* file;
-    const int   line;
+    char const* file;
+    int const   line;
 };
 
 /**
@@ -65,7 +65,7 @@ struct singleton final
  * @typedef AbstractReporter_shared
  * @brief Shared ptr to AbstractReporter
  */
-using reporter_shared = std::shared_ptr<_::abstract_reporter>;
+using reporter_shared = std::shared_ptr<_::reporter>;
 
 /**
  * @typedef TestSuite_shared

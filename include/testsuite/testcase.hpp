@@ -44,8 +44,8 @@ namespace _
 class testcase
 {
 public:
-    testcase(const testcase&) = delete;
-    testcase& operator=(const testcase&) = delete;
+    testcase(testcase const&) = delete;
+    testcase& operator=(testcase const&) = delete;
 
     ~testcase() noexcept = default;
 
@@ -55,21 +55,21 @@ public:
      * @param context The context of the test function
      * @param t_func The test function
      */
-    testcase(const char* name, const char* context, test_function&& t_func)
-        : m_name(name), m_context(context), m_test_func(std::move(t_func))
+    testcase(char const* name_, char const* ctx_, test_function&& fn_)
+        : m_name(name_), m_context(ctx_), m_test_func(std::move(fn_))
     {}
 
     /**
      * @brief Move-constructor
      * @param other The other TestCase
      */
-    testcase(testcase&& other)
-        : m_name(other.m_name),
-          m_context(other.m_context),
-          m_state(other.m_state),
-          m_duration(other.m_duration),
-          m_err_msg(std::move(other.m_err_msg)),
-          m_test_func(std::move(other.m_test_func))
+    testcase(testcase&& other_)
+        : m_name(other_.m_name),
+          m_context(other_.m_context),
+          m_state(other_.m_state),
+          m_duration(other_.m_duration),
+          m_err_msg(std::move(other_.m_err_msg)),
+          m_test_func(std::move(other_.m_test_func))
     {}
 
     /**
@@ -77,14 +77,14 @@ public:
      * @param other The other TestCase
      * @return this
      */
-    testcase& operator=(testcase&& other)
+    testcase& operator=(testcase&& other_)
     {
-        m_name      = other.m_name;
-        m_context   = other.m_context;
-        m_state     = other.m_state;
-        m_duration  = other.m_duration;
-        m_err_msg   = std::move(other.m_err_msg);
-        m_test_func = std::move(other.m_test_func);
+        m_name      = other_.m_name;
+        m_context   = other_.m_context;
+        m_state     = other_.m_state;
+        m_duration  = other_.m_duration;
+        m_err_msg   = std::move(other_.m_err_msg);
+        m_test_func = std::move(other_.m_test_func);
         return *this;
     }
 
@@ -116,11 +116,11 @@ public:
             m_test_func();
             pass();
         }
-        catch (const assertion_failure& e)
+        catch (assertion_failure const& e)
         {
             fail(e.what());
         }
-        catch (const std::exception& e)
+        catch (std::exception const& e)
         {
             erroneous(e.what());
         }
@@ -153,7 +153,7 @@ public:
      * @brief Get the error message.
      * @return the error message
      */
-    inline const std::string& err_msg() const
+    inline std::string const& err_msg() const
     {
         return m_err_msg;
     }
@@ -162,7 +162,7 @@ public:
      * @brief Get the name.
      * @return the name
      */
-    inline const char* name() const
+    inline char const* name() const
     {
         return m_name;
     }
@@ -171,7 +171,7 @@ public:
      * @brief Get the context.
      * @return the context
      */
-    inline const char* context() const
+    inline char const* context() const
     {
         return m_context;
     }
@@ -180,25 +180,25 @@ public:
      * @brief Set the captured output from stdout.
      * @param str The output
      */
-    inline void set_cout(const std::string& str)
+    inline void set_cout(std::string const& str_)
     {
-        m_cout = str;
+        m_cout = str_;
     }
 
     /**
      * @brief Set the captured output from stderr.
      * @param str The output
      */
-    inline void set_cerr(const std::string& str)
+    inline void set_cerr(std::string const& str_)
     {
-        m_cerr = str;
+        m_cerr = str_;
     }
 
     /**
      * @brief Get the output from stdout.
      * @return The output
      */
-    inline const std::string& cout() const
+    inline std::string const& cout() const
     {
         return m_cout;
     }
@@ -207,7 +207,7 @@ public:
      * @brief Get the output from stderr.
      * @return The output
      */
-    inline const std::string& cerr() const
+    inline std::string const& cerr() const
     {
         return m_cerr;
     }
@@ -225,27 +225,27 @@ private:
      * @brief Fail this test.
      * @param msg The failure reason
      */
-    inline void fail(const char* msg)
+    inline void fail(char const* msg_)
     {
         m_state   = result::FAILED;
-        m_err_msg = msg;
+        m_err_msg = msg_;
     }
 
     /**
      * @brief Fail this test with an error.
      * @param error The error msg
      */
-    inline void erroneous(const char* error = "unknown error")
+    inline void erroneous(char const* err_ = "unknown error")
     {
         m_state   = result::ERROR;
-        m_err_msg = error;
+        m_err_msg = err_;
     }
 
     /// @brief The testcase name
-    const char* m_name;
+    char const* m_name;
 
     /// @brief The testcase context
-    const char* m_context;
+    char const* m_context;
 
     /// @brief The test state
     result m_state = result::NONE;
@@ -265,7 +265,6 @@ private:
     /// @brief The test function
     test_function m_test_func;
 };
-
 }  // namespace _
 }  // namespace sctf
 

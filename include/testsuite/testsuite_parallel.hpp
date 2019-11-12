@@ -45,9 +45,9 @@ public:
      * @param context The context
      * @return a shared pointer to the created TestSuiteParallel
      */
-    static testsuite_shared create(const char* name, const char* context)
+    static testsuite_shared create(char const* name_, char const* ctx_)
     {
-        return testsuite_shared(new testsuite_parallel(name, context));
+        return testsuite_shared(new testsuite_parallel(name_, ctx_));
     }
 
     /**
@@ -112,9 +112,8 @@ private:
      * @param name The name/description
      * @param context The context description
      */
-    testsuite_parallel(const char* name, const char* context) : testsuite(name, context) {}
+    testsuite_parallel(char const* name_, char const* ctx_) : testsuite(name_, ctx_) {}
 };
-
 }  // namespace sctf
 
 #endif  // SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP

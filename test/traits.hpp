@@ -40,9 +40,9 @@ struct void_type
 struct streamable
 {
     template<typename S>
-    friend auto operator<<(S& s, const streamable&) -> S&
+    friend auto operator<<(S& s_, streamable const&) -> S&
     {
-        return s;
+        return s_;
     }
 };
 
@@ -65,7 +65,7 @@ struct iterable
 {
     struct iterator
     {
-        bool operator!=(const iterator&) const noexcept
+        bool operator!=(iterator const&) const noexcept
         {
             return false;
         }
@@ -96,7 +96,7 @@ struct not_iterable
 {
     struct iterator
     {
-        bool      operator!=(const iterator&) const noexcept = delete;
+        bool      operator!=(iterator const&) const noexcept = delete;
         iterator& operator++()                               = delete;
         bool      operator*() const noexcept                 = delete;
     };
@@ -128,26 +128,26 @@ struct ordinal
 {
     ordinal() = default;
 
-    ordinal(bool v) : _v(v) {}
+    ordinal(bool v_) : m_v(v_) {}
 
-    bool operator<(const ordinal&) const noexcept
+    bool operator<(ordinal const&) const noexcept
     {
-        return _v;
+        return m_v;
     }
 
-    bool operator>(const ordinal&) const noexcept
+    bool operator>(ordinal const&) const noexcept
     {
-        return _v;
+        return m_v;
     }
 
 private:
-    bool _v = true;
+    bool m_v = true;
 };
 
 struct not_ordinal
 {
-    bool operator<(const ordinal&) const noexcept = delete;
-    bool operator>(const ordinal&) const noexcept = delete;
+    bool operator<(ordinal const&) const noexcept = delete;
+    bool operator>(ordinal const&) const noexcept = delete;
 };
 
 template<typename T, ENABLE_IF(NOT IS_ORDINAL(T))>
@@ -166,40 +166,40 @@ struct equal_comparable
 {
     equal_comparable() = default;
 
-    equal_comparable(bool v) : _v(v) {}
+    equal_comparable(bool v_) : m_v(v_) {}
 
-    bool operator==(const equal_comparable&) const noexcept
+    bool operator==(equal_comparable const&) const noexcept
     {
-        return _v;
+        return m_v;
     }
 
 private:
-    bool _v = true;
+    bool m_v = true;
 };
 
 struct equal_unequal_comparable
 {
     equal_unequal_comparable() = default;
 
-    equal_unequal_comparable(bool v) : _v(v) {}
+    equal_unequal_comparable(bool v_) : m_v(v_) {}
 
-    bool operator==(const equal_unequal_comparable&) const noexcept
+    bool operator==(equal_unequal_comparable const&) const noexcept
     {
-        return _v;
+        return m_v;
     }
 
-    bool operator!=(const equal_unequal_comparable&) const noexcept
+    bool operator!=(equal_unequal_comparable const&) const noexcept
     {
-        return _v;
+        return m_v;
     }
 
 private:
-    bool _v = true;
+    bool m_v = true;
 };
 
 struct not_equal_comparable
 {
-    bool operator==(const equal_comparable&) const noexcept = delete;
+    bool operator==(equal_comparable const&) const noexcept = delete;
 };
 
 template<typename T, ENABLE_IF(NOT IS_EQUAL_COMPARABLE(T, T))>
@@ -218,20 +218,20 @@ struct unequal_comparable
 {
     unequal_comparable() = default;
 
-    unequal_comparable(bool v) : _v(v) {}
+    unequal_comparable(bool v_) : m_v(v_) {}
 
-    bool operator!=(const unequal_comparable&) const noexcept
+    bool operator!=(unequal_comparable const&) const noexcept
     {
-        return _v;
+        return m_v;
     }
 
 private:
-    bool _v = true;
+    bool m_v = true;
 };
 
 struct not_unequal_comparable
 {
-    bool operator!=(const unequal_comparable&) const noexcept = delete;
+    bool operator!=(unequal_comparable const&) const noexcept = delete;
 };
 
 template<typename T, ENABLE_IF(NOT IS_UNEQUAL_COMPARABLE(T, T))>

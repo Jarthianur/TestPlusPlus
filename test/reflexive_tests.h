@@ -29,11 +29,11 @@
 
 void reflexive_tests();
 
-TEST_MODULE(test_sequential_module, { test("test", [] { assertTrue(true); }); })
+TEST_MODULE(test_sequential_module, { test("test", [] { ASSERT_TRUE(true); }); })
 
 TEST_MODULE_PARALLEL(test_parallel_module, {
-    test("1", [] { assertTrue(true); });
-    test("2", [] { assertTrue(true); });
+    test("1", [] { ASSERT_TRUE(true); });
+    test("2", [] { ASSERT_TRUE(true); });
 })
 
 #endif  // TEST_REFLEXIVE_TESTS_H_

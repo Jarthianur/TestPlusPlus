@@ -23,7 +23,7 @@
 #define SCTF_REPORTER_HTML_REPORTER_HPP
 
 #include "common/types.hpp"
-#include "reporter/abstract_reporter.hpp"
+#include "reporter/reporter.hpp"
 #include "testsuite/statistics.hpp"
 #include "testsuite/testcase.hpp"
 #include "testsuite/testsuite.hpp"
@@ -51,7 +51,7 @@ namespace sctf
 /**
  * @brief Concrete reporter featuring HTML format.
  */
-class html_reporter : public _::abstract_reporter
+class html_reporter : public _::reporter
 {
 public:
     ~html_reporter() noexcept override = default;
@@ -60,47 +60,45 @@ public:
      * @brief Constructor
      * @param stream The stream to write to
      */
-    explicit html_reporter(std::ostream& stream) : abstract_reporter(stream) {}
+    explicit html_reporter(std::ostream& stream_) : reporter(stream_) {}
 
     /**
      * @brief Constructor
      * @param fname The file to write to
      */
-    explicit html_reporter(const char* fname) : abstract_reporter(fname) {}
+    explicit html_reporter(char const* fname_) : reporter(fname_) {}
 
 protected:
     /**
      * @brief Implement AbstractReporter#report_ts
      */
-    void report_ts(const testsuite_shared ts) override
+    void report_ts(testsuite_shared const ts_) override
     {
-        *this << "<h3>" << ts->name() << "</h3>"
-              << "<p>Tests: " << ts->statistics().tests()
-              << " Failures: " << ts->statistics().failures()
-              << " Errors: " << ts->statistics().errors() << " Time: " << ts->time()
+        *this << "<h3>" << ts_->name() << "</h3>"
+              << "<p>Tests: " << ts_->statistics().tests()
+              << " Failures: " << ts_->statistics().failures()
+              << " Errors: " << ts_->statistics().errors() << " Time: " << ts_->time()
               << "ms</p><table><thead>" << TR << TH << "Name" << TH_ << TH << "Context" << TH_ << TH
               << "Time" << TH_ << TH << "Status" << TH_ << TR_ << "</thead><tbody>";
-
-        abstract_reporter::report_ts(ts);
-
+        reporter::report_ts(ts_);
         *this << "</tbody></table>";
     }
 
     /**
      * @brief Implement AbstractReporter#report_tc
      */
-    void report_tc(const _::testcase& tc) override
+    void report_tc(_::testcase const& tc_) override
     {
         std::string status;
-        switch (tc.state())
+        switch (tc_.state())
         {
             case _::testcase::result::ERROR: status = "error"; break;
             case _::testcase::result::FAILED: status = "failed"; break;
             case _::testcase::result::PASSED: status = "passed"; break;
             default: break;
         }
-        *this << "<tr class=\"" << status << "\">" << TD << tc.name() << TD_ << TD << tc.context()
-              << TD_ << TD << tc.duration() << "ms" << TD_ << TD << status << TD_ << TR_;
+        *this << "<tr class=\"" << status << "\">" << TD << tc_.name() << TD_ << TD << tc_.context()
+              << TD_ << TD << tc_.duration() << "ms" << TD_ << TD << status << TD_ << TR_;
     }
 
     /**
@@ -131,9 +129,9 @@ protected:
  * @param stream The stream to use, defaults to stdout
  * @return a shared pointer to the reporter
  */
-static reporter_shared createHtmlReporter(std::ostream& stream = std::cout)
+static reporter_shared create_html_reporter(std::ostream& stream_ = std::cout)
 {
-    return std::make_shared<html_reporter>(stream);
+    return std::make_shared<html_reporter>(stream_);
 }
 
 /**
@@ -141,11 +139,10 @@ static reporter_shared createHtmlReporter(std::ostream& stream = std::cout)
  * @param file The filename to use
  * @return a shared pointer to the reporter
  */
-static reporter_shared createHtmlReporter(const char* file)
+static reporter_shared create_html_reporter(char const* file_)
 {
-    return std::make_shared<html_reporter>(file);
+    return std::make_shared<html_reporter>(file_);
 }
-
 }  // namespace sctf
 
 #undef TD

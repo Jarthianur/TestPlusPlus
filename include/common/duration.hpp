@@ -37,8 +37,8 @@ struct duration final
     /**
      * @brief Set fixed start timepoint on construction.
      */
-    duration() : _start(std::chrono::steady_clock::now()) {}
-    ~duration() noexcept {}
+    duration() : m_start(std::chrono::steady_clock::now()) {}
+    ~duration() noexcept = default;
 
     /**
      * @brief Get the actual duration since start time in milliseconds.
@@ -46,13 +46,13 @@ struct duration final
      */
     double get()
     {
-        return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - _start)
+        return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - m_start)
             .count();
     }
 
-protected:
+private:
     /// @brief start timepoint
-    const std::chrono::steady_clock::time_point _start;
+    const std::chrono::steady_clock::time_point m_start;
 };
 
 }  // namespace _

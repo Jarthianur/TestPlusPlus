@@ -43,8 +43,8 @@ public:
      * @param file The source file where the assertion took place
      * @param line The source line of the assertion
      */
-    assertion_failure(const std::string& msg, const location& loc)
-        : std::exception(), m_msg(msg + " at " + loc.file + ":" + std::to_string(loc.line))
+    assertion_failure(std::string const& msg_, code_location const& loc_)
+        : std::exception(), m_msg(msg_ + " at " + loc_.file + ":" + std::to_string(loc_.line))
     {}
 
     virtual ~assertion_failure() noexcept override = default;
@@ -60,7 +60,7 @@ public:
 
 protected:
     /// @brief The error message
-    const std::string m_msg;
+    std::string const m_msg;
 };
 
 }  // namespace _

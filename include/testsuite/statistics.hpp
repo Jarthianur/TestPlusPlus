@@ -89,7 +89,6 @@ protected:
     /// @brief The number of erroneous tests.
     std::size_t m_num_of_errs = 0;
 };
-
 }  // namespace _
 }  // namespace sctf
 

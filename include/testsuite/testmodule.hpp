@@ -35,27 +35,27 @@ namespace _
 class test_module
 {
 protected:
-    test_module(const testsuite_shared& ts) : m_ts(ts) {}
+    test_module(testsuite_shared const& ts_) : m_ts(ts_) {}
     virtual ~test_module() noexcept = default;
 
-    inline void test(const char* name, _::test_function&& fn)
+    inline void test(char const* name_, _::test_function&& fn_)
     {
-        m_ts->test(name, std::move(fn));
+        m_ts->test(name_, std::move(fn_));
     }
 
-    inline void setup(_::test_function&& fn)
+    inline void setup(_::test_function&& fn_)
     {
-        m_ts->setup(std::move(fn));
+        m_ts->setup(std::move(fn_));
     }
 
-    inline void before(_::test_function&& fn)
+    inline void before(_::test_function&& fn_)
     {
-        m_ts->before(std::move(fn));
+        m_ts->before(std::move(fn_));
     }
 
-    inline void after(_::test_function&& fn)
+    inline void after(_::test_function&& fn_)
     {
-        m_ts->after(std::move(fn));
+        m_ts->after(std::move(fn_));
     }
 
     testsuite_shared m_ts;
@@ -99,22 +99,22 @@ protected:
  * @param FN The test function body, which is a block of calls to `test(...)`
  * @param ... Allows to optionally pass a runner
  */
-#define TEST_MODULE_PARALLEL(NAME, FN, ...)                                                \
-    class NAME : public sctf::_::test_module                                               \
-    {                                                                                      \
-    public:                                                                                \
-        NAME() : sctf::_::test_module(sctf::describeParallel(#NAME, #NAME, ##__VA_ARGS__)) \
-        {                                                                                  \
-            FN;                                                                            \
-        }                                                                                  \
-        ~NAME() noexcept override = default;                                               \
-    };                                                                                     \
-    namespace sctf                                                                         \
-    {                                                                                      \
-    namespace _                                                                            \
-    {                                                                                      \
-    static const auto& modp_##NAME = singleton<NAME>::instance();                          \
-    }                                                                                      \
+#define TEST_MODULE_PARALLEL(NAME, FN, ...)                                                 \
+    class NAME : public sctf::_::test_module                                                \
+    {                                                                                       \
+    public:                                                                                 \
+        NAME() : sctf::_::test_module(sctf::describe_parallel(#NAME, #NAME, ##__VA_ARGS__)) \
+        {                                                                                   \
+            FN;                                                                             \
+        }                                                                                   \
+        ~NAME() noexcept override = default;                                                \
+    };                                                                                      \
+    namespace sctf                                                                          \
+    {                                                                                       \
+    namespace _                                                                             \
+    {                                                                                       \
+    static const auto& modp_##NAME = singleton<NAME>::instance();                           \
+    }                                                                                       \
     }
 
 #endif  // SCTF_TESTSUITE_TESTMODULE_HPP

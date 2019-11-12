@@ -27,7 +27,7 @@
 /**
  * Define a less comparator.
  */
-COMPARATOR(less_than, "to be less than", value < expect)
+COMPARATOR(less_than, "to be less than", actual_value < expected_value)
 
 /**
  * Provide a Comparator shortwrite.

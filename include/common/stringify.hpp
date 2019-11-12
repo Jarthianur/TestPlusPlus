@@ -42,7 +42,7 @@ namespace _
  * @return the typename as string
  */
 template<typename T>
-static const char* name_for_type()
+static char const* name_for_type()
 {
     static thread_local std::string name;
     if (name.length() > 0)
@@ -50,12 +50,12 @@ static const char* name_for_type()
         return name.c_str();
     }
 #if defined(__GNUG__) || defined(__clang__)
-    const std::string sig(__PRETTY_FUNCTION__);
-    const auto        b = sig.rfind("T = ") + 4;
+    std::string const sig(__PRETTY_FUNCTION__);
+    auto const        b = sig.rfind("T = ") + 4;
     name                = sig.substr(b, sig.rfind(']') - b);
     name.erase(std::remove(name.begin(), name.end(), ' '), name.end());
 #else
-    const std::string sig(typeid(T).name());
+    std::string const sig(typeid(T).name());
     auto              b = sig.find("struct ");
     if (b != std::string::npos)
     {
@@ -82,10 +82,10 @@ static const char* name_for_type()
  * @return the element as string
  */
 template<typename T, ENABLE_IF(IS_STREAMABLE(T, std::ostringstream) AND NOT IS_FLOAT(T))>
-std::string to_string(const T& arg)
+std::string to_string(T const& arg_)
 {
     std::ostringstream oss;
-    oss << arg;
+    oss << arg_;
     return oss.str();
 }
 
@@ -96,10 +96,10 @@ std::string to_string(const T& arg)
  * @return the element as string
  */
 template<typename T, ENABLE_IF(IS_STREAMABLE(T, std::ostringstream) AND IS_FLOAT(T))>
-std::string to_string(const T& arg)
+std::string to_string(T const& arg_)
 {
     std::ostringstream oss;
-    oss << std::setprecision(std::numeric_limits<T>::max_digits10) << arg;
+    oss << std::setprecision(std::numeric_limits<T>::max_digits10) << arg_;
     return oss.str();
 }
 
@@ -110,7 +110,7 @@ std::string to_string(const T& arg)
  * @return the element as string
  */
 template<typename T, ENABLE_IF(NOT IS_STREAMABLE(T, std::ostringstream))>
-std::string to_string(const T&)
+std::string to_string(T const&)
 {
     return name_for_type<T>();
 }
@@ -120,7 +120,7 @@ std::string to_string(const T&)
  * @param unused
  * @return "0"
  */
-inline std::string to_string(const std::nullptr_t&)
+inline std::string to_string(std::nullptr_t const&)
 {
     return "0";
 }
@@ -130,11 +130,10 @@ inline std::string to_string(const std::nullptr_t&)
  * @param arg The bool to serialize
  * @return the bool as string
  */
-inline std::string to_string(const bool& arg)
+inline std::string to_string(bool const& arg)
 {
     return arg ? "true" : "false";
 }
-
 }  // namespace _
 }  // namespace sctf
 

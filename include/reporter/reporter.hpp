@@ -57,10 +57,10 @@ namespace _
 /**
  * @brief Report testsuites in a format specified by concrete reporter types.
  */
-class abstract_reporter
+class reporter
 {
 public:
-    virtual ~abstract_reporter() noexcept = default;
+    virtual ~reporter() noexcept = default;
 
     /**
      * @brief Generate report.
@@ -68,16 +68,16 @@ public:
      * @note Executes runner's pending TestSuite.
      * @return the sum of failed tests and errors
      */
-    std::size_t report(runner& runner = runner::default_instance())
+    std::size_t report(runner& runner_ = runner::default_instance())
     {
         m_abs_errs  = 0;
         m_abs_fails = 0;
         m_abs_tests = 0;
         m_abs_time  = 0.0;
 
-        runner.run();
+        runner_.run();
         begin_report();
-        std::for_each(runner.testsuites().begin(), runner.testsuites().end(),
+        std::for_each(runner_.testsuites().begin(), runner_.testsuites().end(),
                       [this](const testsuite_shared& ts) {
                           m_abs_errs += ts->statistics().errors();
                           m_abs_fails += ts->statistics().failures();
@@ -94,14 +94,14 @@ protected:
      * @brief Constructor
      * @param stream The out-stream to report to
      */
-    explicit abstract_reporter(std::ostream& stream) : mr_out_stream(stream) {}
+    explicit reporter(std::ostream& stream_) : mr_out_stream(stream_) {}
 
     /**
      * @brief Constructor
      * @param fname The filename where to report to
      * @throw std::runtime_error if the file cannot be opened for writing
      */
-    explicit abstract_reporter(const char* fname) : m_out_file(fname), mr_out_stream(m_out_file)
+    explicit reporter(char const* fname_) : m_out_file(fname_), mr_out_stream(m_out_file)
     {
         if (!mr_out_stream)
         {
@@ -113,9 +113,9 @@ protected:
      * @brief Generate report for a given TestSuite.
      * @param ts The TestSuite
      */
-    inline virtual void report_ts(const testsuite_shared ts)
+    inline virtual void report_ts(testsuite_shared const ts_)
     {
-        std::for_each(ts->testcases().begin(), ts->testcases().end(),
+        std::for_each(ts_->testcases().begin(), ts_->testcases().end(),
                       [this](const _::testcase& tc) { report_tc(tc); });
     }
 
@@ -123,7 +123,7 @@ protected:
      * @brief Generate report for a given TestCase.
      * @param tc The TestCase
      */
-    virtual void report_tc(const testcase& tc) = 0;
+    virtual void report_tc(testcase const& tc_) = 0;
 
     /**
      * @brief Generate the intro of a report.
@@ -141,9 +141,9 @@ protected:
      * @param _1 The element to write
      */
     template<typename T>
-    std::ostream& operator<<(const T& _1)
+    std::ostream& operator<<(T const& t_)
     {
-        mr_out_stream << _1;
+        mr_out_stream << t_;
         return mr_out_stream;
     }
 
@@ -165,7 +165,6 @@ protected:
     /// @brief The accumulated runtime.
     double m_abs_time = 0;
 };
-
 }  // namespace _
 }  // namespace sctf
 

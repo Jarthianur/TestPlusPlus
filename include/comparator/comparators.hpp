@@ -56,40 +56,40 @@ namespace _
 struct comparison final
 {
 #if __cplusplus >= 201402L
-    constexpr comparison() : _failure(nullopt) {}
+    constexpr comparison() : m_failure(nullopt) {}
 
     comparison(const char* comp_str, const std::string& value, const std::string& expect)
-        : _failure("Expected '" + value + "' " + comp_str + " '" + expect + "'")
+        : m_failure("Expected '" + value + "' " + comp_str + " '" + expect + "'")
     {}
 
     explicit operator bool()
     {
-        return !_failure;
+        return !m_failure;
     }
 
     const std::string& operator*() const
     {
-        return *_failure;
+        return *m_failure;
     }
 
-protected:
-    const optional<std::string> _failure;
+private:
+    optional<std::string> const m_failure;
 #else
-    constexpr comparison() : _success(true) {}
+    constexpr comparison() : m_success(true) {}
 
-    comparison(const char* comp_str, const std::string& value, const std::string& expect)
-        : _success(false)
+    comparison(char const* comp_str_, std::string const& val_, std::string const& expect_)
+        : m_success(false)
     {
         std::string msg;
-        msg.reserve(15 + std::strlen(comp_str) + value.length() + expect.length());
+        msg.reserve(15 + std::strlen(comp_str_) + val_.length() + expect_.length());
         msg = "Expected '";
-        msg.append(value).append("' ").append(comp_str).append(" '").append(expect).append("'");
+        msg.append(val_).append("' ").append(comp_str_).append(" '").append(expect_).append("'");
         error() = msg;
     }
 
     explicit operator bool()
     {
-        return _success;
+        return m_success;
     }
 
     const std::string& operator*() const
@@ -97,8 +97,8 @@ protected:
         return error();
     }
 
-protected:
-    const bool _success;
+private:
+    bool const m_success;
 
     std::string& error() const
     {
@@ -115,13 +115,13 @@ protected:
  * @tparam E The right hand type
  */
 template<typename V, typename E = V>
-using comparator = comparison (*)(const V&, const E&);
+using comparator = comparison (*)(V const&, E const&);
 
 /// @brief Default successful comparison.
 #if __cplusplus >= 201402L
-#    define success comparison()
+#    define SUCCESS comparison()
 #else
-constexpr comparison success = comparison();
+constexpr comparison SUCCESS = comparison();
 #endif
 
 #ifdef SCTF_EPSILON
@@ -159,19 +159,20 @@ extern double        epsilon;
  * @note In PRED the two elements are named 'value' and 'expect', where 'value' is the
  * actual value and 'expect' is the expected value.
  */
-#define COMPARATOR(NAME, COMPSTR, PRED)                                                   \
-    namespace sctf                                                                        \
-    {                                                                                     \
-    namespace _                                                                           \
-    {                                                                                     \
-    constexpr const char* NAME##_comp_str = COMPSTR;                                      \
-    template<typename V, typename E = V>                                                  \
-    static comparison NAME(const V& value, const E& expect)                               \
-    {                                                                                     \
-        return (PRED) ? success :                                                         \
-                        comparison(NAME##_comp_str, to_string(value), to_string(expect)); \
-    }                                                                                     \
-    }                                                                                     \
+#define COMPARATOR(NAME, COMPSTR, PRED)                                      \
+    namespace sctf                                                           \
+    {                                                                        \
+    namespace _                                                              \
+    {                                                                        \
+    constexpr char const* NAME##_comp_str = COMPSTR;                         \
+    template<typename V, typename E = V>                                     \
+    static comparison NAME(V const& actual_value, E const& expected_value)   \
+    {                                                                        \
+        return (PRED) ? SUCCESS :                                            \
+                        comparison(NAME##_comp_str, to_string(actual_value), \
+                                   to_string(expected_value));               \
+    }                                                                        \
+    }                                                                        \
     }
 
 /**

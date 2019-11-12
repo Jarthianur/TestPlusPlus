@@ -136,7 +136,6 @@ class is_unequal_comparable
 public:
     static const bool value = decltype(test<S, T>(0))::value;
 };
-
 }  // namespace _
 }  // namespace sctf
 
