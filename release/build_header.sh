@@ -14,7 +14,7 @@ FILES="../include/common/types.hpp
 ../include/testsuite/testsuite_parallel.hpp
 ../include/testsuite/runner.hpp
 ../include/testsuite/testmodule.hpp
-../include/reporter/abstract_reporter.hpp
+../include/reporter/reporter.hpp
 ../include/reporter/xml_reporter.hpp
 ../include/reporter/plaintext_reporter.hpp
 ../include/reporter/html_reporter.hpp
