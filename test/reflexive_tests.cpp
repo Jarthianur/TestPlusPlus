@@ -103,7 +103,7 @@ void reflexive_tests()
             ASSERT_T(*c, EQ, "Expected '1' to be unequals '1'", std::string);
         });
 
-    describe<testsuite_parallel>("TestSuiteParallel")->test("parallel run", [] {
+    describe<testsuite_parallel>("testsuite_parallel")->test("parallel run", [] {
         testsuite_shared ts = testsuite_parallel::create("ts", "ctx");
         ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
         ts->test("", [] { ASSERT_TRUE(false); });
@@ -136,7 +136,7 @@ void reflexive_tests()
         ASSERT_EQUALS(stat.successes(), 2);
     });
 
-    describe<testsuite>("TestSuite")
+    describe<testsuite>("testsuite")
         ->test("creation",
                [] {
                    auto a = std::chrono::system_clock::now();
@@ -155,9 +155,9 @@ void reflexive_tests()
                    ts->test("tc1", [] {});
                    ts->test("tc2", "ctx2", [] {});
                    ts->test<int>("tc3", [] {});
-                   const testcase& tc1 = ts->testcases().at(0);
-                   const testcase& tc2 = ts->testcases().at(1);
-                   const testcase& tc3 = ts->testcases().at(2);
+                   testcase const& tc1 = ts->testcases().at(0);
+                   testcase const& tc2 = ts->testcases().at(1);
+                   testcase const& tc3 = ts->testcases().at(2);
                    ASSERT_T(tc1.context(), EQ, "ctx", std::string);
                    ASSERT_T(tc2.context(), EQ, "ctx2", std::string);
                    ASSERT_T(tc3.context(), EQ, "int", std::string);
@@ -192,7 +192,7 @@ void reflexive_tests()
             ASSERT_EQUALS(t, ts->time());
         });
 
-    describe<testcase>("TestCase")
+    describe<testcase>("testcase")
         ->test("creation",
                [] {
                    testcase tc("t1", "ctx", [] {});
@@ -231,7 +231,7 @@ void reflexive_tests()
             ASSERT_T(tc2.err_msg(), EQ, "unknown error", std::string);
         });
 
-    describe_parallel("serialize")
+    describe_parallel("stringify")
         ->test("bool",
                [] {
                    ASSERT_T(to_string(true), EQ, "true", std::string);
@@ -298,7 +298,7 @@ void reflexive_tests()
         });
 
     describe_parallel("test assertions")
-        ->test("assert",
+        ->test("ASSERT",
                [] {
                    // successful
                    ASSERT_NOTHROW(ASSERT(1, EQUALS, 1));
@@ -313,7 +313,7 @@ void reflexive_tests()
                    ASSERT_THROWS(ASSERT("hello", EQ, "world"), assertion_failure);
                    ASSERT_THROWS(ASSERT(2, IN, (std::vector<int>{1, 3})), assertion_failure);
                })
-        ->test("assertT",
+        ->test("ASSERT_T",
                [] {
                    // successful
                    ASSERT_NOTHROW(ASSERT_T(1, EQUALS, 1, unsigned int));
@@ -326,7 +326,7 @@ void reflexive_tests()
                    ASSERT_THROWS(ASSERT_T(1002.5, LESS, 100.3, double), assertion_failure);
                    ASSERT_THROWS(ASSERT_T("hello", EQ, "world", std::string), assertion_failure);
                })
-        ->test("assertEquals",
+        ->test("ASSERT_EQUALS",
                [] {
                    // successful
                    ASSERT_NOTHROW(ASSERT_EQUALS(1, 1));
@@ -339,7 +339,7 @@ void reflexive_tests()
                    ASSERT_THROWS(ASSERT_EQUALS("b", "a"), assertion_failure);
                    ASSERT_THROWS(ASSERT_EQUALS(1.2, 2.1), assertion_failure);
                })
-        ->test("assertTrue",
+        ->test("ASSERT_TRUE",
                [] {
                    // successful
                    ASSERT_NOTHROW(ASSERT_TRUE(true));
@@ -348,7 +348,7 @@ void reflexive_tests()
                    ASSERT_THROWS(ASSERT_TRUE(false), assertion_failure);
                    ASSERT_THROWS(ASSERT_TRUE(1 == 2), assertion_failure);
                })
-        ->test("assertFalse",
+        ->test("ASSERT_FALSE",
                [] {
                    // successful
                    ASSERT_NOTHROW(ASSERT_FALSE(false));
@@ -357,7 +357,7 @@ void reflexive_tests()
                    ASSERT_THROWS(ASSERT_FALSE(true), assertion_failure);
                    ASSERT_THROWS(ASSERT_FALSE(1 == 1), assertion_failure);
                })
-        ->test("assertNotNull",
+        ->test("ASSERT_NOT_NULL",
                [] {
                    // successful
                    int         i = 1;
@@ -370,7 +370,20 @@ void reflexive_tests()
                    ASSERT_THROWS(ASSERT_NOT_NULL(nullptr), assertion_failure);
                    ASSERT_THROWS(ASSERT_NOT_NULL(NULL), assertion_failure);
                })
-        ->test("assertZero",
+        ->test("ASSERT_NULL",
+               [] {
+                   // successful
+                   ASSERT_NOTHROW(ASSERT_NULL(nullptr));
+                   ASSERT_NOTHROW(ASSERT_NULL(NULL));
+                   // failing
+                   int         i = 1;
+                   double      d = 1.0;
+                   char const* s = "";
+                   ASSERT_THROWS(ASSERT_NULL(&i), assertion_failure);
+                   ASSERT_THROWS(ASSERT_NULL(&d), assertion_failure);
+                   ASSERT_THROWS(ASSERT_NULL(&s), assertion_failure);
+               })
+        ->test("ASSERT_ZERO",
                [] {
                    // successful
                    ASSERT_NOTHROW(ASSERT_ZERO(0));
@@ -379,7 +392,7 @@ void reflexive_tests()
                    ASSERT_THROWS(ASSERT_ZERO(1), assertion_failure);
                    ASSERT_THROWS(ASSERT_ZERO(0.1), assertion_failure);
                })
-        ->test("assertException",
+        ->test("ASSERT_THROWS",
                [] {
                    // successful
                    ASSERT_NOTHROW(ASSERT_THROWS(throw std::logic_error(""), std::logic_error));
@@ -389,7 +402,7 @@ void reflexive_tests()
                                  assertion_failure);
                    ASSERT_THROWS(ASSERT_THROWS(throw 1, std::logic_error), assertion_failure);
                })
-        ->test("assertNoExcept",
+        ->test("ASSERT_NOTHROW",
                [] {
                    // successful
                    ASSERT_NOTHROW(ASSERT_NOTHROW(return ));
@@ -397,7 +410,7 @@ void reflexive_tests()
                    ASSERT_THROWS(ASSERT_NOTHROW(throw std::runtime_error("")), assertion_failure);
                    ASSERT_THROWS(ASSERT_NOTHROW(throw 1), assertion_failure);
                })
-        ->test("assertPerformance", [] {
+        ->test("ASSERT_PERFORMANCE", [] {
             // successful
             ASSERT_NOTHROW(ASSERT_PERFORMANCE(return, 100));
             // failing
