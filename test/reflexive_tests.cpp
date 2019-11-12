@@ -123,11 +123,11 @@ void reflexive_tests()
 #else
         ts->run();
         double t = 0.0;
-        for (const auto& tc : ts->testcases())
+        for ( auto const& tc : ts->testcases())
         {
          t += tc.duration();
         }
-        assertEquals(ts->time(), t);
+        ASSERT_EQUALS(ts->time(), t);
 #endif
         statistics const& stat = ts->statistics();
         ASSERT_EQUALS(stat.tests(), 6);
