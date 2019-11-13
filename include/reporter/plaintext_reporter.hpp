@@ -69,7 +69,7 @@ protected:
     /**
      * @brief Implement AbstractReporter#report_ts
      */
-    void report_ts(testsuite_shared const ts_) override
+    void report_ts(testsuite_ptr const ts_) override
     {
         *this << "Run Testsuite [" << ts_->name() << "]; time = " << ts_->time() << "ms" << SCTF_LF;
 
@@ -141,7 +141,7 @@ protected:
  * @param color Whether to print colored text
  * @return a shared pointer to the reporter
  */
-static reporter_shared create_plaintext_reporter(std::ostream& stream_, bool color_ = false,
+static reporter_ptr create_plaintext_reporter(std::ostream& stream_, bool color_ = false,
                                                  bool capture_ = false)
 {
     return std::make_shared<plaintext_reporter>(stream_, color_, capture_);
@@ -153,7 +153,7 @@ static reporter_shared create_plaintext_reporter(std::ostream& stream_, bool col
  * @param color Whether to print colored text
  * @return a shared pointer to the reporter
  */
-static reporter_shared create_plaintext_reporter(bool color_ = false, bool capture_ = false)
+static reporter_ptr create_plaintext_reporter(bool color_ = false, bool capture_ = false)
 {
     return std::make_shared<plaintext_reporter>(std::cout, color_, capture_);
 }
@@ -164,7 +164,7 @@ static reporter_shared create_plaintext_reporter(bool color_ = false, bool captu
  * @param color Whether to print colored text
  * @return a shared pointer to the reporter
  */
-static reporter_shared create_plaintext_reporter(char const* file_, bool color_ = false,
+static reporter_ptr create_plaintext_reporter(char const* file_, bool color_ = false,
                                                  bool capture_ = false)
 {
     return std::make_shared<plaintext_reporter>(file_, color_, capture_);

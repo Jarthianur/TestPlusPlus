@@ -104,7 +104,7 @@ void reflexive_tests()
         });
 
     describe<testsuite_parallel>("testsuite_parallel")->test("parallel run", [] {
-        testsuite_shared ts = testsuite_parallel::create("ts", "ctx");
+        testsuite_ptr ts = testsuite_parallel::create("ts", "ctx");
         ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
         ts->test("", [] { ASSERT_TRUE(false); });
         ts->test("", [] { throw std::logic_error(""); });
@@ -141,13 +141,13 @@ void reflexive_tests()
                [] {
                    auto a = std::chrono::system_clock::now();
                    std::this_thread::sleep_for(std::chrono::seconds(1));
-                   testsuite_shared ts = testsuite::create("ts", "ctx");
+                   testsuite_ptr ts = testsuite::create("ts", "ctx");
                    ASSERT(ts->timestamp(), GT, a);
                    ASSERT_T(ts->name(), EQ, "ts", std::string);
                })
         ->test("meta functions",
                [] {
-                   testsuite_shared ts = testsuite::create("ts", "ctx");
+                   testsuite_ptr ts = testsuite::create("ts", "ctx");
                    int              i  = 0;
                    ts->setup([&i] { i = 1; });
                    ts->after([&i] { ++i; });
@@ -165,7 +165,7 @@ void reflexive_tests()
                    ASSERT_EQUALS(i, 1);
                })
         ->test("running", [] {
-            testsuite_shared ts = testsuite::create("ts", "ctx");
+            testsuite_ptr ts = testsuite::create("ts", "ctx");
             ts->test("", [] {});
             ts->test("", [] { ASSERT_TRUE(false); });
             ts->test("", [] { throw std::logic_error(""); });

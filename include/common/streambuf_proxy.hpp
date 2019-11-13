@@ -31,20 +31,21 @@ namespace sctf
 namespace _
 {
 /**
- * @brief Streambuffer proxy to capture everything sent to a stream.
+ * Streambuffer proxy to capture everything sent to a stream.
  */
 class streambuf_proxy : public std::streambuf
 {
 public:
     /**
-     * @brief Switch the underlying buffer on construction.
-     * @param stream The stream to capture
+     * Replace the underlying buffer of the stream.
+     * As long as this object lives, everything sent to be stream is captured.
      */
     streambuf_proxy(std::ostream& stream_) : m_orig_buf(stream_.rdbuf(this)), m_orig_stream(stream_)
     {}
 
     /**
-     * @brief Restore the original streambuffer on destruction.
+     * Restore the original buffer of the stream.
+     * After that, the stream is in its original state.
      */
     virtual ~streambuf_proxy() noexcept override
     {
@@ -52,8 +53,7 @@ public:
     }
 
     /**
-     * @brief Get the current buffer content.
-     * @return the buffer content as string
+     * Get the current buffer content.
      */
     std::string str() const
     {
@@ -61,7 +61,7 @@ public:
     }
 
     /**
-     * @brief Clear the buffer.
+     * Clear the buffer.
      */
     void clear()
     {
@@ -69,35 +69,19 @@ public:
     }
 
 protected:
-    /**
-     * @brief Write a single character into the buffer.
-     * @param c The character to write
-     * @return the character on success, else EOF
-     */
     virtual int_type overflow(int_type c_) override
     {
         return m_buffer.sputc(std::stringbuf::traits_type::to_char_type(c_));
     }
 
-    /**
-     * @brief Write a character sequence into the buffer.
-     * @param s The character sequence
-     * @param n The length of the sequence
-     * @return The number of characters written
-     */
     virtual std::streamsize xsputn(char const* s_, std::streamsize n_) override
     {
         return m_buffer.sputn(s_, n_);
     }
 
-    /// @brief The original underlying buffer of the captured stream
     std::streambuf* m_orig_buf;
-
-    /// @brief The captured stream
-    std::ostream& m_orig_stream;
-
-    /// @brief The internal buffer
-    std::stringbuf m_buffer;
+    std::ostream&   m_orig_stream;
+    std::stringbuf  m_buffer;
 };
 }  // namespace _
 }  // namespace sctf

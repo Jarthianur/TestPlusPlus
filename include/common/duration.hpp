@@ -29,20 +29,17 @@ namespace sctf
 namespace _
 {
 /**
- * @brief Measure time in milliseconds.
- * @note The start timepoint is fixed upon construction.
+ * Used to measure durations in milliseconds.
+ * The starting timepoint is fixed on construction.
  */
-struct duration final
+class duration final
 {
-    /**
-     * @brief Set fixed start timepoint on construction.
-     */
+public:
     duration() : m_start(std::chrono::steady_clock::now()) {}
     ~duration() noexcept = default;
 
     /**
-     * @brief Get the actual duration since start time in milliseconds.
-     * @return the milliseconds
+     * Get the duration since start in milliseconds.
      */
     double get()
     {
@@ -51,10 +48,8 @@ struct duration final
     }
 
 private:
-    /// @brief start timepoint
-    const std::chrono::steady_clock::time_point m_start;
+    std::chrono::steady_clock::time_point const m_start;
 };
-
 }  // namespace _
 }  // namespace sctf
 

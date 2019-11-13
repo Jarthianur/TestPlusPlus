@@ -78,7 +78,7 @@ public:
         runner_.run();
         begin_report();
         std::for_each(runner_.testsuites().begin(), runner_.testsuites().end(),
-                      [this](const testsuite_shared& ts) {
+                      [this](const testsuite_ptr& ts) {
                           m_abs_errs += ts->statistics().errors();
                           m_abs_fails += ts->statistics().failures();
                           m_abs_tests += ts->statistics().tests();
@@ -113,7 +113,7 @@ protected:
      * @brief Generate report for a given TestSuite.
      * @param ts The TestSuite
      */
-    inline virtual void report_ts(testsuite_shared const ts_)
+    inline virtual void report_ts(testsuite_ptr const ts_)
     {
         std::for_each(ts_->testcases().begin(), ts_->testcases().end(),
                       [this](const _::testcase& tc) { report_tc(tc); });

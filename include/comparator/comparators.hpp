@@ -49,25 +49,33 @@ namespace sctf
 namespace _
 {
 /**
- * @brief Result of an actual comparison performed by any comparator.
- * @note The error message may only be accessed, if the Comparison returns false to
- * conditions.
+ * Result of an actual comparison performed by any comparator.
+ * The error message may only be accessed, if the comparison returns false.
  */
 struct comparison final
 {
 #if __cplusplus >= 201402L
     constexpr comparison() : m_failure(nullopt) {}
 
-    comparison(const char* comp_str, const std::string& value, const std::string& expect)
-        : m_failure("Expected '" + value + "' " + comp_str + " '" + expect + "'")
+    /**
+     * Initialize the comparison as failed.
+     * @param comp_str_ The expression of the performed comparison
+     * @param val_      The actual value
+     * @param expect_   The expected value
+     */
+    comparison(char const* comp_str_, std::string const& val_, std::string const& expect_)
+        : m_failure("Expected '" + val_ + "' " + comp_str_ + " '" + expect_ + "'")
     {}
 
+    /**
+     *
+     */
     explicit operator bool()
     {
         return !m_failure;
     }
 
-    const std::string& operator*() const
+    std::string const& operator*() const
     {
         return *m_failure;
     }

@@ -35,7 +35,7 @@ namespace _
 class test_module
 {
 protected:
-    test_module(testsuite_shared const& ts_) : m_ts(ts_) {}
+    test_module(testsuite_ptr const& ts_) : m_ts(ts_) {}
     virtual ~test_module() noexcept = default;
 
     inline void test(char const* name_, _::test_function&& fn_)
@@ -58,7 +58,7 @@ protected:
         m_ts->after(std::move(fn_));
     }
 
-    testsuite_shared m_ts;
+    testsuite_ptr m_ts;
 };
 }  // namespace _
 }  // namespace sctf

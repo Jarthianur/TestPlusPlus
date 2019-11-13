@@ -32,26 +32,22 @@ namespace sctf
 namespace _
 {
 /**
- * @brief Thrown if an assertion fails.
+ * Used to be thrown when an assertion fails.
  */
 class assertion_failure : public std::exception
 {
 public:
     /**
-     * @brief Constructor.
-     * @param msg The base error message
-     * @param file The source file where the assertion took place
-     * @param line The source line of the assertion
+     * @param msg_ The error message
+     * @param loc_ The code location where the assertion took place
      */
     assertion_failure(std::string const& msg_, code_location const& loc_)
-        : std::exception(), m_msg(msg_ + " at " + loc_.file + ":" + std::to_string(loc_.line))
+        : m_msg(msg_ + " at " + loc_.file + ":" + std::to_string(loc_.line))
     {}
-
     virtual ~assertion_failure() noexcept override = default;
 
     /**
-     * @brief Get the error message.
-     * @return the message
+     * Get the error message.
      */
     inline const char* what() const noexcept override
     {
@@ -59,10 +55,8 @@ public:
     }
 
 protected:
-    /// @brief The error message
     std::string const m_msg;
 };
-
 }  // namespace _
 }  // namespace sctf
 

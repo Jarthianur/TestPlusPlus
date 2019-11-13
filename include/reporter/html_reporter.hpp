@@ -72,7 +72,7 @@ protected:
     /**
      * @brief Implement AbstractReporter#report_ts
      */
-    void report_ts(testsuite_shared const ts_) override
+    void report_ts(testsuite_ptr const ts_) override
     {
         *this << "<h3>" << ts_->name() << "</h3>"
               << "<p>Tests: " << ts_->statistics().tests()
@@ -129,7 +129,7 @@ protected:
  * @param stream The stream to use, defaults to stdout
  * @return a shared pointer to the reporter
  */
-static reporter_shared create_html_reporter(std::ostream& stream_ = std::cout)
+static reporter_ptr create_html_reporter(std::ostream& stream_ = std::cout)
 {
     return std::make_shared<html_reporter>(stream_);
 }
@@ -139,7 +139,7 @@ static reporter_shared create_html_reporter(std::ostream& stream_ = std::cout)
  * @param file The filename to use
  * @return a shared pointer to the reporter
  */
-static reporter_shared create_html_reporter(char const* file_)
+static reporter_ptr create_html_reporter(char const* file_)
 {
     return std::make_shared<html_reporter>(file_);
 }

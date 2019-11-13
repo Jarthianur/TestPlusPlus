@@ -37,9 +37,7 @@ namespace sctf
 namespace _
 {
 /**
- * @brief Resolve a more or less pretty type name.
- * @tparam The type
- * @return the typename as string
+ * Get a stringified name for every possible type.
  */
 template<typename T>
 static char const* name_for_type()
@@ -76,10 +74,8 @@ static char const* name_for_type()
 }
 
 /**
- * @brief Serialize streamable types.
- * @tparam T The type
- * @param arg The element to serialize
- * @return the element as string
+ * Get a printable string representation for any type, that is already convertable to string, but
+ * not a floatingpoint type.
  */
 template<typename T, ENABLE_IF(IS_STREAMABLE(T, std::ostringstream) AND NOT IS_FLOAT(T))>
 std::string to_string(T const& arg_)
@@ -90,10 +86,7 @@ std::string to_string(T const& arg_)
 }
 
 /**
- * @brief Serialize floating-point types.
- * @tparam T The type
- * @param arg The element to serialize
- * @return the element as string
+ * Get a printable string representation for any floatingpoint type.
  */
 template<typename T, ENABLE_IF(IS_STREAMABLE(T, std::ostringstream) AND IS_FLOAT(T))>
 std::string to_string(T const& arg_)
@@ -104,10 +97,8 @@ std::string to_string(T const& arg_)
 }
 
 /**
- * @brief Serialize not streamable types.
- * @tparam T The type
- * @param unused
- * @return the element as string
+ * Get a printable string representation for any type, that is not convertable to string.
+ * That is basically the typename.
  */
 template<typename T, ENABLE_IF(NOT IS_STREAMABLE(T, std::ostringstream))>
 std::string to_string(T const&)
@@ -116,9 +107,7 @@ std::string to_string(T const&)
 }
 
 /**
- * @brief Specialized serialize for nullptr.
- * @param unused
- * @return "0"
+ * Get a printable string representation for a null pointer.
  */
 inline std::string to_string(std::nullptr_t const&)
 {
@@ -126,9 +115,7 @@ inline std::string to_string(std::nullptr_t const&)
 }
 
 /**
- * @brief Specialized serialize for bool.
- * @param arg The bool to serialize
- * @return the bool as string
+ * Get a printable string representation for boolean type.
  */
 inline std::string to_string(bool const& arg)
 {

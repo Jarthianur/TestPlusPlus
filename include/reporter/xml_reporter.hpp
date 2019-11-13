@@ -57,20 +57,17 @@ protected:
     /**
      * @brief Implement AbstractReporter#report_ts
      */
-    void report_ts(testsuite_shared const ts_) override
+    void report_ts(testsuite_ptr const ts_) override
     {
         std::time_t stamp = std::chrono::system_clock::to_time_t(ts_->timestamp());
         char        buff[128];
         std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
-
         *this << SCTF_SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name()
               << "\" errors=\"" << ts_->statistics().errors() << "\" tests=\""
               << ts_->statistics().tests() << "\" failures=\"" << ts_->statistics().failures()
               << "\" skipped=\"0\" time=\"" << ts_->time() << "\" timestamp=\"" << buff << "\">"
               << SCTF_LF;
-
         reporter::report_ts(ts_);
-
         *this << SCTF_SPACE << "</testsuite>" << SCTF_LF;
     }
 
@@ -124,7 +121,7 @@ protected:
  * @param stream The stream to use, defaults to stdout
  * @return a shared pointer to the reporter
  */
-static reporter_shared create_xml_reporter(std::ostream& stream_ = std::cout)
+static reporter_ptr create_xml_reporter(std::ostream& stream_ = std::cout)
 {
     return std::make_shared<xml_reporter>(stream_);
 }
@@ -134,7 +131,7 @@ static reporter_shared create_xml_reporter(std::ostream& stream_ = std::cout)
  * @param file The filename to use
  * @return a shared pointer to the reporter
  */
-static reporter_shared create_xml_reporter(char const* file_)
+static reporter_ptr create_xml_reporter(char const* file_)
 {
     return std::make_shared<xml_reporter>(file_);
 }

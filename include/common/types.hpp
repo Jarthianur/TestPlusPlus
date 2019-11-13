@@ -31,14 +31,11 @@ namespace _
 {
 class reporter;
 
-/**
- * @typedef test_function
- * @brief Function schema passed to tests.
- */
+/// Type alias for a parameterless void function, which is used to wrap the actual tests.
 using test_function = std::function<void()>;
 
 /**
- * @brief A wrapper for code locations.
+ * Pack source file and line number together as a location in code.
  */
 struct code_location final
 {
@@ -47,33 +44,28 @@ struct code_location final
 };
 
 /**
- * @brief A singleton pattern implementation.
+ * Provide a singleton pattern implementation.
+ * The instance exists in global scope, thus it is not threadsafe by default.
  */
 template<typename T>
 struct singleton final
 {
-    static T& instance()
+    /**
+     * Get the actual singleton instance.
+     * Construction happens only once, on first call with forwarded arguments.
+     */
+    template<typename... Args>
+    static T& instance(Args&&... args_)
     {
-        static T instance;
+        static T instance(std::forward<Args>(args_)...);
         return instance;
     }
 };
-
 }  // namespace _
 
-/**
- * @typedef AbstractReporter_shared
- * @brief Shared ptr to AbstractReporter
- */
-using reporter_shared = std::shared_ptr<_::reporter>;
-
-/**
- * @typedef TestSuite_shared
- * @brief Shared ptr to TestSuite.
- */
 class testsuite;
-using testsuite_shared = std::shared_ptr<testsuite>;
-
+using reporter_ptr  = std::shared_ptr<_::reporter>;
+using testsuite_ptr = std::shared_ptr<testsuite>;
 }  // namespace sctf
 
 #endif  // SCTF_COMMON_TYPES_HPP

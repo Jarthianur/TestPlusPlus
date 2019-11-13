@@ -39,7 +39,7 @@ namespace sctf
 namespace _
 {
 /**
- * @brief Streambuffer proxy to capture everything sent to a stream in a multithreaded context with
+ * Streambuffer proxy to capture everything sent to a stream in a multithreaded context with
  * OpenMP.
  */
 class streambuf_proxy_omp : public std::streambuf
@@ -48,8 +48,8 @@ class streambuf_proxy_omp : public std::streambuf
 
 public:
     /**
-     * @brief Switch the underlying buffer on construction.
-     * @param stream The stream to capture
+     * Replace the underlying buffer of the stream.
+     * As long as this object lives, everything sent to be stream is captured.
      */
     streambuf_proxy_omp(std::ostream& stream_)
         : m_orig_buf(stream_.rdbuf(this)),
@@ -58,7 +58,8 @@ public:
     {}
 
     /**
-     * @brief Restore the original buffer on destruction.
+     * Restore the original buffer of the stream.
+     * After that, the stream is in its original state.
      */
     virtual ~streambuf_proxy_omp() noexcept override
     {
@@ -66,8 +67,7 @@ public:
     }
 
     /**
-     * @brief Get the current buffer content for the executing thread.
-     * @return The the buffer content as string
+     * Get the current buffer content for the executing thread.
      */
     std::string str() const
     {
@@ -75,7 +75,7 @@ public:
     }
 
     /**
-     * @brief Clear the buffer for the executing thread.
+     * Clear the buffer for the executing thread.
      */
     void clear()
     {
@@ -83,34 +83,18 @@ public:
     }
 
 protected:
-    /**
-     * @brief Write a single character into the buffer for the executing thread.
-     * @param c The character to write
-     * @return the character on success, else EOF
-     */
     virtual int_type overflow(int_type c_) override
     {
         return CURRENT_THREAD_BUFFER().sputc(std::stringbuf::traits_type::to_char_type(c_));
     }
 
-    /**
-     * @brief Write a character sequence into the buffer for the executing thread.
-     * @param s The character sequence
-     * @param n The length of the sequence
-     * @return The number of characters written
-     */
     virtual std::streamsize xsputn(char const* s_, std::streamsize n_) override
     {
         return CURRENT_THREAD_BUFFER().sputn(s_, n_);
     }
 
-    /// @brief The original underlying buffer of the captured stream
-    std::streambuf* m_orig_buf;
-
-    /// @brief The captured stream
-    std::ostream& m_orig_stream;
-
-    /// @brief The internal buffers per thread
+    std::streambuf*             m_orig_buf;
+    std::ostream&               m_orig_stream;
     std::vector<std::stringbuf> m_thd_buffers;
 };
 }  // namespace _

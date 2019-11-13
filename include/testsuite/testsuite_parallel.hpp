@@ -45,9 +45,9 @@ public:
      * @param context The context
      * @return a shared pointer to the created TestSuiteParallel
      */
-    static testsuite_shared create(char const* name_, char const* ctx_)
+    static testsuite_ptr create(char const* name_, char const* ctx_)
     {
-        return testsuite_shared(new testsuite_parallel(name_, ctx_));
+        return testsuite_ptr(new testsuite_parallel(name_, ctx_));
     }
 
     /**

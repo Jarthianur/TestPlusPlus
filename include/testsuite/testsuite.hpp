@@ -66,9 +66,9 @@ public:
      * @param context The context
      * @return a shared pointer to the created TestSuite
      */
-    static testsuite_shared create(char const* name_, char const* ctx_)
+    static testsuite_ptr create(char const* name_, char const* ctx_)
     {
-        return testsuite_shared(new testsuite(name_, ctx_));
+        return testsuite_ptr(new testsuite(name_, ctx_));
     }
 
     /**
@@ -119,7 +119,7 @@ public:
      * @return this as shared pointer
      */
     template<typename T>
-    testsuite_shared test(char const* name_, _::test_function&& fn_)
+    testsuite_ptr test(char const* name_, _::test_function&& fn_)
     {
         m_testcases.push_back(_::testcase(name_, _::name_for_type<T>(), std::move(fn_)));
         m_state = execution_state::PENDING;
@@ -133,7 +133,7 @@ public:
      * @param t_func The test function
      * @return this as shared pointer
      */
-    testsuite_shared test(char const* name_, char const* ctx_, _::test_function&& fn_)
+    testsuite_ptr test(char const* name_, char const* ctx_, _::test_function&& fn_)
     {
         m_testcases.push_back(_::testcase(name_, ctx_, std::move(fn_)));
         m_state = execution_state::PENDING;
@@ -147,7 +147,7 @@ public:
      * @param t_func The test function
      * @return this as shared pointer
      */
-    testsuite_shared test(char const* name_, _::test_function&& fn_)
+    testsuite_ptr test(char const* name_, _::test_function&& fn_)
     {
         m_testcases.push_back(_::testcase(name_, m_context, std::move(fn_)));
         m_state = execution_state::PENDING;
@@ -160,7 +160,7 @@ public:
      * @param t_func The function
      * @return this as shared pointer
      */
-    testsuite_shared setup(_::test_function&& fn_)
+    testsuite_ptr setup(_::test_function&& fn_)
     {
         m_setup_func = std::move(fn_);
         return shared_from_this();
@@ -172,7 +172,7 @@ public:
      * @param t_func The function
      * @return this as shared pointer
      */
-    testsuite_shared before(_::test_function&& fn_)
+    testsuite_ptr before(_::test_function&& fn_)
     {
         m_pre_test_func = std::move(fn_);
         return shared_from_this();
@@ -184,7 +184,7 @@ public:
      * @param t_func The function
      * @return this as shared pointer
      */
-    testsuite_shared after(_::test_function&& fn_)
+    testsuite_ptr after(_::test_function&& fn_)
     {
         m_post_test_func = std::move(fn_);
         return shared_from_this();

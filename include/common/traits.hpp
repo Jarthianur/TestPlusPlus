@@ -25,9 +25,7 @@
 #include <iterator>
 #include <type_traits>
 
-/**
- * Template enable_if convenience wrappers.
- */
+/// enable_if convenience wrappers for template declarations.
 #define ENABLE_IF(C) typename std::enable_if<C>::type* = nullptr
 #define AND &&
 #define OR ||
@@ -46,7 +44,7 @@ namespace sctf
 namespace _
 {
 /**
- * @brief Type trait to check for streaming operator compatibility.
+ * Type trait to check for streaming operator capability.
  * @tparam S The stream type
  * @tparam T The type to check for
  */
@@ -64,7 +62,7 @@ public:
 };
 
 /**
- * @brief Type trait to check for iterator capabilities.
+ * Type trait to check for iterator capabilities.
  * @tparam T The type to check for
  */
 template<typename T>
@@ -84,7 +82,7 @@ public:
 };
 
 /**
- * @brief Type trait to check for ordinal relation (operator<, operator>) capabilities.
+ * Type trait to check for ordinal relation (<, >) capabilities.
  * @tparam T The type to check for
  */
 template<typename T>
@@ -102,7 +100,7 @@ public:
 };
 
 /**
- * @brief Type trait to check for equality operator compatibility.
+ * Type trait to check for equality operator capability.
  * @tparam S The left hand type
  * @tparam T The right hand type
  */
@@ -120,7 +118,7 @@ public:
 };
 
 /**
- * @brief Type trait to check for unequality operator compatibility.
+ * Type trait to check for unequality operator capability.
  * @tparam S The left hand type
  * @tparam T The right hand type
  */
