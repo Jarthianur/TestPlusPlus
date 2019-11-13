@@ -101,8 +101,8 @@ public:
                                   }
                                   m_time += tc_.duration();
                                   SCTF_EXEC_SILENT(m_post_test_func)
-                                  tc_.set_cout(buf_cout.str());
-                                  tc_.set_cerr(buf_cerr.str());
+                                  tc_.cout(buf_cout.str());
+                                  tc_.cerr(buf_cerr.str());
                                   buf_cout.clear();
                                   buf_cerr.clear();
                               }

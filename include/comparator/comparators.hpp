@@ -50,11 +50,13 @@ namespace _
 {
 /**
  * Result of an actual comparison performed by any comparator.
- * The error message may only be accessed, if the comparison returns false.
  */
 struct comparison final
 {
 #if __cplusplus >= 201402L
+    /**
+     * Initialize the comparison as successful.
+     */
     constexpr comparison() : m_failure(nullopt) {}
 
     /**
@@ -68,13 +70,18 @@ struct comparison final
     {}
 
     /**
-     *
+     * Allow conversion to boolean.
+     * @return true, if comparison was successful, else false
      */
     explicit operator bool()
     {
         return !m_failure;
     }
 
+    /**
+     * Get the message describing the reason for failure.
+     * May only be called, if the comparison returns false.
+     */
     std::string const& operator*() const
     {
         return *m_failure;
@@ -116,16 +123,9 @@ private:
 #endif
 };
 
-/**
- * @typedef comparator
- * @brief Function pointer to function comparing two elements
- * @tparam V The left hand type
- * @tparam E The right hand type
- */
 template<typename V, typename E = V>
 using comparator = comparison (*)(V const&, E const&);
 
-/// @brief Default successful comparison.
 #if __cplusplus >= 201402L
 #    define SUCCESS comparison()
 #else
@@ -137,16 +137,14 @@ static double epsilon = SCTF_EPSILON;
 #elif defined(SCTF_EXTERN_EPSILON)
 extern double        epsilon;
 #endif
-
 }  // namespace _
 }  // namespace sctf
 
 /**
- * @def PROVIDE_COMPARATOR
- * @brief Provide a shortwrite function which returns the address of the respective
+ * Provide a shortwrite function which returns the address of the respective
  * comparator.
  * @param COMP The comparator function
- * @param NAME The final name, usually COMP in uppercase
+ * @param NAME The final shortwrite
  */
 #define PROVIDE_COMPARATOR(COMP, NAME)   \
     namespace sctf                       \
@@ -159,13 +157,12 @@ extern double        epsilon;
     }
 
 /**
- * @def COMPARATOR
- * @brief Create a comparator function.
- * @param NAME The final name of this function
+ * Create a comparator function.
+ * In PRED the two elements are named 'actual_value' and 'expected_value'.
+ * The comparison is considered successful if PRED returns true, while false results in failure.
+ * @param NAME    The name of this function
  * @param COMPSTR A string representing the comparison constraint, like "to be equals"
- * @param PRED The comparison predicate as code
- * @note In PRED the two elements are named 'value' and 'expect', where 'value' is the
- * actual value and 'expect' is the expected value.
+ * @param PRED    The comparison predicate / condition
  */
 #define COMPARATOR(NAME, COMPSTR, PRED)                                      \
     namespace sctf                                                           \
@@ -184,9 +181,8 @@ extern double        epsilon;
     }
 
 /**
- * @def SCTF_SET_EPSILON
- * @brief Define the epsilon value used by equality comparison of floating point numbers.
- * @note Only used when SCTF_EXTERN_EPSILON is defined.
+ * Define the epsilon value used by equality comparison of floating point numbers.
+ * Only used when SCTF_EXTERN_EPSILON is defined.
  * @param E The epsilon value
  */
 #define SCTF_SET_EPSILON(E) \

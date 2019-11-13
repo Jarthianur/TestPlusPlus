@@ -94,7 +94,7 @@ private:
  * @return a shared pointer to the created TestSuite
  */
 inline static testsuite_ptr describe_parallel(char const* name_, char const* ctx_ = "main",
-                                                 runner& runner_ = runner::default_instance())
+                                              runner& runner_ = runner::default_instance())
 {
     return runner_.register_ts(testsuite_parallel::create(name_, ctx_));
 }
@@ -109,7 +109,7 @@ inline static testsuite_ptr describe_parallel(char const* name_, char const* ctx
  */
 template<typename T>
 static testsuite_ptr describe_parallel(char const* name_,
-                                          runner&     runner_ = runner::default_instance())
+                                       runner&     runner_ = runner::default_instance())
 {
     return runner_.register_ts(testsuite_parallel::create(name_, _::name_for_type<T>()));
 }
@@ -123,7 +123,7 @@ static testsuite_ptr describe_parallel(char const* name_,
  * @return a shared pointer to the created TestSuite
  */
 inline static testsuite_ptr describe(char const* name_, char const* ctx_ = "main",
-                                        runner& runner_ = runner::default_instance())
+                                     runner& runner_ = runner::default_instance())
 {
     return runner_.register_ts(testsuite::create(name_, ctx_));
 }

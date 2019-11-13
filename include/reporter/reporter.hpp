@@ -34,20 +34,13 @@
 #include "testsuite/statistics.hpp"
 #include "testsuite/testsuite.hpp"
 
-/**
- * @def SCTF_LF
- * @brief Line feed
- */
 #ifdef _WIN32
 #    define SCTF_LF "\r\n"
 #else
 #    define SCTF_LF "\n"
 #endif
 
-/// @brief Spacing with two spaces
 #define SCTF_SPACE "  "
-
-/// @brief Spacing with four spaces
 #define SCTF_XSPACE "    "
 
 namespace sctf
@@ -55,7 +48,7 @@ namespace sctf
 namespace _
 {
 /**
- * @brief Report testsuites in a format specified by concrete reporter types.
+ * Abstract reporter type. Used as base class for specific reporter implementations.
  */
 class reporter
 {
@@ -63,9 +56,9 @@ public:
     virtual ~reporter() noexcept = default;
 
     /**
-     * @brief Generate report.
-     * @param runner The TestSuitesRunner to generate reports for
-     * @note Executes runner's pending TestSuite.
+     * Generate the report.
+     * As side effect, all pending testcases in runner_ are executed.
+     * @param runner_ Contains the testsuites to generate report for
      * @return the sum of failed tests and errors
      */
     std::size_t report(runner& runner_ = runner::default_instance())
@@ -78,29 +71,19 @@ public:
         runner_.run();
         begin_report();
         std::for_each(runner_.testsuites().begin(), runner_.testsuites().end(),
-                      [this](const testsuite_ptr& ts) {
-                          m_abs_errs += ts->statistics().errors();
-                          m_abs_fails += ts->statistics().failures();
-                          m_abs_tests += ts->statistics().tests();
-                          m_abs_time += ts->time();
-                          report_ts(ts);
+                      [this](testsuite_ptr const& ts_) {
+                          m_abs_errs += ts_->statistics().errors();
+                          m_abs_fails += ts_->statistics().failures();
+                          m_abs_tests += ts_->statistics().tests();
+                          m_abs_time += ts_->time();
+                          report_testsuite(ts_);
                       });
         end_report();
         return m_abs_errs + m_abs_fails;
     }
 
 protected:
-    /**
-     * @brief Constructor
-     * @param stream The out-stream to report to
-     */
     explicit reporter(std::ostream& stream_) : mr_out_stream(stream_) {}
-
-    /**
-     * @brief Constructor
-     * @param fname The filename where to report to
-     * @throw std::runtime_error if the file cannot be opened for writing
-     */
     explicit reporter(char const* fname_) : m_out_file(fname_), mr_out_stream(m_out_file)
     {
         if (!mr_out_stream)
@@ -109,37 +92,16 @@ protected:
         }
     }
 
-    /**
-     * @brief Generate report for a given TestSuite.
-     * @param ts The TestSuite
-     */
-    inline virtual void report_ts(testsuite_ptr const ts_)
+    inline virtual void report_testsuite(testsuite_ptr const ts_)
     {
         std::for_each(ts_->testcases().begin(), ts_->testcases().end(),
-                      [this](const _::testcase& tc) { report_tc(tc); });
+                      [this](const _::testcase& tc) { report_testcase(tc); });
     }
 
-    /**
-     * @brief Generate report for a given TestCase.
-     * @param tc The TestCase
-     */
-    virtual void report_tc(testcase const& tc_) = 0;
+    virtual void report_testcase(testcase const& tc_) = 0;
+    virtual void begin_report()                       = 0;
+    virtual void end_report()                         = 0;
 
-    /**
-     * @brief Generate the intro of a report.
-     */
-    virtual void begin_report() = 0;
-
-    /**
-     * @brief Generate the outro of a report.
-     */
-    virtual void end_report() = 0;
-
-    /**
-     * @brief Write to stream.
-     * @tparam Type of what to write to stream
-     * @param _1 The element to write
-     */
     template<typename T>
     std::ostream& operator<<(T const& t_)
     {
@@ -147,23 +109,12 @@ protected:
         return mr_out_stream;
     }
 
-    /// @brief The output file stream
     std::ofstream m_out_file;
-
-    /// @brief The output stream reference
     std::ostream& mr_out_stream;
-
-    /// @brief The amount of tests.
-    std::size_t m_abs_tests = 0;
-
-    /// @brief The amount of failed tests.
-    std::size_t m_abs_fails = 0;
-
-    /// @brief The amount of erroneous tests.
-    std::size_t m_abs_errs = 0;
-
-    /// @brief The accumulated runtime.
-    double m_abs_time = 0;
+    std::size_t   m_abs_tests = 0;
+    std::size_t   m_abs_fails = 0;
+    std::size_t   m_abs_errs  = 0;
+    double        m_abs_time  = 0;
 };
 }  // namespace _
 }  // namespace sctf

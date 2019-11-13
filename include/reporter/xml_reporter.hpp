@@ -34,7 +34,7 @@
 namespace sctf
 {
 /**
- * @brief Concrete reporter featuring JUnit like XML format.
+ * Reporter implementation with JUnit like XML format.
  */
 class xml_reporter : public _::reporter
 {
@@ -42,22 +42,17 @@ public:
     ~xml_reporter() noexcept override = default;
 
     /**
-     * @brief Constructor
-     * @param stream The stream to write to
+     * @param stream_  The stream to report to
      */
     explicit xml_reporter(std::ostream& stream_) : reporter(stream_) {}
 
     /**
-     * @brief Constructor
-     * @param fname The file to write to
+     * @param fname_   The name of the file where the report will be written
      */
     explicit xml_reporter(char const* fname_) : reporter(fname_) {}
 
 protected:
-    /**
-     * @brief Implement AbstractReporter#report_ts
-     */
-    void report_ts(testsuite_ptr const ts_) override
+    void report_testsuite(testsuite_ptr const ts_) override
     {
         std::time_t stamp = std::chrono::system_clock::to_time_t(ts_->timestamp());
         char        buff[128];
@@ -67,14 +62,11 @@ protected:
               << ts_->statistics().tests() << "\" failures=\"" << ts_->statistics().failures()
               << "\" skipped=\"0\" time=\"" << ts_->time() << "\" timestamp=\"" << buff << "\">"
               << SCTF_LF;
-        reporter::report_ts(ts_);
+        reporter::report_testsuite(ts_);
         *this << SCTF_SPACE << "</testsuite>" << SCTF_LF;
     }
 
-    /**
-     * @brief Implement AbstractReporter#report_tc
-     */
-    void report_tc(_::testcase const& tc_) override
+    void report_testcase(_::testcase const& tc_) override
     {
         *this << SCTF_XSPACE << "<testcase name=\"" << tc_.name() << "\" classname=\""
               << tc_.context() << "\" time=\"" << tc_.duration() << "\"";
@@ -95,31 +87,23 @@ protected:
         *this << SCTF_LF;
     }
 
-    /**
-     * @brief Implement AbstractReporter#begin_report
-     */
     void begin_report() override
     {
         *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << SCTF_LF << "<testsuites>"
               << SCTF_LF;
     }
 
-    /**
-     * @brief Implement AbstractReporter#end_report
-     */
     void end_report() override
     {
         *this << "</testsuites>" << SCTF_LF;
     }
 
-    /// @brief The incremental testsuite id
     std::size_t mutable m_id = 0;
 };
 
 /**
- * @brief Create a XmlReporter
- * @param stream The stream to use, defaults to stdout
- * @return a shared pointer to the reporter
+ * Create a xml reporter.
+ * @param stream_  The stream to report to (default: stdout)
  */
 static reporter_ptr create_xml_reporter(std::ostream& stream_ = std::cout)
 {
@@ -127,13 +111,12 @@ static reporter_ptr create_xml_reporter(std::ostream& stream_ = std::cout)
 }
 
 /**
- * @brief Create a XmlReporter
- * @param file The filename to use
- * @return a shared pointer to the reporter
+ * Create a xml reporter. The specified file will be overwritten if it already exists.
+ * @param fname_   The name of the file where the report will be written
  */
-static reporter_ptr create_xml_reporter(char const* file_)
+static reporter_ptr create_xml_reporter(char const* fname_)
 {
-    return std::make_shared<xml_reporter>(file_);
+    return std::make_shared<xml_reporter>(fname_);
 }
 }  // namespace sctf
 

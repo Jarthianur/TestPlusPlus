@@ -33,19 +33,8 @@ namespace sctf
 {
 namespace _
 {
-/// @brief The constraint string for unequals.
 constexpr const char* unequals_comp_str = "to be unequals";
 
-/**
- * @brief Check a value to be unequal to an expected.
- * @note Applies to all non-floating-point types for V, which provide an unequality
- * operator.
- * @tparam V The type of value
- * @tparam E The type of expect
- * @param value The value to check
- * @param expect The expected value
- * @return true if value is unequals expect, else false
- */
 template<typename V, typename E = V, ENABLE_IF(NOT IS_FLOAT(V) AND IS_UNEQUAL_COMPARABLE(V, E))>
 static comparison unequals(V const& val_, E const& expect_)
 {
@@ -53,16 +42,6 @@ static comparison unequals(V const& val_, E const& expect_)
                              comparison(unequals_comp_str, to_string(val_), to_string(expect_));
 }
 
-/**
- * @brief Check a value to be unequal to an expected.
- * @note Applies to all non-floating-point types for V, which provide an equality, but no
- * unequality operator.
- * @tparam V The type of value
- * @tparam E The type of expect
- * @param value The value to check
- * @param expect The expected value
- * @return true if value is unequals expect, else false
- */
 template<typename V, typename E = V,
          ENABLE_IF(NOT IS_FLOAT(V) AND NOT IS_UNEQUAL_COMPARABLE(V, E)
                        AND                 IS_EQUAL_COMPARABLE(V, E))>
@@ -72,15 +51,6 @@ static comparison unequals(const V& val_, const E& expect_)
                              SUCCESS;
 }
 
-/**
- * @brief Check a value to be unequal to an expected.
- * @note Applies to all floating-point types for V.
- * @tparam V The type of value
- * @tparam E The type of expect
- * @param value The value to check
- * @param expect The expected value
- * @return true if value is unequals expect, else false
- */
 template<typename V, typename E = V, ENABLE_IF(IS_FLOAT(V) AND IS_FLOAT(E))>
 comparison unequals(const V& val_, const E& expect_)
 {
@@ -96,9 +66,6 @@ comparison unequals(const V& val_, const E& expect_)
 }  // namespace _
 }  // namespace sctf
 
-/**
- * Provide a Comparator shortwrite.
- */
 PROVIDE_COMPARATOR(unequals, UNEQUALS)
 PROVIDE_COMPARATOR(unequals, NE)
 

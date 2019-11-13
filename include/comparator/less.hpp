@@ -24,14 +24,8 @@
 
 #include "comparator/comparators.hpp"
 
-/**
- * Define a less comparator.
- */
 COMPARATOR(less_than, "to be less than", actual_value < expected_value)
-
-/**
- * Provide a Comparator shortwrite.
- */
+PROVIDE_COMPARATOR(less_than, LESS_THAN)
 PROVIDE_COMPARATOR(less_than, LESS)
 PROVIDE_COMPARATOR(less_than, LT)
 

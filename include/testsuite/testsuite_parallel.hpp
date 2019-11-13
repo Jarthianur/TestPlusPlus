@@ -37,6 +37,9 @@ namespace sctf
 class testsuite_parallel : public testsuite
 {
 public:
+    testsuite_parallel(testsuite_parallel const&) = delete;
+    testsuite_parallel& operator=(testsuite_parallel const&) = delete;
+
     ~testsuite_parallel() noexcept override = default;
 
     /**
@@ -89,8 +92,8 @@ public:
                         }
                         tmp += tc.duration();
                         SCTF_EXEC_SILENT(m_post_test_func)
-                        tc.set_cout(mt_buf_cout.str());
-                        tc.set_cerr(mt_buf_cerr.str());
+                        tc.cout(mt_buf_cout.str());
+                        tc.cerr(mt_buf_cerr.str());
                         mt_buf_cout.clear();
                         mt_buf_cerr.clear();
                     }

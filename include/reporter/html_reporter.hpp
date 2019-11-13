@@ -28,22 +28,11 @@
 #include "testsuite/testcase.hpp"
 #include "testsuite/testsuite.hpp"
 
-/// @brief HTML table column start tag
 #define TD "<td>"
-
-/// @brief HTML table column end tag
 #define TD_ "</td>"
-
-/// @brief HTML table row start tag
 #define TR "<tr>"
-
-/// @brief HTML table row end tag
 #define TR_ "</tr>"
-
-/// @brief HTML table head start tag
 #define TH "<th>"
-
-/// @brief HTML table head end tag
 #define TH_ "</th>"
 
 namespace sctf
@@ -72,7 +61,7 @@ protected:
     /**
      * @brief Implement AbstractReporter#report_ts
      */
-    void report_ts(testsuite_ptr const ts_) override
+    void report_testsuite(testsuite_ptr const ts_) override
     {
         *this << "<h3>" << ts_->name() << "</h3>"
               << "<p>Tests: " << ts_->statistics().tests()
@@ -80,14 +69,14 @@ protected:
               << " Errors: " << ts_->statistics().errors() << " Time: " << ts_->time()
               << "ms</p><table><thead>" << TR << TH << "Name" << TH_ << TH << "Context" << TH_ << TH
               << "Time" << TH_ << TH << "Status" << TH_ << TR_ << "</thead><tbody>";
-        reporter::report_ts(ts_);
+        reporter::report_testsuite(ts_);
         *this << "</tbody></table>";
     }
 
     /**
      * @brief Implement AbstractReporter#report_tc
      */
-    void report_tc(_::testcase const& tc_) override
+    void report_testcase(_::testcase const& tc_) override
     {
         std::string status;
         switch (tc_.state())

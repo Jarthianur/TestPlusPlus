@@ -32,7 +32,7 @@ class testsuite_parallel;
 namespace _
 {
 /**
- * @brief Statistics for test results.
+ * Used for storing test results.
  */
 class statistics
 {
@@ -41,8 +41,7 @@ public:
     ~statistics() noexcept = default;
 
     /**
-     * @brief Get the number of all tests.
-     * @return the number of tests
+     * Get the absolute number of tests.
      */
     inline std::size_t tests() const
     {
@@ -50,8 +49,7 @@ public:
     }
 
     /**
-     * @brief Get the number of successful tests.
-     * @return the number of tests
+     * Get the number of successful tests.
      */
     inline std::size_t successes() const
     {
@@ -59,8 +57,7 @@ public:
     }
 
     /**
-     * @brief Get the number of all failed tests.
-     * @return the number of tests
+     * Get the number of failed tests.
      */
     inline std::size_t failures() const
     {
@@ -68,8 +65,7 @@ public:
     }
 
     /**
-     * @brief Get the number of erroneous tests.
-     * @return the number of tests
+     * Get the number of erroneous tests.
      */
     inline std::size_t errors() const
     {
@@ -80,14 +76,9 @@ protected:
     friend sctf::testsuite;
     friend sctf::testsuite_parallel;
 
-    /// @brief The number of tests.
     std::size_t m_num_of_tests = 0;
-
-    /// @brief The number of failed tests.
     std::size_t m_num_of_fails = 0;
-
-    /// @brief The number of erroneous tests.
-    std::size_t m_num_of_errs = 0;
+    std::size_t m_num_of_errs  = 0;
 };
 }  // namespace _
 }  // namespace sctf
