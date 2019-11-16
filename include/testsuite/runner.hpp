@@ -33,7 +33,7 @@
 namespace sctf
 {
 /**
- * @brief A runner to manage and run TestSuites.
+ * Used to manage and run testsuites.
  */
 class runner
 {
@@ -42,18 +42,18 @@ public:
     ~runner() noexcept = default;
 
     /**
-     * @brief Register a TestSuite.
-     * @param ts A shared ptr to the TestSuite
-     * @return a shared pointer to the TestSuite
+     * Add a testsuite to this runner.
+     * @param ts_ The testsuite to add
+     * @return the added testsuite
      */
-    testsuite_ptr register_ts(testsuite_ptr ts_)
+    testsuite_ptr add_testsuite(testsuite_ptr ts_)
     {
         m_testsuites.push_back(ts_);
         return ts_;
     }
 
     /**
-     * @brief Run TestSuites.
+     * Run all testsuites knwon to this runner.
      */
     void run() noexcept
     {
@@ -62,17 +62,15 @@ public:
     }
 
     /**
-     * @brief Get the TestSuites.
-     * @return the testsuites
+     * Get all the testsuites known to this runner.
      */
-    const std::vector<testsuite_ptr>& testsuites()
+    std::vector<testsuite_ptr> const& testsuites()
     {
         return m_testsuites;
     }
 
     /**
-     * @brief Get an instance of a runner, which is used as default.
-     * @return the default runner instance
+     * Get a runner instance, which is used as the default one.
      */
     static runner& default_instance()
     {
@@ -81,7 +79,6 @@ public:
     }
 
 private:
-    /// @brief The registered TestSuites.
     std::vector<testsuite_ptr> m_testsuites;
 };
 
@@ -96,7 +93,7 @@ private:
 inline static testsuite_ptr describe_parallel(char const* name_, char const* ctx_ = "main",
                                               runner& runner_ = runner::default_instance())
 {
-    return runner_.register_ts(testsuite_parallel::create(name_, ctx_));
+    return runner_.add_testsuite(testsuite_parallel::create(name_, ctx_));
 }
 
 /**
@@ -111,7 +108,7 @@ template<typename T>
 static testsuite_ptr describe_parallel(char const* name_,
                                        runner&     runner_ = runner::default_instance())
 {
-    return runner_.register_ts(testsuite_parallel::create(name_, _::name_for_type<T>()));
+    return runner_.add_testsuite(testsuite_parallel::create(name_, _::name_for_type<T>()));
 }
 
 /**
@@ -125,7 +122,7 @@ static testsuite_ptr describe_parallel(char const* name_,
 inline static testsuite_ptr describe(char const* name_, char const* ctx_ = "main",
                                      runner& runner_ = runner::default_instance())
 {
-    return runner_.register_ts(testsuite::create(name_, ctx_));
+    return runner_.add_testsuite(testsuite::create(name_, ctx_));
 }
 
 /**
@@ -139,7 +136,7 @@ inline static testsuite_ptr describe(char const* name_, char const* ctx_ = "main
 template<typename T>
 static testsuite_ptr describe(char const* name_, runner& runner_ = runner::default_instance())
 {
-    return runner_.register_ts(testsuite::create(name_, _::name_for_type<T>()));
+    return runner_.add_testsuite(testsuite::create(name_, _::name_for_type<T>()));
 }
 }  // namespace sctf
 
