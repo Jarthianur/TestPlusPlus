@@ -30,7 +30,7 @@ namespace sctf
 namespace _
 {
 /**
- * @brief Base class for test modules.
+ * Base class for test modules.
  */
 class test_module
 {
@@ -64,13 +64,12 @@ protected:
 }  // namespace sctf
 
 /**
- * @def TEST_MODULE(NAME, FN, ...)
- * @brief Define a test module for OO testing approach.
+ * Define a test module for OO testing approach.
  * Invoke this macro to create and instantiate a test module. The resulting module is bound to a
  * single testsuite.
  * @param NAME The name of this module (not a string!), preferably like test_myClass
- * @param FN The test function body, which is a block of calls to `test(...)`
- * @param ... Allows to optionally pass a runner
+ * @param FN   The test function body, which is a block of calls to `test(...)`
+ * @param ...  Allows to optionally pass a runner
  */
 #define TEST_MODULE(NAME, FN, ...)                                                 \
     class NAME : public sctf::_::test_module                                       \
@@ -91,13 +90,12 @@ protected:
     }
 
 /**
- * @def TEST_MODULE_PARALLEL(NAME, FN, ...)
- * @brief Define a test module for OO testing approach. Tests will run in parallel.
+ * Define a test module for OO testing approach. Tests will run concurrently.
  * Invoke this macro to create and instantiate a test module. The resulting module is bound to a
  * single testsuite.
  * @param NAME The name of this module (not a string!), preferably like test_myClass
- * @param FN The test function body, which is a block of calls to `test(...)`
- * @param ... Allows to optionally pass a runner
+ * @param FN   The test function body, which is a block of calls to `test(...)`
+ * @param ...  Allows to optionally pass a runner
  */
 #define TEST_MODULE_PARALLEL(NAME, FN, ...)                                                 \
     class NAME : public sctf::_::test_module                                                \

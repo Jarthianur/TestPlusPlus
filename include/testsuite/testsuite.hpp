@@ -191,8 +191,7 @@ public:
     }
 
     /**
-     * @brief Get the testsuite name.
-     * @return The name
+     * Get the testsuite name.
      */
     inline char const* name() const
     {
@@ -200,8 +199,7 @@ public:
     }
 
     /**
-     * @brief Get the testsuite timestamp.
-     * @return The timestamp
+     * Get the testsuite timestamp of instantiation.
      */
     inline std::chrono::system_clock::time_point const& timestamp() const
     {
@@ -209,8 +207,7 @@ public:
     }
 
     /**
-     * @brief Get the test statistics.
-     * @return the TestStats
+     * Get the test statistics.
      */
     inline _::statistics const& statistics() const
     {
@@ -218,8 +215,7 @@ public:
     }
 
     /**
-     * @brief Get the accumulated time.
-     * @return the time
+     * Get the accumulated time spent on all tests.
      */
     inline double time() const
     {
@@ -227,8 +223,7 @@ public:
     }
 
     /**
-     * @brief Get the TestCases.
-     * @return the test cases
+     * Get all testcases.
      */
     inline std::vector<_::testcase> const& testcases() const
     {
@@ -236,54 +231,27 @@ public:
     }
 
 protected:
-    /**
-     * @brief The state of all testcases.
-     */
     enum class execution_state : std::int_fast8_t
     {
-        /// Still testcases to execute
         PENDING,
-        /// All testcases executed
         DONE
     };
 
-    /**
-     * @brief Constructor
-     * @param name The name/description
-     * @param context The context description
-     */
     testsuite(char const* name_, char const* ctx_)
         : m_name(name_), m_context(ctx_), m_timestamp(std::chrono::system_clock::now())
     {}
 
-    /// @brief The name/description
-    char const* m_name;
-
-    /// @brief The context description.
-    char const* m_context;
-
-    /// @brief The start timestamp
+    char const*                                 m_name;
+    char const*                                 m_context;
     std::chrono::system_clock::time_point const m_timestamp;
+    double                                      m_time = 0.0;
 
-    /// @brief The accumulated runtime of all tests.
-    double m_time = 0.0;
-
-    /// @brief The test statistics.
-    _::statistics m_stats;
-
-    /// @brief The testcases.
+    _::statistics            m_stats;
     std::vector<_::testcase> m_testcases;
+    execution_state          m_state = execution_state::PENDING;
 
-    /// @brief The execution state.
-    execution_state m_state = execution_state::PENDING;
-
-    /// @brief The optional setup function, executed once before all testcases.
     _::test_function m_setup_func;
-
-    /// @brief The optional pre-test function, executed before each testcase.
     _::test_function m_pre_test_func;
-
-    /// @brief The optional post-test function, executed after each testcase.
     _::test_function m_post_test_func;
 };
 

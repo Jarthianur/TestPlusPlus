@@ -83,12 +83,11 @@ private:
 };
 
 /**
- * @brief Describe and register a TestSuite to the given runner.
- * @note All test cases in this suite will be executed in parallel.
- * @param name The name/description
- * @param context The component/context to test as string (default="")
- * @param runner The TestSuitesRunner to register
- * @return a shared pointer to the created TestSuite
+ * Describe a testsuite, where all tests will run concurrently.
+ * @param name_   The name/description
+ * @param ctx_    The context what is tested
+ * @param runner_ The runner where to add this testsuite (default)
+ * @return the created testsuite for chaining
  */
 inline static testsuite_ptr describe_parallel(char const* name_, char const* ctx_ = "main",
                                               runner& runner_ = runner::default_instance())
@@ -97,12 +96,11 @@ inline static testsuite_ptr describe_parallel(char const* name_, char const* ctx
 }
 
 /**
- * @brief Describe and register a TestSuite to the given runner.
- * @note All test cases in this suite will be executed in parallel.
- * @tparam T The component/context classname where this suite belongs to
- * @param  name The name/description
- * @param runner  The TestSuitesRunner to register
- * @return a shared pointer to the created TestSuite
+ * Describe a testsuite, where all tests will run concurrently.
+ * @tparam T The class context what is tested
+ * @param name_   The name/description
+ * @param runner_ The runner where to add this testsuite (default)
+ * @return the created testsuite for chaining
  */
 template<typename T>
 static testsuite_ptr describe_parallel(char const* name_,
@@ -112,12 +110,11 @@ static testsuite_ptr describe_parallel(char const* name_,
 }
 
 /**
- * @brief Describe and register a TestSuite to the given runner.
- * @note All test cases in this suite will be executed sequentially.
- * @param name The name/description
- * @param context The component/context to test as string (default="")
- * @param runner The TestSuitesRunner to register
- * @return a shared pointer to the created TestSuite
+ * Describe a testsuite, where all tests will run sequentially.
+ * @param name_   The name/description
+ * @param ctx_    The context what is tested
+ * @param runner_ The runner where to add this testsuite (default)
+ * @return the created testsuite for chaining
  */
 inline static testsuite_ptr describe(char const* name_, char const* ctx_ = "main",
                                      runner& runner_ = runner::default_instance())
@@ -126,12 +123,11 @@ inline static testsuite_ptr describe(char const* name_, char const* ctx_ = "main
 }
 
 /**
- * @brief Describe and register a TestSuite to the given runner.
- * @note All test cases in this suite will be executed sequentially.
- * @tparam T The component/context classname where this suite belongs to
- * @param  name The name/description
- * @param runner  The TestSuitesRunner to register
- * @return a shared pointer to the created TestSuite
+ * Describe a testsuite, where all tests will run sequentially.
+ * @tparam T The class context what is tested
+ * @param name_   The name/description
+ * @param runner_ The runner where to add this testsuite (default)
+ * @return the created testsuite for chaining
  */
 template<typename T>
 static testsuite_ptr describe(char const* name_, runner& runner_ = runner::default_instance())
