@@ -92,7 +92,7 @@ public:
     void operator()()
     {
         if (m_state != result::NONE) return;
-        struct duration dur;
+        class duration dur;
         try
         {
             m_test_func();
