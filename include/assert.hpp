@@ -80,8 +80,8 @@
  * @param VALUE The value
  */
 #define ASSERT_NULL(VALUE)                                                 \
-    sctf::_::assert_statement(static_cast<void* const>(VALUE), nullptr,    \
-                              sctf::EQUALS<void* const, std::nullptr_t>(), \
+    sctf::_::assert_statement(static_cast<void const*>(VALUE), nullptr,    \
+                              sctf::EQUALS<void const*, std::nullptr_t>(), \
                               sctf::_::code_location{__FILE__, __LINE__})
 
 /**
@@ -89,8 +89,8 @@
  * @param VALUE The value
  */
 #define ASSERT_NOT_NULL(VALUE)                                               \
-    sctf::_::assert_statement(static_cast<void* const>(VALUE), nullptr,      \
-                              sctf::UNEQUALS<void* const, std::nullptr_t>(), \
+    sctf::_::assert_statement(static_cast<void const*>(VALUE), nullptr,      \
+                              sctf::UNEQUALS<void const*, std::nullptr_t>(), \
                               sctf::_::code_location{__FILE__, __LINE__})
 
 /**
