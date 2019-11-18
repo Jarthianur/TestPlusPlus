@@ -31,8 +31,8 @@
 namespace sctf
 {
 /**
- * @brief Testsuite class for managing parallel testcases.
- * @note Non-copyable
+ * A testsuite describes a set of tests in a certain context, like an user defined class, or
+ * function. This class handles concurrently running testcases.
  */
 class testsuite_parallel : public testsuite
 {
@@ -43,10 +43,10 @@ public:
     ~testsuite_parallel() noexcept override = default;
 
     /**
-     * @brief Create a TestSuiteParallel.
-     * @param name The name/description
-     * @param context The context
-     * @return a shared pointer to the created TestSuiteParallel
+     * Create a new testsuite.
+     * @param name_ The name/description
+     * @param ctx_  The context
+     * @return the newly created testsuite
      */
     static testsuite_ptr create(char const* name_, char const* ctx_)
     {
@@ -54,7 +54,8 @@ public:
     }
 
     /**
-     * @brief Execute all TestCases in parallel.
+     * Execute all testcases concurrently.
+     * @throws std::overflow_error if there are too many testcases for openmp to handle.
      */
     void run() override
     {
@@ -110,11 +111,6 @@ public:
     }
 
 private:
-    /**
-     * @brief Constructor
-     * @param name The name/description
-     * @param context The context description
-     */
     testsuite_parallel(char const* name_, char const* ctx_) : testsuite(name_, ctx_) {}
 };
 }  // namespace sctf

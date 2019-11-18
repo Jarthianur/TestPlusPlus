@@ -36,8 +36,6 @@
 #include "testsuite/statistics.hpp"
 #include "testsuite/testcase.hpp"
 
-/// @brief Call a functor silently, catching all exceptions and only if it points to a
-/// target.
 #define SCTF_EXEC_SILENT(F) \
     if (F)                  \
     {                       \
@@ -52,8 +50,8 @@
 namespace sctf
 {
 /**
- * @brief Testsuite class for managing sequential testcases.
- * @note Not-copyable
+ * A testsuite describes a set of tests in a certain context, like an user defined class, or
+ * function. This class handles sequentially running testcases.
  */
 class testsuite : public std::enable_shared_from_this<testsuite>
 {
@@ -61,10 +59,10 @@ public:
     virtual ~testsuite() noexcept = default;
 
     /**
-     * @brief Create a TestSuite.
-     * @param name The name/description
-     * @param context The context
-     * @return a shared pointer to the created TestSuite
+     * Create a new testsuite.
+     * @param name_ The name/description
+     * @param ctx_  The context
+     * @return the newly created testsuite
      */
     static testsuite_ptr create(char const* name_, char const* ctx_)
     {
@@ -72,7 +70,7 @@ public:
     }
 
     /**
-     * @brief Execute all TestCases sequentially.
+     * Execute all testcases sequentially.
      */
     virtual void run()
     {
@@ -112,11 +110,11 @@ public:
     }
 
     /**
-     * @brief Add a TestCase to this TestSuite.
-     * @tparam T The class context for testing methods
-     * @param name The name/description
-     * @param t_func The test function
-     * @return this as shared pointer
+     * Add a new testcase to this testsuite.
+     * @tparam T The class context
+     * @param name_ The name/description
+     * @param fn_   The test function
+     * @return this testsuite for chaining
      */
     template<typename T>
     testsuite_ptr test(char const* name_, _::test_function&& fn_)
@@ -127,11 +125,11 @@ public:
     }
 
     /**
-     * @brief Add a TestCase to this TestSuite.
-     * @param name The name/description
-     * @param context The testing context
-     * @param t_func The test function
-     * @return this as shared pointer
+     * Add a new testcase to this testsuite.
+     * @param name_ The name/description
+     * @param ctx_  The context
+     * @param fn_   The test function
+     * @return this testsuite for chaining
      */
     testsuite_ptr test(char const* name_, char const* ctx_, _::test_function&& fn_)
     {
@@ -141,11 +139,11 @@ public:
     }
 
     /**
-     * @brief Add a TestCase to this TestSuite.
-     * @note The test context is inherited from the test suite.
-     * @param name The name/description
-     * @param t_func The test function
-     * @return this as shared pointer
+     * Add a new testcase to this testsuite, where the context of the test is inherited from the
+     * suite.
+     * @param name_ The name/description
+     * @param fn_   The test function
+     * @return this testsuite for chaining
      */
     testsuite_ptr test(char const* name_, _::test_function&& fn_)
     {
@@ -155,10 +153,11 @@ public:
     }
 
     /**
-     * @brief Set a setup function, which will be executed once before all testcases.
-     * @note Exceptions thrown by this get ignored.
-     * @param t_func The function
-     * @return this as shared pointer
+     * Set a function, which will be executed once before all testcases.
+     * Overwrites the old setup-function, if any was set yet.
+     * Exceptions thrown by the function will be ignored.
+     * @param fn_ The function
+     * @return this testsuite for chaining
      */
     testsuite_ptr setup(_::test_function&& fn_)
     {
@@ -167,10 +166,11 @@ public:
     }
 
     /**
-     * @brief Set a pre-test function, which will be executed before every testcase.
-     * @note Exceptions thrown by this get ignored.
-     * @param t_func The function
-     * @return this as shared pointer
+     * Set a function, which will be executed before each testcase.
+     * Overwrites the old before-function, if any was set yet.
+     * Exceptions thrown by the function will be ignored.
+     * @param fn_ The function
+     * @return this testsuite for chaining
      */
     testsuite_ptr before(_::test_function&& fn_)
     {
@@ -179,10 +179,11 @@ public:
     }
 
     /**
-     * @brief Set a post-test function, which will be executed after every testcase.
-     * @note Exceptions thrown by this get ignored.
-     * @param t_func The function
-     * @return this as shared pointer
+     * Set a function, which will be executed after each testcase.
+     * Overwrites the old after-function, if any was set yet.
+     * Exceptions thrown by the function will be ignored.
+     * @param fn_ The function
+     * @return this testsuite for chaining
      */
     testsuite_ptr after(_::test_function&& fn_)
     {
