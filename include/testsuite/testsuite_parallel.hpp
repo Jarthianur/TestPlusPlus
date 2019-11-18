@@ -31,27 +31,31 @@
 namespace sctf
 {
 /**
- * @brief Testsuite class for managing parallel testcases.
- * @note Non-copyable
+ * A testsuite describes a set of tests in a certain context, like an user defined class, or
+ * function. This class handles concurrently running testcases.
  */
 class testsuite_parallel : public testsuite
 {
 public:
+    testsuite_parallel(testsuite_parallel const&) = delete;
+    testsuite_parallel& operator=(testsuite_parallel const&) = delete;
+
     ~testsuite_parallel() noexcept override = default;
 
     /**
-     * @brief Create a TestSuiteParallel.
-     * @param name The name/description
-     * @param context The context
-     * @return a shared pointer to the created TestSuiteParallel
+     * Create a new testsuite.
+     * @param name_ The name/description
+     * @param ctx_  The context
+     * @return the newly created testsuite
      */
-    static testsuite_shared create(const char* name, const char* context)
+    static testsuite_ptr create(char const* name_, char const* ctx_)
     {
-        return testsuite_shared(new testsuite_parallel(name, context));
+        return testsuite_ptr(new testsuite_parallel(name_, ctx_));
     }
 
     /**
-     * @brief Execute all TestCases in parallel.
+     * Execute all testcases concurrently.
+     * @throws std::overflow_error if there are too many testcases for openmp to handle.
      */
     void run() override
     {
@@ -89,8 +93,8 @@ public:
                         }
                         tmp += tc.duration();
                         SCTF_EXEC_SILENT(m_post_test_func)
-                        tc.set_cout(mt_buf_cout.str());
-                        tc.set_cerr(mt_buf_cerr.str());
+                        tc.cout(mt_buf_cout.str());
+                        tc.cerr(mt_buf_cerr.str());
                         mt_buf_cout.clear();
                         mt_buf_cerr.clear();
                     }
@@ -107,14 +111,8 @@ public:
     }
 
 private:
-    /**
-     * @brief Constructor
-     * @param name The name/description
-     * @param context The context description
-     */
-    testsuite_parallel(const char* name, const char* context) : testsuite(name, context) {}
+    testsuite_parallel(char const* name_, char const* ctx_) : testsuite(name_, ctx_) {}
 };
-
 }  // namespace sctf
 
 #endif  // SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP

@@ -33,7 +33,7 @@
 namespace sctf
 {
 /**
- * @brief A runner to manage and run TestSuites.
+ * Used to manage and run testsuites.
  */
 class runner
 {
@@ -42,37 +42,35 @@ public:
     ~runner() noexcept = default;
 
     /**
-     * @brief Register a TestSuite.
-     * @param ts A shared ptr to the TestSuite
-     * @return a shared pointer to the TestSuite
+     * Add a testsuite to this runner.
+     * @param ts_ The testsuite to add
+     * @return the added testsuite
      */
-    testsuite_shared register_ts(testsuite_shared ts)
+    testsuite_ptr add_testsuite(testsuite_ptr ts_)
     {
-        m_testsuites.push_back(ts);
-        return ts;
+        m_testsuites.push_back(ts_);
+        return ts_;
     }
 
     /**
-     * @brief Run TestSuites.
+     * Run all testsuites knwon to this runner.
      */
     void run() noexcept
     {
         std::for_each(m_testsuites.begin(), m_testsuites.end(),
-                      [](testsuite_shared& ts) { ts->run(); });
+                      [](testsuite_ptr& ts_) { ts_->run(); });
     }
 
     /**
-     * @brief Get the TestSuites.
-     * @return the testsuites
+     * Get all the testsuites known to this runner.
      */
-    const std::vector<testsuite_shared>& testsuites()
+    std::vector<testsuite_ptr> const& testsuites()
     {
         return m_testsuites;
     }
 
     /**
-     * @brief Get an instance of a runner, which is used as default.
-     * @return the default runner instance
+     * Get a runner instance, which is used as the default one.
      */
     static runner& default_instance()
     {
@@ -81,67 +79,61 @@ public:
     }
 
 private:
-    /// @brief The registered TestSuites.
-    std::vector<testsuite_shared> m_testsuites;
+    std::vector<testsuite_ptr> m_testsuites;
 };
 
 /**
- * @brief Describe and register a TestSuite to the given runner.
- * @note All test cases in this suite will be executed in parallel.
- * @param name The name/description
- * @param context The component/context to test as string (default="")
- * @param runner The TestSuitesRunner to register
- * @return a shared pointer to the created TestSuite
+ * Describe a testsuite, where all tests will run concurrently.
+ * @param name_   The name/description
+ * @param ctx_    The context what is tested
+ * @param runner_ The runner where to add this testsuite (default)
+ * @return the created testsuite for chaining
  */
-inline static testsuite_shared describeParallel(const char* name, const char* context = "main",
-                                                runner& runner = runner::default_instance())
+inline static testsuite_ptr describe_parallel(char const* name_, char const* ctx_ = "main",
+                                              runner& runner_ = runner::default_instance())
 {
-    return runner.register_ts(testsuite_parallel::create(name, context));
+    return runner_.add_testsuite(testsuite_parallel::create(name_, ctx_));
 }
 
 /**
- * @brief Describe and register a TestSuite to the given runner.
- * @note All test cases in this suite will be executed in parallel.
- * @tparam T The component/context classname where this suite belongs to
- * @param  name The name/description
- * @param runner  The TestSuitesRunner to register
- * @return a shared pointer to the created TestSuite
+ * Describe a testsuite, where all tests will run concurrently.
+ * @tparam T The class context what is tested
+ * @param name_   The name/description
+ * @param runner_ The runner where to add this testsuite (default)
+ * @return the created testsuite for chaining
  */
 template<typename T>
-static testsuite_shared describeParallel(const char* name,
-                                         runner&     runner = runner::default_instance())
+static testsuite_ptr describe_parallel(char const* name_,
+                                       runner&     runner_ = runner::default_instance())
 {
-    return runner.register_ts(testsuite_parallel::create(name, _::name_for_type<T>()));
+    return runner_.add_testsuite(testsuite_parallel::create(name_, _::name_for_type<T>()));
 }
 
 /**
- * @brief Describe and register a TestSuite to the given runner.
- * @note All test cases in this suite will be executed sequentially.
- * @param name The name/description
- * @param context The component/context to test as string (default="")
- * @param runner The TestSuitesRunner to register
- * @return a shared pointer to the created TestSuite
+ * Describe a testsuite, where all tests will run sequentially.
+ * @param name_   The name/description
+ * @param ctx_    The context what is tested
+ * @param runner_ The runner where to add this testsuite (default)
+ * @return the created testsuite for chaining
  */
-inline static testsuite_shared describe(const char* name, const char* context = "main",
-                                        runner& runner = runner::default_instance())
+inline static testsuite_ptr describe(char const* name_, char const* ctx_ = "main",
+                                     runner& runner_ = runner::default_instance())
 {
-    return runner.register_ts(testsuite::create(name, context));
+    return runner_.add_testsuite(testsuite::create(name_, ctx_));
 }
 
 /**
- * @brief Describe and register a TestSuite to the given runner.
- * @note All test cases in this suite will be executed sequentially.
- * @tparam T The component/context classname where this suite belongs to
- * @param  name The name/description
- * @param runner  The TestSuitesRunner to register
- * @return a shared pointer to the created TestSuite
+ * Describe a testsuite, where all tests will run sequentially.
+ * @tparam T The class context what is tested
+ * @param name_   The name/description
+ * @param runner_ The runner where to add this testsuite (default)
+ * @return the created testsuite for chaining
  */
 template<typename T>
-static testsuite_shared describe(const char* name, runner& runner = runner::default_instance())
+static testsuite_ptr describe(char const* name_, runner& runner_ = runner::default_instance())
 {
-    return runner.register_ts(testsuite::create(name, _::name_for_type<T>()));
+    return runner_.add_testsuite(testsuite::create(name_, _::name_for_type<T>()));
 }
-
 }  // namespace sctf
 
 #endif  // SCTF_TESTSUITE_RUNNER_HPP

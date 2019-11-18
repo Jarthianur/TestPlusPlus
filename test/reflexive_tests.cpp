@@ -39,77 +39,77 @@ using namespace _;
 
 void reflexive_tests()
 {
-    describeParallel("comparators")
+    describe_parallel("comparators")
         ->test("equals",
                [] {
-                   assertFalse(!equals(1, 1));
-                   assertFalse(!equals(equal_comparable(), equal_comparable()));
-                   assertFalse(!equals(unequal_comparable(false), unequal_comparable(false)));
-                   assertFalse(!equals(1.0, 1.0));
-                   assertFalse(!equals(1.0f, 1.0f));
-                   assertTrue(!equals(2, 1));
-                   assertTrue(!equals(equal_comparable(false), equal_comparable()));
-                   assertTrue(!equals(unequal_comparable(true), unequal_comparable(false)));
-                   assertTrue(!equals(1.1, 2.0));
-                   assertTrue(!equals(1.1f, 2.0f));
+                   ASSERT_FALSE(!equals(1, 1));
+                   ASSERT_FALSE(!equals(equal_comparable(), equal_comparable()));
+                   ASSERT_FALSE(!equals(unequal_comparable(false), unequal_comparable(false)));
+                   ASSERT_FALSE(!equals(1.0, 1.0));
+                   ASSERT_FALSE(!equals(1.0f, 1.0f));
+                   ASSERT_TRUE(!equals(2, 1));
+                   ASSERT_TRUE(!equals(equal_comparable(false), equal_comparable()));
+                   ASSERT_TRUE(!equals(unequal_comparable(true), unequal_comparable(false)));
+                   ASSERT_TRUE(!equals(1.1, 2.0));
+                   ASSERT_TRUE(!equals(1.1f, 2.0f));
                    comparison c = equals(1, 2);
-                   assertTrue(!c);
-                   assertT(*c, EQ, "Expected '1' to be equals '2'", std::string);
+                   ASSERT_TRUE(!c);
+                   ASSERT_T(*c, EQ, "Expected '1' to be equals '2'", std::string);
                })
         ->test("greater than",
                [] {
-                   assertFalse(!greater_than(2, 1));
-                   assertFalse(!greater_than(ordinal(), ordinal()));
-                   assertFalse(!greater_than(2.1, 1.9));
-                   assertTrue(!greater_than(1, 2));
-                   assertTrue(!greater_than(ordinal(false), ordinal()));
-                   assertTrue(!greater_than(2.1, 3.9));
+                   ASSERT_FALSE(!greater_than(2, 1));
+                   ASSERT_FALSE(!greater_than(ordinal(), ordinal()));
+                   ASSERT_FALSE(!greater_than(2.1, 1.9));
+                   ASSERT_TRUE(!greater_than(1, 2));
+                   ASSERT_TRUE(!greater_than(ordinal(false), ordinal()));
+                   ASSERT_TRUE(!greater_than(2.1, 3.9));
                    comparison c = greater_than(1, 2);
-                   assertTrue(!c);
-                   assertT(*c, EQ, "Expected '1' to be greater than '2'", std::string);
+                   ASSERT_TRUE(!c);
+                   ASSERT_T(*c, EQ, "Expected '1' to be greater than '2'", std::string);
                })
         ->test("in range",
                [] {
-                   assertFalse(!in_range(1, std::vector<int>{1}));
-                   assertFalse(!in_range("a", std::string("a")));
-                   assertTrue(!in_range(2, std::vector<int>{1}));
-                   assertTrue(!in_range("b", std::string("a")));
+                   ASSERT_FALSE(!in_range(1, std::vector<int>{1}));
+                   ASSERT_FALSE(!in_range("a", std::string("a")));
+                   ASSERT_TRUE(!in_range(2, std::vector<int>{1}));
+                   ASSERT_TRUE(!in_range("b", std::string("a")));
                })
         ->test("less than",
                [] {
-                   assertFalse(!less_than(1, 2));
-                   assertFalse(!less_than(ordinal(), ordinal()));
-                   assertFalse(!less_than(1.9, 2.1));
-                   assertTrue(!less_than(2, 1));
-                   assertTrue(!less_than(ordinal(false), ordinal()));
-                   assertTrue(!less_than(3.9, 2.1));
+                   ASSERT_FALSE(!less_than(1, 2));
+                   ASSERT_FALSE(!less_than(ordinal(), ordinal()));
+                   ASSERT_FALSE(!less_than(1.9, 2.1));
+                   ASSERT_TRUE(!less_than(2, 1));
+                   ASSERT_TRUE(!less_than(ordinal(false), ordinal()));
+                   ASSERT_TRUE(!less_than(3.9, 2.1));
                    comparison c = less_than(2, 1);
-                   assertTrue(!c);
-                   assertT(*c, EQ, "Expected '2' to be less than '1'", std::string);
+                   ASSERT_TRUE(!c);
+                   ASSERT_T(*c, EQ, "Expected '2' to be less than '1'", std::string);
                })
         ->test("unequals", [] {
-            assertFalse(!unequals(1, 2));
-            assertFalse(!unequals(unequal_comparable(), unequal_comparable()));
-            assertFalse(!unequals(equal_comparable(false), equal_comparable(false)));
-            assertFalse(!unequals(1.0, 1.1));
-            assertFalse(!unequals(1.0f, 1.1f));
-            assertTrue(!unequals(2, 2));
-            assertTrue(!unequals(equal_comparable(), equal_comparable()));
-            assertTrue(!unequals(unequal_comparable(false), unequal_comparable()));
-            assertTrue(!unequals(2.0, 2.0));
-            assertTrue(!unequals(1.1f, 1.1f));
+            ASSERT_FALSE(!unequals(1, 2));
+            ASSERT_FALSE(!unequals(unequal_comparable(), unequal_comparable()));
+            ASSERT_FALSE(!unequals(equal_comparable(false), equal_comparable(false)));
+            ASSERT_FALSE(!unequals(1.0, 1.1));
+            ASSERT_FALSE(!unequals(1.0f, 1.1f));
+            ASSERT_TRUE(!unequals(2, 2));
+            ASSERT_TRUE(!unequals(equal_comparable(), equal_comparable()));
+            ASSERT_TRUE(!unequals(unequal_comparable(false), unequal_comparable()));
+            ASSERT_TRUE(!unequals(2.0, 2.0));
+            ASSERT_TRUE(!unequals(1.1f, 1.1f));
             comparison c = unequals(1, 1);
-            assertTrue(!c);
-            assertT(*c, EQ, "Expected '1' to be unequals '1'", std::string);
+            ASSERT_TRUE(!c);
+            ASSERT_T(*c, EQ, "Expected '1' to be unequals '1'", std::string);
         });
 
-    describe<testsuite_parallel>("TestSuiteParallel")->test("parallel run", [] {
-        testsuite_shared ts = testsuite_parallel::create("ts", "ctx");
+    describe<testsuite_parallel>("testsuite_parallel")->test("parallel run", [] {
+        testsuite_ptr ts = testsuite_parallel::create("ts", "ctx");
         ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
-        ts->test("", [] { assertTrue(false); });
+        ts->test("", [] { ASSERT_TRUE(false); });
         ts->test("", [] { throw std::logic_error(""); });
         ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
-        ts->test("", [] { assertTrue(false); });
+        ts->test("", [] { ASSERT_TRUE(false); });
         ts->test("", [] { throw std::logic_error(""); });
 #ifdef _OPENMP
         int c = 200;
@@ -118,36 +118,36 @@ void reflexive_tests()
 #    ifdef __clang__
         c = 250;
 #    endif
-        assertPerformance(ts->run(), c);
-        assert(ts->time(), LT, c);
+        ASSERT_PERFORMANCE(ts->run(), c);
+        ASSERT(ts->time(), LT, c);
 #else
         ts->run();
         double t = 0.0;
-        for (const auto& tc : ts->testcases())
+        for ( auto const& tc : ts->testcases())
         {
          t += tc.duration();
         }
-        assertEquals(ts->time(), t);
+        ASSERT_EQUALS(ts->time(), t);
 #endif
-        const statistics& stat = ts->statistics();
-        assertEquals(stat.tests(), 6);
-        assertEquals(stat.errors(), 2);
-        assertEquals(stat.failures(), 2);
-        assertEquals(stat.successes(), 2);
+        statistics const& stat = ts->statistics();
+        ASSERT_EQUALS(stat.tests(), 6);
+        ASSERT_EQUALS(stat.errors(), 2);
+        ASSERT_EQUALS(stat.failures(), 2);
+        ASSERT_EQUALS(stat.successes(), 2);
     });
 
-    describe<testsuite>("TestSuite")
+    describe<testsuite>("testsuite")
         ->test("creation",
                [] {
                    auto a = std::chrono::system_clock::now();
                    std::this_thread::sleep_for(std::chrono::seconds(1));
-                   testsuite_shared ts = testsuite::create("ts", "ctx");
-                   assert(ts->timestamp(), GT, a);
-                   assertT(ts->name(), EQ, "ts", std::string);
+                   testsuite_ptr ts = testsuite::create("ts", "ctx");
+                   ASSERT(ts->timestamp(), GT, a);
+                   ASSERT_T(ts->name(), EQ, "ts", std::string);
                })
         ->test("meta functions",
                [] {
-                   testsuite_shared ts = testsuite::create("ts", "ctx");
+                   testsuite_ptr ts = testsuite::create("ts", "ctx");
                    int              i  = 0;
                    ts->setup([&i] { i = 1; });
                    ts->after([&i] { ++i; });
@@ -155,256 +155,269 @@ void reflexive_tests()
                    ts->test("tc1", [] {});
                    ts->test("tc2", "ctx2", [] {});
                    ts->test<int>("tc3", [] {});
-                   const testcase& tc1 = ts->testcases().at(0);
-                   const testcase& tc2 = ts->testcases().at(1);
-                   const testcase& tc3 = ts->testcases().at(2);
-                   assertT(tc1.context(), EQ, "ctx", std::string);
-                   assertT(tc2.context(), EQ, "ctx2", std::string);
-                   assertT(tc3.context(), EQ, "int", std::string);
+                   testcase const& tc1 = ts->testcases().at(0);
+                   testcase const& tc2 = ts->testcases().at(1);
+                   testcase const& tc3 = ts->testcases().at(2);
+                   ASSERT_T(tc1.context(), EQ, "ctx", std::string);
+                   ASSERT_T(tc2.context(), EQ, "ctx2", std::string);
+                   ASSERT_T(tc3.context(), EQ, "int", std::string);
                    ts->run();
-                   assertEquals(i, 1);
+                   ASSERT_EQUALS(i, 1);
                })
         ->test("running", [] {
-            testsuite_shared ts = testsuite::create("ts", "ctx");
+            testsuite_ptr ts = testsuite::create("ts", "ctx");
             ts->test("", [] {});
-            ts->test("", [] { assertTrue(false); });
+            ts->test("", [] { ASSERT_TRUE(false); });
             ts->test("", [] { throw std::logic_error(""); });
             ts->run();
-            const statistics& stat = ts->statistics();
-            assertEquals(stat.tests(), 3);
-            assertEquals(stat.errors(), 1);
-            assertEquals(stat.failures(), 1);
-            assertEquals(stat.successes(), 1);
+            statistics const& stat = ts->statistics();
+            ASSERT_EQUALS(stat.tests(), 3);
+            ASSERT_EQUALS(stat.errors(), 1);
+            ASSERT_EQUALS(stat.failures(), 1);
+            ASSERT_EQUALS(stat.successes(), 1);
             ts->run();
-            assertEquals(stat.tests(), 3);
-            assertEquals(stat.errors(), 1);
-            assertEquals(stat.failures(), 1);
-            assertEquals(stat.successes(), 1);
+            ASSERT_EQUALS(stat.tests(), 3);
+            ASSERT_EQUALS(stat.errors(), 1);
+            ASSERT_EQUALS(stat.failures(), 1);
+            ASSERT_EQUALS(stat.successes(), 1);
             ts->test("", [] {});
             ts->run();
-            assertEquals(stat.tests(), 4);
-            assertEquals(stat.successes(), 2);
+            ASSERT_EQUALS(stat.tests(), 4);
+            ASSERT_EQUALS(stat.successes(), 2);
             double t = 0.0;
-            for (const auto& tc : ts->testcases())
+            for (auto const& tc : ts->testcases())
             {
                 t += tc.duration();
             }
-            assertEquals(t, ts->time());
+            ASSERT_EQUALS(t, ts->time());
         });
 
-    describe<testcase>("TestCase")
+    describe<testcase>("testcase")
         ->test("creation",
                [] {
                    testcase tc("t1", "ctx", [] {});
                    testcase tc2("t2", "", [] {});
-                   assertEquals(tc.state(), testcase::result::NONE);
-                   assertT(tc.context(), EQ, "ctx", std::string);
-                   assertT(tc2.context(), EQ, "", std::string);
-                   assertT(tc.name(), EQ, "t1", std::string);
+                   ASSERT_EQUALS(tc.state(), testcase::result::NONE);
+                   ASSERT_T(tc.context(), EQ, "ctx", std::string);
+                   ASSERT_T(tc2.context(), EQ, "", std::string);
+                   ASSERT_T(tc.name(), EQ, "t1", std::string);
                })
         ->test("successful execution",
                [] {
                    testcase tc("t1", "ctx", [] {});
                    tc();
-                   assertEquals(tc.state(), testcase::result::PASSED);
-                   assert(tc.duration(), GT, 0.0);
-                   assertZero(tc.err_msg().size());
+                   ASSERT_EQUALS(tc.state(), testcase::result::PASSED);
+                   ASSERT(tc.duration(), GT, 0.0);
+                   ASSERT_ZERO(tc.err_msg().size());
                })
         ->test("failed execution",
                [] {
-                   testcase tc("t1", "ctx", [] { assertTrue(false); });
+                   testcase tc("t1", "ctx", [] { ASSERT_TRUE(false); });
                    tc();
-                   assertEquals(tc.state(), testcase::result::FAILED);
-                   assert(tc.duration(), GT, 0.0);
+                   ASSERT_EQUALS(tc.state(), testcase::result::FAILED);
+                   ASSERT(tc.duration(), GT, 0.0);
                })
         ->test("erroneous execution", [] {
             testcase tc("t1", "ctx", [] { throw std::logic_error("err"); });
             tc();
-            assertEquals(tc.state(), testcase::result::ERROR);
-            assert(tc.duration(), GT, 0.0);
-            assertT(tc.err_msg(), EQ, "err", std::string);
+            ASSERT_EQUALS(tc.state(), testcase::result::ERROR);
+            ASSERT(tc.duration(), GT, 0.0);
+            ASSERT_T(tc.err_msg(), EQ, "err", std::string);
 
             testcase tc2("t2", "ctx", [] { throw 1; });
             tc2();
-            assertEquals(tc2.state(), testcase::result::ERROR);
-            assert(tc2.duration(), GT, 0.0);
-            assertT(tc2.err_msg(), EQ, "unknown error", std::string);
+            ASSERT_EQUALS(tc2.state(), testcase::result::ERROR);
+            ASSERT(tc2.duration(), GT, 0.0);
+            ASSERT_T(tc2.err_msg(), EQ, "unknown error", std::string);
         });
 
-    describeParallel("serialize")
+    describe_parallel("stringify")
         ->test("bool",
                [] {
-                   assertT(to_string(true), EQ, "true", std::string);
-                   assertT(to_string(false), EQ, "false", std::string);
+                   ASSERT_T(to_string(true), EQ, "true", std::string);
+                   ASSERT_T(to_string(false), EQ, "false", std::string);
                })
 
         ->test("std::pair",
-               [] { assertT("pair<int,int>", IN, to_string(std::make_pair(1, 2)), std::string); })
+               [] { ASSERT_T("pair<int,int>", IN, to_string(std::make_pair(1, 2)), std::string); })
         ->test("nullptr",
                [] {
-                   assertT(to_string(nullptr), EQ, "0", std::string);
-                   assertT(to_string(NULL), EQ, "0", std::string);
+                   ASSERT_T(to_string(nullptr), EQ, "0", std::string);
+                   ASSERT_T(to_string(NULL), EQ, "0", std::string);
                })
         ->test("string/cstring",
                [] {
                    std::string str("cstring");
-                   assertEquals(to_string(str), str);
-                   assertEquals(to_string("cstring"), str);
-                   const char* cstr = "cstring";
-                   assertEquals(to_string(cstr), str);
+                   ASSERT_EQUALS(to_string(str), str);
+                   ASSERT_EQUALS(to_string("cstring"), str);
+                   char const* cstr = "cstring";
+                   ASSERT_EQUALS(to_string(cstr), str);
                })
         ->test("floating-point",
                [] {
-                   assertT("1.123", IN, to_string(1.123f), std::string);
-                   assertT("1.123", IN, to_string(1.123), std::string);
+                   ASSERT_T("1.123", IN, to_string(1.123f), std::string);
+                   ASSERT_T("1.123", IN, to_string(1.123), std::string);
                })
         ->test("not streamable",
-               [] { assertT(to_string(not_streamable()), EQ, "not_streamable", std::string); })
-        ->test("streamable", [] { assertT(to_string(1), EQ, "1", std::string); });
+               [] { ASSERT_T(to_string(not_streamable()), EQ, "not_streamable", std::string); })
+        ->test("streamable", [] { ASSERT_T(to_string(1), EQ, "1", std::string); });
 
-    describeParallel("test traits")
+    describe_parallel("test traits")
         ->test("is_streamable",
                [] {
-                   assertNoExcept((throw_if_not_streamable<std::ostringstream, streamable>()));
-                   assertException((throw_if_not_streamable<std::ostringstream, void_type>()),
-                                   std::logic_error);
-                   assertException((throw_if_not_streamable<std::ostringstream, not_streamable>()),
-                                   std::logic_error);
+                   ASSERT_NOTHROW((throw_if_not_streamable<std::ostringstream, streamable>()));
+                   ASSERT_THROWS((throw_if_not_streamable<std::ostringstream, void_type>()),
+                                 std::logic_error);
+                   ASSERT_THROWS((throw_if_not_streamable<std::ostringstream, not_streamable>()),
+                                 std::logic_error);
                })
         ->test("is_iterable",
                [] {
-                   assertNoExcept((throw_if_not_iterable<iterable>()));
-                   assertException((throw_if_not_iterable<void_type>()), std::logic_error);
-                   assertException((throw_if_not_iterable<not_iterable>()), std::logic_error);
+                   ASSERT_NOTHROW((throw_if_not_iterable<iterable>()));
+                   ASSERT_THROWS((throw_if_not_iterable<void_type>()), std::logic_error);
+                   ASSERT_THROWS((throw_if_not_iterable<not_iterable>()), std::logic_error);
                })
         ->test("is_ordinal",
                [] {
-                   assertNoExcept((throw_if_not_ordinal<ordinal>()));
-                   assertException((throw_if_not_ordinal<void_type>()), std::logic_error);
-                   assertException((throw_if_not_ordinal<not_ordinal>()), std::logic_error);
+                   ASSERT_NOTHROW((throw_if_not_ordinal<ordinal>()));
+                   ASSERT_THROWS((throw_if_not_ordinal<void_type>()), std::logic_error);
+                   ASSERT_THROWS((throw_if_not_ordinal<not_ordinal>()), std::logic_error);
                })
         ->test("is_equal_comparable",
                [] {
-                   assertNoExcept((throw_if_not_equal_comparable<equal_comparable>()));
-                   assertException((throw_if_not_equal_comparable<void_type>()), std::logic_error);
-                   assertException((throw_if_not_equal_comparable<not_equal_comparable>()),
-                                   std::logic_error);
+                   ASSERT_NOTHROW((throw_if_not_equal_comparable<equal_comparable>()));
+                   ASSERT_THROWS((throw_if_not_equal_comparable<void_type>()), std::logic_error);
+                   ASSERT_THROWS((throw_if_not_equal_comparable<not_equal_comparable>()),
+                                 std::logic_error);
                })
         ->test("is_unequal_comparable", [] {
-            assertNoExcept((throw_if_not_unequal_comparable<unequal_comparable>()));
-            assertException((throw_if_not_unequal_comparable<void_type>()), std::logic_error);
-            assertException((throw_if_not_unequal_comparable<not_unequal_comparable>()),
-                            std::logic_error);
+            ASSERT_NOTHROW((throw_if_not_unequal_comparable<unequal_comparable>()));
+            ASSERT_THROWS((throw_if_not_unequal_comparable<void_type>()), std::logic_error);
+            ASSERT_THROWS((throw_if_not_unequal_comparable<not_unequal_comparable>()),
+                          std::logic_error);
         });
 
-    describeParallel("test assertions")
-        ->test("assert",
+    describe_parallel("test assertions")
+        ->test("ASSERT",
                [] {
                    // successful
-                   assertNoExcept(assert(1, EQUALS, 1));
-                   assertNoExcept(assert(true, EQUALS, true));
-                   assertNoExcept(assert(1.5, LESS, 100.3));
-                   assertNoExcept(assert("hello", NE, "world"));
-                   assertNoExcept(assert(2, IN, (std::vector<int>{1, 3, 2})));
+                   ASSERT_NOTHROW(ASSERT(1, EQUALS, 1));
+                   ASSERT_NOTHROW(ASSERT(true, EQUALS, true));
+                   ASSERT_NOTHROW(ASSERT(1.5, LESS, 100.3));
+                   ASSERT_NOTHROW(ASSERT("hello", NE, "world"));
+                   ASSERT_NOTHROW(ASSERT(2, IN, (std::vector<int>{1, 3, 2})));
                    // failing
-                   assertException(assert(2, EQUALS, 1), assertion_failure);
-                   assertException(assert(false, EQUALS, true), assertion_failure);
-                   assertException(assert(1002.5, LESS, 100.3), assertion_failure);
-                   assertException(assert("hello", EQ, "world"), assertion_failure);
-                   assertException(assert(2, IN, (std::vector<int>{1, 3})), assertion_failure);
+                   ASSERT_THROWS(ASSERT(2, EQUALS, 1), assertion_failure);
+                   ASSERT_THROWS(ASSERT(false, EQUALS, true), assertion_failure);
+                   ASSERT_THROWS(ASSERT(1002.5, LESS, 100.3), assertion_failure);
+                   ASSERT_THROWS(ASSERT("hello", EQ, "world"), assertion_failure);
+                   ASSERT_THROWS(ASSERT(2, IN, (std::vector<int>{1, 3})), assertion_failure);
                })
-        ->test("assertT",
+        ->test("ASSERT_T",
                [] {
                    // successful
-                   assertNoExcept(assertT(1, EQUALS, 1, unsigned int));
-                   assertNoExcept(assertT(true, EQUALS, true, bool));
-                   assertNoExcept(assertT(1.5, LESS, 100.3, double));
-                   assertNoExcept(assertT("hello", NE, "world", std::string));
+                   ASSERT_NOTHROW(ASSERT_T(1, EQUALS, 1, unsigned int));
+                   ASSERT_NOTHROW(ASSERT_T(true, EQUALS, true, bool));
+                   ASSERT_NOTHROW(ASSERT_T(1.5, LESS, 100.3, double));
+                   ASSERT_NOTHROW(ASSERT_T("hello", NE, "world", std::string));
                    // failing
-                   assertException(assertT(2, EQUALS, 1, unsigned int), assertion_failure);
-                   assertException(assertT(false, EQUALS, true, bool), assertion_failure);
-                   assertException(assertT(1002.5, LESS, 100.3, double), assertion_failure);
-                   assertException(assertT("hello", EQ, "world", std::string), assertion_failure);
+                   ASSERT_THROWS(ASSERT_T(2, EQUALS, 1, unsigned int), assertion_failure);
+                   ASSERT_THROWS(ASSERT_T(false, EQUALS, true, bool), assertion_failure);
+                   ASSERT_THROWS(ASSERT_T(1002.5, LESS, 100.3, double), assertion_failure);
+                   ASSERT_THROWS(ASSERT_T("hello", EQ, "world", std::string), assertion_failure);
                })
-        ->test("assertEquals",
+        ->test("ASSERT_EQUALS",
                [] {
                    // successful
-                   assertNoExcept(assertEquals(1, 1));
-                   assertNoExcept(assertEquals(true, true));
-                   assertNoExcept(assertEquals("", ""));
-                   assertNoExcept(assertEquals(1.1, 1.1));
+                   ASSERT_NOTHROW(ASSERT_EQUALS(1, 1));
+                   ASSERT_NOTHROW(ASSERT_EQUALS(true, true));
+                   ASSERT_NOTHROW(ASSERT_EQUALS("", ""));
+                   ASSERT_NOTHROW(ASSERT_EQUALS(1.1, 1.1));
                    // failing
-                   assertException(assertEquals(1, 2), assertion_failure);
-                   assertException(assertEquals(false, true), assertion_failure);
-                   assertException(assertEquals("b", "a"), assertion_failure);
-                   assertException(assertEquals(1.2, 2.1), assertion_failure);
+                   ASSERT_THROWS(ASSERT_EQUALS(1, 2), assertion_failure);
+                   ASSERT_THROWS(ASSERT_EQUALS(false, true), assertion_failure);
+                   ASSERT_THROWS(ASSERT_EQUALS("b", "a"), assertion_failure);
+                   ASSERT_THROWS(ASSERT_EQUALS(1.2, 2.1), assertion_failure);
                })
-        ->test("assertTrue",
+        ->test("ASSERT_TRUE",
                [] {
                    // successful
-                   assertNoExcept(assertTrue(true));
-                   assertNoExcept(assertTrue(1 == 1));
+                   ASSERT_NOTHROW(ASSERT_TRUE(true));
+                   ASSERT_NOTHROW(ASSERT_TRUE(1 == 1));
                    // failing
-                   assertException(assertTrue(false), assertion_failure);
-                   assertException(assertTrue(1 == 2), assertion_failure);
+                   ASSERT_THROWS(ASSERT_TRUE(false), assertion_failure);
+                   ASSERT_THROWS(ASSERT_TRUE(1 == 2), assertion_failure);
                })
-        ->test("assertFalse",
+        ->test("ASSERT_FALSE",
                [] {
                    // successful
-                   assertNoExcept(assertFalse(false));
-                   assertNoExcept(assertFalse(1 == 2));
+                   ASSERT_NOTHROW(ASSERT_FALSE(false));
+                   ASSERT_NOTHROW(ASSERT_FALSE(1 == 2));
                    // failing
-                   assertException(assertFalse(true), assertion_failure);
-                   assertException(assertFalse(1 == 1), assertion_failure);
+                   ASSERT_THROWS(ASSERT_FALSE(true), assertion_failure);
+                   ASSERT_THROWS(ASSERT_FALSE(1 == 1), assertion_failure);
                })
-        ->test("assertNotNull",
+        ->test("ASSERT_NOT_NULL",
                [] {
                    // successful
                    int         i = 1;
                    double      d = 1.0;
-                   const char* s = "";
-                   assertNoExcept(assertNotNull(&i));
-                   assertNoExcept(assertNotNull(&d));
-                   assertNoExcept(assertNotNull(&s));
+                   char const* s = "";
+                   ASSERT_NOTHROW(ASSERT_NOT_NULL(&i));
+                   ASSERT_NOTHROW(ASSERT_NOT_NULL(&d));
+                   ASSERT_NOTHROW(ASSERT_NOT_NULL(&s));
                    // failing
-                   assertException(assertNotNull(nullptr), assertion_failure);
-                   assertException(assertNotNull(NULL), assertion_failure);
+                   ASSERT_THROWS(ASSERT_NOT_NULL(nullptr), assertion_failure);
+                   ASSERT_THROWS(ASSERT_NOT_NULL(NULL), assertion_failure);
                })
-        ->test("assertZero",
+        ->test("ASSERT_NULL",
                [] {
                    // successful
-                   assertNoExcept(assertZero(0));
-                   assertNoExcept(assertZero(0.0));
+                   ASSERT_NOTHROW(ASSERT_NULL(nullptr));
+                   ASSERT_NOTHROW(ASSERT_NULL(NULL));
                    // failing
-                   assertException(assertZero(1), assertion_failure);
-                   assertException(assertZero(0.1), assertion_failure);
+                   int         i = 1;
+                   double      d = 1.0;
+                   char const* s = "";
+                   ASSERT_THROWS(ASSERT_NULL(&i), assertion_failure);
+                   ASSERT_THROWS(ASSERT_NULL(&d), assertion_failure);
+                   ASSERT_THROWS(ASSERT_NULL(&s), assertion_failure);
                })
-        ->test("assertException",
+        ->test("ASSERT_ZERO",
                [] {
                    // successful
-                   assertNoExcept(assertException(throw std::logic_error(""), std::logic_error));
+                   ASSERT_NOTHROW(ASSERT_ZERO(0));
+                   ASSERT_NOTHROW(ASSERT_ZERO(0.0));
                    // failing
-                   assertException(assertException(return, std::logic_error), assertion_failure);
-                   assertException(assertException(throw std::runtime_error(""), std::logic_error),
-                                   assertion_failure);
-                   assertException(assertException(throw 1, std::logic_error), assertion_failure);
+                   ASSERT_THROWS(ASSERT_ZERO(1), assertion_failure);
+                   ASSERT_THROWS(ASSERT_ZERO(0.1), assertion_failure);
                })
-        ->test("assertNoExcept",
+        ->test("ASSERT_THROWS",
                [] {
                    // successful
-                   assertNoExcept(assertNoExcept(return ));
+                   ASSERT_NOTHROW(ASSERT_THROWS(throw std::logic_error(""), std::logic_error));
                    // failing
-                   assertException(assertNoExcept(throw std::runtime_error("")), assertion_failure);
-                   assertException(assertNoExcept(throw 1), assertion_failure);
+                   ASSERT_THROWS(ASSERT_THROWS(return, std::logic_error), assertion_failure);
+                   ASSERT_THROWS(ASSERT_THROWS(throw std::runtime_error(""), std::logic_error),
+                                 assertion_failure);
+                   ASSERT_THROWS(ASSERT_THROWS(throw 1, std::logic_error), assertion_failure);
                })
-        ->test("assertPerformance", [] {
+        ->test("ASSERT_NOTHROW",
+               [] {
+                   // successful
+                   ASSERT_NOTHROW(ASSERT_NOTHROW(return ));
+                   // failing
+                   ASSERT_THROWS(ASSERT_NOTHROW(throw std::runtime_error("")), assertion_failure);
+                   ASSERT_THROWS(ASSERT_NOTHROW(throw 1), assertion_failure);
+               })
+        ->test("ASSERT_PERFORMANCE", [] {
             // successful
-            assertNoExcept(assertPerformance(return, 100));
+            ASSERT_NOTHROW(ASSERT_PERFORMANCE(return, 100));
             // failing
-            assertException(
-                assertPerformance(std::this_thread::sleep_for(std::chrono::milliseconds(100)), 10),
+            ASSERT_THROWS(
+                ASSERT_PERFORMANCE(std::this_thread::sleep_for(std::chrono::milliseconds(100)), 10),
                 assertion_failure);
-            assertException(assertPerformance(throw 1, 100), assertion_failure);
+            ASSERT_THROWS(ASSERT_PERFORMANCE(throw 1, 100), assertion_failure);
         });
 
     describe<testsuite>("test output capture")
@@ -422,9 +435,9 @@ void reflexive_tests()
                 ts->run();
                 for (unsigned long i = 0; i < ts->testcases().size(); ++i)
                 {
-                    const auto& tc = ts->testcases().at(i);
-                    assertEquals(tc.cout(), std::string("out from ") + to_string(i + 1));
-                    assertEquals(tc.cerr(), std::string("err from ") + to_string(i + 1));
+                    auto const& tc = ts->testcases().at(i);
+                    ASSERT_EQUALS(tc.cout(), std::string("out from ") + to_string(i + 1));
+                    ASSERT_EQUALS(tc.cerr(), std::string("err from ") + to_string(i + 1));
                 }
             })
         ->test<_::streambuf_proxy_omp>("multi thread", [] {
@@ -439,9 +452,9 @@ void reflexive_tests()
             ts->run();
             for (unsigned long i = 0; i < ts->testcases().size(); ++i)
             {
-                const auto& tc = ts->testcases().at(i);
-                assertEquals(tc.cout(), std::string("out from ") + to_string(i + 1));
-                assertEquals(tc.cerr(), std::string("err from ") + to_string(i + 1));
+                auto const& tc = ts->testcases().at(i);
+                ASSERT_EQUALS(tc.cout(), std::string("out from ") + to_string(i + 1));
+                ASSERT_EQUALS(tc.cerr(), std::string("err from ") + to_string(i + 1));
             }
         });
 }

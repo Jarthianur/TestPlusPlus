@@ -22,7 +22,7 @@ model:
     - target: test_seq
       cxx_args: ""
     - target: test_par
-      cxx_args: -fopenmp
+      cxx_args: "-fopenmp"
     osx:
     - target: test_seq
       cxx_args: ""
@@ -34,7 +34,7 @@ model:
         mkdir -p $BUILD_DIR
         cp -r test $BUILD_DIR/{{ item.target }}
         pushd $BUILD_DIR/{{ item.target }}
-        $CXX -o {{ item.target }} {{ item.cxx_args }} -g -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.cpp_std }} -I../../include $(echo -en *.cpp)
+        $CXX -o {{ item.target }} {{ item.cxx_args }} -Wall -Wextra -Wpedantic -Wnon-virtual-dtor -Wno-unused-function -Wno-unknown-pragmas -g -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.cpp_std }} -I../../include $(echo -en *.cpp)
         popd
       test_script: |
         pushd $BUILD_DIR/{{ item.target }}

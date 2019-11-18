@@ -36,8 +36,6 @@
 #include "testsuite/statistics.hpp"
 #include "testsuite/testcase.hpp"
 
-/// @brief Call a functor silently, catching all exceptions and only if it points to a
-/// target.
 #define SCTF_EXEC_SILENT(F) \
     if (F)                  \
     {                       \
@@ -52,8 +50,8 @@
 namespace sctf
 {
 /**
- * @brief Testsuite class for managing sequential testcases.
- * @note Not-copyable
+ * A testsuite describes a set of tests in a certain context, like an user defined class, or
+ * function. This class handles sequentially running testcases.
  */
 class testsuite : public std::enable_shared_from_this<testsuite>
 {
@@ -61,18 +59,18 @@ public:
     virtual ~testsuite() noexcept = default;
 
     /**
-     * @brief Create a TestSuite.
-     * @param name The name/description
-     * @param context The context
-     * @return a shared pointer to the created TestSuite
+     * Create a new testsuite.
+     * @param name_ The name/description
+     * @param ctx_  The context
+     * @return the newly created testsuite
      */
-    static testsuite_shared create(const char* name, const char* context)
+    static testsuite_ptr create(char const* name_, char const* ctx_)
     {
-        return testsuite_shared(new testsuite(name, context));
+        return testsuite_ptr(new testsuite(name_, ctx_));
     }
 
     /**
-     * @brief Execute all TestCases sequentially.
+     * Execute all testcases sequentially.
      */
     virtual void run()
     {
@@ -84,12 +82,12 @@ public:
 
             SCTF_EXEC_SILENT(m_setup_func)
             std::for_each(m_testcases.begin(), m_testcases.end(),
-                          [this, &buf_cerr, &buf_cout](_::testcase& tc) {
-                              if (tc.state() == _::testcase::result::NONE)
+                          [this, &buf_cerr, &buf_cout](_::testcase& tc_) {
+                              if (tc_.state() == _::testcase::result::NONE)
                               {
                                   SCTF_EXEC_SILENT(m_pre_test_func)
-                                  tc();
-                                  switch (tc.state())
+                                  tc_();
+                                  switch (tc_.state())
                                   {
                                       case _::testcase::result::FAILED:
                                           ++m_stats.m_num_of_fails;
@@ -99,10 +97,10 @@ public:
                                           break;
                                       default: break;
                                   }
-                                  m_time += tc.duration();
+                                  m_time += tc_.duration();
                                   SCTF_EXEC_SILENT(m_post_test_func)
-                                  tc.set_cout(buf_cout.str());
-                                  tc.set_cerr(buf_cerr.str());
+                                  tc_.cout(buf_cout.str());
+                                  tc_.cerr(buf_cerr.str());
                                   buf_cout.clear();
                                   buf_cerr.clear();
                               }
@@ -112,114 +110,113 @@ public:
     }
 
     /**
-     * @brief Add a TestCase to this TestSuite.
-     * @tparam T The class context for testing methods
-     * @param name The name/description
-     * @param t_func The test function
-     * @return this as shared pointer
+     * Add a new testcase to this testsuite.
+     * @tparam T The class context
+     * @param name_ The name/description
+     * @param fn_   The test function
+     * @return this testsuite for chaining
      */
     template<typename T>
-    testsuite_shared test(const char* name, _::test_function&& t_func)
+    testsuite_ptr test(char const* name_, _::test_function&& fn_)
     {
-        m_testcases.push_back(_::testcase(name, _::name_for_type<T>(), std::move(t_func)));
+        m_testcases.push_back(_::testcase(name_, _::name_for_type<T>(), std::move(fn_)));
         m_state = execution_state::PENDING;
         return shared_from_this();
     }
 
     /**
-     * @brief Add a TestCase to this TestSuite.
-     * @param name The name/description
-     * @param context The testing context
-     * @param t_func The test function
-     * @return this as shared pointer
+     * Add a new testcase to this testsuite.
+     * @param name_ The name/description
+     * @param ctx_  The context
+     * @param fn_   The test function
+     * @return this testsuite for chaining
      */
-    testsuite_shared test(const char* name, const char* context, _::test_function&& t_func)
+    testsuite_ptr test(char const* name_, char const* ctx_, _::test_function&& fn_)
     {
-        m_testcases.push_back(_::testcase(name, context, std::move(t_func)));
+        m_testcases.push_back(_::testcase(name_, ctx_, std::move(fn_)));
         m_state = execution_state::PENDING;
         return shared_from_this();
     }
 
     /**
-     * @brief Add a TestCase to this TestSuite.
-     * @note The test context is inherited from the test suite.
-     * @param name The name/description
-     * @param t_func The test function
-     * @return this as shared pointer
+     * Add a new testcase to this testsuite, where the context of the test is inherited from the
+     * suite.
+     * @param name_ The name/description
+     * @param fn_   The test function
+     * @return this testsuite for chaining
      */
-    testsuite_shared test(const char* name, _::test_function&& t_func)
+    testsuite_ptr test(char const* name_, _::test_function&& fn_)
     {
-        m_testcases.push_back(_::testcase(name, m_context, std::move(t_func)));
+        m_testcases.push_back(_::testcase(name_, m_context, std::move(fn_)));
         m_state = execution_state::PENDING;
         return shared_from_this();
     }
 
     /**
-     * @brief Set a setup function, which will be executed once before all testcases.
-     * @note Exceptions thrown by this get ignored.
-     * @param t_func The function
-     * @return this as shared pointer
+     * Set a function, which will be executed once before all testcases.
+     * Overwrites the old setup-function, if any was set yet.
+     * Exceptions thrown by the function will be ignored.
+     * @param fn_ The function
+     * @return this testsuite for chaining
      */
-    testsuite_shared setup(_::test_function&& t_func)
+    testsuite_ptr setup(_::test_function&& fn_)
     {
-        m_setup_func = std::move(t_func);
+        m_setup_func = std::move(fn_);
         return shared_from_this();
     }
 
     /**
-     * @brief Set a pre-test function, which will be executed before every testcase.
-     * @note Exceptions thrown by this get ignored.
-     * @param t_func The function
-     * @return this as shared pointer
+     * Set a function, which will be executed before each testcase.
+     * Overwrites the old before-function, if any was set yet.
+     * Exceptions thrown by the function will be ignored.
+     * @param fn_ The function
+     * @return this testsuite for chaining
      */
-    testsuite_shared before(_::test_function&& t_func)
+    testsuite_ptr before(_::test_function&& fn_)
     {
-        m_pre_test_func = std::move(t_func);
+        m_pre_test_func = std::move(fn_);
         return shared_from_this();
     }
 
     /**
-     * @brief Set a post-test function, which will be executed after every testcase.
-     * @note Exceptions thrown by this get ignored.
-     * @param t_func The function
-     * @return this as shared pointer
+     * Set a function, which will be executed after each testcase.
+     * Overwrites the old after-function, if any was set yet.
+     * Exceptions thrown by the function will be ignored.
+     * @param fn_ The function
+     * @return this testsuite for chaining
      */
-    testsuite_shared after(_::test_function&& t_func)
+    testsuite_ptr after(_::test_function&& fn_)
     {
-        m_post_test_func = std::move(t_func);
+        m_post_test_func = std::move(fn_);
         return shared_from_this();
     }
 
     /**
-     * @brief Get the testsuite name.
-     * @return The name
+     * Get the testsuite name.
      */
-    inline const char* name() const
+    inline char const* name() const
     {
         return m_name;
     }
 
     /**
-     * @brief Get the testsuite timestamp.
-     * @return The timestamp
+     * Get the testsuite timestamp of instantiation.
      */
-    inline const std::chrono::system_clock::time_point& timestamp() const
+    inline std::chrono::system_clock::time_point const& timestamp() const
     {
         return m_timestamp;
     }
 
     /**
-     * @brief Get the test statistics.
-     * @return the TestStats
+     * Get the test statistics.
      */
-    inline const _::statistics& statistics() const
+    inline _::statistics const& statistics() const
     {
         return m_stats;
     }
 
     /**
-     * @brief Get the accumulated time.
-     * @return the time
+     * Get the accumulated time spent on all tests.
      */
     inline double time() const
     {
@@ -227,63 +224,35 @@ public:
     }
 
     /**
-     * @brief Get the TestCases.
-     * @return the test cases
+     * Get all testcases.
      */
-    inline const std::vector<_::testcase>& testcases() const
+    inline std::vector<_::testcase> const& testcases() const
     {
         return m_testcases;
     }
 
 protected:
-    /**
-     * @brief The state of all testcases.
-     */
     enum class execution_state : std::int_fast8_t
     {
-        /// Still testcases to execute
         PENDING,
-        /// All testcases executed
         DONE
     };
 
-    /**
-     * @brief Constructor
-     * @param name The name/description
-     * @param context The context description
-     */
-    testsuite(const char* name, const char* context)
-        : m_name(name), m_context(context), m_timestamp(std::chrono::system_clock::now())
+    testsuite(char const* name_, char const* ctx_)
+        : m_name(name_), m_context(ctx_), m_timestamp(std::chrono::system_clock::now())
     {}
 
-    /// @brief The name/description
-    const char* m_name;
+    char const*                                 m_name;
+    char const*                                 m_context;
+    std::chrono::system_clock::time_point const m_timestamp;
+    double                                      m_time = 0.0;
 
-    /// @brief The context description.
-    const char* m_context;
-
-    /// @brief The start timestamp
-    const std::chrono::system_clock::time_point m_timestamp;
-
-    /// @brief The accumulated runtime of all tests.
-    double m_time = 0.0;
-
-    /// @brief The test statistics.
-    _::statistics m_stats;
-
-    /// @brief The testcases.
+    _::statistics            m_stats;
     std::vector<_::testcase> m_testcases;
+    execution_state          m_state = execution_state::PENDING;
 
-    /// @brief The execution state.
-    execution_state m_state = execution_state::PENDING;
-
-    /// @brief The optional setup function, executed once before all testcases.
     _::test_function m_setup_func;
-
-    /// @brief The optional pre-test function, executed before each testcase.
     _::test_function m_pre_test_func;
-
-    /// @brief The optional post-test function, executed after each testcase.
     _::test_function m_post_test_func;
 };
 

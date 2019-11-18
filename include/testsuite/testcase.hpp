@@ -35,92 +35,74 @@ namespace sctf
 namespace _
 {
 /**
- * @brief Represent a testcase.
- *
- * A TestCase has a test function with assertions inside, which failes if any assertion
- * fails and respectively passes if not. The state is stored with an error message in case
- * of failure.
+ * A testcase has a test function with assertions inside.
+ * If one of the assertions fails, the whole testcase fails. Otherwise the testcase passes.
  */
 class testcase
 {
 public:
-    testcase(const testcase&) = delete;
-    testcase& operator=(const testcase&) = delete;
+    testcase(testcase const&) = delete;
+    testcase& operator=(testcase const&) = delete;
 
     ~testcase() noexcept = default;
 
     /**
-     * @brief Constructor
-     * @param name The name/description of the test case
-     * @param context The context of the test function
-     * @param t_func The test function
+     * @param name_ The name/description of the test case
+     * @param ctx_  The context of the test function
+     * @param fn_   The test function
      */
-    testcase(const char* name, const char* context, test_function&& t_func)
-        : m_name(name), m_context(context), m_test_func(std::move(t_func))
+    testcase(char const* name_, char const* ctx_, test_function&& fn_)
+        : m_name(name_), m_context(ctx_), m_test_func(std::move(fn_))
     {}
 
-    /**
-     * @brief Move-constructor
-     * @param other The other TestCase
-     */
-    testcase(testcase&& other)
-        : m_name(other.m_name),
-          m_context(other.m_context),
-          m_state(other.m_state),
-          m_duration(other.m_duration),
-          m_err_msg(std::move(other.m_err_msg)),
-          m_test_func(std::move(other.m_test_func))
+    testcase(testcase&& other_)
+        : m_name(other_.m_name),
+          m_context(other_.m_context),
+          m_state(other_.m_state),
+          m_duration(other_.m_duration),
+          m_err_msg(std::move(other_.m_err_msg)),
+          m_test_func(std::move(other_.m_test_func))
     {}
 
-    /**
-     * @brief Move-assignment
-     * @param other The other TestCase
-     * @return this
-     */
-    testcase& operator=(testcase&& other)
+    testcase& operator=(testcase&& other_)
     {
-        m_name      = other.m_name;
-        m_context   = other.m_context;
-        m_state     = other.m_state;
-        m_duration  = other.m_duration;
-        m_err_msg   = std::move(other.m_err_msg);
-        m_test_func = std::move(other.m_test_func);
+        m_name      = other_.m_name;
+        m_context   = other_.m_context;
+        m_state     = other_.m_state;
+        m_duration  = other_.m_duration;
+        m_err_msg   = std::move(other_.m_err_msg);
+        m_test_func = std::move(other_.m_test_func);
         return *this;
     }
 
     /**
-     * @brief The test state.
+     * The testcases result state.
      */
     enum class result : std::int_fast8_t
     {
-        /// not yet executed
-        NONE,
-        /// passed
+        NONE,  ///< not yet executed
         PASSED,
-        /// failed
         FAILED,
-        /// erroneous
         ERROR
     };
 
     /**
-     * @brief Execute the test function and store results.
-     * @note If already executed, this does nothing.
+     * Execute the test function and store results. Does nothing if the test was executed already.
      */
     void operator()()
     {
         if (m_state != result::NONE) return;
-        struct duration dur;
+        class duration dur;
         try
         {
             m_test_func();
             pass();
         }
-        catch (const assertion_failure& e)
+        catch (assertion_failure const& e)
         {
             fail(e.what());
         }
-        catch (const std::exception& e)
+        catch (std::exception const& e)
         {
             erroneous(e.what());
         }
@@ -132,8 +114,7 @@ public:
     }
 
     /**
-     * @brief Get the TestState.
-     * @return the test state
+     * Get the result state.
      */
     inline result state() const
     {
@@ -141,8 +122,7 @@ public:
     }
 
     /**
-     * @brief Get the Duration.
-     * @return the duration
+     * Get the duration of the test function in milliseconds.
      */
     inline double duration() const
     {
@@ -150,122 +130,85 @@ public:
     }
 
     /**
-     * @brief Get the error message.
-     * @return the error message
+     * Get the error, or assertion failure reason.
+     * If the test passed, it is empty.
      */
-    inline const std::string& err_msg() const
+    inline std::string const& err_msg() const
     {
         return m_err_msg;
     }
 
-    /**
-     * @brief Get the name.
-     * @return the name
-     */
-    inline const char* name() const
+    inline char const* name() const
     {
         return m_name;
     }
 
-    /**
-     * @brief Get the context.
-     * @return the context
-     */
-    inline const char* context() const
+    inline char const* context() const
     {
         return m_context;
     }
 
     /**
-     * @brief Set the captured output from stdout.
-     * @param str The output
+     * Set the captured stdout content for this testcase.
+     * @param str_ The captured output
      */
-    inline void set_cout(const std::string& str)
+    inline void cout(std::string const& str_)
     {
-        m_cout = str;
+        m_cout = str_;
     }
 
     /**
-     * @brief Set the captured output from stderr.
-     * @param str The output
+     * Set the captured stdout content for this testcase.
+     * @param str_ The captured output
      */
-    inline void set_cerr(const std::string& str)
+    inline void cerr(std::string const& str_)
     {
-        m_cerr = str;
+        m_cerr = str_;
     }
 
     /**
-     * @brief Get the output from stdout.
-     * @return The output
+     * Get the captured output from stdout.
      */
-    inline const std::string& cout() const
+    inline std::string const& cout() const
     {
         return m_cout;
     }
 
     /**
-     * @brief Get the output from stderr.
-     * @return The output
+     * Get the captured output from stderr.
      */
-    inline const std::string& cerr() const
+    inline std::string const& cerr() const
     {
         return m_cerr;
     }
 
 private:
-    /**
-     * @brief Pass this test.
-     */
     inline void pass()
     {
         m_state = result::PASSED;
     }
 
-    /**
-     * @brief Fail this test.
-     * @param msg The failure reason
-     */
-    inline void fail(const char* msg)
+    inline void fail(char const* msg_)
     {
         m_state   = result::FAILED;
-        m_err_msg = msg;
+        m_err_msg = msg_;
     }
 
-    /**
-     * @brief Fail this test with an error.
-     * @param error The error msg
-     */
-    inline void erroneous(const char* error = "unknown error")
+    inline void erroneous(char const* err_ = "unknown error")
     {
         m_state   = result::ERROR;
-        m_err_msg = error;
+        m_err_msg = err_;
     }
 
-    /// @brief The testcase name
-    const char* m_name;
-
-    /// @brief The testcase context
-    const char* m_context;
-
-    /// @brief The test state
-    result m_state = result::NONE;
-
-    /// @brief The duration in milliseconds
-    double m_duration = 0.0;
-
-    /// @brief The error message
-    std::string m_err_msg;
-
-    /// @brief The coutput from stdout
-    std::string m_cout;
-
-    /// @brief The coutput from stderr
-    std::string m_cerr;
-
-    /// @brief The test function
+    char const*   m_name;
+    char const*   m_context;
+    result        m_state    = result::NONE;
+    double        m_duration = 0.0;
+    std::string   m_err_msg;
+    std::string   m_cout;
+    std::string   m_cerr;
     test_function m_test_func;
 };
-
 }  // namespace _
 }  // namespace sctf
 

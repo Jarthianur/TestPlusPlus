@@ -29,14 +29,14 @@ using namespace sctf;
 
 int main(int, char**)
 {
-    auto rep  = createPlainTextReporter(true, true);
-    auto repx = createXmlReporter("test.xml");
+    auto rep  = create_plaintext_reporter(true, true);
+    auto repx = create_xml_reporter("test.xml");
 
     try
     {
         basic_tests();
     }
-    catch (const std::exception& e)
+    catch (std::exception const& e)
     {
         std::cout << "Basic tests have failed! [" << e.what() << "]" << std::endl;
         return 1;

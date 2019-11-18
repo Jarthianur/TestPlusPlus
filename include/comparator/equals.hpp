@@ -33,73 +33,39 @@ namespace sctf
 {
 namespace _
 {
-/// @brief The constraint string for equals.
 constexpr const char* equals_comp_str = "to be equals";
 
-/**
- * @brief Check a value to be equal to an expected.
- * @note Applies to all non-floating-point types for V, which provide an equality
- * operator.
- * @tparam V The type of value
- * @tparam E The type of expect
- * @param value The value to check
- * @param expect The expected value
- * @return true if value is equals expect, else false
- */
 template<typename V, typename E = V, ENABLE_IF(NOT IS_FLOAT(V) AND IS_EQUAL_COMPARABLE(V, E))>
-static comparison equals(const V& value, const E& expect)
+static comparison equals(V const& val_, E const& expect_)
 {
-    return value == expect ? success :
-                             comparison(equals_comp_str, to_string(value), to_string(expect));
+    return val_ == expect_ ? SUCCESS :
+                             comparison(equals_comp_str, to_string(val_), to_string(expect_));
 }
 
-/**
- * @brief Check a value to be equal to an expected.
- * @note Applies to all non-floating-point types for V, which don't provide an equality,
- * but an unequality operator.
- * @tparam V The type of value
- * @tparam E The type of expect
- * @param value The value to check
- * @param expect The expected value
- * @return true if value is equals expect, else false
- */
 template<typename V, typename E = V,
          ENABLE_IF(NOT IS_FLOAT(V) AND NOT IS_EQUAL_COMPARABLE(V, E)
                        AND                 IS_UNEQUAL_COMPARABLE(V, E))>
-static comparison equals(const V& value, const E& expect)
+static comparison equals(V const& val_, E const& expect_)
 {
-    return value != expect ? comparison(equals_comp_str, to_string(value), to_string(expect)) :
-                             success;
+    return val_ != expect_ ? comparison(equals_comp_str, to_string(val_), to_string(expect_)) :
+                             SUCCESS;
 }
 
-/**
- * @brief Check a value to be equal to an expected.
- * @note Applies to all floating-point types for V.
- * @tparam V The type of value
- * @tparam E The type of expect
- * @param value The value to check
- * @param expect The expected value
- * @return true if value is equals expect, else false
- */
 template<typename V, typename E = V, ENABLE_IF(IS_FLOAT(V) AND IS_FLOAT(E))>
-comparison equals(const V& value, const E& expect)
+comparison equals(V const& val_, E const& expect_)
 {
 #if defined(SCTF_EXTERN_EPSILON) || defined(SCTF_EPSILON)
     static V epsilon_ = static_cast<V>(epsilon);
 #else
     static V epsilon_ = std::numeric_limits<V>::epsilon();
 #endif
-    return (std::abs(value - expect) <= std::max(std::abs(value), std::abs(expect)) * epsilon_) ?
-               success :
-               comparison(equals_comp_str, to_string(value), to_string(expect));
+    return (std::abs(val_ - expect_) <= std::max(std::abs(val_), std::abs(expect_)) * epsilon_) ?
+               SUCCESS :
+               comparison(equals_comp_str, to_string(val_), to_string(expect_));
 }
-
 }  // namespace _
 }  // namespace sctf
 
-/**
- * Provide a Comparator shortwrite
- */
 PROVIDE_COMPARATOR(equals, EQUALS)
 PROVIDE_COMPARATOR(equals, EQ)
 

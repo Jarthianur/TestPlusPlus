@@ -14,7 +14,7 @@ FILES="../include/common/types.hpp
 ../include/testsuite/testsuite_parallel.hpp
 ../include/testsuite/runner.hpp
 ../include/testsuite/testmodule.hpp
-../include/reporter/abstract_reporter.hpp
+../include/reporter/reporter.hpp
 ../include/reporter/xml_reporter.hpp
 ../include/reporter/plaintext_reporter.hpp
 ../include/reporter/html_reporter.hpp
@@ -57,7 +57,7 @@ done
 
 grep '#include' $TARGET.tmp > .includes
 perl -0pi -e 's/#include [<"].*[">]//g' $TARGET.tmp
-perl -0pi -e 's%///.*|/\*[\w\W\n]*?\*/%%g' $TARGET.tmp
+perl -0pi -e 's%/// .*|/\*[\w\W\n]*?\*/%%g' $TARGET.tmp
 
 echo "$COPYRIGHT" > $TARGET
 echo "#ifndef SCTF_RELEASE_SCTF_HPP" >> $TARGET

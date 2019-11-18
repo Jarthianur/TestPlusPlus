@@ -31,47 +31,26 @@ namespace sctf
 {
 namespace _
 {
-/// @brief The constraint string for in_range.
 constexpr const char* in_range_comp_str = "to be in range of";
 
-/**
- * @brief Check for iterable non-string types to contain a value.
- * @tparam V The value type
- * @tparam R The range/container type
- * @param value The value to check
- * @param range The range/container to search
- * @return whether the value was found
- */
 template<typename V, typename R, ENABLE_IF(IS_ITERABLE(R) AND NOT IS_TYPE(R, std::string))>
-static comparison in_range(const V& value, const R& range)
+static comparison in_range(V const& val_, R const& range_)
 {
-    return std::find(range.begin(), range.end(), value) != range.end() ?
-               success :
-               comparison(in_range_comp_str, to_string(value), to_string(range));
+    return std::find(range_.begin(), range_.end(), val_) != range_.end() ?
+               SUCCESS :
+               comparison(in_range_comp_str, to_string(val_), to_string(range_));
 }
 
-/**
- * @brief Check for string types to contain a value.
- * @tparam V The value type
- * @tparam R The range/container type
- * @param value The value to check
- * @param range The range/container to search
- * @return whether the value was found
- */
 template<typename V, typename R = V, ENABLE_IF(IS_TYPE(R, std::string))>
-comparison in_range(const V& value, const R& range)
+comparison in_range(V const& val_, R const& range_)
 {
-    return range.find(value) != std::string::npos ?
-               success :
-               comparison(in_range_comp_str, to_string(value), to_string(range));
+    return range_.find(val_) != std::string::npos ?
+               SUCCESS :
+               comparison(in_range_comp_str, to_string(val_), to_string(range_));
 }
-
 }  // namespace _
 }  // namespace sctf
 
-/**
- * Provide a Comparator shortwrite
- */
 PROVIDE_COMPARATOR(in_range, IN_RANGE)
 PROVIDE_COMPARATOR(in_range, IN)
 
