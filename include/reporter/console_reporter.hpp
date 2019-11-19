@@ -39,7 +39,8 @@
 namespace sctf
 {
 /**
- * Reporter implementation with optionally colored, plain text output.
+ * Reporter implementation with optionally colored text output.
+ * Used for console printing.
  */
 class console_reporter : public _::reporter
 {
@@ -120,7 +121,7 @@ protected:
 };
 
 /**
- * Create a plain text reporter.
+ * Create a console reporter.
  * @param stream_  The stream to report to
  * @param color_   Whether to print ANSI colored text (default: false)
  * @param capture_ Whether to report captured stdout/stderr (default: false)
@@ -132,7 +133,7 @@ static reporter_ptr create_console_reporter(std::ostream& stream_, bool color_ =
 }
 
 /**
- * Create a plain text reporter. The report is printed to stdout.
+ * Create a console reporter. The report is printed to stdout.
  * @param color_   Whether to print ANSI colored text (default: false)
  * @param capture_ Whether to report captured stdout/stderr (default: false)
  */
@@ -142,7 +143,7 @@ static reporter_ptr create_console_reporter(bool color_ = false, bool capture_ =
 }
 
 /**
- * Create a plain text reporter. The specified file will be overwritten if it already exists.
+ * Create a console reporter. The specified file will be overwritten if it already exists.
  * @param fname_   The name of the file where the report will be written
  * @param color_   Whether to print ANSI colored text (default: false)
  * @param capture_ Whether to report captured stdout/stderr (default: false)

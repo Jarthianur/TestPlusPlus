@@ -33,7 +33,7 @@
 namespace sctf
 {
 /**
- * @brief Concrete reporter featuring HTML format.
+ * Reporter implementation with markdown format.
  */
 class markdown_reporter : public _::reporter
 {
@@ -41,21 +41,16 @@ public:
     ~markdown_reporter() noexcept override = default;
 
     /**
-     * @brief Constructor
-     * @param stream The stream to write to
+     * @param stream_  The stream to report to
      */
     explicit markdown_reporter(std::ostream& stream_) : reporter(stream_) {}
 
     /**
-     * @brief Constructor
-     * @param fname The file to write to
+     * @param fname_   The name of the file where the report will be written
      */
     explicit markdown_reporter(char const* fname_) : reporter(fname_) {}
 
 protected:
-    /**
-     * @brief Implement AbstractReporter#report_ts
-     */
     void report_testsuite(testsuite_ptr const ts_) override
     {
         *this << "## " << ts_->name() << SCTF_XLF << "|Tests|Successes|Failures|Errors|Time|"
@@ -68,9 +63,6 @@ protected:
         *this << SCTF_XLF;
     }
 
-    /**
-     * @brief Implement AbstractReporter#report_tc
-     */
     void report_testcase(_::testcase const& tc_) override
     {
         char const* status = "";
@@ -85,17 +77,11 @@ protected:
               << status << "|" << SCTF_LF;
     }
 
-    /**
-     * @brief Implement AbstractReporter#begin_report
-     */
     void begin_report() override
     {
         *this << "# Test Report" << SCTF_XLF;
     }
 
-    /**
-     * @brief Implement AbstractReporter#end_report
-     */
     void end_report() override
     {
         *this << "## Summary" << SCTF_XLF << "|Tests|Successes|Failures|Errors|Time|" << SCTF_LF
@@ -106,9 +92,8 @@ protected:
 };
 
 /**
- * @brief Create a HtmlReporter
- * @param stream The stream to use, defaults to stdout
- * @return a shared pointer to the reporter
+ * Create a markdown reporter.
+ * @param stream_  The stream to report to (default: stdout)
  */
 static reporter_ptr create_markdown_reporter(std::ostream& stream_ = std::cout)
 {
@@ -116,9 +101,8 @@ static reporter_ptr create_markdown_reporter(std::ostream& stream_ = std::cout)
 }
 
 /**
- * @brief Create a HtmlReporter
- * @param file The filename to use
- * @return a shared pointer to the reporter
+ * Create a markdown reporter. The specified file will be overwritten if it already exists.
+ * @param fname_   The name of the file where the report will be written
  */
 static reporter_ptr create_markdown_reporter(char const* file_)
 {
