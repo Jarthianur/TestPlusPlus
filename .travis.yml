@@ -67,6 +67,7 @@ matrix:
     - test/cpp17_seq.exe
     - test/cpp17_par.exe
     - cat test.xml
+    - cat test.md
 
 notifications:
     email:
