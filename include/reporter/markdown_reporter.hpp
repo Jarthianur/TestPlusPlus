@@ -62,7 +62,8 @@ protected:
               << SCTF_LF << "|-|-|-|-|-|" << SCTF_LF << "|" << ts_->statistics().tests() << "|"
               << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"
               << ts_->statistics().errors() << "|" << ts_->time() << "ms|" << SCTF_XLF
-              << "### Tests" << SCTF_XLF << "|Name|Context|Time|Status|" << SCTF_LF;
+              << "### Tests" << SCTF_XLF << "|Name|Context|Time|Status|" << SCTF_LF << "|-|-|-|-|"
+              << SCTF_LF;
         reporter::report_testsuite(ts_);
         *this << SCTF_XLF;
     }
