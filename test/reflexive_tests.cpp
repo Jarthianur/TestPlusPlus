@@ -148,7 +148,7 @@ void reflexive_tests()
         ->test("meta functions",
                [] {
                    testsuite_ptr ts = testsuite::create("ts", "ctx");
-                   int              i  = 0;
+                   int           i  = 0;
                    ts->setup([&i] { i = 1; });
                    ts->after([&i] { ++i; });
                    ts->before([&i] { --i; });

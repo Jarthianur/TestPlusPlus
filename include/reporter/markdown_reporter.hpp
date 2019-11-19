@@ -28,34 +28,29 @@
 #include "testsuite/testcase.hpp"
 #include "testsuite/testsuite.hpp"
 
-#define TD "<td>"
-#define TD_ "</td>"
-#define TR "<tr>"
-#define TR_ "</tr>"
-#define TH "<th>"
-#define TH_ "</th>"
+#define SCTF_XLF (SCTF_LF SCTF_LF)
 
 namespace sctf
 {
 /**
  * @brief Concrete reporter featuring HTML format.
  */
-class html_reporter : public _::reporter
+class markdown_reporter : public _::reporter
 {
 public:
-    ~html_reporter() noexcept override = default;
+    ~markdown_reporter() noexcept override = default;
 
     /**
      * @brief Constructor
      * @param stream The stream to write to
      */
-    explicit html_reporter(std::ostream& stream_) : reporter(stream_) {}
+    explicit markdown_reporter(std::ostream& stream_) : reporter(stream_) {}
 
     /**
      * @brief Constructor
      * @param fname The file to write to
      */
-    explicit html_reporter(char const* fname_) : reporter(fname_) {}
+    explicit markdown_reporter(char const* fname_) : reporter(fname_) {}
 
 protected:
     /**
@@ -63,14 +58,14 @@ protected:
      */
     void report_testsuite(testsuite_ptr const ts_) override
     {
-        *this << "<h3>" << ts_->name() << "</h3>"
-              << "<p>Tests: " << ts_->statistics().tests()
-              << " Failures: " << ts_->statistics().failures()
-              << " Errors: " << ts_->statistics().errors() << " Time: " << ts_->time()
-              << "ms</p><table><thead>" << TR << TH << "Name" << TH_ << TH << "Context" << TH_ << TH
-              << "Time" << TH_ << TH << "Status" << TH_ << TR_ << "</thead><tbody>";
+        *this << "## " << ts_->name() << SCTF_XLF << "|Tests|Successes|Failures|Errors|Time|"
+              << SCTF_LF << "|-|-|-|-|-|" << SCTF_LF << "|" << ts_->statistics().tests() << "|"
+              << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"
+              << ts_->statistics().errors() << "|" << ts_->time() << "ms|" << SCTF_XLF
+              << "### Tests" << SCTF_XLF << "|Name|Context|Time|Status|" << SCTF_LF << "|-|-|-|-|"
+              << SCTF_LF;
         reporter::report_testsuite(ts_);
-        *this << "</tbody></table>";
+        *this << SCTF_XLF;
     }
 
     /**
@@ -78,16 +73,16 @@ protected:
      */
     void report_testcase(_::testcase const& tc_) override
     {
-        std::string status;
+        char const* status = "";
         switch (tc_.state())
         {
-            case _::testcase::result::ERROR: status = "error"; break;
-            case _::testcase::result::FAILED: status = "failed"; break;
-            case _::testcase::result::PASSED: status = "passed"; break;
+            case _::testcase::result::ERROR: status = "ERROR"; break;
+            case _::testcase::result::FAILED: status = "FAILED"; break;
+            case _::testcase::result::PASSED: status = "PASSED"; break;
             default: break;
         }
-        *this << "<tr class=\"" << status << "\">" << TD << tc_.name() << TD_ << TD << tc_.context()
-              << TD_ << TD << tc_.duration() << "ms" << TD_ << TD << status << TD_ << TR_;
+        *this << "|" << tc_.name() << "|" << tc_.context() << "|" << tc_.duration() << "ms|"
+              << status << "|" << SCTF_LF;
     }
 
     /**
@@ -95,11 +90,7 @@ protected:
      */
     void begin_report() override
     {
-        *this << "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/>"
-                 "<style>table{border-collapse: collapse;min-width: 50%}"
-                 "tr,th,td{border: 1px solid black;padding: 2px}.failed{background: lightskyblue}"
-                 ".passed{background: lightgreen}.error{background: lightcoral}</style>"
-                 "</head><body><header><h1>Test Report</h1></header>";
+        *this << "# Test Report" << SCTF_XLF;
     }
 
     /**
@@ -107,9 +98,10 @@ protected:
      */
     void end_report() override
     {
-        *this << "<footer><h3>Summary</h3><p>Tests: " << m_abs_tests << " Failures: " << m_abs_fails
-              << " Errors: " << m_abs_errs << " Time: " << m_abs_time
-              << "ms</p></footer></body></html>";
+        *this << "## Summary" << SCTF_XLF << "|Tests|Successes|Failures|Errors|Time|" << SCTF_LF
+              << "|-|-|-|-|-|" << SCTF_LF << "|" << m_abs_tests << "|"
+              << (m_abs_tests - m_abs_errs - m_abs_fails) << "|" << m_abs_fails << "|" << m_abs_errs
+              << "|" << m_abs_time << "ms|" << SCTF_LF;
     }
 };
 
@@ -118,9 +110,9 @@ protected:
  * @param stream The stream to use, defaults to stdout
  * @return a shared pointer to the reporter
  */
-static reporter_ptr create_html_reporter(std::ostream& stream_ = std::cout)
+static reporter_ptr create_markdown_reporter(std::ostream& stream_ = std::cout)
 {
-    return std::make_shared<html_reporter>(stream_);
+    return std::make_shared<markdown_reporter>(stream_);
 }
 
 /**
@@ -128,17 +120,12 @@ static reporter_ptr create_html_reporter(std::ostream& stream_ = std::cout)
  * @param file The filename to use
  * @return a shared pointer to the reporter
  */
-static reporter_ptr create_html_reporter(char const* file_)
+static reporter_ptr create_markdown_reporter(char const* file_)
 {
-    return std::make_shared<html_reporter>(file_);
+    return std::make_shared<markdown_reporter>(file_);
 }
 }  // namespace sctf
 
-#undef TD
-#undef TD_
-#undef TR
-#undef TR_
-#undef TH
-#undef TH_
+#undef SCTF_XLF
 
 #endif  // SCTF_REPORTER_HTML_REPORTER_HPP

@@ -16,8 +16,8 @@ FILES="../include/common/types.hpp
 ../include/testsuite/testmodule.hpp
 ../include/reporter/reporter.hpp
 ../include/reporter/xml_reporter.hpp
-../include/reporter/plaintext_reporter.hpp
-../include/reporter/html_reporter.hpp
+../include/reporter/console_reporter.hpp
+../include/reporter/markdown_reporter.hpp
 ../include/comparator/comparators.hpp
 ../include/comparator/less.hpp
 ../include/comparator/inrange.hpp
