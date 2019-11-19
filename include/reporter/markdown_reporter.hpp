@@ -64,7 +64,7 @@ protected:
               << ts_->statistics().errors() << "|" << ts_->time() << "ms|" << SCTF_XLF
               << "### Tests" << SCTF_XLF << "|Name|Context|Time|Status|" << SCTF_LF;
         reporter::report_testsuite(ts_);
-        *this << "</tbody></table>";
+        *this << SCTF_XLF;
     }
 
     /**
