@@ -63,18 +63,18 @@ Also consider, spawning threads has some overhead. Thus there is no point in run
 
 **Note:** The argument *runner* of all *describe* functions is always the instance where to register the testsuite. It is optional if you just need the default one. The argument *func* of all *test*,*setup*,*before*,*after* methods is always a void function without arguments, preferably a lambda expression. Calls to those methods are chainable. It is possible to add tests after the runner has run, thus run tests partially, and run it again. Already executed tests will be skipped.
 
-| Call                  | Arguments             | Description                                                                                                                                          | Example                                             |
-| --------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| describe              | name, context, runner | Describe a testsuite with *name* and *context*, where context defaults to "main".                                                                    | `describe("ts1", "Component")...`                   |
-| describe\<T>          | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T.                                                                  | `describe<Component>("ts2")...`                     |
-| describe_parallel     | name, context, runner | Describe a testsuite with *name* and *context*, where context defaults to an empty string. Tests inside this testsuite will be executed in parallel. | `describe_parallel("ts3", "Component")...`          |
-| describe_parallel\<T> | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T. Tests inside this testsuite will be executed in parallel.        | `describe_parallel<Component>("ts2")...`            |
-| test                  | name, context, func   | Create a testcase on a testsuite with *name* and *context*.                                                                                          | `...->test("test1", "Component::func", []{...})...` |
-| test                  | name, func            | Create a testcase on a testsuite with *name*, the context is inherited from the testsuite.                                                           | `...->test("test2", []{...})...`                    |
-| test\<T>              | name, func            | Create a testcase on a testsuite with *name*. The context is taken as the class-/typename of T.                                                      | `...->test<Component>("test3", []{...})...`         |
-| setup                 | func                  | Set a *setup* function, which will be executed once before all testcases. Exceptions thrown by the given function will get ignored.                  | `...->setup([&]{ x = 10; ... })...`                 |
-| before                | func                  | Set a *pre-test* function, which will be executed before each testcase. Exceptions thrown by the given function will get ignored.                    | `...->before([&]{ x = 10; ... })...`                |
-| after                 | func                  | Set a *post-test* function, which will be executed after each testcase. Exceptions thrown by the given function will get ignored.                    | `...->after([&]{ x = 10; ... })...`                 |
+| Call          | Arguments             | Description                                                                                                                                          | Example                                             |
+| ------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| suite         | name, context, runner | Describe a testsuite with *name* and *context*, where context defaults to "main".                                                                    | `suite("ts1", "Component")...`                      |
+| suite\<T>     | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T.                                                                  | `suite<Component>("ts2")...`                        |
+| suite_par     | name, context, runner | Describe a testsuite with *name* and *context*, where context defaults to an empty string. Tests inside this testsuite will be executed in parallel. | `suite_par("ts3", "Component")...`                  |
+| suite_par\<T> | name, runner          | Describe a testsuite with *name*. The context is taken as the class-/typename of T. Tests inside this testsuite will be executed in parallel.        | `suite_par<Component>("ts2")...`                    |
+| test          | name, context, func   | Create a testcase on a testsuite with *name* and *context*.                                                                                          | `...->test("test1", "Component::func", []{...})...` |
+| test          | name, func            | Create a testcase on a testsuite with *name*, the context is inherited from the testsuite.                                                           | `...->test("test2", []{...})...`                    |
+| test\<T>      | name, func            | Create a testcase on a testsuite with *name*. The context is taken as the class-/typename of T.                                                      | `...->test<Component>("test3", []{...})...`         |
+| setup         | func                  | Set a *setup* function, which will be executed once before all testcases. Exceptions thrown by the given function will get ignored.                  | `...->setup([&]{ x = 10; ... })...`                 |
+| before        | func                  | Set a *pre-test* function, which will be executed before each testcase. Exceptions thrown by the given function will get ignored.                    | `...->before([&]{ x = 10; ... })...`                |
+| after         | func                  | Set a *post-test* function, which will be executed after each testcase. Exceptions thrown by the given function will get ignored.                    | `...->after([&]{ x = 10; ... })...`                 |
 
 ### Comparators
 
@@ -112,10 +112,10 @@ The idea of test modules is to bind tests to an object instead of calling descri
 
 **Note:** *NAME* is just the name of the module, not a string. It is encouraged to apply a naming scheme like *test_myClass*. *FN* is a block of invacations to the *test* method you already know from the testsuites, but here it is not chainable and no template version is available. Also the context is taken from the modules name. *RUNNER* is optional if you only use the default runner.
 
-| Syntax               | Parameters       | Description                                                                                                                          | Example                                                                                                     |
-| -------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| TEST_MODULE          | NAME, FN, RUNNER | Define a test module. It is basically an object that binds a testsuite to its context.                                               | `TEST_MODULE(test_myClass,{test("myClass::function",[]{myClass mc;assertTrue(mc.function());});})`          |
-| TEST_MODULE_PARALLEL | NAME, FN, RUNNER | Define a test module where all tests will run in parallel. It is basically an object that binds a parallel testsuite to its context. | `TEST_MODULE_PARALLEL(test_myClass,{test("myClass::function",[]{myClass mc;assertTrue(mc.function());});})` |
+| Syntax          | Parameters       | Description                                                                                                                          | Example                                                                                                |
+| --------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| TEST_MODULE     | NAME, FN, RUNNER | Define a test module. It is basically an object that binds a testsuite to its context.                                               | `TEST_MODULE(test_myClass,{test("myClass::function",[]{myClass mc;assertTrue(mc.function());});})`     |
+| TEST_MODULE_PAR | NAME, FN, RUNNER | Define a test module where all tests will run in parallel. It is basically an object that binds a parallel testsuite to its context. | `TEST_MODULE_PAR(test_myClass,{test("myClass::function",[]{myClass mc;assertTrue(mc.function());});})` |
 
 ## Usage
 
@@ -150,7 +150,7 @@ int main(int argc, char** argv)
 {
     auto rep = create_console_reporter(true, true);
     int x;
-    describe("test")
+    suite("test")
         ->setup([&]{ x = 10; })
         ->test("1",
                [&] {
