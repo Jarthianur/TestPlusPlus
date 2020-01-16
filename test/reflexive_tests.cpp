@@ -39,7 +39,7 @@ using namespace _;
 
 void reflexive_tests()
 {
-    describe_parallel("comparators")
+    suite_par("comparators")
         ->test("equals",
                [] {
                    ASSERT_FALSE(!equals(1, 1));
@@ -103,7 +103,7 @@ void reflexive_tests()
             ASSERT_T(*c, EQ, "Expected '1' to be unequals '1'", std::string);
         });
 
-    describe<testsuite_parallel>("testsuite_parallel")->test("parallel run", [] {
+    suite<testsuite_parallel>("testsuite_parallel")->test("parallel run", [] {
         testsuite_ptr ts = testsuite_parallel::create("ts", "ctx");
         ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
         ts->test("", [] { ASSERT_TRUE(false); });
@@ -136,7 +136,7 @@ void reflexive_tests()
         ASSERT_EQUALS(stat.successes(), 2);
     });
 
-    describe<testsuite>("testsuite")
+    suite<testsuite>("testsuite")
         ->test("creation",
                [] {
                    auto a = std::chrono::system_clock::now();
@@ -192,7 +192,7 @@ void reflexive_tests()
             ASSERT_EQUALS(t, ts->time());
         });
 
-    describe<testcase>("testcase")
+    suite<testcase>("testcase")
         ->test("creation",
                [] {
                    testcase tc("t1", "ctx", [] {});
@@ -231,7 +231,7 @@ void reflexive_tests()
             ASSERT_T(tc2.err_msg(), EQ, "unknown error", std::string);
         });
 
-    describe_parallel("stringify")
+    suite_par("stringify")
         ->test("bool",
                [] {
                    ASSERT_T(to_string(true), EQ, "true", std::string);
@@ -262,7 +262,7 @@ void reflexive_tests()
                [] { ASSERT_T(to_string(not_streamable()), EQ, "not_streamable", std::string); })
         ->test("streamable", [] { ASSERT_T(to_string(1), EQ, "1", std::string); });
 
-    describe_parallel("test traits")
+    suite_par("test traits")
         ->test("is_streamable",
                [] {
                    ASSERT_NOTHROW((throw_if_not_streamable<std::ostringstream, streamable>()));
@@ -297,7 +297,7 @@ void reflexive_tests()
                           std::logic_error);
         });
 
-    describe_parallel("test assertions")
+    suite_par("test assertions")
         ->test("ASSERT",
                [] {
                    // successful
@@ -420,7 +420,7 @@ void reflexive_tests()
             ASSERT_THROWS(ASSERT_PERFORMANCE(throw 1, 100), assertion_failure);
         });
 
-    describe<testsuite>("test output capture")
+    suite<testsuite>("test output capture")
         ->test<_::streambuf_proxy>(
             "single thread",
             [] {

@@ -71,22 +71,22 @@ protected:
  * @param FN   The test function body, which is a block of calls to `test(...)`
  * @param ...  Allows to optionally pass a runner
  */
-#define TEST_MODULE(NAME, FN, ...)                                                 \
-    class NAME : public sctf::_::test_module                                       \
-    {                                                                              \
-    public:                                                                        \
-        NAME() : sctf::_::test_module(sctf::describe(#NAME, #NAME, ##__VA_ARGS__)) \
-        {                                                                          \
-            FN;                                                                    \
-        }                                                                          \
-        ~NAME() noexcept override = default;                                       \
-    };                                                                             \
-    namespace sctf                                                                 \
-    {                                                                              \
-    namespace _                                                                    \
-    {                                                                              \
-    static const auto& mods_##NAME = singleton<NAME>::instance();                  \
-    }                                                                              \
+#define TEST_MODULE(NAME, FN, ...)                                              \
+    class NAME : public sctf::_::test_module                                    \
+    {                                                                           \
+    public:                                                                     \
+        NAME() : sctf::_::test_module(sctf::suite(#NAME, #NAME, ##__VA_ARGS__)) \
+        {                                                                       \
+            FN;                                                                 \
+        }                                                                       \
+        ~NAME() noexcept override = default;                                    \
+    };                                                                          \
+    namespace sctf                                                              \
+    {                                                                           \
+    namespace _                                                                 \
+    {                                                                           \
+    static const auto& mods_##NAME = singleton<NAME>::instance();               \
+    }                                                                           \
     }
 
 /**
@@ -97,22 +97,22 @@ protected:
  * @param FN   The test function body, which is a block of calls to `test(...)`
  * @param ...  Allows to optionally pass a runner
  */
-#define TEST_MODULE_PARALLEL(NAME, FN, ...)                                                 \
-    class NAME : public sctf::_::test_module                                                \
-    {                                                                                       \
-    public:                                                                                 \
-        NAME() : sctf::_::test_module(sctf::describe_parallel(#NAME, #NAME, ##__VA_ARGS__)) \
-        {                                                                                   \
-            FN;                                                                             \
-        }                                                                                   \
-        ~NAME() noexcept override = default;                                                \
-    };                                                                                      \
-    namespace sctf                                                                          \
-    {                                                                                       \
-    namespace _                                                                             \
-    {                                                                                       \
-    static const auto& modp_##NAME = singleton<NAME>::instance();                           \
-    }                                                                                       \
+#define TEST_MODULE_PAR(NAME, FN, ...)                                              \
+    class NAME : public sctf::_::test_module                                        \
+    {                                                                               \
+    public:                                                                         \
+        NAME() : sctf::_::test_module(sctf::suite_par(#NAME, #NAME, ##__VA_ARGS__)) \
+        {                                                                           \
+            FN;                                                                     \
+        }                                                                           \
+        ~NAME() noexcept override = default;                                        \
+    };                                                                              \
+    namespace sctf                                                                  \
+    {                                                                               \
+    namespace _                                                                     \
+    {                                                                               \
+    static const auto& modp_##NAME = singleton<NAME>::instance();                   \
+    }                                                                               \
     }
 
 #endif  // SCTF_TESTSUITE_TESTMODULE_HPP

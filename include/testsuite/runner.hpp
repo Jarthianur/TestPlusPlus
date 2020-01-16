@@ -89,8 +89,8 @@ private:
  * @param runner_ The runner where to add this testsuite (default)
  * @return the created testsuite for chaining
  */
-inline static testsuite_ptr describe_parallel(char const* name_, char const* ctx_ = "main",
-                                              runner& runner_ = runner::default_instance())
+inline static testsuite_ptr suite_par(char const* name_, char const* ctx_ = "main",
+                                      runner& runner_ = runner::default_instance())
 {
     return runner_.add_testsuite(testsuite_parallel::create(name_, ctx_));
 }
@@ -103,8 +103,7 @@ inline static testsuite_ptr describe_parallel(char const* name_, char const* ctx
  * @return the created testsuite for chaining
  */
 template<typename T>
-static testsuite_ptr describe_parallel(char const* name_,
-                                       runner&     runner_ = runner::default_instance())
+static testsuite_ptr suite_par(char const* name_, runner& runner_ = runner::default_instance())
 {
     return runner_.add_testsuite(testsuite_parallel::create(name_, _::name_for_type<T>()));
 }
@@ -116,8 +115,8 @@ static testsuite_ptr describe_parallel(char const* name_,
  * @param runner_ The runner where to add this testsuite (default)
  * @return the created testsuite for chaining
  */
-inline static testsuite_ptr describe(char const* name_, char const* ctx_ = "main",
-                                     runner& runner_ = runner::default_instance())
+inline static testsuite_ptr suite(char const* name_, char const* ctx_ = "main",
+                                  runner& runner_ = runner::default_instance())
 {
     return runner_.add_testsuite(testsuite::create(name_, ctx_));
 }
@@ -130,7 +129,7 @@ inline static testsuite_ptr describe(char const* name_, char const* ctx_ = "main
  * @return the created testsuite for chaining
  */
 template<typename T>
-static testsuite_ptr describe(char const* name_, runner& runner_ = runner::default_instance())
+static testsuite_ptr suite(char const* name_, runner& runner_ = runner::default_instance())
 {
     return runner_.add_testsuite(testsuite::create(name_, _::name_for_type<T>()));
 }
