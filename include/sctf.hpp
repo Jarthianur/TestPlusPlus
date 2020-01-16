@@ -22,6 +22,8 @@
 #ifndef SCTF_SCTF_HPP
 #define SCTF_SCTF_HPP
 
+#define SCFT_VERSION "1.2-rc0"
+
 #include "common/types.hpp"
 #include "comparator/equals.hpp"
 #include "comparator/greater.hpp"
