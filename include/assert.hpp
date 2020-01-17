@@ -37,9 +37,8 @@
  * @param COMP The Comparator
  * @param EXPECT The expected value
  */
-#define ASSERT(VALUE, COMP, EXPECT)                                                     \
-    sctf::_::assert_statement(VALUE, EXPECT, COMP<decltype(VALUE), decltype(EXPECT)>(), \
-                              sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT(VALUE, COMP, EXPECT) \
+    sctf::_::assert_statement(VALUE, EXPECT, COMP(), sctf::_::code_location{__FILE__, __LINE__})
 
 /**
  * Test for successful negated comparison.
@@ -47,60 +46,56 @@
  * @param COMP The Comparator
  * @param EXPECT The expected value
  */
-#define ASSERT_NOT(VALUE, COMP, EXPECT)                                                  \
-    sctf::_::assert_statement(VALUE, EXPECT, !COMP<decltype(VALUE), decltype(EXPECT)>(), \
-                              sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT_NOT(VALUE, COMP, EXPECT) \
+    sctf::_::assert_statement(VALUE, EXPECT, !COMP(), sctf::_::code_location{__FILE__, __LINE__})
 
 /**
  * Test for equality.
  * @param VALUE The actual value
  * @param EXPECT The expected value
  */
-#define ASSERT_EQUALS(VALUE, EXPECT)                                                            \
-    sctf::_::assert_statement(VALUE, EXPECT, sctf::EQUALS<decltype(VALUE), decltype(EXPECT)>(), \
+#define ASSERT_EQUALS(VALUE, EXPECT)                         \
+    sctf::_::assert_statement(VALUE, EXPECT, sctf::EQUALS(), \
                               sctf::_::code_location{__FILE__, __LINE__})
 
 /**
  * Test value to be true.
  * @param VALUE The value
  */
-#define ASSERT_TRUE(VALUE)                                  \
-    sctf::_::assert_statement<sctf::_::equals<bool>, bool>( \
-        VALUE, true, sctf::EQUALS<bool>(), sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT_TRUE(VALUE)                                 \
+    sctf::_::assert_statement(VALUE, true, sctf::EQUALS(), \
+                              sctf::_::code_location{__FILE__, __LINE__})
 
 /**
  * Test value to be false.
  * @param VALUE The value
  */
 #define ASSERT_FALSE(VALUE)                                 \
-    sctf::_::assert_statement<sctf::_::equals<bool>, bool>( \
-        VALUE, false, sctf::EQUALS<bool>(), sctf::_::code_location{__FILE__, __LINE__})
+    sctf::_::assert_statement(VALUE, false, sctf::EQUALS(), \
+                              sctf::_::code_location{__FILE__, __LINE__})
 
 /**
  * Test value to be nullptr.
  * @param VALUE The value
  */
-#define ASSERT_NULL(VALUE)                                                 \
-    sctf::_::assert_statement(static_cast<void const*>(VALUE), nullptr,    \
-                              sctf::EQUALS<void const*, std::nullptr_t>(), \
+#define ASSERT_NULL(VALUE)                                                              \
+    sctf::_::assert_statement(static_cast<void const*>(VALUE), nullptr, sctf::EQUALS(), \
                               sctf::_::code_location{__FILE__, __LINE__})
 
 /**
  * Test value not to be nullptr.
  * @param VALUE The value
  */
-#define ASSERT_NOT_NULL(VALUE)                                               \
-    sctf::_::assert_statement(static_cast<void const*>(VALUE), nullptr,      \
-                              sctf::UNEQUALS<void const*, std::nullptr_t>(), \
+#define ASSERT_NOT_NULL(VALUE)                                                            \
+    sctf::_::assert_statement(static_cast<void const*>(VALUE), nullptr, sctf::UNEQUALS(), \
                               sctf::_::code_location{__FILE__, __LINE__})
 
 /**
  * Test value to be 0.
  * @param VALUE The value
  */
-#define ASSERT_ZERO(VALUE)                                            \
-    sctf::_::assert_statement(VALUE, static_cast<decltype(VALUE)>(0), \
-                              sctf::EQUALS<decltype(VALUE)>(),        \
+#define ASSERT_ZERO(VALUE)                                                            \
+    sctf::_::assert_statement(VALUE, static_cast<decltype(VALUE)>(0), sctf::EQUALS(), \
                               sctf::_::code_location{__FILE__, __LINE__})
 
 /**

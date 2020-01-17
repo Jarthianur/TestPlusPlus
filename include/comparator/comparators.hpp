@@ -150,7 +150,6 @@ extern double        epsilon;
     {                                                                                         \
     namespace _                                                                               \
     {                                                                                         \
-    template<typename V, typename E = V>                                                      \
     class NAME                                                                                \
     {                                                                                         \
         static constexpr char const* m_cmp_str     = "to be " CMPSTR;                         \
@@ -160,6 +159,7 @@ extern double        epsilon;
     public:                                                                                   \
         NAME()           = default;                                                           \
         ~NAME() noexcept = default;                                                           \
+        template<typename V, typename E = V>                                                  \
         comparison operator()(V const& actual_value, E const& expected_value)                 \
         {                                                                                     \
             return (PRED) != m_neg ?                                                          \
@@ -182,14 +182,13 @@ extern double        epsilon;
  * @param COMP The comparator function
  * @param NAME The final shortwrite
  */
-#define PROVIDE_COMPARATOR(COMP, NAME)   \
-    namespace sctf                       \
-    {                                    \
-    template<typename V, typename E = V> \
-    static _::COMP<V, E> NAME()          \
-    {                                    \
-        return _::COMP<V, E>();          \
-    }                                    \
+#define PROVIDE_COMPARATOR(COMP, NAME) \
+    namespace sctf                     \
+    {                                  \
+    static _::COMP NAME()              \
+    {                                  \
+        return _::COMP();              \
+    }                                  \
     }
 
 /**

@@ -33,10 +33,7 @@ namespace sctf
 {
 namespace _
 {
-// ENABLE_IF(NOT IS_FLOAT(V) AND IS_UNEQUAL_COMPARABLE(V, E))
-template<typename V, typename E = V, typename = void>
-class unequals  //<V,E,std::enable_if<!std::is_floating_point<V>::value &&
-                //_::is_unequal_comparable<V,E>::value>>
+class unequals
 {
     static constexpr char const* m_cmp_str     = "to be unequals";
     static constexpr char const* m_neg_cmp_str = "to be not unequals";
@@ -45,6 +42,14 @@ class unequals  //<V,E,std::enable_if<!std::is_floating_point<V>::value &&
 public:
     unequals()           = default;
     ~unequals() noexcept = default;
+
+    unequals& operator!()
+    {
+        m_neg = !m_neg;
+        return *this;
+    }
+
+    template<typename V, typename E = V, ENABLE_IF(NOT IS_FLOAT(V) AND IS_UNEQUAL_COMPARABLE(V, E))>
     comparison operator()(V const& actual_value, E const& expected_value)
     {
         return (actual_value != expected_value) != m_neg ?
@@ -52,27 +57,10 @@ public:
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
                               to_string(expected_value));
     }
-    unequals& operator!()
-    {
-        m_neg = !m_neg;
-        return *this;
-    }
-};
 
-// ENABLE_IF(NOT IS_FLOAT(V) AND NOT IS_UNEQUAL_COMPARABLE(V, E) AND IS_EQUAL_COMPARABLE(V, E))
-template<typename V, typename E>
-class unequals<
-    V, E,
-    std::enable_if<!std::is_floating_point<V>::value && !is_unequal_comparable<V, E>::value &&
-                   is_equal_comparable<V, E>::value>>
-{
-    static constexpr char const* m_cmp_str     = "to be unequals";
-    static constexpr char const* m_neg_cmp_str = "to be not unequals";
-    bool                         m_neg         = false;
-
-public:
-    unequals()           = default;
-    ~unequals() noexcept = default;
+    template<typename V, typename E = V,
+             ENABLE_IF(NOT IS_FLOAT(V) AND NOT IS_UNEQUAL_COMPARABLE(V, E)
+                           AND                 IS_EQUAL_COMPARABLE(V, E))>
     comparison operator()(V const& actual_value, E const& expected_value)
     {
         return (actual_value == expected_value) != m_neg ?
@@ -80,25 +68,8 @@ public:
                               to_string(expected_value)) :
                    SUCCESS;
     }
-    unequals& operator!()
-    {
-        m_neg = !m_neg;
-        return *this;
-    }
-};
 
-// ENABLE_IF(IS_FLOAT(V) AND IS_FLOAT(E))
-template<typename V, typename E>
-class unequals<V, E,
-               std::enable_if<std::is_floating_point<V>::value && std::is_floating_point<E>::value>>
-{
-    static constexpr char const* m_cmp_str     = "to be unequals";
-    static constexpr char const* m_neg_cmp_str = "to be not unequals";
-    bool                         m_neg         = false;
-
-public:
-    unequals()           = default;
-    ~unequals() noexcept = default;
+    template<typename V, typename E = V, ENABLE_IF(IS_FLOAT(V) AND IS_FLOAT(E))>
     comparison operator()(V const& actual_value, E const& expected_value)
     {
 #if defined(SCTF_EXTERN_EPSILON) || defined(SCTF_EPSILON)
@@ -111,11 +82,6 @@ public:
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
                               to_string(expected_value)) :
                    SUCCESS;
-    }
-    unequals& operator!()
-    {
-        m_neg = !m_neg;
-        return *this;
     }
 };
 }  // namespace _
