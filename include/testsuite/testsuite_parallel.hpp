@@ -70,7 +70,7 @@ public:
             _::streambuf_proxy_omp mt_buf_cout(std::cout);
             _::streambuf_proxy_omp mt_buf_cerr(std::cerr);
 
-            SCTF_EXEC_SILENT(m_setup_func)
+            SCTF_EXEC_SILENT(m_setup_fn)
 #pragma omp parallel
             {
                 double      tmp   = 0.0;
@@ -83,7 +83,7 @@ public:
                     auto& tc = m_testcases[static_cast<std::size_t>(i)];
                     if (tc.state() == _::testcase::result::NONE)
                     {
-                        SCTF_EXEC_SILENT(m_pre_test_func)
+                        SCTF_EXEC_SILENT(m_pretest_fn)
                         tc();
                         switch (tc.state())
                         {
@@ -92,7 +92,7 @@ public:
                             default: break;
                         }
                         tmp += tc.duration();
-                        SCTF_EXEC_SILENT(m_post_test_func)
+                        SCTF_EXEC_SILENT(m_posttest_fn)
                         tc.cout(mt_buf_cout.str());
                         tc.cerr(mt_buf_cerr.str());
                         mt_buf_cout.clear();
@@ -107,6 +107,7 @@ public:
                 }
             }
             m_state = execution_state::DONE;
+            SCTF_EXEC_SILENT(m_teardown_fn)
         }
     }
 

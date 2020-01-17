@@ -48,14 +48,19 @@ protected:
         m_ts->setup(std::move(fn_));
     }
 
-    inline void before(_::test_function&& fn_)
+    inline void teardown(_::test_function&& fn_)
     {
-        m_ts->before(std::move(fn_));
+        m_ts->teardown(std::move(fn_));
     }
 
-    inline void after(_::test_function&& fn_)
+    inline void before_each(_::test_function&& fn_)
     {
-        m_ts->after(std::move(fn_));
+        m_ts->before_each(std::move(fn_));
+    }
+
+    inline void after_each(_::test_function&& fn_)
+    {
+        m_ts->after_each(std::move(fn_));
     }
 
     testsuite_ptr m_ts;

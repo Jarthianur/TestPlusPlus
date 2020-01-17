@@ -80,12 +80,12 @@ public:
             _::streambuf_proxy buf_cout(std::cout);
             _::streambuf_proxy buf_cerr(std::cerr);
 
-            SCTF_EXEC_SILENT(m_setup_func)
+            SCTF_EXEC_SILENT(m_setup_fn)
             std::for_each(m_testcases.begin(), m_testcases.end(),
                           [this, &buf_cerr, &buf_cout](_::testcase& tc_) {
                               if (tc_.state() == _::testcase::result::NONE)
                               {
-                                  SCTF_EXEC_SILENT(m_pre_test_func)
+                                  SCTF_EXEC_SILENT(m_pretest_fn)
                                   tc_();
                                   switch (tc_.state())
                                   {
@@ -98,7 +98,7 @@ public:
                                       default: break;
                                   }
                                   m_time += tc_.duration();
-                                  SCTF_EXEC_SILENT(m_post_test_func)
+                                  SCTF_EXEC_SILENT(m_posttest_fn)
                                   tc_.cout(buf_cout.str());
                                   tc_.cerr(buf_cerr.str());
                                   buf_cout.clear();
@@ -106,6 +106,7 @@ public:
                               }
                           });
             m_state = execution_state::DONE;
+            SCTF_EXEC_SILENT(m_teardown_fn)
         }
     }
 
@@ -161,7 +162,13 @@ public:
      */
     testsuite_ptr setup(_::test_function&& fn_)
     {
-        m_setup_func = std::move(fn_);
+        m_setup_fn = std::move(fn_);
+        return shared_from_this();
+    }
+
+    testsuite_ptr teardown(_::test_function&& fn_)
+    {
+        m_teardown_fn = std::move(fn_);
         return shared_from_this();
     }
 
@@ -172,9 +179,9 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    testsuite_ptr before(_::test_function&& fn_)
+    testsuite_ptr before_each(_::test_function&& fn_)
     {
-        m_pre_test_func = std::move(fn_);
+        m_pretest_fn = std::move(fn_);
         return shared_from_this();
     }
 
@@ -185,9 +192,9 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    testsuite_ptr after(_::test_function&& fn_)
+    testsuite_ptr after_each(_::test_function&& fn_)
     {
-        m_post_test_func = std::move(fn_);
+        m_posttest_fn = std::move(fn_);
         return shared_from_this();
     }
 
@@ -251,9 +258,10 @@ protected:
     std::vector<_::testcase> m_testcases;
     execution_state          m_state = execution_state::PENDING;
 
-    _::test_function m_setup_func;
-    _::test_function m_pre_test_func;
-    _::test_function m_post_test_func;
+    _::test_function m_setup_fn;
+    _::test_function m_teardown_fn;
+    _::test_function m_pretest_fn;
+    _::test_function m_posttest_fn;
 };
 
 }  // namespace sctf

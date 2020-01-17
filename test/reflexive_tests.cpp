@@ -150,8 +150,8 @@ void reflexive_tests()
                    testsuite_ptr ts = testsuite::create("ts", "ctx");
                    int           i  = 0;
                    ts->setup([&i] { i = 1; });
-                   ts->after([&i] { ++i; });
-                   ts->before([&i] { --i; });
+                   ts->after_each([&i] { ++i; });
+                   ts->before_each([&i] { --i; });
                    ts->test("tc1", [] {});
                    ts->test("tc2", "ctx2", [] {});
                    ts->test<int>("tc3", [] {});
