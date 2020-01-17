@@ -316,15 +316,15 @@ void reflexive_tests()
         ->test("ASSERT_NOT",
                [] {
                    // successful
-                   /*ASSERT_NOTHROW(ASSERT_T(1, EQUALS, 1, unsigned int));
-                   ASSERT_NOTHROW(ASSERT_T(true, EQUALS, true, bool));
-                   ASSERT_NOTHROW(ASSERT_T(1.5, LESS, 100.3, double));
-                   ASSERT_NOTHROW(ASSERT_T("hello", NE, "world", std::string));
+                   ASSERT_NOTHROW(ASSERT_NOT(1, EQUALS, 2));
+                   ASSERT_NOTHROW(ASSERT_NOT(true, EQUALS, false));
+                   ASSERT_NOTHROW(ASSERT_NOT(1.5, LESS, 0.3));
+                   ASSERT_NOTHROW(ASSERT_NOT("hello", NE, "hello"));
                    // failing
-                   ASSERT_THROWS(ASSERT_T(2, EQUALS, 1, unsigned int), assertion_failure);
-                   ASSERT_THROWS(ASSERT_T(false, EQUALS, true, bool), assertion_failure);
-                   ASSERT_THROWS(ASSERT_T(1002.5, LESS, 100.3, double), assertion_failure);
-                   ASSERT_THROWS(ASSERT_T("hello", EQ, "world", std::string), assertion_failure);*/
+                   ASSERT_THROWS(ASSERT_NOT(2, EQUALS, 2), assertion_failure);
+                   ASSERT_THROWS(ASSERT_NOT(false, EQUALS, false), assertion_failure);
+                   ASSERT_THROWS(ASSERT_NOT(1002.5, LESS, 1002.5), assertion_failure);
+                   ASSERT_THROWS(ASSERT_NOT("hello", EQ, "hello"), assertion_failure);
                })
         ->test("ASSERT_EQUALS",
                [] {

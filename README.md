@@ -61,7 +61,7 @@ Also consider, spawning threads has some overhead. Thus there is no point in run
 
 ### Testsuites
 
-**Note:** The argument *runner* of all *describe* functions is always the instance where to register the testsuite. It is optional if you just need the default one. The argument *func* of all *test*,*setup*,*before*,*after* methods is always a void function without arguments, preferably a lambda expression. Calls to those methods are chainable. It is possible to add tests after the runner has run, thus run tests partially, and run it again. Already executed tests will be skipped.
+**Note:** The argument *runner* of all *suite* functions is always the instance where to register the testsuite. It is optional if you just need the default one. The argument *func* of all *test*,*setup*,*teardown*,*before_each*,*after_each* methods is always a void function without arguments, preferably a lambda expression. Calls to those methods are chainable. It is possible to add tests after the runner has run, thus run tests partially, and run it again. Already executed tests will be skipped.
 
 | Call          | Arguments             | Description                                                                                                                                          | Example                                             |
 | ------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
@@ -73,8 +73,9 @@ Also consider, spawning threads has some overhead. Thus there is no point in run
 | test          | name, func            | Create a testcase on a testsuite with *name*, the context is inherited from the testsuite.                                                           | `...->test("test2", []{...})...`                    |
 | test\<T>      | name, func            | Create a testcase on a testsuite with *name*. The context is taken as the class-/typename of T.                                                      | `...->test<Component>("test3", []{...})...`         |
 | setup         | func                  | Set a *setup* function, which will be executed once before all testcases. Exceptions thrown by the given function will get ignored.                  | `...->setup([&]{ x = 10; ... })...`                 |
-| before        | func                  | Set a *pre-test* function, which will be executed before each testcase. Exceptions thrown by the given function will get ignored.                    | `...->before([&]{ x = 10; ... })...`                |
-| after         | func                  | Set a *post-test* function, which will be executed after each testcase. Exceptions thrown by the given function will get ignored.                    | `...->after([&]{ x = 10; ... })...`                 |
+| teardown      | func                  | Set a *teardown* function, which will be executed once after all testcases. Exceptions thrown by the given function will get ignored.                | `...->teardown([&]{ x = 10; ... })...`              |
+| before_each   | func                  | Set a *pre-test* function, which will be executed before each testcase. Exceptions thrown by the given function will get ignored.                    | `...->before_each([&]{ x = 10; ... })...`           |
+| after_each    | func                  | Set a *post-test* function, which will be executed after each testcase. Exceptions thrown by the given function will get ignored.                    | `...->after_each([&]{ x = 10; ... })...`            |
 
 ### Comparators
 
@@ -90,21 +91,21 @@ Also consider, spawning threads has some overhead. Thus there is no point in run
 
 ### Assertions
 
-**Note:** VALUE means the actual value you want to check. EXPECT means the expected value. COMP means the comparator. TYPE means a certain type, or class. FUNC means a function call, or instruction and is wrapped in a lambda with captions as reference. Hence FUNC can be a single instruction, or multiple split by `;`.
+**Note:** VALUE means the actual value you want to check. EXPECT means the expected value. COMP means the comparator. TYPE means a certain type, or class. FUNC means a function call, or instruction and is wrapped in a lambda with captions as reference. Hence FUNC can be a single instruction, or multiple split by `;`. Assertions are based on comparators. Every comparator provides a negation operator `!`, which allows the logical negation of the actual comparison. Hence `ASSERT(1, !EQ, 1)` and `ASSERT(1, NE, 1)` are logically equivalent.
 
-| Assertion          | Parameters                | Description                                                                                                         | Example                                                        |
-| ------------------ | ------------------------- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| ASSERT             | VALUE, COMP, EXPECT       | Common assert. Assert successfull comparison of VALUE and EXPECT with COMP.                                         | `ASSERT(1, LT, 1);`                                            |
-| ASSERT_T           | VALUE, COMP, EXPECT, TYPE | Same as *assert*, but parameters are specialized to TYPE, which allows implicit conversions.                        | `ASSERT_T("hell", IN, "hello", std::string);`                  |
-| ASSERT_EQUALS      | VALUE, EXPECT             | Wrapper for *assert* using *EQUALS* comparator.                                                                     | `ASSERT_EQUALS(1, 1);`                                         |
-| ASSERT_TRUE        | VALUE                     | Assert VALUE to be *true*.                                                                                          | `ASSERT_TRUE(true);`                                           |
-| ASSERT_FALSE       | VALUE                     | Assert VALUE to be *false*.                                                                                         | `ASSERT_FALSE(false);`                                         |
-| ASSERT_NOT_NULL    | VALUE                     | Assert VALUE not to be *nullptr*.                                                                                   | `ASSERT_NOT_NULL(&var);`                                       |
-| ASSERT_NULL        | VALUE                     | Assert VALUE to be *nullptr*.                                                                                       | `ASSERT_NULL(&var);`                                           |
-| ASSERT_ZERO        | VALUE                     | Assert VALUE to be *0*, where the type of *0* will match VALUE's.                                                   | `ASSERT_ZERO(0.0);`                                            |
-| ASSERT_THROWS      | FUNC, TYPE                | Assert FUNC to throw an exception of TYPE.                                                                          | `ASSERT_THROWS(throw std::logic_error(""), std::logic_error);` |
-| ASSERT_NOTHROW     | FUNC                      | Assert FUNC not to throw any exception.                                                                             | `ASSERT_NOTHROW(int i = 0);`                                   |
-| ASSERT_PERFORMANCE | FUNC, MILLIS              | Assert FUNC to run in MILLIS milliseconds at maximum. The FUNC call is not interrupted, if the time exceeds MILLIS. | `ASSERT_PERFORMANCE(call(), 5);`                               |
+| Assertion          | Parameters          | Description                                                                                                         | Example                                                        |
+| ------------------ | ------------------- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| ASSERT             | VALUE, COMP, EXPECT | Common assert. Assert successfull comparison of VALUE and EXPECT with COMP.                                         | `ASSERT(1, LT, 1);`                                            |
+| ASSERT_NOT         | VALUE, COMP, EXPECT | Same as *assert*, but with negated comparison.                                                                      | `ASSERT_NOT("hell", IN, "hello");`                             |
+| ASSERT_EQUALS      | VALUE, EXPECT       | Wrapper for *assert* using *EQUALS* comparator.                                                                     | `ASSERT_EQUALS(1, 1);`                                         |
+| ASSERT_TRUE        | VALUE               | Assert VALUE to be *true*.                                                                                          | `ASSERT_TRUE(true);`                                           |
+| ASSERT_FALSE       | VALUE               | Assert VALUE to be *false*.                                                                                         | `ASSERT_FALSE(false);`                                         |
+| ASSERT_NOT_NULL    | VALUE               | Assert VALUE not to be *nullptr*.                                                                                   | `ASSERT_NOT_NULL(&var);`                                       |
+| ASSERT_NULL        | VALUE               | Assert VALUE to be *nullptr*.                                                                                       | `ASSERT_NULL(&var);`                                           |
+| ASSERT_ZERO        | VALUE               | Assert VALUE to be *0*, where the type of *0* will match VALUE's.                                                   | `ASSERT_ZERO(0.0);`                                            |
+| ASSERT_THROWS      | FUNC, TYPE          | Assert FUNC to throw an exception of TYPE.                                                                          | `ASSERT_THROWS(throw std::logic_error(""), std::logic_error);` |
+| ASSERT_NOTHROW     | FUNC                | Assert FUNC not to throw any exception.                                                                             | `ASSERT_NOTHROW(int i = 0);`                                   |
+| ASSERT_PERFORMANCE | FUNC, MILLIS        | Assert FUNC to run in MILLIS milliseconds at maximum. The FUNC call is not interrupted, if the time exceeds MILLIS. | `ASSERT_PERFORMANCE(call(), 5);`                               |
 
 ### Test Modules
 
@@ -268,4 +269,4 @@ Contribution to this project is always welcome.
 
 #### Footnote
 
-I have implemented this framework, intentionally, to test my own C++ projects, with an fundamental and extendable API. Nevertheless anybody, finding this framework useful, may use, or even extend and contribute to it.
+I have implemented this framework to test my own C++ projects with a fundamental and extendable API. Nevertheless anybody, finding this framework useful, may use, or even extend and contribute to it.

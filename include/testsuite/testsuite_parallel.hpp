@@ -106,8 +106,8 @@ public:
                     m_time = std::max(m_time, tmp);
                 }
             }
-            m_state = execution_state::DONE;
             SCTF_EXEC_SILENT(m_teardown_fn)
+            m_state = execution_state::DONE;
         }
     }
 

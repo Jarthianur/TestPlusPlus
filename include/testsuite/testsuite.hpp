@@ -105,8 +105,8 @@ public:
                                   buf_cerr.clear();
                               }
                           });
-            m_state = execution_state::DONE;
             SCTF_EXEC_SILENT(m_teardown_fn)
+            m_state = execution_state::DONE;
         }
     }
 
@@ -166,6 +166,13 @@ public:
         return shared_from_this();
     }
 
+    /**
+     * Set a function, which will be executed once after all testcases.
+     * Overwrites the old teardown-function, if any was set yet.
+     * Exceptions thrown by the function will be ignored.
+     * @param fn_ The function
+     * @return this testsuite for chaining
+     */
     testsuite_ptr teardown(_::test_function&& fn_)
     {
         m_teardown_fn = std::move(fn_);

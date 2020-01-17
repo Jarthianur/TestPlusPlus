@@ -138,7 +138,7 @@ extern double        epsilon;
 }  // namespace sctf
 
 /**
- * Create a comparator function.
+ * Define a comparator.
  * In PRED the two elements are named 'actual_value' and 'expected_value'.
  * The comparison is considered successful if PRED returns true, while false results in failure.
  * @param NAME   The name of this function
