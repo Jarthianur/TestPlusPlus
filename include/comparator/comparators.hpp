@@ -157,8 +157,11 @@ extern double        epsilon;
         bool                         m_neg         = false;                                   \
                                                                                               \
     public:                                                                                   \
-        NAME()           = default;                                                           \
-        ~NAME() noexcept = default;                                                           \
+        NAME& operator!()                                                                     \
+        {                                                                                     \
+            m_neg = !m_neg;                                                                   \
+            return *this;                                                                     \
+        }                                                                                     \
         template<typename V, typename E = V>                                                  \
         comparison operator()(V const& actual_value, E const& expected_value)                 \
         {                                                                                     \
@@ -166,11 +169,6 @@ extern double        epsilon;
                        SUCCESS :                                                              \
                        comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value), \
                                   to_string(expected_value));                                 \
-        }                                                                                     \
-        NAME& operator!()                                                                     \
-        {                                                                                     \
-            m_neg = !m_neg;                                                                   \
-            return *this;                                                                     \
         }                                                                                     \
     };                                                                                        \
     }                                                                                         \

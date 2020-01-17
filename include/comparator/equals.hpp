@@ -40,9 +40,6 @@ class equals
     bool                         m_neg         = false;
 
 public:
-    equals()           = default;
-    ~equals() noexcept = default;
-
     equals& operator!()
     {
         m_neg = !m_neg;

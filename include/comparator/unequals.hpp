@@ -40,9 +40,6 @@ class unequals
     bool                         m_neg         = false;
 
 public:
-    unequals()           = default;
-    ~unequals() noexcept = default;
-
     unequals& operator!()
     {
         m_neg = !m_neg;

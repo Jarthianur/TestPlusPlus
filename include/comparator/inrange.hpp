@@ -38,9 +38,6 @@ class in_range
     bool                         m_neg         = false;
 
 public:
-    in_range()           = default;
-    ~in_range() noexcept = default;
-
     in_range& operator!()
     {
         m_neg = !m_neg;
