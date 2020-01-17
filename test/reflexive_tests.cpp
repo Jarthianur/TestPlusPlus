@@ -323,7 +323,7 @@ void reflexive_tests()
                    // failing
                    ASSERT_THROWS(ASSERT_NOT(2, EQUALS, 2), assertion_failure);
                    ASSERT_THROWS(ASSERT_NOT(false, EQUALS, false), assertion_failure);
-                   ASSERT_THROWS(ASSERT_NOT(1002.5, LESS, 1002.5), assertion_failure);
+                   ASSERT_THROWS(ASSERT_NOT(1002.4, LESS, 1002.5), assertion_failure);
                    ASSERT_THROWS(ASSERT_NOT("hello", EQ, "hello"), assertion_failure);
                })
         ->test("ASSERT_EQUALS",
