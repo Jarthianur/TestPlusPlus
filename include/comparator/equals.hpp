@@ -33,36 +33,91 @@ namespace sctf
 {
 namespace _
 {
-constexpr const char* equals_comp_str = "to be equals";
-
-template<typename V, typename E = V, ENABLE_IF(NOT IS_FLOAT(V) AND IS_EQUAL_COMPARABLE(V, E))>
-static comparison equals(V const& val_, E const& expect_)
+// ENABLE_IF(NOT IS_FLOAT(V) AND IS_EQUAL_COMPARABLE(V, E))
+template<typename V, typename E = V, typename = void>
+class equals  //<V,E,std::enable_if<!std::is_floating_point<V>::value &&
+              //_::is_equal_comparable<V,E>::value>>
 {
-    return val_ == expect_ ? SUCCESS :
-                             comparison(equals_comp_str, to_string(val_), to_string(expect_));
-}
+    static constexpr char const* m_cmp_str     = "to be equals";
+    static constexpr char const* m_neg_cmp_str = "to be not equals";
+    bool                         m_neg         = false;
 
-template<typename V, typename E = V,
-         ENABLE_IF(NOT IS_FLOAT(V) AND NOT IS_EQUAL_COMPARABLE(V, E)
-                       AND                 IS_UNEQUAL_COMPARABLE(V, E))>
-static comparison equals(V const& val_, E const& expect_)
-{
-    return val_ != expect_ ? comparison(equals_comp_str, to_string(val_), to_string(expect_)) :
-                             SUCCESS;
-}
+public:
+    equals()           = default;
+    ~equals() noexcept = default;
+    comparison operator()(V const& actual_value, E const& expected_value)
+    {
+        return (actual_value == expected_value) != m_neg ?
+                   SUCCESS :
+                   comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
+                              to_string(expected_value));
+    }
+    equals& operator!()
+    {
+        m_neg = !m_neg;
+        return *this;
+    }
+};
 
-template<typename V, typename E = V, ENABLE_IF(IS_FLOAT(V) AND IS_FLOAT(E))>
-comparison equals(V const& val_, E const& expect_)
+// ENABLE_IF(NOT IS_FLOAT(V) AND NOT IS_EQUAL_COMPARABLE(V, E) AND IS_UNEQUAL_COMPARABLE(V, E))
+template<typename V, typename E>
+class equals<
+    V, E,
+    std::enable_if<!std::is_floating_point<V>::value && !is_equal_comparable<V, E>::value &&
+                   is_unequal_comparable<V, E>::value>>
 {
+    static constexpr char const* m_cmp_str     = "to be equals";
+    static constexpr char const* m_neg_cmp_str = "to be not equals";
+    bool                         m_neg         = false;
+
+public:
+    equals()           = default;
+    ~equals() noexcept = default;
+    comparison operator()(V const& actual_value, E const& expected_value)
+    {
+        return (actual_value != expected_value) != m_neg ?
+                   comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
+                              to_string(expected_value)) :
+                   SUCCESS;
+    }
+    equals& operator!()
+    {
+        m_neg = !m_neg;
+        return *this;
+    }
+};
+
+// ENABLE_IF(IS_FLOAT(V) AND IS_FLOAT(E))
+template<typename V, typename E>
+class equals<V, E,
+             std::enable_if<std::is_floating_point<V>::value && std::is_floating_point<E>::value>>
+{
+    static constexpr char const* m_cmp_str     = "to be equals";
+    static constexpr char const* m_neg_cmp_str = "to be not equals";
+    bool                         m_neg         = false;
+
+public:
+    equals()           = default;
+    ~equals() noexcept = default;
+    comparison operator()(V const& actual_value, E const& expected_value)
+    {
 #if defined(SCTF_EXTERN_EPSILON) || defined(SCTF_EPSILON)
-    static V epsilon_ = static_cast<V>(epsilon);
+        static V epsilon_ = static_cast<V>(epsilon);
 #else
-    static V epsilon_ = std::numeric_limits<V>::epsilon();
+        static V epsilon_ = std::numeric_limits<V>::epsilon();
 #endif
-    return (std::abs(val_ - expect_) <= std::max(std::abs(val_), std::abs(expect_)) * epsilon_) ?
-               SUCCESS :
-               comparison(equals_comp_str, to_string(val_), to_string(expect_));
-}
+        return (std::abs(actual_value - expected_value) <=
+                std::max(std::abs(actual_value), std::abs(expected_value)) * epsilon_) != m_neg ?
+                   SUCCESS :
+                   comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
+                              to_string(expected_value));
+    }
+    equals& operator!()
+    {
+        m_neg = !m_neg;
+        return *this;
+    }
+};
 }  // namespace _
 }  // namespace sctf
 

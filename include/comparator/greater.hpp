@@ -24,7 +24,7 @@
 
 #include "comparator/comparators.hpp"
 
-COMPARATOR(greater_than, "to be greater than", actual_value > expected_value)
+COMPARATOR(greater_than, "greater than", actual_value > expected_value)
 PROVIDE_COMPARATOR(greater_than, GREATER_THAN)
 PROVIDE_COMPARATOR(greater_than, GREATER)
 PROVIDE_COMPARATOR(greater_than, GT)

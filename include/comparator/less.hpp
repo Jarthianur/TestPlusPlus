@@ -24,7 +24,7 @@
 
 #include "comparator/comparators.hpp"
 
-COMPARATOR(less_than, "to be less than", actual_value < expected_value)
+COMPARATOR(less_than, "less than", actual_value < expected_value)
 PROVIDE_COMPARATOR(less_than, LESS_THAN)
 PROVIDE_COMPARATOR(less_than, LESS)
 PROVIDE_COMPARATOR(less_than, LT)

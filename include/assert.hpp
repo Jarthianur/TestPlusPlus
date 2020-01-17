@@ -42,38 +42,39 @@
                               sctf::_::code_location{__FILE__, __LINE__})
 
 /**
- * Test for successful comparison.
+ * Test for successful negated comparison.
  * @param VALUE The actual value
  * @param COMP The Comparator
  * @param EXPECT The expected value
- * @param TYPE The value type to enforce
  */
-#define ASSERT_T(VALUE, COMP, EXPECT, TYPE)                                  \
-    sctf::_::assert_statement<TYPE, TYPE>(VALUE, EXPECT, COMP<TYPE, TYPE>(), \
-                                          sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT_NOT(VALUE, COMP, EXPECT)                                                  \
+    sctf::_::assert_statement(VALUE, EXPECT, !COMP<decltype(VALUE), decltype(EXPECT)>(), \
+                              sctf::_::code_location{__FILE__, __LINE__})
 
 /**
  * Test for equality.
  * @param VALUE The actual value
  * @param EXPECT The expected value
  */
-#define ASSERT_EQUALS(VALUE, EXPECT) ASSERT_T(VALUE, EQUALS, EXPECT, decltype(VALUE))
+#define ASSERT_EQUALS(VALUE, EXPECT)                                                            \
+    sctf::_::assert_statement(VALUE, EXPECT, sctf::EQUALS<decltype(VALUE), decltype(EXPECT)>(), \
+                              sctf::_::code_location{__FILE__, __LINE__})
 
 /**
  * Test value to be true.
  * @param VALUE The value
  */
-#define ASSERT_TRUE(VALUE)                                             \
-    sctf::_::assert_statement<bool>(VALUE, true, sctf::EQUALS<bool>(), \
-                                    sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT_TRUE(VALUE)                                  \
+    sctf::_::assert_statement<sctf::_::equals<bool>, bool>( \
+        VALUE, true, sctf::EQUALS<bool>(), sctf::_::code_location{__FILE__, __LINE__})
 
 /**
  * Test value to be false.
  * @param VALUE The value
  */
-#define ASSERT_FALSE(VALUE)                                             \
-    sctf::_::assert_statement<bool>(VALUE, false, sctf::EQUALS<bool>(), \
-                                    sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT_FALSE(VALUE)                                 \
+    sctf::_::assert_statement<sctf::_::equals<bool>, bool>( \
+        VALUE, false, sctf::EQUALS<bool>(), sctf::_::code_location{__FILE__, __LINE__})
 
 /**
  * Test value to be nullptr.
@@ -129,11 +130,10 @@ namespace sctf
 {
 namespace _
 {
-template<typename V, typename E = V>
-static void assert_statement(V const& val_, E const& expect_, comparator<V, E> comp_,
-                             code_location const& loc_)
+template<typename C, typename V, typename E = V>
+static void assert_statement(V const& val_, E const& expect_, C&& cmp_, code_location const& loc_)
 {
-    comparison res = (*comp_)(val_, expect_);
+    comparison res = cmp_(val_, expect_);
     if (!res)
     {
         throw assertion_failure(*res, loc_);

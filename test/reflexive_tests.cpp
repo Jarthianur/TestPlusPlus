@@ -36,71 +36,79 @@ SCTF_SET_EPSILON(0.000001)
 
 using namespace sctf;
 using namespace _;
+using namespace std::literals;
 
 void reflexive_tests()
 {
     suite_par("comparators")
         ->test("equals",
                [] {
-                   ASSERT_FALSE(!equals(1, 1));
-                   ASSERT_FALSE(!equals(equal_comparable(), equal_comparable()));
-                   ASSERT_FALSE(!equals(unequal_comparable(false), unequal_comparable(false)));
-                   ASSERT_FALSE(!equals(1.0, 1.0));
-                   ASSERT_FALSE(!equals(1.0f, 1.0f));
-                   ASSERT_TRUE(!equals(2, 1));
-                   ASSERT_TRUE(!equals(equal_comparable(false), equal_comparable()));
-                   ASSERT_TRUE(!equals(unequal_comparable(true), unequal_comparable(false)));
-                   ASSERT_TRUE(!equals(1.1, 2.0));
-                   ASSERT_TRUE(!equals(1.1f, 2.0f));
-                   comparison c = equals(1, 2);
+                   ASSERT_FALSE(!equals<int>()(1, 1));
+                   ASSERT_FALSE(
+                       !equals<equal_comparable>()(equal_comparable(), equal_comparable()));
+                   ASSERT_FALSE(!equals<unequal_comparable>()(unequal_comparable(false),
+                                                              unequal_comparable(false)));
+                   ASSERT_FALSE(!equals<double>()(1.0, 1.0));
+                   ASSERT_FALSE(!equals<float>()(1.0f, 1.0f));
+                   ASSERT_TRUE(!equals<int>()(2, 1));
+                   ASSERT_TRUE(
+                       !equals<equal_comparable>()(equal_comparable(false), equal_comparable()));
+                   ASSERT_TRUE(!equals<unequal_comparable>()(unequal_comparable(true),
+                                                             unequal_comparable(false)));
+                   ASSERT_TRUE(!equals<double>()(1.1, 2.0));
+                   ASSERT_TRUE(!equals<float>()(1.1f, 2.0f));
+                   comparison c = equals<int>()(1, 2);
                    ASSERT_TRUE(!c);
-                   ASSERT_T(*c, EQ, "Expected '1' to be equals '2'", std::string);
+                   ASSERT(*c, EQ, "Expected '1' to be equals '2'"s);
                })
         ->test("greater than",
                [] {
-                   ASSERT_FALSE(!greater_than(2, 1));
-                   ASSERT_FALSE(!greater_than(ordinal(), ordinal()));
-                   ASSERT_FALSE(!greater_than(2.1, 1.9));
-                   ASSERT_TRUE(!greater_than(1, 2));
-                   ASSERT_TRUE(!greater_than(ordinal(false), ordinal()));
-                   ASSERT_TRUE(!greater_than(2.1, 3.9));
-                   comparison c = greater_than(1, 2);
+                   ASSERT_FALSE(!greater_than<int>()(2, 1));
+                   ASSERT_FALSE(!greater_than<ordinal>()(ordinal(), ordinal()));
+                   ASSERT_FALSE(!greater_than<double>()(2.1, 1.9));
+                   ASSERT_TRUE(!greater_than<int>()(1, 2));
+                   ASSERT_TRUE(!greater_than<ordinal>()(ordinal(false), ordinal()));
+                   ASSERT_TRUE(!greater_than<double>()(2.1, 3.9));
+                   comparison c = greater_than<int>()(1, 2);
                    ASSERT_TRUE(!c);
-                   ASSERT_T(*c, EQ, "Expected '1' to be greater than '2'", std::string);
+                   ASSERT(*c, EQ, "Expected '1' to be greater than '2'"s);
                })
         ->test("in range",
                [] {
-                   ASSERT_FALSE(!in_range(1, std::vector<int>{1}));
-                   ASSERT_FALSE(!in_range("a", std::string("a")));
-                   ASSERT_TRUE(!in_range(2, std::vector<int>{1}));
-                   ASSERT_TRUE(!in_range("b", std::string("a")));
+                   ASSERT_FALSE(!(in_range<int, std::vector<int>>()(1, {1})));
+                   ASSERT_FALSE(!(in_range<char const*, std::string>()("a", std::string("a"))));
+                   ASSERT_TRUE(!(in_range<int, std::vector<int>>()(2, std::vector<int>{1})));
+                   ASSERT_TRUE(!(in_range<char const*, std::string>()("b", std::string("a"))));
                })
         ->test("less than",
                [] {
-                   ASSERT_FALSE(!less_than(1, 2));
-                   ASSERT_FALSE(!less_than(ordinal(), ordinal()));
-                   ASSERT_FALSE(!less_than(1.9, 2.1));
-                   ASSERT_TRUE(!less_than(2, 1));
-                   ASSERT_TRUE(!less_than(ordinal(false), ordinal()));
-                   ASSERT_TRUE(!less_than(3.9, 2.1));
-                   comparison c = less_than(2, 1);
+                   ASSERT_FALSE(!less_than<int>()(1, 2));
+                   ASSERT_FALSE(!less_than<ordinal>()(ordinal(), ordinal()));
+                   ASSERT_FALSE(!less_than<double>()(1.9, 2.1));
+                   ASSERT_TRUE(!less_than<int>()(2, 1));
+                   ASSERT_TRUE(!less_than<ordinal>()(ordinal(false), ordinal()));
+                   ASSERT_TRUE(!less_than<double>()(3.9, 2.1));
+                   comparison c = less_than<int>()(2, 1);
                    ASSERT_TRUE(!c);
-                   ASSERT_T(*c, EQ, "Expected '2' to be less than '1'", std::string);
+                   ASSERT(*c, EQ, "Expected '2' to be less than '1'"s);
                })
         ->test("unequals", [] {
-            ASSERT_FALSE(!unequals(1, 2));
-            ASSERT_FALSE(!unequals(unequal_comparable(), unequal_comparable()));
-            ASSERT_FALSE(!unequals(equal_comparable(false), equal_comparable(false)));
-            ASSERT_FALSE(!unequals(1.0, 1.1));
-            ASSERT_FALSE(!unequals(1.0f, 1.1f));
-            ASSERT_TRUE(!unequals(2, 2));
-            ASSERT_TRUE(!unequals(equal_comparable(), equal_comparable()));
-            ASSERT_TRUE(!unequals(unequal_comparable(false), unequal_comparable()));
-            ASSERT_TRUE(!unequals(2.0, 2.0));
-            ASSERT_TRUE(!unequals(1.1f, 1.1f));
-            comparison c = unequals(1, 1);
+            ASSERT_FALSE(!unequals<int>()(1, 2));
+            ASSERT_FALSE(
+                !unequals<unequal_comparable>()(unequal_comparable(), unequal_comparable()));
+            ASSERT_FALSE(
+                !unequals<equal_comparable>()(equal_comparable(false), equal_comparable(false)));
+            ASSERT_FALSE(!unequals<double>()(1.0, 1.1));
+            ASSERT_FALSE(!unequals<float>()(1.0f, 1.1f));
+            ASSERT_TRUE(!unequals<int>()(2, 2));
+            ASSERT_TRUE(!unequals<equal_comparable>()(equal_comparable(), equal_comparable()));
+            ASSERT_TRUE(
+                !unequals<unequal_comparable>()(unequal_comparable(false), unequal_comparable()));
+            ASSERT_TRUE(!unequals<double>()(2.0, 2.0));
+            ASSERT_TRUE(!unequals<float>()(1.1f, 1.1f));
+            comparison c = unequals<int>()(1, 1);
             ASSERT_TRUE(!c);
-            ASSERT_T(*c, EQ, "Expected '1' to be unequals '1'", std::string);
+            ASSERT(*c, EQ, "Expected '1' to be unequals '1'"s);
         });
 
     suite<testsuite_parallel>("testsuite_parallel")->test("parallel run", [] {
@@ -143,7 +151,7 @@ void reflexive_tests()
                    std::this_thread::sleep_for(std::chrono::seconds(1));
                    testsuite_ptr ts = testsuite::create("ts", "ctx");
                    ASSERT(ts->timestamp(), GT, a);
-                   ASSERT_T(ts->name(), EQ, "ts", std::string);
+                   ASSERT(ts->name(), EQ, "ts"s);
                })
         ->test("meta functions",
                [] {
@@ -158,9 +166,9 @@ void reflexive_tests()
                    testcase const& tc1 = ts->testcases().at(0);
                    testcase const& tc2 = ts->testcases().at(1);
                    testcase const& tc3 = ts->testcases().at(2);
-                   ASSERT_T(tc1.context(), EQ, "ctx", std::string);
-                   ASSERT_T(tc2.context(), EQ, "ctx2", std::string);
-                   ASSERT_T(tc3.context(), EQ, "int", std::string);
+                   ASSERT(tc1.context(), EQ, "ctx"s);
+                   ASSERT(tc2.context(), EQ, "ctx2"s);
+                   ASSERT(tc3.context(), EQ, "int"s);
                    ts->run();
                    ASSERT_EQUALS(i, 1);
                })
@@ -198,9 +206,9 @@ void reflexive_tests()
                    testcase tc("t1", "ctx", [] {});
                    testcase tc2("t2", "", [] {});
                    ASSERT_EQUALS(tc.state(), testcase::result::NONE);
-                   ASSERT_T(tc.context(), EQ, "ctx", std::string);
-                   ASSERT_T(tc2.context(), EQ, "", std::string);
-                   ASSERT_T(tc.name(), EQ, "t1", std::string);
+                   ASSERT(tc.context(), EQ, "ctx"s);
+                   ASSERT(tc2.context(), EQ, ""s);
+                   ASSERT(tc.name(), EQ, "t1"s);
                })
         ->test("successful execution",
                [] {
@@ -222,28 +230,27 @@ void reflexive_tests()
             tc();
             ASSERT_EQUALS(tc.state(), testcase::result::ERROR);
             ASSERT(tc.duration(), GT, 0.0);
-            ASSERT_T(tc.err_msg(), EQ, "err", std::string);
+            ASSERT(tc.err_msg(), EQ, "err"s);
 
             testcase tc2("t2", "ctx", [] { throw 1; });
             tc2();
             ASSERT_EQUALS(tc2.state(), testcase::result::ERROR);
             ASSERT(tc2.duration(), GT, 0.0);
-            ASSERT_T(tc2.err_msg(), EQ, "unknown error", std::string);
+            ASSERT(tc2.err_msg(), EQ, "unknown error"s);
         });
 
     suite_par("stringify")
         ->test("bool",
                [] {
-                   ASSERT_T(to_string(true), EQ, "true", std::string);
-                   ASSERT_T(to_string(false), EQ, "false", std::string);
+                   ASSERT(to_string(true), EQ, "true"s);
+                   ASSERT(to_string(false), EQ, "false"s);
                })
 
-        ->test("std::pair",
-               [] { ASSERT_T("pair<int,int>", IN, to_string(std::make_pair(1, 2)), std::string); })
+        ->test("std::pair", [] { ASSERT("pair<int,int>"s, IN, to_string(std::make_pair(1, 2))); })
         ->test("nullptr",
                [] {
-                   ASSERT_T(to_string(nullptr), EQ, "0", std::string);
-                   ASSERT_T(to_string(NULL), EQ, "0", std::string);
+                   ASSERT(to_string(nullptr), EQ, "0"s);
+                   ASSERT(to_string(NULL), EQ, "0"s);
                })
         ->test("string/cstring",
                [] {
@@ -255,12 +262,11 @@ void reflexive_tests()
                })
         ->test("floating-point",
                [] {
-                   ASSERT_T("1.123", IN, to_string(1.123f), std::string);
-                   ASSERT_T("1.123", IN, to_string(1.123), std::string);
+                   ASSERT("1.123"s, IN, to_string(1.123f));
+                   ASSERT("1.123"s, IN, to_string(1.123));
                })
-        ->test("not streamable",
-               [] { ASSERT_T(to_string(not_streamable()), EQ, "not_streamable", std::string); })
-        ->test("streamable", [] { ASSERT_T(to_string(1), EQ, "1", std::string); });
+        ->test("not streamable", [] { ASSERT(to_string(not_streamable()), EQ, "not_streamable"s); })
+        ->test("streamable", [] { ASSERT(to_string(1), EQ, "1"s); });
 
     suite_par("test traits")
         ->test("is_streamable",
@@ -313,10 +319,10 @@ void reflexive_tests()
                    ASSERT_THROWS(ASSERT("hello", EQ, "world"), assertion_failure);
                    ASSERT_THROWS(ASSERT(2, IN, (std::vector<int>{1, 3})), assertion_failure);
                })
-        ->test("ASSERT_T",
+        ->test("ASSERT_NOT",
                [] {
                    // successful
-                   ASSERT_NOTHROW(ASSERT_T(1, EQUALS, 1, unsigned int));
+                   /*ASSERT_NOTHROW(ASSERT_T(1, EQUALS, 1, unsigned int));
                    ASSERT_NOTHROW(ASSERT_T(true, EQUALS, true, bool));
                    ASSERT_NOTHROW(ASSERT_T(1.5, LESS, 100.3, double));
                    ASSERT_NOTHROW(ASSERT_T("hello", NE, "world", std::string));
@@ -324,7 +330,7 @@ void reflexive_tests()
                    ASSERT_THROWS(ASSERT_T(2, EQUALS, 1, unsigned int), assertion_failure);
                    ASSERT_THROWS(ASSERT_T(false, EQUALS, true, bool), assertion_failure);
                    ASSERT_THROWS(ASSERT_T(1002.5, LESS, 100.3, double), assertion_failure);
-                   ASSERT_THROWS(ASSERT_T("hello", EQ, "world", std::string), assertion_failure);
+                   ASSERT_THROWS(ASSERT_T("hello", EQ, "world", std::string), assertion_failure);*/
                })
         ->test("ASSERT_EQUALS",
                [] {

@@ -123,9 +123,6 @@ private:
 #endif
 };
 
-template<typename V, typename E = V>
-using comparator = comparison (*)(V const&, E const&);
-
 #if __cplusplus >= 201402L
 #    define SUCCESS comparison()
 #else
@@ -141,6 +138,45 @@ extern double        epsilon;
 }  // namespace sctf
 
 /**
+ * Create a comparator function.
+ * In PRED the two elements are named 'actual_value' and 'expected_value'.
+ * The comparison is considered successful if PRED returns true, while false results in failure.
+ * @param NAME   The name of this function
+ * @param CMPSTR A string representing the comparison constraint, like "equals"
+ * @param PRED   The comparison predicate / condition
+ */
+#define COMPARATOR(NAME, CMPSTR, PRED)                                                        \
+    namespace sctf                                                                            \
+    {                                                                                         \
+    namespace _                                                                               \
+    {                                                                                         \
+    template<typename V, typename E = V>                                                      \
+    class NAME                                                                                \
+    {                                                                                         \
+        static constexpr char const* m_cmp_str     = "to be " CMPSTR;                         \
+        static constexpr char const* m_neg_cmp_str = "to be not " CMPSTR;                     \
+        bool                         m_neg         = false;                                   \
+                                                                                              \
+    public:                                                                                   \
+        NAME()           = default;                                                           \
+        ~NAME() noexcept = default;                                                           \
+        comparison operator()(V const& actual_value, E const& expected_value)                 \
+        {                                                                                     \
+            return (PRED) != m_neg ?                                                          \
+                       SUCCESS :                                                              \
+                       comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value), \
+                                  to_string(expected_value));                                 \
+        }                                                                                     \
+        NAME& operator!()                                                                     \
+        {                                                                                     \
+            m_neg = !m_neg;                                                                   \
+            return *this;                                                                     \
+        }                                                                                     \
+    };                                                                                        \
+    }                                                                                         \
+    }
+
+/**
  * Provide a shortwrite function which returns the address of the respective
  * comparator.
  * @param COMP The comparator function
@@ -150,34 +186,10 @@ extern double        epsilon;
     namespace sctf                       \
     {                                    \
     template<typename V, typename E = V> \
-    static _::comparator<V, E> NAME()    \
+    static _::COMP<V, E> NAME()          \
     {                                    \
-        return &_::COMP<V, E>;           \
+        return _::COMP<V, E>();          \
     }                                    \
-    }
-
-/**
- * Create a comparator function.
- * In PRED the two elements are named 'actual_value' and 'expected_value'.
- * The comparison is considered successful if PRED returns true, while false results in failure.
- * @param NAME    The name of this function
- * @param COMPSTR A string representing the comparison constraint, like "to be equals"
- * @param PRED    The comparison predicate / condition
- */
-#define COMPARATOR(NAME, COMPSTR, PRED)                                      \
-    namespace sctf                                                           \
-    {                                                                        \
-    namespace _                                                              \
-    {                                                                        \
-    constexpr char const* NAME##_comp_str = COMPSTR;                         \
-    template<typename V, typename E = V>                                     \
-    static comparison NAME(V const& actual_value, E const& expected_value)   \
-    {                                                                        \
-        return (PRED) ? SUCCESS :                                            \
-                        comparison(NAME##_comp_str, to_string(actual_value), \
-                                   to_string(expected_value));               \
-    }                                                                        \
-    }                                                                        \
     }
 
 /**
