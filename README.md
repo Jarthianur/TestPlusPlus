@@ -157,17 +157,16 @@ int main(int argc, char** argv)
                [&] {
                    ASSERT(x+1, EQ, 11);
                    ASSERT_FALSE(false);
-                   ASSERT_T("hell", IN, "hello", std::string);
+                   ASSERT("xyz"s, !IN, "hello"s);
                    int i = 101;
                    ASSERT_NOT_NULL(&i);
-                   ASSERT_NOT_NULL(nullptr);
                })
         ->test("2",
                [] {
                    ASSERT_EQUALS(0, 0);
                    ASSERT_ZERO(0.0);
                    ASSERT_TRUE(true);
-                   ASSERT_T(0, UNEQUALS, 1.0, double);
+                   ASSERT_NOT(.0, EQUALS, 1.0);
                    ASSERT(6, IN_RANGE, (std::pair<int, int>(1, 5)));
                })
         ->test("3",
@@ -234,11 +233,11 @@ To specialize a comparator for custom types, which do not provide a respective o
 namespace sctf {
 namespace _ {
     template<>
-    Comparison equals<Custom>(const Custom& value, const Custom& expect)
+    comparison equals<Custom>(const Custom& value, const Custom& expect)
     {
         return value.hash() == expect.hash()
                ? SUCCESS
-               : Comparison(equals_comp_str, to_string(value),
+               : comparison(equals_comp_str, to_string(value),
                             to_string(expect));
     }
 }
