@@ -79,7 +79,7 @@ Also consider, spawning threads has some overhead. Thus there is no point in run
 
 ### Comparators
 
-**Note:** While the *comparator* names the function itself, the *shortwrite* is what you actually write in code.
+**Note:** While the *comparator* names the function itself, the *shortwrite* is what you actually write in code. Assertions are based on comparators. Every comparator provides a negation operator `!`, which allows the logical negation of the actual comparison. For example `ASSERT(1, !EQ, 1)` and `ASSERT(1, NE, 1)` are logically equivalent.
 
 | Comparator   | Shortwrite(s)             | Description                                                                                                                                          |
 | ------------ | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -91,7 +91,7 @@ Also consider, spawning threads has some overhead. Thus there is no point in run
 
 ### Assertions
 
-**Note:** VALUE means the actual value you want to check. EXPECT means the expected value. COMP means the comparator. TYPE means a certain type, or class. FUNC means a function call, or instruction and is wrapped in a lambda with captions as reference. Hence FUNC can be a single instruction, or multiple split by `;`. Assertions are based on comparators. Every comparator provides a negation operator `!`, which allows the logical negation of the actual comparison. Hence `ASSERT(1, !EQ, 1)` and `ASSERT(1, NE, 1)` are logically equivalent.
+**Note:** VALUE means the actual value you want to check. EXPECT means the expected value. COMP means the comparator. TYPE means a certain type, or class. FUNC means a function call, or instruction and is wrapped in a lambda with captions as reference. Hence FUNC can be a single instruction, or multiple split by `;`.
 
 | Assertion          | Parameters          | Description                                                                                                         | Example                                                        |
 | ------------------ | ------------------- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
@@ -220,7 +220,7 @@ To add a new comparator you basically just need to invoke two macros.
 For example:
 
 ```c
-COMPARATOR(pred, "to be predecessor of", value + 1 == expect)
+COMPARATOR(pred, "predecessor of", value + 1 == expect)
 PROVIDE_COMPARATOR(pred, PRE)
 ```
 
