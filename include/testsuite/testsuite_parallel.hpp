@@ -48,9 +48,9 @@ public:
      * @param ctx_  The context
      * @return the newly created testsuite
      */
-    static testsuite_ptr create(char const* name_, char const* ctx_)
+    static testsuite_ptr create(char const* name_)
     {
-        return testsuite_ptr(new testsuite_parallel(name_, ctx_));
+        return testsuite_ptr(new testsuite_parallel(name_));
     }
 
     /**
@@ -112,7 +112,7 @@ public:
     }
 
 private:
-    testsuite_parallel(char const* name_, char const* ctx_) : testsuite(name_, ctx_) {}
+    testsuite_parallel(char const* name_) : testsuite(name_) {}
 };
 }  // namespace sctf
 

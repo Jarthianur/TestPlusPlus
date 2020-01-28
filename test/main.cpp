@@ -49,7 +49,5 @@ int main(int, char**)
     }
     std::cout << "Basic tests have succeeded!" << std::endl;
 
-    reflexive_tests();
-
     return rep->report() + repx->report() + repmd->report() > 0 ? 1 : 0;
 }

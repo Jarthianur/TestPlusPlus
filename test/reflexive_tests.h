@@ -27,11 +27,9 @@
 
 #include "sctf.hpp"
 
-void reflexive_tests();
+TEST_SUITE(test_sequential_module, { test("test", [] { ASSERT_TRUE(true); }); })
 
-TEST_MODULE(test_sequential_module, { test("test", [] { ASSERT_TRUE(true); }); })
-
-TEST_MODULE_PAR(test_parallel_module, {
+TEST_SUITE_PAR(test_parallel_module, {
     test("1", [] { ASSERT_TRUE(true); });
     test("2", [] { ASSERT_TRUE(true); });
 })

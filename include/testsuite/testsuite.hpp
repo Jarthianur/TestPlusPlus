@@ -64,9 +64,9 @@ public:
      * @param ctx_  The context
      * @return the newly created testsuite
      */
-    static testsuite_ptr create(char const* name_, char const* ctx_)
+    static testsuite_ptr create(char const* name_)
     {
-        return testsuite_ptr(new testsuite(name_, ctx_));
+        return testsuite_ptr(new testsuite(name_));
     }
 
     /**
@@ -111,35 +111,6 @@ public:
     }
 
     /**
-     * Add a new testcase to this testsuite.
-     * @tparam T The class context
-     * @param name_ The name/description
-     * @param fn_   The test function
-     * @return this testsuite for chaining
-     */
-    template<typename T>
-    testsuite_ptr test(char const* name_, _::test_function&& fn_)
-    {
-        m_testcases.push_back(_::testcase(name_, _::name_for_type<T>(), std::move(fn_)));
-        m_state = execution_state::PENDING;
-        return shared_from_this();
-    }
-
-    /**
-     * Add a new testcase to this testsuite.
-     * @param name_ The name/description
-     * @param ctx_  The context
-     * @param fn_   The test function
-     * @return this testsuite for chaining
-     */
-    testsuite_ptr test(char const* name_, char const* ctx_, _::test_function&& fn_)
-    {
-        m_testcases.push_back(_::testcase(name_, ctx_, std::move(fn_)));
-        m_state = execution_state::PENDING;
-        return shared_from_this();
-    }
-
-    /**
      * Add a new testcase to this testsuite, where the context of the test is inherited from the
      * suite.
      * @param name_ The name/description
@@ -148,7 +119,7 @@ public:
      */
     testsuite_ptr test(char const* name_, _::test_function&& fn_)
     {
-        m_testcases.push_back(_::testcase(name_, m_context, std::move(fn_)));
+        m_testcases.push_back(_::testcase(name_, m_name, std::move(fn_)));
         m_state = execution_state::PENDING;
         return shared_from_this();
     }
@@ -252,12 +223,9 @@ protected:
         DONE
     };
 
-    testsuite(char const* name_, char const* ctx_)
-        : m_name(name_), m_context(ctx_), m_timestamp(std::chrono::system_clock::now())
-    {}
+    testsuite(char const* name_) : m_name(name_), m_timestamp(std::chrono::system_clock::now()) {}
 
     char const*                                 m_name;
-    char const*                                 m_context;
     std::chrono::system_clock::time_point const m_timestamp;
     double                                      m_time = 0.0;
 

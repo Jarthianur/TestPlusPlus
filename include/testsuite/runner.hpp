@@ -46,10 +46,9 @@ public:
      * @param ts_ The testsuite to add
      * @return the added testsuite
      */
-    testsuite_ptr add_testsuite(testsuite_ptr ts_)
+    void add_testsuite(testsuite_ptr ts_)
     {
         m_testsuites.push_back(ts_);
-        return ts_;
     }
 
     /**
@@ -72,7 +71,7 @@ public:
     /**
      * Get a runner instance, which is used as the default one.
      */
-    static runner& default_instance()
+    static runner& instance()
     {
         static runner r;
         return r;
@@ -81,58 +80,6 @@ public:
 private:
     std::vector<testsuite_ptr> m_testsuites;
 };
-
-/**
- * Describe a testsuite, where all tests will run concurrently.
- * @param name_   The name/description
- * @param ctx_    The context what is tested
- * @param runner_ The runner where to add this testsuite (default)
- * @return the created testsuite for chaining
- */
-inline static testsuite_ptr suite_par(char const* name_, char const* ctx_ = "main",
-                                      runner& runner_ = runner::default_instance())
-{
-    return runner_.add_testsuite(testsuite_parallel::create(name_, ctx_));
-}
-
-/**
- * Describe a testsuite, where all tests will run concurrently.
- * @tparam T The class context what is tested
- * @param name_   The name/description
- * @param runner_ The runner where to add this testsuite (default)
- * @return the created testsuite for chaining
- */
-template<typename T>
-static testsuite_ptr suite_par(char const* name_, runner& runner_ = runner::default_instance())
-{
-    return runner_.add_testsuite(testsuite_parallel::create(name_, _::name_for_type<T>()));
-}
-
-/**
- * Describe a testsuite, where all tests will run sequentially.
- * @param name_   The name/description
- * @param ctx_    The context what is tested
- * @param runner_ The runner where to add this testsuite (default)
- * @return the created testsuite for chaining
- */
-inline static testsuite_ptr suite(char const* name_, char const* ctx_ = "main",
-                                  runner& runner_ = runner::default_instance())
-{
-    return runner_.add_testsuite(testsuite::create(name_, ctx_));
-}
-
-/**
- * Describe a testsuite, where all tests will run sequentially.
- * @tparam T The class context what is tested
- * @param name_   The name/description
- * @param runner_ The runner where to add this testsuite (default)
- * @return the created testsuite for chaining
- */
-template<typename T>
-static testsuite_ptr suite(char const* name_, runner& runner_ = runner::default_instance())
-{
-    return runner_.add_testsuite(testsuite::create(name_, _::name_for_type<T>()));
-}
 }  // namespace sctf
 
 #endif  // SCTF_TESTSUITE_RUNNER_HPP

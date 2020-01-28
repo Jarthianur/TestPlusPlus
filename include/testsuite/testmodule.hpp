@@ -35,7 +35,10 @@ namespace _
 class test_module
 {
 protected:
-    test_module(testsuite_ptr const& ts_) : m_ts(ts_) {}
+    test_module(testsuite_ptr const& ts_) : m_ts(ts_)
+    {
+        sctf::runner::instance().add_testsuite(m_ts);
+    }
     virtual ~test_module() noexcept = default;
 
     inline void test(char const* name_, _::test_function&& fn_)
@@ -74,24 +77,23 @@ protected:
  * single testsuite.
  * @param NAME The name of this module (not a string!), preferably like test_myClass
  * @param FN   The test function body, which is a block of calls to `test(...)`
- * @param ...  Allows to optionally pass a runner
  */
-#define TEST_MODULE(NAME, FN, ...)                                              \
-    class NAME : public sctf::_::test_module                                    \
-    {                                                                           \
-    public:                                                                     \
-        NAME() : sctf::_::test_module(sctf::suite(#NAME, #NAME, ##__VA_ARGS__)) \
-        {                                                                       \
-            FN;                                                                 \
-        }                                                                       \
-        ~NAME() noexcept override = default;                                    \
-    };                                                                          \
-    namespace sctf                                                              \
-    {                                                                           \
-    namespace _                                                                 \
-    {                                                                           \
-    static const auto& mods_##NAME = singleton<NAME>::instance();               \
-    }                                                                           \
+#define TEST_SUITE(NAME, FN)                                          \
+    class NAME : public sctf::_::test_module                          \
+    {                                                                 \
+    public:                                                           \
+        NAME() : sctf::_::test_module(sctf::testsuite::create(#NAME)) \
+        {                                                             \
+            FN;                                                       \
+        }                                                             \
+        ~NAME() noexcept override = default;                          \
+    };                                                                \
+    namespace sctf                                                    \
+    {                                                                 \
+    namespace _                                                       \
+    {                                                                 \
+    static const auto& mods_##NAME = singleton<NAME>::instance();     \
+    }                                                                 \
     }
 
 /**
@@ -100,24 +102,23 @@ protected:
  * single testsuite.
  * @param NAME The name of this module (not a string!), preferably like test_myClass
  * @param FN   The test function body, which is a block of calls to `test(...)`
- * @param ...  Allows to optionally pass a runner
  */
-#define TEST_MODULE_PAR(NAME, FN, ...)                                              \
-    class NAME : public sctf::_::test_module                                        \
-    {                                                                               \
-    public:                                                                         \
-        NAME() : sctf::_::test_module(sctf::suite_par(#NAME, #NAME, ##__VA_ARGS__)) \
-        {                                                                           \
-            FN;                                                                     \
-        }                                                                           \
-        ~NAME() noexcept override = default;                                        \
-    };                                                                              \
-    namespace sctf                                                                  \
-    {                                                                               \
-    namespace _                                                                     \
-    {                                                                               \
-    static const auto& modp_##NAME = singleton<NAME>::instance();                   \
-    }                                                                               \
+#define TEST_SUITE_PAR(NAME, FN)                                               \
+    class NAME : public sctf::_::test_module                                   \
+    {                                                                          \
+    public:                                                                    \
+        NAME() : sctf::_::test_module(sctf::testsuite_parallel::create(#NAME)) \
+        {                                                                      \
+            FN;                                                                \
+        }                                                                      \
+        ~NAME() noexcept override = default;                                   \
+    };                                                                         \
+    namespace sctf                                                             \
+    {                                                                          \
+    namespace _                                                                \
+    {                                                                          \
+    static const auto& modp_##NAME = singleton<NAME>::instance();              \
+    }                                                                          \
     }
 
 #endif  // SCTF_TESTSUITE_TESTMODULE_HPP

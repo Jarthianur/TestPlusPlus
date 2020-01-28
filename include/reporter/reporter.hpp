@@ -58,19 +58,19 @@ public:
     /**
      * Generate the report.
      * As side effect, all pending testcases in runner_ are executed.
-     * @param runner_ Contains the testsuites to generate report for
      * @return the sum of failed tests and errors
      */
-    std::size_t report(runner& runner_ = runner::default_instance())
+    std::size_t report()
     {
-        m_abs_errs  = 0;
-        m_abs_fails = 0;
-        m_abs_tests = 0;
-        m_abs_time  = 0.0;
+        m_abs_errs     = 0;
+        m_abs_fails    = 0;
+        m_abs_tests    = 0;
+        m_abs_time     = 0.0;
+        runner& runner = runner::instance();
 
-        runner_.run();
+        runner.run();
         begin_report();
-        std::for_each(runner_.testsuites().begin(), runner_.testsuites().end(),
+        std::for_each(runner.testsuites().begin(), runner.testsuites().end(),
                       [this](testsuite_ptr const& ts_) {
                           m_abs_errs += ts_->statistics().errors();
                           m_abs_fails += ts_->statistics().failures();
