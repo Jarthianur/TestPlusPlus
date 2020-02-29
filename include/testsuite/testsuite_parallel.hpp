@@ -40,7 +40,7 @@ public:
     testsuite_parallel(testsuite_parallel const&) = delete;
     testsuite_parallel& operator=(testsuite_parallel const&) = delete;
 
-    ~testsuite_parallel() noexcept override = default;
+    virtual ~testsuite_parallel() noexcept override = default;
 
     /**
      * Create a new testsuite.
@@ -103,7 +103,7 @@ public:
                 {
                     m_stats.m_num_of_fails += fails;
                     m_stats.m_num_of_errs += errs;
-                    m_time = std::max(m_time, tmp);
+                    m_execution_time = std::max(m_execution_time, tmp);
                 }
             }
             SCTF_EXEC_SILENT(m_teardown_fn)
@@ -112,7 +112,7 @@ public:
     }
 
 private:
-    testsuite_parallel(char const* name_) : testsuite(name_) {}
+    explicit testsuite_parallel(char const* name_) : testsuite(name_) {}
 };
 }  // namespace sctf
 

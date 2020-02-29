@@ -184,7 +184,7 @@ TEST_SUITE(test_testsuite, {
         {
             t += tc.duration();
         }
-        ASSERT_EQUALS(t, ts->time());
+        ASSERT_EQUALS(t, ts->execution_time());
     });
 })
 

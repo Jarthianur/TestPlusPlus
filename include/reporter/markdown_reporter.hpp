@@ -56,7 +56,7 @@ protected:
         *this << "## " << ts_->name() << SCTF_XLF << "|Tests|Successes|Failures|Errors|Time|"
               << SCTF_LF << "|-|-|-|-|-|" << SCTF_LF << "|" << ts_->statistics().tests() << "|"
               << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"
-              << ts_->statistics().errors() << "|" << ts_->time() << "ms|" << SCTF_XLF
+              << ts_->statistics().errors() << "|" << ts_->execution_time() << "ms|" << SCTF_XLF
               << "### Tests" << SCTF_XLF << "|Name|Context|Time|Status|" << SCTF_LF << "|-|-|-|-|"
               << SCTF_LF;
         reporter::report_testsuite(ts_);

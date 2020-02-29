@@ -60,7 +60,7 @@ protected:
         *this << SCTF_SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name()
               << "\" errors=\"" << ts_->statistics().errors() << "\" tests=\""
               << ts_->statistics().tests() << "\" failures=\"" << ts_->statistics().failures()
-              << "\" skipped=\"0\" time=\"" << ts_->time() << "\" timestamp=\"" << buff << "\">"
+              << "\" skipped=\"0\" time=\"" << ts_->execution_time() << "\" timestamp=\"" << buff << "\">"
               << SCTF_LF;
         reporter::report_testsuite(ts_);
         *this << SCTF_SPACE << "</testsuite>" << SCTF_LF;

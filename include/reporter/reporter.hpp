@@ -75,7 +75,7 @@ public:
                           m_abs_errs += ts_->statistics().errors();
                           m_abs_fails += ts_->statistics().failures();
                           m_abs_tests += ts_->statistics().tests();
-                          m_abs_time += ts_->time();
+                          m_abs_time += ts_->execution_time();
                           report_testsuite(ts_);
                       });
         end_report();

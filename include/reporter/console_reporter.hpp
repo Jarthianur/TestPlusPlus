@@ -68,7 +68,7 @@ public:
 protected:
     void report_testsuite(testsuite_ptr const ts_) override
     {
-        *this << "Run Testsuite [" << ts_->name() << "]; time = " << ts_->time() << "ms" << SCTF_LF;
+        *this << "Run Testsuite [" << ts_->name() << "]; time = " << ts_->execution_time() << "ms" << SCTF_LF;
 
         reporter::report_testsuite(ts_);
     }

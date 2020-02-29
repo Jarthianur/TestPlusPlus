@@ -27,11 +27,16 @@
 
 #include "sctf.hpp"
 
-TEST_SUITE(test_sequential_module, { test("test", [] { ASSERT_TRUE(true); }); })
+SUITE(abc){TEST(a){std::cout << "hello" << std::endl;
+}
+}
+;
+
+/*TEST_SUITE(test_sequential_module, { test("test", [] { ASSERT_TRUE(true); }); })
 
 TEST_SUITE_PAR(test_parallel_module, {
     test("1", [] { ASSERT_TRUE(true); });
     test("2", [] { ASSERT_TRUE(true); });
-})
+})*/
 
 #endif  // TEST_REFLEXIVE_TESTS_H_

@@ -24,9 +24,7 @@
 
 #include <algorithm>
 #include <chrono>
-#include <functional>
 #include <iostream>
-#include <memory>
 #include <utility>
 #include <vector>
 
@@ -53,9 +51,12 @@ namespace sctf
  * A testsuite describes a set of tests in a certain context, like an user defined class, or
  * function. This class handles sequentially running testcases.
  */
-class testsuite : public std::enable_shared_from_this<testsuite>
+class testsuite
 {
 public:
+    testsuite(testsuite const&) = delete;
+    testsuite& operator=(testsuite const&) = delete;
+
     virtual ~testsuite() noexcept = default;
 
     /**
@@ -97,7 +98,7 @@ public:
                                           break;
                                       default: break;
                                   }
-                                  m_time += tc_.duration();
+                                  m_execution_time += tc_.duration();
                                   SCTF_EXEC_SILENT(m_posttest_fn)
                                   tc_.cout(buf_cout.str());
                                   tc_.cerr(buf_cerr.str());
@@ -117,11 +118,10 @@ public:
      * @param fn_   The test function
      * @return this testsuite for chaining
      */
-    testsuite_ptr test(char const* name_, _::test_function&& fn_)
+    void test(char const* name_, _::test_function&& fn_)
     {
         m_testcases.push_back(_::testcase(name_, m_name, std::move(fn_)));
         m_state = execution_state::PENDING;
-        return shared_from_this();
     }
 
     /**
@@ -131,10 +131,9 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    testsuite_ptr setup(_::test_function&& fn_)
+    void setup(_::test_function&& fn_)
     {
         m_setup_fn = std::move(fn_);
-        return shared_from_this();
     }
 
     /**
@@ -144,10 +143,9 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    testsuite_ptr teardown(_::test_function&& fn_)
+    void teardown(_::test_function&& fn_)
     {
         m_teardown_fn = std::move(fn_);
-        return shared_from_this();
     }
 
     /**
@@ -157,10 +155,9 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    testsuite_ptr before_each(_::test_function&& fn_)
+    void before_each(_::test_function&& fn_)
     {
         m_pretest_fn = std::move(fn_);
-        return shared_from_this();
     }
 
     /**
@@ -170,10 +167,9 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    testsuite_ptr after_each(_::test_function&& fn_)
+    void after_each(_::test_function&& fn_)
     {
         m_posttest_fn = std::move(fn_);
-        return shared_from_this();
     }
 
     /**
@@ -203,9 +199,9 @@ public:
     /**
      * Get the accumulated time spent on all tests.
      */
-    inline double time() const
+    inline double execution_time() const
     {
-        return m_time;
+        return m_execution_time;
     }
 
     /**
@@ -223,11 +219,13 @@ protected:
         DONE
     };
 
-    testsuite(char const* name_) : m_name(name_), m_timestamp(std::chrono::system_clock::now()) {}
+    explicit testsuite(char const* name_)
+        : m_name(name_), m_timestamp(std::chrono::system_clock::now())
+    {}
 
     char const*                                 m_name;
     std::chrono::system_clock::time_point const m_timestamp;
-    double                                      m_time = 0.0;
+    double                                      m_execution_time = 0.0;
 
     _::statistics            m_stats;
     std::vector<_::testcase> m_testcases;

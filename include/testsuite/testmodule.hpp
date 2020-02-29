@@ -22,6 +22,8 @@
 #ifndef SCTF_TESTSUITE_TESTMODULE_HPP
 #define SCTF_TESTSUITE_TESTMODULE_HPP
 
+#include <functional>
+
 #include "common/types.hpp"
 #include "testsuite/runner.hpp"
 
@@ -32,93 +34,42 @@ namespace _
 /**
  * Base class for test modules.
  */
+// template<char const* N>
 class test_module
 {
 protected:
-    test_module(testsuite_ptr const& ts_) : m_ts(ts_)
-    {
-        sctf::runner::instance().add_testsuite(m_ts);
-    }
     virtual ~test_module() noexcept = default;
 
-    inline void test(char const* name_, _::test_function&& fn_)
+    test_module() : _m_ts_(sctf::testsuite::create(""))
     {
-        m_ts->test(name_, std::move(fn_));
+        sctf::runner::instance().add_testsuite(_m_ts_);
     }
 
-    inline void setup(_::test_function&& fn_)
-    {
-        m_ts->setup(std::move(fn_));
-    }
-
-    inline void teardown(_::test_function&& fn_)
-    {
-        m_ts->teardown(std::move(fn_));
-    }
-
-    inline void before_each(_::test_function&& fn_)
-    {
-        m_ts->before_each(std::move(fn_));
-    }
-
-    inline void after_each(_::test_function&& fn_)
-    {
-        m_ts->after_each(std::move(fn_));
-    }
-
-    testsuite_ptr m_ts;
+    testsuite_ptr _m_ts_;
 };
 }  // namespace _
 }  // namespace sctf
 
-/**
- * Define a test module for OO testing approach.
- * Invoke this macro to create and instantiate a test module. The resulting module is bound to a
- * single testsuite.
- * @param NAME The name of this module (not a string!), preferably like test_myClass
- * @param FN   The test function body, which is a block of calls to `test(...)`
- */
-#define TEST_SUITE(NAME, FN)                                          \
-    class NAME : public sctf::_::test_module                          \
-    {                                                                 \
-    public:                                                           \
-        NAME() : sctf::_::test_module(sctf::testsuite::create(#NAME)) \
-        {                                                             \
-            FN;                                                       \
-        }                                                             \
-        ~NAME() noexcept override = default;                          \
-    };                                                                \
-    namespace sctf                                                    \
-    {                                                                 \
-    namespace _                                                       \
-    {                                                                 \
-    static const auto& mods_##NAME = singleton<NAME>::instance();     \
-    }                                                                 \
-    }
+#define SUITE(N)                                                                   \
+    namespace _ns_##N                                                              \
+    {                                                                              \
+        class N;                                                                   \
+        static const auto& _mod_              = sctf::_::singleton<N>::instance(); \
+        using _type_                          = N;                                 \
+        static constexpr char const _class_[] = #N;                                \
+    }                                                                              \
+    class _ns_##N::N : public sctf::_::test_module
+//<_ns_##N::_class_>
 
-/**
- * Define a test module for OO testing approach. Tests will run concurrently.
- * Invoke this macro to create and instantiate a test module. The resulting module is bound to a
- * single testsuite.
- * @param NAME The name of this module (not a string!), preferably like test_myClass
- * @param FN   The test function body, which is a block of calls to `test(...)`
- */
-#define TEST_SUITE_PAR(NAME, FN)                                               \
-    class NAME : public sctf::_::test_module                                   \
-    {                                                                          \
-    public:                                                                    \
-        NAME() : sctf::_::test_module(sctf::testsuite_parallel::create(#NAME)) \
-        {                                                                      \
-            FN;                                                                \
-        }                                                                      \
-        ~NAME() noexcept override = default;                                   \
-    };                                                                         \
-    namespace sctf                                                             \
-    {                                                                          \
-    namespace _                                                                \
-    {                                                                          \
-    static const auto& modp_##NAME = singleton<NAME>::instance();              \
-    }                                                                          \
-    }
+#define TEST(N)                                                          \
+    class _t_##N                                                         \
+    {                                                                    \
+    public:                                                              \
+        _t_##N()                                                         \
+        {                                                                \
+            _mod_._m_ts_->test(#N, std::bind(&_type_::_tf_##N, &_mod_)); \
+        }                                                                \
+    } _ti_##N;                                                           \
+    void _tf_##N() const
 
 #endif  // SCTF_TESTSUITE_TESTMODULE_HPP
