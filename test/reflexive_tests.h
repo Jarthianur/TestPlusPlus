@@ -47,6 +47,14 @@ SUITE(abc)
     {
         std::cout << "hello " << x << std::endl;
     }
+    TEST(b)
+    {
+        ASSERT_EQUALS(1, 1);
+    }
+    TEST(c)
+    {
+        ASSERT_FALSE(true);
+    }
 };
 
     /*TEST_SUITE(test_sequential_module, { test("test", [] { ASSERT_TRUE(true); }); })

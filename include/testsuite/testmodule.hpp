@@ -23,7 +23,6 @@
 #define SCTF_TESTSUITE_TESTMODULE_HPP
 
 #include <functional>
-#include <iostream>
 
 #include "common/stringify.hpp"
 #include "common/types.hpp"
