@@ -136,10 +136,10 @@ SUITE(test_testsuite_parallel)
         ASSERT_EQUALS(ts->execution_time(), t);
 #endif
         statistics const& stat = ts->statistics();
-        ASSERT_EQUALS(stat.tests(), 6);
-        ASSERT_EQUALS(stat.errors(), 2);
-        ASSERT_EQUALS(stat.failures(), 2);
-        ASSERT_EQUALS(stat.successes(), 2);
+        ASSERT_EQUALS(stat.tests(), 6ul);
+        ASSERT_EQUALS(stat.errors(), 2ul);
+        ASSERT_EQUALS(stat.failures(), 2ul);
+        ASSERT_EQUALS(stat.successes(), 2ul);
     }
 };
 
@@ -181,19 +181,19 @@ SUITE(test_testsuite)
         ts->test("", [] { throw std::logic_error(""); });
         ts->run();
         statistics const& stat = ts->statistics();
-        ASSERT_EQUALS(stat.tests(), 3);
-        ASSERT_EQUALS(stat.errors(), 1);
-        ASSERT_EQUALS(stat.failures(), 1);
-        ASSERT_EQUALS(stat.successes(), 1);
+        ASSERT_EQUALS(stat.tests(), 3ul);
+        ASSERT_EQUALS(stat.errors(), 1ul);
+        ASSERT_EQUALS(stat.failures(), 1ul);
+        ASSERT_EQUALS(stat.successes(), 1ul);
         ts->run();
-        ASSERT_EQUALS(stat.tests(), 3);
-        ASSERT_EQUALS(stat.errors(), 1);
-        ASSERT_EQUALS(stat.failures(), 1);
-        ASSERT_EQUALS(stat.successes(), 1);
+        ASSERT_EQUALS(stat.tests(), 3ul);
+        ASSERT_EQUALS(stat.errors(), 1ul);
+        ASSERT_EQUALS(stat.failures(), 1ul);
+        ASSERT_EQUALS(stat.successes(), 1ul);
         ts->test("", [] {});
         ts->run();
-        ASSERT_EQUALS(stat.tests(), 4);
-        ASSERT_EQUALS(stat.successes(), 2);
+        ASSERT_EQUALS(stat.tests(), 4ul);
+        ASSERT_EQUALS(stat.successes(), 2ul);
         double t = 0.0;
         for (auto const& tc : ts->testcases())
         {
