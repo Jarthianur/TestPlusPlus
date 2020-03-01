@@ -29,7 +29,7 @@
 
 namespace sctf
 {
-namespace _
+namespace private_
 {
 class in_range
 {
@@ -63,7 +63,7 @@ public:
                               to_string(expected_value));
     }
 };
-}  // namespace _
+}  // namespace private_
 }  // namespace sctf
 
 PROVIDE_COMPARATOR(in_range, IN_RANGE)

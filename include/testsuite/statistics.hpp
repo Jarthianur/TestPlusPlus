@@ -29,7 +29,7 @@ namespace sctf
 class testsuite;
 class testsuite_parallel;
 
-namespace _
+namespace private_
 {
 /**
  * Used for storing test results.
@@ -80,7 +80,7 @@ protected:
     std::size_t m_num_of_fails = 0;
     std::size_t m_num_of_errs  = 0;
 };
-}  // namespace _
+}  // namespace private_
 }  // namespace sctf
 
 #endif  // SCTF_TESTSUITE_STATISTICS_HPP

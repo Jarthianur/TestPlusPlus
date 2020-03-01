@@ -29,8 +29,8 @@ using namespace sctf;
 
 int main(int, char**)
 {
-    /*auto rep   = create_console_reporter(true, true);
-    auto repx  = create_xml_reporter("test.xml");
+    auto rep   = create_console_reporter(true, true);
+   /* auto repx  = create_xml_reporter("test.xml");
     auto repmd = create_markdown_reporter("test.md");
 
     try
@@ -50,5 +50,5 @@ int main(int, char**)
     std::cout << "Basic tests have succeeded!" << std::endl;
 
     return rep->report() + repx->report() + repmd->report() > 0 ? 1 : 0;*/
-    return 0;
+    return rep->report();
 }

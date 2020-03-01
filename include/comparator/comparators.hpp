@@ -46,7 +46,7 @@ using std::experimental::optional;
 
 namespace sctf
 {
-namespace _
+namespace private_
 {
 /**
  * Result of an actual comparison performed by any comparator.
@@ -134,7 +134,7 @@ static double epsilon = SCTF_EPSILON;
 #elif defined(SCTF_EXTERN_EPSILON)
 extern double        epsilon;
 #endif
-}  // namespace _
+}  // namespace private_
 }  // namespace sctf
 
 /**
@@ -148,7 +148,7 @@ extern double        epsilon;
 #define COMPARATOR(NAME, CMPSTR, PRED)                                                        \
     namespace sctf                                                                            \
     {                                                                                         \
-    namespace _                                                                               \
+    namespace private_                                                                        \
     {                                                                                         \
     class NAME                                                                                \
     {                                                                                         \
@@ -183,9 +183,9 @@ extern double        epsilon;
 #define PROVIDE_COMPARATOR(COMP, NAME) \
     namespace sctf                     \
     {                                  \
-    static _::COMP NAME()              \
+    static private_::COMP NAME()       \
     {                                  \
-        return _::COMP();              \
+        return private_::COMP();       \
     }                                  \
     }
 
@@ -197,7 +197,7 @@ extern double        epsilon;
 #define SCTF_SET_EPSILON(E) \
     namespace sctf          \
     {                       \
-    namespace _             \
+    namespace private_      \
     {                       \
     double epsilon = E;     \
     }                       \

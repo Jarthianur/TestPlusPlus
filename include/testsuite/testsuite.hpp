@@ -77,23 +77,23 @@ public:
     {
         if (m_state != execution_state::DONE)
         {
-            m_stats.m_num_of_tests = m_testcases.size();
-            _::streambuf_proxy buf_cout(std::cout);
-            _::streambuf_proxy buf_cerr(std::cerr);
-
             SCTF_EXEC_SILENT(m_setup_fn)
+            m_stats.m_num_of_tests = m_testcases.size();
+            private_::streambuf_proxy buf_cout(std::cout);
+            private_::streambuf_proxy buf_cerr(std::cerr);
+
             std::for_each(m_testcases.begin(), m_testcases.end(),
-                          [this, &buf_cerr, &buf_cout](_::testcase& tc_) {
-                              if (tc_.state() == _::testcase::result::NONE)
+                          [this, &buf_cerr, &buf_cout](private_::testcase& tc_) {
+                              if (tc_.state() == private_::testcase::result::NONE)
                               {
                                   SCTF_EXEC_SILENT(m_pretest_fn)
                                   tc_();
                                   switch (tc_.state())
                                   {
-                                      case _::testcase::result::FAILED:
+                                      case private_::testcase::result::FAILED:
                                           ++m_stats.m_num_of_fails;
                                           break;
-                                      case _::testcase::result::ERROR:
+                                      case private_::testcase::result::ERROR:
                                           ++m_stats.m_num_of_errs;
                                           break;
                                       default: break;
@@ -118,9 +118,9 @@ public:
      * @param fn_   The test function
      * @return this testsuite for chaining
      */
-    void test(char const* name_, _::test_function&& fn_)
+    void test(char const* name_, private_::test_function&& fn_)
     {
-        m_testcases.push_back(_::testcase(name_, m_name, std::move(fn_)));
+        m_testcases.push_back(private_::testcase(name_, m_name, std::move(fn_)));
         m_state = execution_state::PENDING;
     }
 
@@ -131,7 +131,7 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    void setup(_::test_function&& fn_)
+    void setup(private_::test_function&& fn_)
     {
         m_setup_fn = std::move(fn_);
     }
@@ -143,7 +143,7 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    void teardown(_::test_function&& fn_)
+    void teardown(private_::test_function&& fn_)
     {
         m_teardown_fn = std::move(fn_);
     }
@@ -155,7 +155,7 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    void before_each(_::test_function&& fn_)
+    void before_each(private_::test_function&& fn_)
     {
         m_pretest_fn = std::move(fn_);
     }
@@ -167,7 +167,7 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    void after_each(_::test_function&& fn_)
+    void after_each(private_::test_function&& fn_)
     {
         m_posttest_fn = std::move(fn_);
     }
@@ -191,7 +191,7 @@ public:
     /**
      * Get the test statistics.
      */
-    inline _::statistics const& statistics() const
+    inline private_::statistics const& statistics() const
     {
         return m_stats;
     }
@@ -207,7 +207,7 @@ public:
     /**
      * Get all testcases.
      */
-    inline std::vector<_::testcase> const& testcases() const
+    inline std::vector<private_::testcase> const& testcases() const
     {
         return m_testcases;
     }
@@ -227,14 +227,14 @@ protected:
     std::chrono::system_clock::time_point const m_timestamp;
     double                                      m_execution_time = 0.0;
 
-    _::statistics            m_stats;
-    std::vector<_::testcase> m_testcases;
-    execution_state          m_state = execution_state::PENDING;
+    private_::statistics            m_stats;
+    std::vector<private_::testcase> m_testcases;
+    execution_state                 m_state = execution_state::PENDING;
 
-    _::test_function m_setup_fn;
-    _::test_function m_teardown_fn;
-    _::test_function m_pretest_fn;
-    _::test_function m_posttest_fn;
+    private_::test_function m_setup_fn;
+    private_::test_function m_teardown_fn;
+    private_::test_function m_pretest_fn;
+    private_::test_function m_posttest_fn;
 };
 
 }  // namespace sctf

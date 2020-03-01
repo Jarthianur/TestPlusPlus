@@ -35,7 +35,7 @@
 SCTF_SET_EPSILON(0.000001)
 
 using namespace sctf;
-using namespace _;
+using namespace private;
 
 TEST_SUITE_PAR(test_comparators, {
     test("equals", [] {

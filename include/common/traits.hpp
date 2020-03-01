@@ -33,15 +33,15 @@
 #define IS(T, ...) (T<__VA_ARGS__>::value)
 #define IS_TYPE(T, R) (IS(std::is_same, T, R))
 #define IS_FLOAT(T) (IS(std::is_floating_point, T))
-#define IS_STREAMABLE(T, S) (IS(sctf::_::is_streamable, S, T))
-#define IS_ITERABLE(T) (IS(sctf::_::is_iterable, T))
-#define IS_ORDINAL(T) (IS(sctf::_::is_ordinal, T))
-#define IS_EQUAL_COMPARABLE(T, R) (IS(sctf::_::is_equal_comparable, T, R))
-#define IS_UNEQUAL_COMPARABLE(T, R) (IS(sctf::_::is_unequal_comparable, T, R))
+#define IS_STREAMABLE(T, S) (IS(sctf::private_::is_streamable, S, T))
+#define IS_ITERABLE(T) (IS(sctf::private_::is_iterable, T))
+#define IS_ORDINAL(T) (IS(sctf::private_::is_ordinal, T))
+#define IS_EQUAL_COMPARABLE(T, R) (IS(sctf::private_::is_equal_comparable, T, R))
+#define IS_UNEQUAL_COMPARABLE(T, R) (IS(sctf::private_::is_unequal_comparable, T, R))
 
 namespace sctf
 {
-namespace _
+namespace private_
 {
 /**
  * Type trait to check for streaming operator capability.
@@ -134,7 +134,7 @@ class is_unequal_comparable
 public:
     static const bool value = decltype(test<S, T>(0))::value;
 };
-}  // namespace _
+}  // namespace private_
 }  // namespace sctf
 
 #endif  // SCTF_COMMON_TRAITS_HPP

@@ -36,7 +36,7 @@ namespace sctf
 /**
  * Reporter implementation with JUnit like XML format.
  */
-class xml_reporter : public _::reporter
+class xml_reporter : public private_::reporter
 {
 public:
     ~xml_reporter() noexcept override = default;
@@ -60,28 +60,28 @@ protected:
         *this << SCTF_SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name()
               << "\" errors=\"" << ts_->statistics().errors() << "\" tests=\""
               << ts_->statistics().tests() << "\" failures=\"" << ts_->statistics().failures()
-              << "\" skipped=\"0\" time=\"" << ts_->execution_time() << "\" timestamp=\"" << buff << "\">"
-              << SCTF_LF;
+              << "\" skipped=\"0\" time=\"" << ts_->execution_time() << "\" timestamp=\"" << buff
+              << "\">" << SCTF_LF;
         reporter::report_testsuite(ts_);
         *this << SCTF_SPACE << "</testsuite>" << SCTF_LF;
     }
 
-    void report_testcase(_::testcase const& tc_) override
+    void report_testcase(private_::testcase const& tc_) override
     {
         *this << SCTF_XSPACE << "<testcase name=\"" << tc_.name() << "\" classname=\""
               << tc_.context() << "\" time=\"" << tc_.duration() << "\"";
         switch (tc_.state())
         {
-            case _::testcase::result::ERROR:
+            case private_::testcase::result::ERROR:
                 *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<error message=\""
                       << tc_.err_msg() << "\"></error>" << SCTF_LF << SCTF_XSPACE << "</testcase>";
                 break;
-            case _::testcase::result::FAILED:
+            case private_::testcase::result::FAILED:
                 *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<failure message=\""
                       << tc_.err_msg() << "\"></failure>" << SCTF_LF << SCTF_XSPACE
                       << "</testcase>";
                 break;
-            case _::testcase::result::PASSED: *this << "/>"; break;
+            case private_::testcase::result::PASSED: *this << "/>"; break;
             default: break;
         }
         *this << SCTF_LF;

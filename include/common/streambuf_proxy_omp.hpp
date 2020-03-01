@@ -36,7 +36,7 @@
 
 namespace sctf
 {
-namespace _
+namespace private_
 {
 /**
  * Streambuffer proxy to capture everything sent to a stream in a multithreaded context with
@@ -97,7 +97,7 @@ protected:
     std::ostream&               m_orig_stream;
     std::vector<std::stringbuf> m_thd_buffers;
 };
-}  // namespace _
+}  // namespace private_
 }  // namespace sctf
 
 #ifndef _OPENMP
