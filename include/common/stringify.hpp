@@ -50,7 +50,7 @@ static std::string const& name_for_type()
 #if defined(__GNUG__) || defined(__clang__)
     std::string const sig(__PRETTY_FUNCTION__);
     auto const        b = sig.rfind("T = ") + 4;
-    name                = sig.substr(b, sig.find(';', b) - b);
+    name                = sig.substr(b, sig.find_first_of(";]", b) - b);
     name.erase(std::remove(name.begin(), name.end(), ' '), name.end());
 #else
     std::string const sig(typeid(T).name());
