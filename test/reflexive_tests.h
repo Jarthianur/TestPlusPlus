@@ -27,41 +27,4 @@
 
 #include "sctf.hpp"
 
-SUITE(abc)
-{
-    int x;
-    SETUP()
-    {
-        x = 0;
-        std::cout << 'a' << std::endl;
-    }
-    BEFORE_EACH()
-    {
-        x++;
-    }
-    AFTER_EACH()
-    {
-        x--;
-    }
-    TEST(a)
-    {
-        std::cout << "hello " << x << std::endl;
-    }
-    TEST(b)
-    {
-        ASSERT_EQUALS(1, 1);
-    }
-    TEST(c)
-    {
-        ASSERT_FALSE(true);
-    }
-};
-
-    /*TEST_SUITE(test_sequential_module, { test("test", [] { ASSERT_TRUE(true); }); })
-
-    TEST_SUITE_PAR(test_parallel_module, {
-        test("1", [] { ASSERT_TRUE(true); });
-        test("2", [] { ASSERT_TRUE(true); });
-    })*/
-
 #endif  // TEST_REFLEXIVE_TESTS_H_
