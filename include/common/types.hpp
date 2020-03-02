@@ -27,7 +27,7 @@
 
 namespace sctf
 {
-namespace _
+namespace private_
 {
 class reporter;
 
@@ -57,14 +57,14 @@ struct singleton final
     template<typename... Args>
     static T& instance(Args&&... args_)
     {
-        static T instance(std::forward<Args>(args_)...);
-        return instance;
+        static T inst(std::forward<Args>(args_)...);
+        return inst;
     }
 };
-}  // namespace _
+}  // namespace private_
 
 class testsuite;
-using reporter_ptr  = std::shared_ptr<_::reporter>;
+using reporter_ptr  = std::shared_ptr<private_::reporter>;
 using testsuite_ptr = std::shared_ptr<testsuite>;
 }  // namespace sctf
 

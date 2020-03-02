@@ -40,7 +40,7 @@ public:
     testsuite_parallel(testsuite_parallel const&) = delete;
     testsuite_parallel& operator=(testsuite_parallel const&) = delete;
 
-    ~testsuite_parallel() noexcept override = default;
+    virtual ~testsuite_parallel() noexcept override = default;
 
     /**
      * Create a new testsuite.
@@ -65,12 +65,12 @@ public:
             {
                 throw std::overflow_error("Too many testcases! Size would overflow loop variant.");
             }
+            SCTF_EXEC_SILENT(m_setup_fn)
             const long tc_size     = static_cast<long>(m_testcases.size());
             m_stats.m_num_of_tests = m_testcases.size();
-            _::streambuf_proxy_omp mt_buf_cout(std::cout);
-            _::streambuf_proxy_omp mt_buf_cerr(std::cerr);
+            private_::streambuf_proxy_omp mt_buf_cout(std::cout);
+            private_::streambuf_proxy_omp mt_buf_cerr(std::cerr);
 
-            SCTF_EXEC_SILENT(m_setup_fn)
 #pragma omp parallel
             {
                 double      tmp   = 0.0;
@@ -81,14 +81,14 @@ public:
                 for (long i = 0; i < tc_size; ++i)
                 {
                     auto& tc = m_testcases[static_cast<std::size_t>(i)];
-                    if (tc.state() == _::testcase::result::NONE)
+                    if (tc.state() == private_::testcase::result::NONE)
                     {
                         SCTF_EXEC_SILENT(m_pretest_fn)
                         tc();
                         switch (tc.state())
                         {
-                            case _::testcase::result::FAILED: ++fails; break;
-                            case _::testcase::result::ERROR: ++errs; break;
+                            case private_::testcase::result::FAILED: ++fails; break;
+                            case private_::testcase::result::ERROR: ++errs; break;
                             default: break;
                         }
                         tmp += tc.duration();
@@ -103,7 +103,7 @@ public:
                 {
                     m_stats.m_num_of_fails += fails;
                     m_stats.m_num_of_errs += errs;
-                    m_time = std::max(m_time, tmp);
+                    m_execution_time = std::max(m_execution_time, tmp);
                 }
             }
             SCTF_EXEC_SILENT(m_teardown_fn)
@@ -112,7 +112,7 @@ public:
     }
 
 private:
-    testsuite_parallel(char const* name_) : testsuite(name_) {}
+    explicit testsuite_parallel(char const* name_) : testsuite(name_) {}
 };
 }  // namespace sctf
 

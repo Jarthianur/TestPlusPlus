@@ -42,7 +42,7 @@ namespace sctf
  * Reporter implementation with optionally colored text output.
  * Used for console printing.
  */
-class console_reporter : public _::reporter
+class console_reporter : public private_::reporter
 {
 public:
     ~console_reporter() noexcept override = default;
@@ -68,12 +68,13 @@ public:
 protected:
     void report_testsuite(testsuite_ptr const ts_) override
     {
-        *this << "Run Testsuite [" << ts_->name() << "]; time = " << ts_->time() << "ms" << SCTF_LF;
+        *this << "Run Testsuite [" << ts_->name() << "]; time = " << ts_->execution_time() << "ms"
+              << SCTF_LF;
 
         reporter::report_testsuite(ts_);
     }
 
-    void report_testcase(_::testcase const& tc_) override
+    void report_testcase(private_::testcase const& tc_) override
     {
         *this << SCTF_SPACE << "Run Testcase [" << tc_.name() << "](" << tc_.context()
               << "); time = " << tc_.duration() << "ms" << SCTF_LF << SCTF_XSPACE;
@@ -84,13 +85,13 @@ protected:
         }
         switch (tc_.state())
         {
-            case _::testcase::result::ERROR:
+            case private_::testcase::result::ERROR:
                 *this << (m_color ? ANSI_MAGENTA : "") << "ERROR! " << tc_.err_msg();
                 break;
-            case _::testcase::result::FAILED:
+            case private_::testcase::result::FAILED:
                 *this << (m_color ? ANSI_RED : "") << "FAILED! " << tc_.err_msg();
                 break;
-            case _::testcase::result::PASSED:
+            case private_::testcase::result::PASSED:
                 *this << (m_color ? ANSI_GREEN : "") << "PASSED!";
                 break;
             default: break;

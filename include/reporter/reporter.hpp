@@ -45,7 +45,7 @@
 
 namespace sctf
 {
-namespace _
+namespace private_
 {
 /**
  * Abstract reporter type. Used as base class for specific reporter implementations.
@@ -75,7 +75,7 @@ public:
                           m_abs_errs += ts_->statistics().errors();
                           m_abs_fails += ts_->statistics().failures();
                           m_abs_tests += ts_->statistics().tests();
-                          m_abs_time += ts_->time();
+                          m_abs_time += ts_->execution_time();
                           report_testsuite(ts_);
                       });
         end_report();
@@ -95,7 +95,7 @@ protected:
     inline virtual void report_testsuite(testsuite_ptr const ts_)
     {
         std::for_each(ts_->testcases().begin(), ts_->testcases().end(),
-                      [this](const _::testcase& tc) { report_testcase(tc); });
+                      [this](const testcase& tc) { report_testcase(tc); });
     }
 
     virtual void report_testcase(testcase const& tc_) = 0;
@@ -116,7 +116,7 @@ protected:
     std::size_t   m_abs_errs  = 0;
     double        m_abs_time  = 0;
 };
-}  // namespace _
+}  // namespace private_
 }  // namespace sctf
 
 #endif  // SCTF_REPORTER_ABSTRACT_REPORTER_HPP

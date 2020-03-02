@@ -37,8 +37,9 @@
  * @param COMP The Comparator
  * @param EXPECT The expected value
  */
-#define ASSERT(VALUE, COMP, EXPECT) \
-    sctf::_::assert_statement(VALUE, EXPECT, COMP(), sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT(VALUE, COMP, EXPECT)                         \
+    sctf::private_::assert_statement(VALUE, EXPECT, COMP(), \
+                                     sctf::private_::code_location{__FILE__, __LINE__})
 
 /**
  * Test for successful negated comparison.
@@ -46,84 +47,87 @@
  * @param COMP The Comparator
  * @param EXPECT The expected value
  */
-#define ASSERT_NOT(VALUE, COMP, EXPECT) \
-    sctf::_::assert_statement(VALUE, EXPECT, !COMP(), sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT_NOT(VALUE, COMP, EXPECT)                      \
+    sctf::private_::assert_statement(VALUE, EXPECT, !COMP(), \
+                                     sctf::private_::code_location{__FILE__, __LINE__})
 
 /**
  * Test for equality.
  * @param VALUE The actual value
  * @param EXPECT The expected value
  */
-#define ASSERT_EQUALS(VALUE, EXPECT)                         \
-    sctf::_::assert_statement(VALUE, EXPECT, sctf::EQUALS(), \
-                              sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT_EQUALS(VALUE, EXPECT)                                \
+    sctf::private_::assert_statement(VALUE, EXPECT, sctf::EQUALS(), \
+                                     sctf::private_::code_location{__FILE__, __LINE__})
 
 /**
  * Test value to be true.
  * @param VALUE The value
  */
-#define ASSERT_TRUE(VALUE)                                 \
-    sctf::_::assert_statement(VALUE, true, sctf::EQUALS(), \
-                              sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT_TRUE(VALUE)                                        \
+    sctf::private_::assert_statement(VALUE, true, sctf::EQUALS(), \
+                                     sctf::private_::code_location{__FILE__, __LINE__})
 
 /**
  * Test value to be false.
  * @param VALUE The value
  */
-#define ASSERT_FALSE(VALUE)                                 \
-    sctf::_::assert_statement(VALUE, false, sctf::EQUALS(), \
-                              sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT_FALSE(VALUE)                                        \
+    sctf::private_::assert_statement(VALUE, false, sctf::EQUALS(), \
+                                     sctf::private_::code_location{__FILE__, __LINE__})
 
 /**
  * Test value to be nullptr.
  * @param VALUE The value
  */
-#define ASSERT_NULL(VALUE)                                                              \
-    sctf::_::assert_statement(static_cast<void const*>(VALUE), nullptr, sctf::EQUALS(), \
-                              sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT_NULL(VALUE)                                                                     \
+    sctf::private_::assert_statement(static_cast<void const*>(VALUE), nullptr, sctf::EQUALS(), \
+                                     sctf::private_::code_location{__FILE__, __LINE__})
 
 /**
  * Test value not to be nullptr.
  * @param VALUE The value
  */
-#define ASSERT_NOT_NULL(VALUE)                                                            \
-    sctf::_::assert_statement(static_cast<void const*>(VALUE), nullptr, sctf::UNEQUALS(), \
-                              sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT_NOT_NULL(VALUE)                                                                   \
+    sctf::private_::assert_statement(static_cast<void const*>(VALUE), nullptr, sctf::UNEQUALS(), \
+                                     sctf::private_::code_location{__FILE__, __LINE__})
 
 /**
  * Test value to be 0.
  * @param VALUE The value
  */
-#define ASSERT_ZERO(VALUE)                                                            \
-    sctf::_::assert_statement(VALUE, static_cast<decltype(VALUE)>(0), sctf::EQUALS(), \
-                              sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT_ZERO(VALUE)                                                                   \
+    sctf::private_::assert_statement(VALUE, static_cast<decltype(VALUE)>(0), sctf::EQUALS(), \
+                                     sctf::private_::code_location{__FILE__, __LINE__})
 
 /**
  * Test for FUNC to throw TYPE.
  * @param FUNC The function call
  * @param TYPE The exception type
  */
-#define ASSERT_THROWS(FUNC, TYPE) \
-    sctf::_::assert_throws<TYPE>([&] { FUNC; }, sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT_THROWS(FUNC, TYPE)                      \
+    sctf::private_::assert_throws<TYPE>([&] { FUNC; }, \
+                                        sctf::private_::code_location{__FILE__, __LINE__})
 
 /**
  * Test for FUNC not to throw any exception.
  * @param FUNC The function call
  */
 #define ASSERT_NOTHROW(FUNC) \
-    sctf::_::assert_nothrow([&] { FUNC; }, sctf::_::code_location{__FILE__, __LINE__})
+    sctf::private_::assert_nothrow([&] { FUNC; }, sctf::private_::code_location{__FILE__, __LINE__})
 
 /**
  * Test for FUNC to run faster than MILLIS.
  * @param FUNC The function call
  * @param MILLIS The max amount of milliseconds
  */
-#define ASSERT_PERFORMANCE(FUNC, MILLIS) \
-    sctf::_::assert_performance([&] { FUNC; }, MILLIS, sctf::_::code_location{__FILE__, __LINE__})
+#define ASSERT_PERFORMANCE(FUNC, MILLIS)                      \
+    sctf::private_::assert_performance([&] { FUNC; }, MILLIS, \
+                                       sctf::private_::code_location{__FILE__, __LINE__})
 
 namespace sctf
 {
-namespace _
+namespace private_
 {
 template<typename C, typename V, typename E = V>
 static void assert_statement(V const& val_, E const& expect_, C&& cmp_, code_location const& loc_)
@@ -197,7 +201,7 @@ static void assert_performance(test_function&& fn_, double max_ms_, code_locatio
         throw assertion_failure("Unknown exception thrown", loc_);
     }
 }
-}  // namespace _
+}  // namespace private_
 }  // namespace sctf
 
 #endif  // SCTF_ASSERT_HPP

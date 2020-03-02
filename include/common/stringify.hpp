@@ -34,23 +34,23 @@
 
 namespace sctf
 {
-namespace _
+namespace private_
 {
 /**
  * Get a stringified name for every possible type.
  */
 template<typename T>
-static char const* name_for_type()
+static std::string const& name_for_type()
 {
     static thread_local std::string name;
     if (name.length() > 0)
     {
-        return name.c_str();
+        return name;
     }
 #if defined(__GNUG__) || defined(__clang__)
     std::string const sig(__PRETTY_FUNCTION__);
     auto const        b = sig.rfind("T = ") + 4;
-    name                = sig.substr(b, sig.rfind(']') - b);
+    name                = sig.substr(b, sig.find_first_of(";]", b) - b);
     name.erase(std::remove(name.begin(), name.end(), ' '), name.end());
 #else
     std::string const sig(typeid(T).name());
@@ -58,7 +58,7 @@ static char const* name_for_type()
     if (b != std::string::npos)
     {
         name = sig.substr(b + 7);
-        return name.c_str();
+        return name;
     }
     b = sig.find("class ");
     if (b != std::string::npos)
@@ -70,7 +70,17 @@ static char const* name_for_type()
         name = std::move(sig);
     }
 #endif
-    return name.c_str();
+    return name;
+}
+
+static char const* strip_namespace(std::string const& class_)
+{
+    std::size_t c;
+    if ((c = class_.find_last_of(':')) != std::string::npos)
+    {
+        return class_.c_str() + c + 1;
+    }
+    return class_.c_str();
 }
 
 /**
@@ -121,7 +131,7 @@ inline std::string to_string(bool const& arg)
 {
     return arg ? "true" : "false";
 }
-}  // namespace _
+}  // namespace private_
 }  // namespace sctf
 
 #endif  // SCTF_COMMON_STRINGIFY_HPP

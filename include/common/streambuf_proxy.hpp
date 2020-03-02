@@ -28,7 +28,7 @@
 
 namespace sctf
 {
-namespace _
+namespace private_
 {
 /**
  * Streambuffer proxy to capture everything sent to a stream.
@@ -83,7 +83,7 @@ protected:
     std::ostream&   m_orig_stream;
     std::stringbuf  m_buffer;
 };
-}  // namespace _
+}  // namespace private_
 }  // namespace sctf
 
 #endif  // SCTF_COMMON_STREAMBUF_PROXY_HPP

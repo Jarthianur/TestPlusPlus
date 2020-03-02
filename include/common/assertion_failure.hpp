@@ -29,7 +29,7 @@
 
 namespace sctf
 {
-namespace _
+namespace private_
 {
 /**
  * Used to be thrown when an assertion fails.
@@ -49,7 +49,7 @@ public:
     /**
      * Get the error message.
      */
-    inline const char* what() const noexcept override
+    inline char const* what() const noexcept override
     {
         return m_msg.c_str();
     }
@@ -57,7 +57,7 @@ public:
 protected:
     std::string const m_msg;
 };
-}  // namespace _
+}  // namespace private_
 }  // namespace sctf
 
 #endif  // SCTF_COMMON_ASSERTION_FAILURE_HPP

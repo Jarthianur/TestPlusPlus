@@ -35,7 +35,7 @@ namespace sctf
 /**
  * Reporter implementation with markdown format.
  */
-class markdown_reporter : public _::reporter
+class markdown_reporter : public private_::reporter
 {
 public:
     ~markdown_reporter() noexcept override = default;
@@ -56,21 +56,21 @@ protected:
         *this << "## " << ts_->name() << SCTF_XLF << "|Tests|Successes|Failures|Errors|Time|"
               << SCTF_LF << "|-|-|-|-|-|" << SCTF_LF << "|" << ts_->statistics().tests() << "|"
               << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"
-              << ts_->statistics().errors() << "|" << ts_->time() << "ms|" << SCTF_XLF
+              << ts_->statistics().errors() << "|" << ts_->execution_time() << "ms|" << SCTF_XLF
               << "### Tests" << SCTF_XLF << "|Name|Context|Time|Status|" << SCTF_LF << "|-|-|-|-|"
               << SCTF_LF;
         reporter::report_testsuite(ts_);
         *this << SCTF_XLF;
     }
 
-    void report_testcase(_::testcase const& tc_) override
+    void report_testcase(private_::testcase const& tc_) override
     {
         char const* status = "";
         switch (tc_.state())
         {
-            case _::testcase::result::ERROR: status = "ERROR"; break;
-            case _::testcase::result::FAILED: status = "FAILED"; break;
-            case _::testcase::result::PASSED: status = "PASSED"; break;
+            case private_::testcase::result::ERROR: status = "ERROR"; break;
+            case private_::testcase::result::FAILED: status = "FAILED"; break;
+            case private_::testcase::result::PASSED: status = "PASSED"; break;
             default: break;
         }
         *this << "|" << tc_.name() << "|" << tc_.context() << "|" << tc_.duration() << "ms|"

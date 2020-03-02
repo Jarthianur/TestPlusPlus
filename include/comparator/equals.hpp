@@ -31,7 +31,7 @@
 
 namespace sctf
 {
-namespace _
+namespace private_
 {
 class equals
 {
@@ -81,7 +81,7 @@ public:
                               to_string(expected_value));
     }
 };
-}  // namespace _
+}  // namespace private_
 }  // namespace sctf
 
 PROVIDE_COMPARATOR(equals, EQUALS)

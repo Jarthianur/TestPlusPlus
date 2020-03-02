@@ -31,7 +31,7 @@
 
 namespace sctf
 {
-namespace _
+namespace private_
 {
 class unequals
 {
@@ -81,7 +81,7 @@ public:
                    SUCCESS;
     }
 };
-}  // namespace _
+}  // namespace private_
 }  // namespace sctf
 
 PROVIDE_COMPARATOR(unequals, UNEQUALS)

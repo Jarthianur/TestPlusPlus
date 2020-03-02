@@ -24,9 +24,7 @@
 
 #include <algorithm>
 #include <chrono>
-#include <functional>
 #include <iostream>
-#include <memory>
 #include <utility>
 #include <vector>
 
@@ -53,9 +51,12 @@ namespace sctf
  * A testsuite describes a set of tests in a certain context, like an user defined class, or
  * function. This class handles sequentially running testcases.
  */
-class testsuite : public std::enable_shared_from_this<testsuite>
+class testsuite
 {
 public:
+    testsuite(testsuite const&) = delete;
+    testsuite& operator=(testsuite const&) = delete;
+
     virtual ~testsuite() noexcept = default;
 
     /**
@@ -76,28 +77,28 @@ public:
     {
         if (m_state != execution_state::DONE)
         {
-            m_stats.m_num_of_tests = m_testcases.size();
-            _::streambuf_proxy buf_cout(std::cout);
-            _::streambuf_proxy buf_cerr(std::cerr);
-
             SCTF_EXEC_SILENT(m_setup_fn)
+            m_stats.m_num_of_tests = m_testcases.size();
+            private_::streambuf_proxy buf_cout(std::cout);
+            private_::streambuf_proxy buf_cerr(std::cerr);
+
             std::for_each(m_testcases.begin(), m_testcases.end(),
-                          [this, &buf_cerr, &buf_cout](_::testcase& tc_) {
-                              if (tc_.state() == _::testcase::result::NONE)
+                          [this, &buf_cerr, &buf_cout](private_::testcase& tc_) {
+                              if (tc_.state() == private_::testcase::result::NONE)
                               {
                                   SCTF_EXEC_SILENT(m_pretest_fn)
                                   tc_();
                                   switch (tc_.state())
                                   {
-                                      case _::testcase::result::FAILED:
+                                      case private_::testcase::result::FAILED:
                                           ++m_stats.m_num_of_fails;
                                           break;
-                                      case _::testcase::result::ERROR:
+                                      case private_::testcase::result::ERROR:
                                           ++m_stats.m_num_of_errs;
                                           break;
                                       default: break;
                                   }
-                                  m_time += tc_.duration();
+                                  m_execution_time += tc_.duration();
                                   SCTF_EXEC_SILENT(m_posttest_fn)
                                   tc_.cout(buf_cout.str());
                                   tc_.cerr(buf_cerr.str());
@@ -117,11 +118,10 @@ public:
      * @param fn_   The test function
      * @return this testsuite for chaining
      */
-    testsuite_ptr test(char const* name_, _::test_function&& fn_)
+    void test(char const* name_, private_::test_function&& fn_)
     {
-        m_testcases.push_back(_::testcase(name_, m_name, std::move(fn_)));
+        m_testcases.push_back(private_::testcase(name_, m_name, std::move(fn_)));
         m_state = execution_state::PENDING;
-        return shared_from_this();
     }
 
     /**
@@ -131,10 +131,9 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    testsuite_ptr setup(_::test_function&& fn_)
+    void setup(private_::test_function&& fn_)
     {
         m_setup_fn = std::move(fn_);
-        return shared_from_this();
     }
 
     /**
@@ -144,10 +143,9 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    testsuite_ptr teardown(_::test_function&& fn_)
+    void teardown(private_::test_function&& fn_)
     {
         m_teardown_fn = std::move(fn_);
-        return shared_from_this();
     }
 
     /**
@@ -157,10 +155,9 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    testsuite_ptr before_each(_::test_function&& fn_)
+    void before_each(private_::test_function&& fn_)
     {
         m_pretest_fn = std::move(fn_);
-        return shared_from_this();
     }
 
     /**
@@ -170,10 +167,9 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    testsuite_ptr after_each(_::test_function&& fn_)
+    void after_each(private_::test_function&& fn_)
     {
         m_posttest_fn = std::move(fn_);
-        return shared_from_this();
     }
 
     /**
@@ -195,7 +191,7 @@ public:
     /**
      * Get the test statistics.
      */
-    inline _::statistics const& statistics() const
+    inline private_::statistics const& statistics() const
     {
         return m_stats;
     }
@@ -203,15 +199,15 @@ public:
     /**
      * Get the accumulated time spent on all tests.
      */
-    inline double time() const
+    inline double execution_time() const
     {
-        return m_time;
+        return m_execution_time;
     }
 
     /**
      * Get all testcases.
      */
-    inline std::vector<_::testcase> const& testcases() const
+    inline std::vector<private_::testcase> const& testcases() const
     {
         return m_testcases;
     }
@@ -223,20 +219,22 @@ protected:
         DONE
     };
 
-    testsuite(char const* name_) : m_name(name_), m_timestamp(std::chrono::system_clock::now()) {}
+    explicit testsuite(char const* name_)
+        : m_name(name_), m_timestamp(std::chrono::system_clock::now())
+    {}
 
     char const*                                 m_name;
     std::chrono::system_clock::time_point const m_timestamp;
-    double                                      m_time = 0.0;
+    double                                      m_execution_time = 0.0;
 
-    _::statistics            m_stats;
-    std::vector<_::testcase> m_testcases;
-    execution_state          m_state = execution_state::PENDING;
+    private_::statistics            m_stats;
+    std::vector<private_::testcase> m_testcases;
+    execution_state                 m_state = execution_state::PENDING;
 
-    _::test_function m_setup_fn;
-    _::test_function m_teardown_fn;
-    _::test_function m_pretest_fn;
-    _::test_function m_posttest_fn;
+    private_::test_function m_setup_fn;
+    private_::test_function m_teardown_fn;
+    private_::test_function m_pretest_fn;
+    private_::test_function m_posttest_fn;
 };
 
 }  // namespace sctf

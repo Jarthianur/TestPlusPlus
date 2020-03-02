@@ -32,7 +32,7 @@
 
 namespace sctf
 {
-namespace _
+namespace private_
 {
 /**
  * A testcase has a test function with assertions inside.
@@ -209,7 +209,7 @@ private:
     std::string   m_cerr;
     test_function m_test_func;
 };
-}  // namespace _
+}  // namespace private_
 }  // namespace sctf
 
 #endif  // SCTF_TESTSUITE_TESTCASE_HPP
