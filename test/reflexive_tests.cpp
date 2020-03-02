@@ -39,7 +39,6 @@ using namespace private_;
 
 SUITE_PAR(test_comparators)
 {
-    int x;
     TEST(equals)
     {
         ASSERT_FALSE(!equals()(1, 1));
@@ -107,7 +106,6 @@ SUITE_PAR(test_comparators)
 
 SUITE(test_testsuite_parallel)
 {
-    int x;
     TEST(parallel_run)
     {
         testsuite_ptr ts = testsuite_parallel::create("ts");
@@ -145,7 +143,6 @@ SUITE(test_testsuite_parallel)
 
 SUITE(test_testsuite)
 {
-    int x;
     TEST(creation)
     {
         auto a = std::chrono::system_clock::now();
@@ -205,7 +202,6 @@ SUITE(test_testsuite)
 
 SUITE(test_testcase)
 {
-    int x;
     TEST(creation)
     {
         testcase tc("t1", "ctx", [] {});
@@ -248,7 +244,6 @@ SUITE(test_testcase)
 
 SUITE_PAR(test_stringify)
 {
-    int x;
     TEST(bool)
     {
         ASSERT(to_string(true), EQ, std::string("true"));
@@ -288,7 +283,6 @@ SUITE_PAR(test_stringify)
 
 SUITE_PAR(test_traits)
 {
-    int x;
     TEST(is_streamable)
     {
         ASSERT_NOTHROW((throw_if_not_streamable<std::ostringstream, streamable>()));
@@ -325,7 +319,6 @@ SUITE_PAR(test_traits)
 
 SUITE_PAR(test_assertions)
 {
-    int x;
     TEST(assert)
     {
         // successful
@@ -452,7 +445,6 @@ SUITE_PAR(test_assertions)
 
 SUITE(test_output_capture)
 {
-    int x;
     TEST(single_thread)
     {
         auto ts = testsuite::create("ts");
