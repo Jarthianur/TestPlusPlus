@@ -80,8 +80,8 @@ protected:
               << "); time = " << tc_.duration() << "ms" << SCTF_LF << SCTF_XSPACE;
         if (m_capture)
         {
-            *this << "stdout = '" << tc_.cout() << '\'' << SCTF_LF << SCTF_XSPACE;
-            *this << "stderr = '" << tc_.cerr() << '\'' << SCTF_LF << SCTF_XSPACE;
+            *this << "stdout = \"" << tc_.cout() << "\"" << SCTF_LF << SCTF_XSPACE;
+            *this << "stderr = \"" << tc_.cerr() << "\"" << SCTF_LF << SCTF_XSPACE;
         }
         switch (tc_.state())
         {

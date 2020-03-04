@@ -83,22 +83,24 @@ static char const* strip_namespace(std::string const& class_)
     return class_.c_str();
 }
 
-static std::string& escape_string(std::string& str_)
+static std::string escaped_string(std::string const& str_)
 {
+    std::string s = str_;
     std::size_t p = 0;
-    while ((p = str_.find_first_of("\r\n\t\f\v\"", p)) != std::string::npos)
+    while ((p = s.find_first_of("\r\n\t\f\v\"", p)) != std::string::npos)
     {
-        switch (str_[p])
+        switch (s[p])
         {
-            case '\r': str_.replace(p, 1, "\\r"); break;
-            case '\n': str_.replace(p, 1, "\\n"); break;
-            case '\t': str_.replace(p, 1, "\\t"); break;
-            case '\f': str_.replace(p, 1, "\\f"); break;
-            case '\v': str_.replace(p, 1, "\\v"); break;
-            case '"': str_.replace(p, 1, "\\\""); break;
+            case '\r': s.replace(p, 1, "\\r"); break;
+            case '\n': s.replace(p, 1, "\\n"); break;
+            case '\t': s.replace(p, 1, "\\t"); break;
+            case '\f': s.replace(p, 1, "\\f"); break;
+            case '\v': s.replace(p, 1, "\\v"); break;
+            case '\"': s.replace(p, 1, "\\\""); break;
         }
+        p += 2;
     }
-    return str_;
+    return s;
 }
 
 /**
@@ -136,12 +138,12 @@ std::string to_string(T const&)
 
 inline std::string to_string(std::string const& arg_)
 {
-    return std::string("\"") + escape_string(arg_) + "\"";
+    return std::string("\"") + escaped_string(arg_) + "\"";
 }
 
 inline std::string to_string(char const* arg_)
 {
-    return std::string("\"") + escape_string(arg_) + "\"";
+    return std::string("\"") + escaped_string(arg_) + "\"";
 }
 
 inline std::string to_string(char const& arg_)
@@ -164,6 +166,7 @@ inline std::string to_string(bool const& arg_)
 {
     return arg_ ? "true" : "false";
 }
+
 }  // namespace private_
 }  // namespace sctf
 

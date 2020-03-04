@@ -66,7 +66,7 @@ struct comparison final
      * @param expect_   The expected value
      */
     comparison(char const* comp_str_, std::string const& val_, std::string const& expect_)
-        : m_failure("Expected " + val_ + ' ' + comp_str_ + ' ' + expect_)
+        : m_failure("Expected " + val_ + " " + comp_str_ + " " + expect_)
     {}
 
     /**
@@ -98,7 +98,7 @@ private:
         std::string msg;
         msg.reserve(15 + std::strlen(comp_str_) + val_.length() + expect_.length());
         msg = "Expected ";
-        msg.append(val_).append(' ').append(comp_str_).append(' ').append(expect_);
+        msg.append(val_).append(" ").append(comp_str_).append(" ").append(expect_);
         error() = msg;
     }
 
