@@ -73,7 +73,12 @@ protected:
 }  // namespace private_
 }  // namespace sctf
 
-#define SUITE(NAME)                                                                         \
+#define SCTF_PRIVATE_CONCAT3(A, B, C) A##B##C
+#define SCTF_PRIVATE_TEST_NAME(ID) SCTF_PRIVATE_CONCAT3(sctf_private_test_, ID, _)
+#define SCTF_PRIVATE_TEST_INST(ID) SCTF_PRIVATE_CONCAT3(sctf_private_test_, ID, _inst_)
+#define SCTF_PRIVATE_TEST_FN(ID) SCTF_PRIVATE_CONCAT3(sctf_private_test_fn_, ID, _)
+
+#define SCTF_PRIVATE_SUITE_WRAPPER(NAME, BASE)                                              \
     namespace sctf_private_ns_##NAME##_                                                     \
     {                                                                                       \
         class NAME;                                                                         \
@@ -81,76 +86,42 @@ protected:
         using sctf_private_mod_type_         = NAME;                                        \
     }                                                                                       \
     class sctf_private_ns_##NAME##_::NAME                                                   \
-        : public sctf::private_::test_module<sctf_private_ns_##NAME##_::NAME>
+        : public sctf::private_::BASE<sctf_private_ns_##NAME##_::NAME>
 
-#define SUITE_PAR(NAME)                                                                     \
-    namespace sctf_private_ns_##NAME##_                                                     \
-    {                                                                                       \
-        class NAME;                                                                         \
-        static const auto& sctf_private_mod_ = sctf::private_::singleton<NAME>::instance(); \
-        using sctf_private_mod_type_         = NAME;                                        \
-    }                                                                                       \
-    class sctf_private_ns_##NAME##_::NAME                                                   \
-        : public sctf::private_::test_module_parallel<sctf_private_ns_##NAME##_::NAME>
+#define SUITE(NAME) SCTF_PRIVATE_SUITE_WRAPPER(NAME, test_module)
+#define SUITE_PAR(NAME) SCTF_PRIVATE_SUITE_WRAPPER(NAME, test_module_parallel)
+#define DESCRIBE(NAME) SUITE(NAME)
+#define DESCRIBE_PAR(NAME) SUITE_PAR(NAME)
 
-#define TEST(NAME)                                                                                \
-    class sctf_private_test_##NAME##_                                                             \
-    {                                                                                             \
-    public:                                                                                       \
-        sctf_private_test_##NAME##_(sctf_private_mod_type_* mod_)                                 \
-        {                                                                                         \
-            mod_->sctf_private_m_ts_->test(                                                       \
-                #NAME, std::bind(&sctf_private_mod_type_::sctf_private_test_fn_##NAME##_, mod_)); \
-        }                                                                                         \
-    } sctf_private_test_##NAME##_inst_{this};                                                     \
-    void sctf_private_test_fn_##NAME##_()
+#define TEST(NAME)                                                                               \
+    class SCTF_PRIVATE_TEST_NAME(__LINE__)                                                       \
+    {                                                                                            \
+    public:                                                                                      \
+        SCTF_PRIVATE_TEST_NAME(__LINE__)(sctf_private_mod_type_ * mod_)                          \
+        {                                                                                        \
+            mod_->sctf_private_m_ts_->test(                                                      \
+                NAME, std::bind(&sctf_private_mod_type_::SCTF_PRIVATE_TEST_FN(__LINE__), mod_)); \
+        }                                                                                        \
+    } SCTF_PRIVATE_TEST_INST(__LINE__){this};                                                    \
+    void SCTF_PRIVATE_TEST_FN(__LINE__)()
 
-#define BEFORE_EACH()                                                                    \
-    class sctf_private_before_each_                                                      \
-    {                                                                                    \
-    public:                                                                              \
-        sctf_private_before_each_(sctf_private_mod_type_* mod_)                          \
-        {                                                                                \
-            mod_->sctf_private_m_ts_->before_each(                                       \
-                std::bind(&sctf_private_mod_type_::sctf_private_before_each_fn_, mod_)); \
-        }                                                                                \
-    } sctf_private_before_each_inst_{this};                                              \
-    void sctf_private_before_each_fn_()
+#define IT_SHOULD(DESCR) TEST("It should " DESCR)
 
-#define AFTER_EACH()                                                                    \
-    class sctf_private_after_each_                                                      \
-    {                                                                                   \
-    public:                                                                             \
-        sctf_private_after_each_(sctf_private_mod_type_* mod_)                          \
-        {                                                                               \
-            mod_->sctf_private_m_ts_->after_each(                                       \
-                std::bind(&sctf_private_mod_type_::sctf_private_after_each_fn_, mod_)); \
-        }                                                                               \
-    } sctf_private_after_each_inst_{this};                                              \
-    void sctf_private_after_each_fn_()
+#define SCTF_PRIVATE_FN_WRAPPER(FN)                                                 \
+    class sctf_private_##FN##_                                                      \
+    {                                                                               \
+    public:                                                                         \
+        sctf_private_##FN##_(sctf_private_mod_type_* mod_)                          \
+        {                                                                           \
+            mod_->sctf_private_m_ts_->FN(                                           \
+                std::bind(&sctf_private_mod_type_::sctf_private_##FN##_fn_, mod_)); \
+        }                                                                           \
+    } sctf_private_##FN##_inst_{this};                                              \
+    void sctf_private_##FN##_fn_()
 
-#define SETUP()                                                                    \
-    class sctf_private_setup_                                                      \
-    {                                                                              \
-    public:                                                                        \
-        sctf_private_setup_(sctf_private_mod_type_* mod_)                          \
-        {                                                                          \
-            mod_->sctf_private_m_ts_->setup(                                       \
-                std::bind(&sctf_private_mod_type_::sctf_private_setup_fn_, mod_)); \
-        }                                                                          \
-    } sctf_private_setup_inst_{this};                                              \
-    void sctf_private_setup_fn_()
-
-#define TEARDOWN()                                                                    \
-    class sctf_private_teardown_                                                      \
-    {                                                                                 \
-    public:                                                                           \
-        sctf_private_teardown_(sctf_private_mod_type_* mod_)                          \
-        {                                                                             \
-            mod_->sctf_private_m_ts_->teardown(                                       \
-                std::bind(&sctf_private_mod_type_::sctf_private_teardown_fn_, mod_)); \
-        }                                                                             \
-    } sctf_private_teardown_inst_{this};                                              \
-    void sctf_private_teardown_fn_()
+#define BEFORE_EACH() SCTF_PRIVATE_FN_WRAPPER(before_each)
+#define AFTER_EACH() SCTF_PRIVATE_FN_WRAPPER(after_each)
+#define SETUP() SCTF_PRIVATE_FN_WRAPPER(setup)
+#define TEARDOWN() SCTF_PRIVATE_FN_WRAPPER(teardown)
 
 #endif  // SCTF_TESTSUITE_TESTMODULE_HPP

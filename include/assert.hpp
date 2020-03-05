@@ -56,7 +56,7 @@
  * @param VALUE The actual value
  * @param EXPECT The expected value
  */
-#define ASSERT_EQUALS(VALUE, EXPECT)                                \
+#define ASSERT_EQ(VALUE, EXPECT)                                    \
     sctf::private_::assert_statement(VALUE, EXPECT, sctf::EQUALS(), \
                                      sctf::private_::code_location{__FILE__, __LINE__})
 

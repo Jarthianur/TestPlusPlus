@@ -83,6 +83,32 @@ static char const* strip_namespace(std::string const& class_)
     return class_.c_str();
 }
 
+inline std::string escaped_char(char c_)
+{
+    switch (c_)
+    {
+        case '\r': return "\\r";
+        case '\n': return "\\n";
+        case '\t': return "\\t";
+        case '\f': return "\\f";
+        case '\v': return "\\v";
+        case '\"': return "\\\"";
+        default: return std::string(1, c_);
+    }
+}
+
+static std::string escaped_string(std::string const& str_)
+{
+    std::string s = str_;
+    std::size_t p = 0;
+    while ((p = s.find_first_of("\r\n\t\f\v\"", p)) != std::string::npos)
+    {
+        s.replace(p, 1, escaped_char(s[p]));
+        p += 2;
+    }
+    return s;
+}
+
 /**
  * Get a printable string representation for any type, that is already convertable to string, but
  * not a floatingpoint type.
@@ -116,6 +142,21 @@ std::string to_string(T const&)
     return name_for_type<T>();
 }
 
+inline std::string to_string(std::string const& arg_)
+{
+    return std::string("\"") + escaped_string(arg_) + "\"";
+}
+
+inline std::string to_string(char const* arg_)
+{
+    return std::string("\"") + escaped_string(arg_) + "\"";
+}
+
+inline std::string to_string(char const& arg_)
+{
+    return std::string("'") + escaped_char(arg_) + "'";
+}
+
 /**
  * Get a printable string representation for a null pointer.
  */
@@ -127,10 +168,11 @@ inline std::string to_string(std::nullptr_t const&)
 /**
  * Get a printable string representation for boolean type.
  */
-inline std::string to_string(bool const& arg)
+inline std::string to_string(bool const& arg_)
 {
-    return arg ? "true" : "false";
+    return arg_ ? "true" : "false";
 }
+
 }  // namespace private_
 }  // namespace sctf
 
