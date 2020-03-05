@@ -55,8 +55,7 @@ struct singleton final
      * Construction happens only once, on first call with forwarded arguments.
      */
     template<typename... Args>
-    static T& instance(Args&&... args_)
-    {
+    static T& instance(Args&&... args_) {
         static T inst(std::forward<Args>(args_)...);
         return inst;
     }

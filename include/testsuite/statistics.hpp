@@ -43,32 +43,28 @@ public:
     /**
      * Get the absolute number of tests.
      */
-    inline std::size_t tests() const
-    {
+    inline std::size_t tests() const {
         return m_num_of_tests;
     }
 
     /**
      * Get the number of successful tests.
      */
-    inline std::size_t successes() const
-    {
+    inline std::size_t successes() const {
         return m_num_of_tests - m_num_of_errs - m_num_of_fails;
     }
 
     /**
      * Get the number of failed tests.
      */
-    inline std::size_t failures() const
-    {
+    inline std::size_t failures() const {
         return m_num_of_fails;
     }
 
     /**
      * Get the number of erroneous tests.
      */
-    inline std::size_t errors() const
-    {
+    inline std::size_t errors() const {
         return m_num_of_errs;
     }
 

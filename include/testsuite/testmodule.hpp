@@ -43,8 +43,7 @@ public:
 
 protected:
     test_module()
-        : sctf_private_m_ts_(sctf::testsuite::create(strip_namespace(name_for_type<MOD>())))
-    {
+        : sctf_private_m_ts_(sctf::testsuite::create(strip_namespace(name_for_type<MOD>()))) {
         sctf::runner::instance().add_testsuite(sctf_private_m_ts_);
     }
 
@@ -63,8 +62,7 @@ public:
 protected:
     test_module_parallel()
         : sctf_private_m_ts_(
-              sctf::testsuite_parallel::create(strip_namespace(name_for_type<MOD>())))
-    {
+              sctf::testsuite_parallel::create(strip_namespace(name_for_type<MOD>()))) {
         sctf::runner::instance().add_testsuite(sctf_private_m_ts_);
     }
 
@@ -79,8 +77,7 @@ protected:
 #define SCTF_PRIVATE_TEST_FN(ID) SCTF_PRIVATE_CONCAT3(sctf_private_test_fn_, ID, _)
 
 #define SCTF_PRIVATE_SUITE_WRAPPER(NAME, BASE)                                              \
-    namespace sctf_private_ns_##NAME##_                                                     \
-    {                                                                                       \
+    namespace sctf_private_ns_##NAME##_ {                                                   \
         class NAME;                                                                         \
         static const auto& sctf_private_mod_ = sctf::private_::singleton<NAME>::instance(); \
         using sctf_private_mod_type_         = NAME;                                        \
@@ -97,8 +94,7 @@ protected:
     class SCTF_PRIVATE_TEST_NAME(__LINE__)                                                       \
     {                                                                                            \
     public:                                                                                      \
-        SCTF_PRIVATE_TEST_NAME(__LINE__)(sctf_private_mod_type_ * mod_)                          \
-        {                                                                                        \
+        SCTF_PRIVATE_TEST_NAME(__LINE__)(sctf_private_mod_type_ * mod_) {                        \
             mod_->sctf_private_m_ts_->test(                                                      \
                 NAME, std::bind(&sctf_private_mod_type_::SCTF_PRIVATE_TEST_FN(__LINE__), mod_)); \
         }                                                                                        \
@@ -111,8 +107,7 @@ protected:
     class sctf_private_##FN##_                                                      \
     {                                                                               \
     public:                                                                         \
-        sctf_private_##FN##_(sctf_private_mod_type_* mod_)                          \
-        {                                                                           \
+        sctf_private_##FN##_(sctf_private_mod_type_* mod_) {                        \
             mod_->sctf_private_m_ts_->FN(                                           \
                 std::bind(&sctf_private_mod_type_::sctf_private_##FN##_fn_, mod_)); \
         }                                                                           \

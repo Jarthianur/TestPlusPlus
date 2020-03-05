@@ -53,8 +53,7 @@ public:
      * @param capture_ Whether to report captured stdout/stderr
      */
     explicit console_reporter(std::ostream& stream_, bool color_ = false, bool capture_ = false)
-        : reporter(stream_), m_color(color_), m_capture(capture_)
-    {}
+        : reporter(stream_), m_color(color_), m_capture(capture_) {}
 
     /**
      * @param fname_   The name of the file where the report will be written
@@ -62,29 +61,24 @@ public:
      * @param capture_ Whether to report captured stdout/stderr
      */
     explicit console_reporter(char const* fname_, bool color_ = false, bool capture_ = false)
-        : reporter(fname_), m_color(color_), m_capture(capture_)
-    {}
+        : reporter(fname_), m_color(color_), m_capture(capture_) {}
 
 protected:
-    void report_testsuite(testsuite_ptr const ts_) override
-    {
+    void report_testsuite(testsuite_ptr const ts_) override {
         *this << "Run Testsuite [" << ts_->name() << "]; time = " << ts_->execution_time() << "ms"
               << SCTF_LF;
 
         reporter::report_testsuite(ts_);
     }
 
-    void report_testcase(private_::testcase const& tc_) override
-    {
+    void report_testcase(private_::testcase const& tc_) override {
         *this << SCTF_SPACE << "Run Testcase [" << tc_.name() << "](" << tc_.context()
               << "); time = " << tc_.duration() << "ms" << SCTF_LF << SCTF_XSPACE;
-        if (m_capture)
-        {
+        if (m_capture) {
             *this << "stdout = \"" << tc_.cout() << "\"" << SCTF_LF << SCTF_XSPACE;
             *this << "stderr = \"" << tc_.cerr() << "\"" << SCTF_LF << SCTF_XSPACE;
         }
-        switch (tc_.state())
-        {
+        switch (tc_.state()) {
             case private_::testcase::result::ERROR:
                 *this << (m_color ? ANSI_MAGENTA : "") << "ERROR! " << tc_.err_msg();
                 break;
@@ -101,14 +95,10 @@ protected:
 
     void begin_report() override {}
 
-    void end_report() override
-    {
-        if (m_abs_fails >= (m_abs_tests + 1) / 2)
-        {
+    void end_report() override {
+        if (m_abs_fails >= (m_abs_tests + 1) / 2) {
             *this << (m_color ? ANSI_YELLOW : "");
-        }
-        else
-        {
+        } else {
             *this << (m_color ? ANSI_CYAN : "");
         }
         *this << "Result:: passed: " << m_abs_tests - m_abs_fails - m_abs_errs << "/" << m_abs_tests
@@ -128,8 +118,7 @@ protected:
  * @param capture_ Whether to report captured stdout/stderr (default: false)
  */
 static reporter_ptr create_console_reporter(std::ostream& stream_, bool color_ = false,
-                                            bool capture_ = false)
-{
+                                            bool capture_ = false) {
     return std::make_shared<console_reporter>(stream_, color_, capture_);
 }
 
@@ -138,8 +127,7 @@ static reporter_ptr create_console_reporter(std::ostream& stream_, bool color_ =
  * @param color_   Whether to print ANSI colored text (default: false)
  * @param capture_ Whether to report captured stdout/stderr (default: false)
  */
-static reporter_ptr create_console_reporter(bool color_ = false, bool capture_ = false)
-{
+static reporter_ptr create_console_reporter(bool color_ = false, bool capture_ = false) {
     return std::make_shared<console_reporter>(std::cout, color_, capture_);
 }
 
@@ -150,8 +138,7 @@ static reporter_ptr create_console_reporter(bool color_ = false, bool capture_ =
  * @param capture_ Whether to report captured stdout/stderr (default: false)
  */
 static reporter_ptr create_console_reporter(char const* fname_, bool color_ = false,
-                                            bool capture_ = false)
-{
+                                            bool capture_ = false) {
     return std::make_shared<console_reporter>(fname_, color_, capture_);
 }
 }  // namespace sctf

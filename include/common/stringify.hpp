@@ -37,14 +37,12 @@ namespace sctf
 namespace private_
 {
 /**
- * Get a stringified name for every possible type.
+ * Get a stringified name for any type.
  */
 template<typename T>
-static std::string const& name_for_type()
-{
+static std::string const& name_for_type() {
     static thread_local std::string name;
-    if (name.length() > 0)
-    {
+    if (name.length() > 0) {
         return name;
     }
 #if defined(__GNUG__) || defined(__clang__)
@@ -55,38 +53,36 @@ static std::string const& name_for_type()
 #else
     std::string const sig(typeid(T).name());
     auto              b = sig.find("struct ");
-    if (b != std::string::npos)
-    {
+    if (b != std::string::npos) {
         name = sig.substr(b + 7);
         return name;
     }
     b = sig.find("class ");
-    if (b != std::string::npos)
-    {
+    if (b != std::string::npos) {
         name = sig.substr(b + 6);
-    }
-    else
-    {
+    } else {
         name = std::move(sig);
     }
 #endif
     return name;
 }
 
-static char const* strip_namespace(std::string const& class_)
-{
+/**
+ * Strip the namespace part of a given classname and return a pointer to the basename part.
+ */
+inline char const* strip_namespace(std::string const& class_) {
     std::size_t c;
-    if ((c = class_.find_last_of(':')) != std::string::npos)
-    {
+    if ((c = class_.find_last_of(':')) != std::string::npos) {
         return class_.c_str() + c + 1;
     }
     return class_.c_str();
 }
 
-inline std::string escaped_char(char c_)
-{
-    switch (c_)
-    {
+/**
+ * Get a readable string representation of some escape sequences.
+ */
+inline std::string escaped_char(char c_) {
+    switch (c_) {
         case '\r': return "\\r";
         case '\n': return "\\n";
         case '\t': return "\\t";
@@ -97,12 +93,13 @@ inline std::string escaped_char(char c_)
     }
 }
 
-static std::string escaped_string(std::string const& str_)
-{
+/**
+ * Get a copy of a string with some escape sequences replaced in a readable representation.
+ */
+static std::string escaped_string(std::string const& str_) {
     std::string s = str_;
     std::size_t p = 0;
-    while ((p = s.find_first_of("\r\n\t\f\v\"", p)) != std::string::npos)
-    {
+    while ((p = s.find_first_of("\r\n\t\f\v\"", p)) != std::string::npos) {
         s.replace(p, 1, escaped_char(s[p]));
         p += 2;
     }
@@ -114,8 +111,7 @@ static std::string escaped_string(std::string const& str_)
  * not a floatingpoint type.
  */
 template<typename T, ENABLE_IF(IS_STREAMABLE(T, std::ostringstream) AND NOT IS_FLOAT(T))>
-std::string to_string(T const& arg_)
-{
+std::string to_string(T const& arg_) {
     std::ostringstream oss;
     oss << arg_;
     return oss.str();
@@ -125,8 +121,7 @@ std::string to_string(T const& arg_)
  * Get a printable string representation for any floatingpoint type.
  */
 template<typename T, ENABLE_IF(IS_STREAMABLE(T, std::ostringstream) AND IS_FLOAT(T))>
-std::string to_string(T const& arg_)
-{
+std::string to_string(T const& arg_) {
     std::ostringstream oss;
     oss << std::setprecision(std::numeric_limits<T>::max_digits10) << arg_;
     return oss.str();
@@ -134,42 +129,45 @@ std::string to_string(T const& arg_)
 
 /**
  * Get a printable string representation for any type, that is not convertable to string.
- * That is basically the typename.
+ * The result is basically the typename.
  */
 template<typename T, ENABLE_IF(NOT IS_STREAMABLE(T, std::ostringstream))>
-std::string to_string(T const&)
-{
+std::string to_string(T const&) {
     return name_for_type<T>();
 }
 
-inline std::string to_string(std::string const& arg_)
-{
+/**
+ * Get a string wrapped in quotes and transformed escape sequences.
+ */
+inline std::string to_string(std::string const& arg_) {
     return std::string("\"") + escaped_string(arg_) + "\"";
 }
 
-inline std::string to_string(char const* arg_)
-{
+/**
+ * Get a string wrapped in quotes and transformed escape sequences.
+ */
+inline std::string to_string(char const* const& arg_) {
     return std::string("\"") + escaped_string(arg_) + "\"";
 }
 
-inline std::string to_string(char const& arg_)
-{
+/**
+ * Get a character wrapped in quotes and transformed escape sequences.
+ */
+inline std::string to_string(char const& arg_) {
     return std::string("'") + escaped_char(arg_) + "'";
 }
 
 /**
  * Get a printable string representation for a null pointer.
  */
-inline std::string to_string(std::nullptr_t const&)
-{
+inline std::string to_string(std::nullptr_t const&) {
     return "0";
 }
 
 /**
  * Get a printable string representation for boolean type.
  */
-inline std::string to_string(bool const& arg_)
-{
+inline std::string to_string(bool const& arg_) {
     return arg_ ? "true" : "false";
 }
 

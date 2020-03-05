@@ -45,11 +45,9 @@ public:
     /**
      * Create a new testsuite.
      * @param name_ The name/description
-     * @param ctx_  The context
      * @return the newly created testsuite
      */
-    static testsuite_ptr create(char const* name_)
-    {
+    static testsuite_ptr create(char const* name_) {
         return testsuite_ptr(new testsuite_parallel(name_));
     }
 
@@ -57,12 +55,9 @@ public:
      * Execute all testcases concurrently.
      * @throws std::overflow_error if there are too many testcases for openmp to handle.
      */
-    void run() override
-    {
-        if (m_state != execution_state::DONE)
-        {
-            if (m_testcases.size() > std::numeric_limits<long>::max())
-            {
+    void run() override {
+        if (m_state != execution_state::DONE) {
+            if (m_testcases.size() > std::numeric_limits<long>::max()) {
                 throw std::overflow_error("Too many testcases! Size would overflow loop variant.");
             }
             SCTF_EXEC_SILENT(m_setup_fn)
@@ -78,15 +73,12 @@ public:
                 std::size_t errs  = 0;
                 // OpenMP 2 compatible - MSVC not supporting higher version
 #pragma omp for schedule(dynamic)
-                for (long i = 0; i < tc_size; ++i)
-                {
+                for (long i = 0; i < tc_size; ++i) {
                     auto& tc = m_testcases[static_cast<std::size_t>(i)];
-                    if (tc.state() == private_::testcase::result::NONE)
-                    {
+                    if (tc.state() == private_::testcase::result::NONE) {
                         SCTF_EXEC_SILENT(m_pretest_fn)
                         tc();
-                        switch (tc.state())
-                        {
+                        switch (tc.state()) {
                             case private_::testcase::result::FAILED: ++fails; break;
                             case private_::testcase::result::ERROR: ++errs; break;
                             default: break;

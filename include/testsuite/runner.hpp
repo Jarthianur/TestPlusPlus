@@ -46,16 +46,14 @@ public:
      * @param ts_ The testsuite to add
      * @return the added testsuite
      */
-    void add_testsuite(testsuite_ptr ts_)
-    {
+    void add_testsuite(testsuite_ptr ts_) {
         m_testsuites.push_back(ts_);
     }
 
     /**
      * Run all testsuites knwon to this runner.
      */
-    void run() noexcept
-    {
+    void run() noexcept {
         std::for_each(m_testsuites.begin(), m_testsuites.end(),
                       [](testsuite_ptr& ts_) { ts_->run(); });
     }
@@ -63,16 +61,14 @@ public:
     /**
      * Get all the testsuites known to this runner.
      */
-    std::vector<testsuite_ptr> const& testsuites()
-    {
+    std::vector<testsuite_ptr> const& testsuites() {
         return m_testsuites;
     }
 
     /**
      * Get a runner instance, which is used as the default one.
      */
-    static runner& instance()
-    {
+    static runner& instance() {
         static runner r;
         return r;
     }

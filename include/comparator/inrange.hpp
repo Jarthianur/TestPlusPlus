@@ -38,15 +38,13 @@ class in_range
     bool                         m_neg         = false;
 
 public:
-    in_range& operator!()
-    {
+    in_range& operator!() {
         m_neg = !m_neg;
         return *this;
     }
 
     template<typename V, typename E = V, ENABLE_IF(IS_ITERABLE(E) AND NOT IS_TYPE(E, std::string))>
-    comparison operator()(V const& actual_value, E const& expected_value)
-    {
+    comparison operator()(V const& actual_value, E const& expected_value) {
         return (std::find(expected_value.cbegin(), expected_value.cend(), actual_value) !=
                 expected_value.cend()) != m_neg ?
                    SUCCESS :
@@ -55,8 +53,7 @@ public:
     }
 
     template<typename V, typename E = V, ENABLE_IF(IS_TYPE(E, std::string))>
-    comparison operator()(V const& actual_value, E const& expected_value)
-    {
+    comparison operator()(V const& actual_value, E const& expected_value) {
         return (expected_value.find(actual_value) != std::string::npos) != m_neg ?
                    SUCCESS :
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),

@@ -40,42 +40,37 @@ public:
      * Replace the underlying buffer of the stream.
      * As long as this object lives, everything sent to be stream is captured.
      */
-    streambuf_proxy(std::ostream& stream_) : m_orig_buf(stream_.rdbuf(this)), m_orig_stream(stream_)
-    {}
+    streambuf_proxy(std::ostream& stream_)
+        : m_orig_buf(stream_.rdbuf(this)), m_orig_stream(stream_) {}
 
     /**
      * Restore the original buffer of the stream.
      * After that, the stream is in its original state.
      */
-    virtual ~streambuf_proxy() noexcept override
-    {
+    virtual ~streambuf_proxy() noexcept override {
         m_orig_stream.rdbuf(m_orig_buf);
     }
 
     /**
      * Get the current buffer content.
      */
-    std::string str() const
-    {
+    std::string str() const {
         return m_buffer.str();
     }
 
     /**
      * Clear the buffer.
      */
-    void clear()
-    {
+    void clear() {
         m_buffer.str("");
     }
 
 protected:
-    virtual int_type overflow(int_type c_) override
-    {
+    virtual int_type overflow(int_type c_) override {
         return m_buffer.sputc(std::stringbuf::traits_type::to_char_type(c_));
     }
 
-    virtual std::streamsize xsputn(char const* s_, std::streamsize n_) override
-    {
+    virtual std::streamsize xsputn(char const* s_, std::streamsize n_) override {
         return m_buffer.sputn(s_, n_);
     }
 

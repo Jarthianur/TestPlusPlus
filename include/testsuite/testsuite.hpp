@@ -35,14 +35,11 @@
 #include "testsuite/testcase.hpp"
 
 #define SCTF_EXEC_SILENT(F) \
-    if (F)                  \
-    {                       \
-        try                 \
-        {                   \
+    if (F) {                \
+        try {               \
             F();            \
+        } catch (...) {     \
         }                   \
-        catch (...)         \
-        {}                  \
     }
 
 namespace sctf
@@ -62,21 +59,17 @@ public:
     /**
      * Create a new testsuite.
      * @param name_ The name/description
-     * @param ctx_  The context
      * @return the newly created testsuite
      */
-    static testsuite_ptr create(char const* name_)
-    {
+    static testsuite_ptr create(char const* name_) {
         return testsuite_ptr(new testsuite(name_));
     }
 
     /**
      * Execute all testcases sequentially.
      */
-    virtual void run()
-    {
-        if (m_state != execution_state::DONE)
-        {
+    virtual void run() {
+        if (m_state != execution_state::DONE) {
             SCTF_EXEC_SILENT(m_setup_fn)
             m_stats.m_num_of_tests = m_testcases.size();
             private_::streambuf_proxy buf_cout(std::cout);
@@ -84,12 +77,10 @@ public:
 
             std::for_each(m_testcases.begin(), m_testcases.end(),
                           [this, &buf_cerr, &buf_cout](private_::testcase& tc_) {
-                              if (tc_.state() == private_::testcase::result::NONE)
-                              {
+                              if (tc_.state() == private_::testcase::result::NONE) {
                                   SCTF_EXEC_SILENT(m_pretest_fn)
                                   tc_();
-                                  switch (tc_.state())
-                                  {
+                                  switch (tc_.state()) {
                                       case private_::testcase::result::FAILED:
                                           ++m_stats.m_num_of_fails;
                                           break;
@@ -118,8 +109,7 @@ public:
      * @param fn_   The test function
      * @return this testsuite for chaining
      */
-    void test(char const* name_, private_::test_function&& fn_)
-    {
+    void test(char const* name_, private_::test_function&& fn_) {
         m_testcases.push_back(private_::testcase(name_, m_name, std::move(fn_)));
         m_state = execution_state::PENDING;
     }
@@ -131,8 +121,7 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    void setup(private_::test_function&& fn_)
-    {
+    void setup(private_::test_function&& fn_) {
         m_setup_fn = std::move(fn_);
     }
 
@@ -143,8 +132,7 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    void teardown(private_::test_function&& fn_)
-    {
+    void teardown(private_::test_function&& fn_) {
         m_teardown_fn = std::move(fn_);
     }
 
@@ -155,8 +143,7 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    void before_each(private_::test_function&& fn_)
-    {
+    void before_each(private_::test_function&& fn_) {
         m_pretest_fn = std::move(fn_);
     }
 
@@ -167,48 +154,42 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    void after_each(private_::test_function&& fn_)
-    {
+    void after_each(private_::test_function&& fn_) {
         m_posttest_fn = std::move(fn_);
     }
 
     /**
      * Get the testsuite name.
      */
-    inline char const* name() const
-    {
+    inline char const* name() const {
         return m_name;
     }
 
     /**
      * Get the testsuite timestamp of instantiation.
      */
-    inline std::chrono::system_clock::time_point const& timestamp() const
-    {
+    inline std::chrono::system_clock::time_point const& timestamp() const {
         return m_timestamp;
     }
 
     /**
      * Get the test statistics.
      */
-    inline private_::statistics const& statistics() const
-    {
+    inline private_::statistics const& statistics() const {
         return m_stats;
     }
 
     /**
      * Get the accumulated time spent on all tests.
      */
-    inline double execution_time() const
-    {
+    inline double execution_time() const {
         return m_execution_time;
     }
 
     /**
      * Get all testcases.
      */
-    inline std::vector<private_::testcase> const& testcases() const
-    {
+    inline std::vector<private_::testcase> const& testcases() const {
         return m_testcases;
     }
 
@@ -220,8 +201,7 @@ protected:
     };
 
     explicit testsuite(char const* name_)
-        : m_name(name_), m_timestamp(std::chrono::system_clock::now())
-    {}
+        : m_name(name_), m_timestamp(std::chrono::system_clock::now()) {}
 
     char const*                                 m_name;
     std::chrono::system_clock::time_point const m_timestamp;

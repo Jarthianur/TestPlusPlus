@@ -52,8 +52,7 @@ public:
     explicit xml_reporter(char const* fname_) : reporter(fname_) {}
 
 protected:
-    void report_testsuite(testsuite_ptr const ts_) override
-    {
+    void report_testsuite(testsuite_ptr const ts_) override {
         std::time_t stamp = std::chrono::system_clock::to_time_t(ts_->timestamp());
         char        buff[128];
         std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
@@ -66,12 +65,10 @@ protected:
         *this << SCTF_SPACE << "</testsuite>" << SCTF_LF;
     }
 
-    void report_testcase(private_::testcase const& tc_) override
-    {
+    void report_testcase(private_::testcase const& tc_) override {
         *this << SCTF_XSPACE << "<testcase name=\"" << tc_.name() << "\" classname=\""
               << tc_.context() << "\" time=\"" << tc_.duration() << "\"";
-        switch (tc_.state())
-        {
+        switch (tc_.state()) {
             case private_::testcase::result::ERROR:
                 *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<error message=\""
                       << tc_.err_msg() << "\"></error>" << SCTF_LF << SCTF_XSPACE << "</testcase>";
@@ -87,14 +84,12 @@ protected:
         *this << SCTF_LF;
     }
 
-    void begin_report() override
-    {
+    void begin_report() override {
         *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << SCTF_LF << "<testsuites>"
               << SCTF_LF;
     }
 
-    void end_report() override
-    {
+    void end_report() override {
         *this << "</testsuites>" << SCTF_LF;
     }
 
@@ -105,8 +100,7 @@ protected:
  * Create a xml reporter.
  * @param stream_  The stream to report to (default: stdout)
  */
-static reporter_ptr create_xml_reporter(std::ostream& stream_ = std::cout)
-{
+static reporter_ptr create_xml_reporter(std::ostream& stream_ = std::cout) {
     return std::make_shared<xml_reporter>(stream_);
 }
 
@@ -114,8 +108,7 @@ static reporter_ptr create_xml_reporter(std::ostream& stream_ = std::cout)
  * Create a xml reporter. The specified file will be overwritten if it already exists.
  * @param fname_   The name of the file where the report will be written
  */
-static reporter_ptr create_xml_reporter(char const* fname_)
-{
+static reporter_ptr create_xml_reporter(char const* fname_) {
     return std::make_shared<xml_reporter>(fname_);
 }
 }  // namespace sctf

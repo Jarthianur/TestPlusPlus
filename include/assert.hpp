@@ -130,74 +130,51 @@ namespace sctf
 namespace private_
 {
 template<typename C, typename V, typename E = V>
-static void assert_statement(V const& val_, E const& expect_, C&& cmp_, code_location const& loc_)
-{
+static void assert_statement(V const& val_, E const& expect_, C&& cmp_, code_location const& loc_) {
     comparison res = cmp_(val_, expect_);
-    if (!res)
-    {
+    if (!res) {
         throw assertion_failure(*res, loc_);
     }
 }
 
 template<typename T>
-static void assert_throws(test_function&& fn_, code_location const& loc_)
-{
-    try
-    {
+static void assert_throws(test_function&& fn_, code_location const& loc_) {
+    try {
         fn_();
-    }
-    catch (T const&)
-    {
+    } catch (T const&) {
         return;
-    }
-    catch (std::exception const& e)
-    {
+    } catch (std::exception const& e) {
         throw assertion_failure(
             std::string("Wrong exception thrown, caught '") + to_string(e) + "'", loc_);
-    }
-    catch (...)
-    {
+    } catch (...) {
         throw assertion_failure("Wrong exception thrown", loc_);
     }
     throw assertion_failure(
         std::string("No exception thrown, expected '") + name_for_type<T>() + "'", loc_);
 }
 
-static void assert_nothrow(test_function&& fn_, code_location const& loc_)
-{
-    try
-    {
+static void assert_nothrow(test_function&& fn_, code_location const& loc_) {
+    try {
         fn_();
-    }
-    catch (const std::exception& e)
-    {
+    } catch (const std::exception& e) {
         throw assertion_failure(std::string("Expected no exception, caught '") + to_string(e) + "'",
                                 loc_);
-    }
-    catch (...)
-    {
+    } catch (...) {
         throw assertion_failure("Expected no exception", loc_);
     }
 }
 
-static void assert_performance(test_function&& fn_, double max_ms_, code_location const& loc_)
-{
-    try
-    {
+static void assert_performance(test_function&& fn_, double max_ms_, code_location const& loc_) {
+    try {
         duration dur;
         fn_();
         double dur_ms = dur.get();
-        if (dur_ms > max_ms_)
-        {
+        if (dur_ms > max_ms_) {
             throw assertion_failure(std::string("runtime > ") + to_string(max_ms_) + "ms", loc_);
         }
-    }
-    catch (std::exception const& e)
-    {
+    } catch (std::exception const& e) {
         throw assertion_failure(e.what(), loc_);
-    }
-    catch (...)
-    {
+    } catch (...) {
         throw assertion_failure("Unknown exception thrown", loc_);
     }
 }

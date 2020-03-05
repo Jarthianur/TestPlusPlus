@@ -42,15 +42,13 @@ public:
      * @param loc_ The code location where the assertion took place
      */
     assertion_failure(std::string const& msg_, code_location const& loc_)
-        : m_msg(msg_ + " at " + loc_.file + ":" + std::to_string(loc_.line))
-    {}
+        : m_msg(msg_ + " at " + loc_.file + ":" + std::to_string(loc_.line)) {}
     virtual ~assertion_failure() noexcept override = default;
 
     /**
      * Get the error message.
      */
-    inline char const* what() const noexcept override
-    {
+    inline char const* what() const noexcept override {
         return m_msg.c_str();
     }
 

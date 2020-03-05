@@ -33,8 +33,7 @@ public:
 
     ~Failure() noexcept override = default;
 
-    char const* what() const noexcept override
-    {
+    char const* what() const noexcept override {
         return m_msg;
     }
 

@@ -60,8 +60,7 @@ public:
      * As side effect, all pending testcases in runner_ are executed.
      * @return the sum of failed tests and errors
      */
-    std::size_t report()
-    {
+    std::size_t report() {
         m_abs_errs     = 0;
         m_abs_fails    = 0;
         m_abs_tests    = 0;
@@ -84,16 +83,13 @@ public:
 
 protected:
     explicit reporter(std::ostream& stream_) : mr_out_stream(stream_) {}
-    explicit reporter(char const* fname_) : m_out_file(fname_), mr_out_stream(m_out_file)
-    {
-        if (!mr_out_stream)
-        {
+    explicit reporter(char const* fname_) : m_out_file(fname_), mr_out_stream(m_out_file) {
+        if (!mr_out_stream) {
             throw std::runtime_error("Could not open file.");
         }
     }
 
-    inline virtual void report_testsuite(testsuite_ptr const ts_)
-    {
+    inline virtual void report_testsuite(testsuite_ptr const ts_) {
         std::for_each(ts_->testcases().begin(), ts_->testcases().end(),
                       [this](const testcase& tc) { report_testcase(tc); });
     }
@@ -103,8 +99,7 @@ protected:
     virtual void end_report()                         = 0;
 
     template<typename T>
-    std::ostream& operator<<(T const& t_)
-    {
+    std::ostream& operator<<(T const& t_) {
         mr_out_stream << t_;
         return mr_out_stream;
     }

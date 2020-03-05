@@ -40,15 +40,13 @@ class equals
     bool                         m_neg         = false;
 
 public:
-    equals& operator!()
-    {
+    equals& operator!() {
         m_neg = !m_neg;
         return *this;
     }
 
     template<typename V, typename E = V, ENABLE_IF(NOT IS_FLOAT(V) AND IS_EQUAL_COMPARABLE(V, E))>
-    comparison operator()(V const& actual_value, E const& expected_value)
-    {
+    comparison operator()(V const& actual_value, E const& expected_value) {
         return (actual_value == expected_value) != m_neg ?
                    SUCCESS :
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
@@ -58,8 +56,7 @@ public:
     template<typename V, typename E = V,
              ENABLE_IF(NOT IS_FLOAT(V) AND NOT IS_EQUAL_COMPARABLE(V, E)
                            AND                 IS_UNEQUAL_COMPARABLE(V, E))>
-    comparison operator()(V const& actual_value, E const& expected_value)
-    {
+    comparison operator()(V const& actual_value, E const& expected_value) {
         return (actual_value != expected_value) != m_neg ?
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
                               to_string(expected_value)) :
@@ -67,8 +64,7 @@ public:
     }
 
     template<typename V, typename E = V, ENABLE_IF(IS_FLOAT(V) AND IS_FLOAT(E))>
-    comparison operator()(V const& actual_value, E const& expected_value)
-    {
+    comparison operator()(V const& actual_value, E const& expected_value) {
 #if defined(SCTF_EXTERN_EPSILON) || defined(SCTF_EPSILON)
         static V epsilon_ = static_cast<V>(epsilon);
 #else

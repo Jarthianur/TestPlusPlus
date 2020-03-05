@@ -66,15 +66,13 @@ struct comparison final
      * @param expect_   The expected value
      */
     comparison(char const* comp_str_, std::string const& val_, std::string const& expect_)
-        : m_failure("Expected " + val_ + " " + comp_str_ + " " + expect_)
-    {}
+        : m_failure("Expected " + val_ + " " + comp_str_ + " " + expect_) {}
 
     /**
      * Allow conversion to boolean.
      * @return true, if comparison was successful, else false
      */
-    explicit operator bool()
-    {
+    explicit operator bool() {
         return !m_failure;
     }
 
@@ -82,8 +80,7 @@ struct comparison final
      * Get the message describing the reason for failure.
      * May only be called, if the comparison returns false.
      */
-    std::string const& operator*() const
-    {
+    std::string const& operator*() const {
         return *m_failure;
     }
 
@@ -93,8 +90,7 @@ private:
     constexpr comparison() : m_success(true) {}
 
     comparison(char const* comp_str_, std::string const& val_, std::string const& expect_)
-        : m_success(false)
-    {
+        : m_success(false) {
         std::string msg;
         msg.reserve(15 + std::strlen(comp_str_) + val_.length() + expect_.length());
         msg = "Expected ";
@@ -102,21 +98,18 @@ private:
         error() = msg;
     }
 
-    explicit operator bool()
-    {
+    explicit operator bool() {
         return m_success;
     }
 
-    const std::string& operator*() const
-    {
+    const std::string& operator*() const {
         return error();
     }
 
 private:
     bool const m_success;
 
-    std::string& error() const
-    {
+    std::string& error() const {
         static thread_local std::string err_msg;
         return err_msg;
     }
@@ -157,14 +150,12 @@ extern double        epsilon;
         bool                         m_neg         = false;                                   \
                                                                                               \
     public:                                                                                   \
-        NAME& operator!()                                                                     \
-        {                                                                                     \
+        NAME& operator!() {                                                                   \
             m_neg = !m_neg;                                                                   \
             return *this;                                                                     \
         }                                                                                     \
         template<typename V, typename E = V>                                                  \
-        comparison operator()(V const& actual_value, E const& expected_value)                 \
-        {                                                                                     \
+        comparison operator()(V const& actual_value, E const& expected_value) {               \
             return (PRED) != m_neg ?                                                          \
                        SUCCESS :                                                              \
                        comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value), \
@@ -175,7 +166,7 @@ extern double        epsilon;
     }
 
 /**
- * Provide a shortwrite function which returns the address of the respective
+ * Provide a shortwrite function which returns the respective
  * comparator.
  * @param COMP The comparator function
  * @param NAME The final shortwrite
@@ -183,8 +174,7 @@ extern double        epsilon;
 #define PROVIDE_COMPARATOR(COMP, NAME) \
     namespace sctf                     \
     {                                  \
-    static private_::COMP NAME()       \
-    {                                  \
+    static private_::COMP NAME() {     \
         return private_::COMP();       \
     }                                  \
     }

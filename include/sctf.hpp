@@ -45,8 +45,7 @@
  * @return the number of failed and erroneous tests
  */
 #define SCTF_DEFAULT_MAIN(REPORTER)                        \
-    int main(int /*argc*/, char** /*argv*/)                \
-    {                                                      \
+    int main(int /*argc*/, char** /*argv*/) {              \
         return static_cast<int>(sctf::REPORTER->report()); \
     }
 

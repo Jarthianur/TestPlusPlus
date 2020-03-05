@@ -52,8 +52,7 @@ public:
      * @param fn_   The test function
      */
     testcase(char const* name_, char const* ctx_, test_function&& fn_)
-        : m_name(name_), m_context(ctx_), m_test_func(std::move(fn_))
-    {}
+        : m_name(name_), m_context(ctx_), m_test_func(std::move(fn_)) {}
 
     testcase(testcase&& other_)
         : m_name(other_.m_name),
@@ -61,11 +60,9 @@ public:
           m_state(other_.m_state),
           m_duration(other_.m_duration),
           m_err_msg(std::move(other_.m_err_msg)),
-          m_test_func(std::move(other_.m_test_func))
-    {}
+          m_test_func(std::move(other_.m_test_func)) {}
 
-    testcase& operator=(testcase&& other_)
-    {
+    testcase& operator=(testcase&& other_) {
         m_name      = other_.m_name;
         m_context   = other_.m_context;
         m_state     = other_.m_state;
@@ -89,25 +86,17 @@ public:
     /**
      * Execute the test function and store results. Does nothing if the test was executed already.
      */
-    void operator()()
-    {
+    void operator()() {
         if (m_state != result::NONE) return;
         class duration dur;
-        try
-        {
+        try {
             m_test_func();
             pass();
-        }
-        catch (assertion_failure const& e)
-        {
+        } catch (assertion_failure const& e) {
             fail(e.what());
-        }
-        catch (std::exception const& e)
-        {
+        } catch (std::exception const& e) {
             erroneous(e.what());
-        }
-        catch (...)
-        {
+        } catch (...) {
             erroneous();
         }
         m_duration = dur.get();
@@ -116,16 +105,14 @@ public:
     /**
      * Get the result state.
      */
-    inline result state() const
-    {
+    inline result state() const {
         return m_state;
     }
 
     /**
      * Get the duration of the test function in milliseconds.
      */
-    inline double duration() const
-    {
+    inline double duration() const {
         return m_duration;
     }
 
@@ -133,18 +120,15 @@ public:
      * Get the error, or assertion failure reason.
      * If the test passed, it is empty.
      */
-    inline std::string const& err_msg() const
-    {
+    inline std::string const& err_msg() const {
         return m_err_msg;
     }
 
-    inline char const* name() const
-    {
+    inline char const* name() const {
         return m_name;
     }
 
-    inline char const* context() const
-    {
+    inline char const* context() const {
         return m_context;
     }
 
@@ -152,8 +136,7 @@ public:
      * Set the captured stdout content for this testcase.
      * @param str_ The captured output
      */
-    inline void cout(std::string const& str_)
-    {
+    inline void cout(std::string const& str_) {
         m_cout = str_;
     }
 
@@ -161,41 +144,35 @@ public:
      * Set the captured stdout content for this testcase.
      * @param str_ The captured output
      */
-    inline void cerr(std::string const& str_)
-    {
+    inline void cerr(std::string const& str_) {
         m_cerr = str_;
     }
 
     /**
      * Get the captured output from stdout.
      */
-    inline std::string const& cout() const
-    {
+    inline std::string const& cout() const {
         return m_cout;
     }
 
     /**
      * Get the captured output from stderr.
      */
-    inline std::string const& cerr() const
-    {
+    inline std::string const& cerr() const {
         return m_cerr;
     }
 
 private:
-    inline void pass()
-    {
+    inline void pass() {
         m_state = result::PASSED;
     }
 
-    inline void fail(char const* msg_)
-    {
+    inline void fail(char const* msg_) {
         m_state   = result::FAILED;
         m_err_msg = msg_;
     }
 
-    inline void erroneous(char const* err_ = "unknown error")
-    {
+    inline void erroneous(char const* err_ = "unknown error") {
         m_state   = result::ERROR;
         m_err_msg = err_;
     }

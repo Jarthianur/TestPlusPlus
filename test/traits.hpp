@@ -40,8 +40,7 @@ struct void_type
 struct streamable
 {
     template<typename S>
-    friend auto operator<<(S& s_, streamable const&) -> S&
-    {
+    friend auto operator<<(S& s_, streamable const&) -> S& {
         return s_;
     }
 };
@@ -50,14 +49,12 @@ struct not_streamable
 {};
 
 template<typename S, typename T, ENABLE_IF(NOT IS_STREAMABLE(T, S))>
-void throw_if_not_streamable()
-{
+void throw_if_not_streamable() {
     throw std::logic_error("Given type is not streamable");
 }
 
 template<typename S, typename T, ENABLE_IF(IS_STREAMABLE(T, S))>
-void throw_if_not_streamable()
-{}
+void throw_if_not_streamable() {}
 
 // is_iterable
 
@@ -65,29 +62,24 @@ struct iterable
 {
     struct iterator
     {
-        bool operator!=(iterator const&) const noexcept
-        {
+        bool operator!=(iterator const&) const noexcept {
             return false;
         }
 
-        iterator& operator++()
-        {
+        iterator& operator++() {
             return *this;
         }
 
-        bool operator*() const noexcept
-        {
+        bool operator*() const noexcept {
             return true;
         }
     };
 
-    iterator begin() noexcept
-    {
+    iterator begin() noexcept {
         return iterator();
     }
 
-    iterator end() noexcept
-    {
+    iterator end() noexcept {
         return iterator();
     }
 };
@@ -101,26 +93,22 @@ struct not_iterable
         bool      operator*() const noexcept                 = delete;
     };
 
-    iterator begin() noexcept
-    {
+    iterator begin() noexcept {
         return iterator();
     }
 
-    iterator end() noexcept
-    {
+    iterator end() noexcept {
         return iterator();
     }
 };
 
 template<typename T, ENABLE_IF(NOT IS_ITERABLE(T))>
-void throw_if_not_iterable()
-{
+void throw_if_not_iterable() {
     throw std::logic_error("Given type is not streamable");
 }
 
 template<typename T, ENABLE_IF(IS_ITERABLE(T))>
-void throw_if_not_iterable()
-{}
+void throw_if_not_iterable() {}
 
 // is_ordinal
 
@@ -130,13 +118,11 @@ struct ordinal
 
     ordinal(bool v_) : m_v(v_) {}
 
-    bool operator<(ordinal const&) const noexcept
-    {
+    bool operator<(ordinal const&) const noexcept {
         return m_v;
     }
 
-    bool operator>(ordinal const&) const noexcept
-    {
+    bool operator>(ordinal const&) const noexcept {
         return m_v;
     }
 
@@ -151,14 +137,12 @@ struct not_ordinal
 };
 
 template<typename T, ENABLE_IF(NOT IS_ORDINAL(T))>
-void throw_if_not_ordinal()
-{
+void throw_if_not_ordinal() {
     throw std::logic_error("Given type is not ordinal");
 }
 
 template<typename T, ENABLE_IF(IS_ORDINAL(T))>
-void throw_if_not_ordinal()
-{}
+void throw_if_not_ordinal() {}
 
 // is_equal_comparable
 
@@ -168,8 +152,7 @@ struct equal_comparable
 
     equal_comparable(bool v_) : m_v(v_) {}
 
-    bool operator==(equal_comparable const&) const noexcept
-    {
+    bool operator==(equal_comparable const&) const noexcept {
         return m_v;
     }
 
@@ -183,13 +166,11 @@ struct equal_unequal_comparable
 
     equal_unequal_comparable(bool v_) : m_v(v_) {}
 
-    bool operator==(equal_unequal_comparable const&) const noexcept
-    {
+    bool operator==(equal_unequal_comparable const&) const noexcept {
         return m_v;
     }
 
-    bool operator!=(equal_unequal_comparable const&) const noexcept
-    {
+    bool operator!=(equal_unequal_comparable const&) const noexcept {
         return m_v;
     }
 
@@ -203,14 +184,12 @@ struct not_equal_comparable
 };
 
 template<typename T, ENABLE_IF(NOT IS_EQUAL_COMPARABLE(T, T))>
-void throw_if_not_equal_comparable()
-{
+void throw_if_not_equal_comparable() {
     throw std::logic_error("Given type is not equal-comparable");
 }
 
 template<typename T, ENABLE_IF(IS_EQUAL_COMPARABLE(T, T))>
-void throw_if_not_equal_comparable()
-{}
+void throw_if_not_equal_comparable() {}
 
 // is_unequal_comparable
 
@@ -220,8 +199,7 @@ struct unequal_comparable
 
     unequal_comparable(bool v_) : m_v(v_) {}
 
-    bool operator!=(unequal_comparable const&) const noexcept
-    {
+    bool operator!=(unequal_comparable const&) const noexcept {
         return m_v;
     }
 
@@ -235,13 +213,11 @@ struct not_unequal_comparable
 };
 
 template<typename T, ENABLE_IF(NOT IS_UNEQUAL_COMPARABLE(T, T))>
-void throw_if_not_unequal_comparable()
-{
+void throw_if_not_unequal_comparable() {
     throw std::logic_error("Given type is not unequal-comparable");
 }
 
 template<typename T, ENABLE_IF(IS_UNEQUAL_COMPARABLE(T, T))>
-void throw_if_not_unequal_comparable()
-{}
+void throw_if_not_unequal_comparable() {}
 
 #endif  // TEST_TRAITS_HPP

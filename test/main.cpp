@@ -27,23 +27,17 @@
 
 using namespace sctf;
 
-int main(int, char**)
-{
+int main(int, char**) {
     auto rep   = create_console_reporter(true, true);
     auto repx  = create_xml_reporter("test.xml");
     auto repmd = create_markdown_reporter("test.md");
 
-    try
-    {
+    try {
         basic_tests();
-    }
-    catch (std::exception const& e)
-    {
+    } catch (std::exception const& e) {
         std::cout << "Basic tests have failed! [" << e.what() << "]" << std::endl;
         return 1;
-    }
-    catch (...)
-    {
+    } catch (...) {
         std::cout << "Basic tests have failed!" << std::endl;
         return 1;
     }

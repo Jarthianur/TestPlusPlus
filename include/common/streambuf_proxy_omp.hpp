@@ -54,42 +54,36 @@ public:
     streambuf_proxy_omp(std::ostream& stream_)
         : m_orig_buf(stream_.rdbuf(this)),
           m_orig_stream(stream_),
-          m_thd_buffers(static_cast<std::size_t>(omp_get_max_threads()))
-    {}
+          m_thd_buffers(static_cast<std::size_t>(omp_get_max_threads())) {}
 
     /**
      * Restore the original buffer of the stream.
      * After that, the stream is in its original state.
      */
-    virtual ~streambuf_proxy_omp() noexcept override
-    {
+    virtual ~streambuf_proxy_omp() noexcept override {
         m_orig_stream.rdbuf(m_orig_buf);
     }
 
     /**
      * Get the current buffer content for the executing thread.
      */
-    std::string str() const
-    {
+    std::string str() const {
         return CURRENT_THREAD_BUFFER().str();
     }
 
     /**
      * Clear the buffer for the executing thread.
      */
-    void clear()
-    {
+    void clear() {
         CURRENT_THREAD_BUFFER().str("");
     }
 
 protected:
-    virtual int_type overflow(int_type c_) override
-    {
+    virtual int_type overflow(int_type c_) override {
         return CURRENT_THREAD_BUFFER().sputc(std::stringbuf::traits_type::to_char_type(c_));
     }
 
-    virtual std::streamsize xsputn(char const* s_, std::streamsize n_) override
-    {
+    virtual std::streamsize xsputn(char const* s_, std::streamsize n_) override {
         return CURRENT_THREAD_BUFFER().sputn(s_, n_);
     }
 

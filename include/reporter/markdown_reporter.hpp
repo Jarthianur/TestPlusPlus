@@ -51,8 +51,7 @@ public:
     explicit markdown_reporter(char const* fname_) : reporter(fname_) {}
 
 protected:
-    void report_testsuite(testsuite_ptr const ts_) override
-    {
+    void report_testsuite(testsuite_ptr const ts_) override {
         *this << "## " << ts_->name() << SCTF_XLF << "|Tests|Successes|Failures|Errors|Time|"
               << SCTF_LF << "|-|-|-|-|-|" << SCTF_LF << "|" << ts_->statistics().tests() << "|"
               << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"
@@ -63,11 +62,9 @@ protected:
         *this << SCTF_XLF;
     }
 
-    void report_testcase(private_::testcase const& tc_) override
-    {
+    void report_testcase(private_::testcase const& tc_) override {
         char const* status = "";
-        switch (tc_.state())
-        {
+        switch (tc_.state()) {
             case private_::testcase::result::ERROR: status = "ERROR"; break;
             case private_::testcase::result::FAILED: status = "FAILED"; break;
             case private_::testcase::result::PASSED: status = "PASSED"; break;
@@ -77,13 +74,11 @@ protected:
               << status << "|" << SCTF_LF;
     }
 
-    void begin_report() override
-    {
+    void begin_report() override {
         *this << "# Test Report" << SCTF_XLF;
     }
 
-    void end_report() override
-    {
+    void end_report() override {
         *this << "## Summary" << SCTF_XLF << "|Tests|Successes|Failures|Errors|Time|" << SCTF_LF
               << "|-|-|-|-|-|" << SCTF_LF << "|" << m_abs_tests << "|"
               << (m_abs_tests - m_abs_errs - m_abs_fails) << "|" << m_abs_fails << "|" << m_abs_errs
@@ -95,8 +90,7 @@ protected:
  * Create a markdown reporter.
  * @param stream_  The stream to report to (default: stdout)
  */
-static reporter_ptr create_markdown_reporter(std::ostream& stream_ = std::cout)
-{
+static reporter_ptr create_markdown_reporter(std::ostream& stream_ = std::cout) {
     return std::make_shared<markdown_reporter>(stream_);
 }
 
@@ -104,8 +98,7 @@ static reporter_ptr create_markdown_reporter(std::ostream& stream_ = std::cout)
  * Create a markdown reporter. The specified file will be overwritten if it already exists.
  * @param fname_   The name of the file where the report will be written
  */
-static reporter_ptr create_markdown_reporter(char const* file_)
-{
+static reporter_ptr create_markdown_reporter(char const* file_) {
     return std::make_shared<markdown_reporter>(file_);
 }
 }  // namespace sctf
