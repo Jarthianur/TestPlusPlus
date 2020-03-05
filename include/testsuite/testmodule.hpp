@@ -73,6 +73,11 @@ protected:
 }  // namespace private_
 }  // namespace sctf
 
+#define SCTF_PRIVATE_CONCAT3(A, B, C) A##B##C
+#define SCTF_PRIVATE_TEST_NAME(ID) SCTF_PRIVATE_CONCAT3(sctf_private_test_, ID, _)
+#define SCTF_PRIVATE_TEST_INST(ID) SCTF_PRIVATE_CONCAT3(sctf_private_test_, ID, _inst_)
+#define SCTF_PRIVATE_TEST_FN(ID) SCTF_PRIVATE_CONCAT3(sctf_private_test_fn_, ID, _)
+
 #define SUITE(NAME)                                                                         \
     namespace sctf_private_ns_##NAME##_                                                     \
     {                                                                                       \
@@ -93,17 +98,21 @@ protected:
     class sctf_private_ns_##NAME##_::NAME                                                   \
         : public sctf::private_::test_module_parallel<sctf_private_ns_##NAME##_::NAME>
 
-#define TEST(NAME)                                                                                \
-    class sctf_private_test_##NAME##_                                                             \
-    {                                                                                             \
-    public:                                                                                       \
-        sctf_private_test_##NAME##_(sctf_private_mod_type_* mod_)                                 \
-        {                                                                                         \
-            mod_->sctf_private_m_ts_->test(                                                       \
-                #NAME, std::bind(&sctf_private_mod_type_::sctf_private_test_fn_##NAME##_, mod_)); \
-        }                                                                                         \
-    } sctf_private_test_##NAME##_inst_{this};                                                     \
-    void sctf_private_test_fn_##NAME##_()
+#define TEST(NAME)                                                                               \
+    class SCTF_PRIVATE_TEST_NAME(__LINE__)                                                       \
+    {                                                                                            \
+    public:                                                                                      \
+        SCTF_PRIVATE_TEST_NAME(__LINE__)(sctf_private_mod_type_ * mod_)                          \
+        {                                                                                        \
+            mod_->sctf_private_m_ts_->test(                                                      \
+                NAME, std::bind(&sctf_private_mod_type_::SCTF_PRIVATE_TEST_FN(__LINE__), mod_)); \
+        }                                                                                        \
+    } SCTF_PRIVATE_TEST_INST(__LINE__){this};                                                    \
+    void SCTF_PRIVATE_TEST_FN(__LINE__)()
+
+#define DESCRIBE(NAME) SUITE(NAME)
+#define DESCRIBE_PAR(NAME) SUITE_PAR(NAME)
+#define IT_SHOULD(DESCR) TEST("It should " DESCR)
 
 #define BEFORE_EACH()                                                                    \
     class sctf_private_before_each_                                                      \
