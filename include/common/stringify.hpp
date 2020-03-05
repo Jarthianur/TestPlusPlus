@@ -83,21 +83,27 @@ static char const* strip_namespace(std::string const& class_)
     return class_.c_str();
 }
 
+inline std::string escaped_char(char c_)
+{
+    switch (c_)
+    {
+        case '\r': return "\\r";
+        case '\n': return "\\n";
+        case '\t': return "\\t";
+        case '\f': return "\\f";
+        case '\v': return "\\v";
+        case '\"': return "\\\"";
+        default: return std::string(1, c_);
+    }
+}
+
 static std::string escaped_string(std::string const& str_)
 {
     std::string s = str_;
     std::size_t p = 0;
     while ((p = s.find_first_of("\r\n\t\f\v\"", p)) != std::string::npos)
     {
-        switch (s[p])
-        {
-            case '\r': s.replace(p, 1, "\\r"); break;
-            case '\n': s.replace(p, 1, "\\n"); break;
-            case '\t': s.replace(p, 1, "\\t"); break;
-            case '\f': s.replace(p, 1, "\\f"); break;
-            case '\v': s.replace(p, 1, "\\v"); break;
-            case '\"': s.replace(p, 1, "\\\""); break;
-        }
+        s.replace(p, 1, escaped_char(s[p]));
         p += 2;
     }
     return s;
@@ -148,7 +154,7 @@ inline std::string to_string(char const* arg_)
 
 inline std::string to_string(char const& arg_)
 {
-    return std::string("'") + arg_ + "'";
+    return std::string("'") + escaped_char(arg_) + "'";
 }
 
 /**

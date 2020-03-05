@@ -200,7 +200,7 @@ SUITE(test_testsuite)
     };
 };
 
-SUITE(test_testcase)
+SUITE_PAR(test_testcase)
 {
     TEST("creation")
     {
@@ -260,11 +260,16 @@ SUITE_PAR(test_stringify)
     };
     TEST("string_cstring")
     {
-        std::string str("string");
-        ASSERT_EQ(to_string(str), "\"string\"");
-        ASSERT_EQ(to_string("cstring"), "\"cstring\"");
-        char const* cstr = "cstring";
-        ASSERT_EQ(to_string(cstr), "\"cstring\"");
+        std::string str("str\ning");
+        ASSERT_EQ(to_string(str), "\"str\\ning\"");
+        ASSERT_EQ(to_string("cstr\ring"), "\"cstr\\ring\"");
+        char const* cstr = "\"cstring\"";
+        ASSERT_EQ(to_string(cstr), "\"\\\"cstring\\\"\"");
+    };
+    TEST("char")
+    {
+        ASSERT_EQ(to_string('a'), "'a'");
+        ASSERT_EQ(to_string('\n'), "'\\n'");
     };
     TEST("floating_point")
     {
@@ -479,5 +484,36 @@ DESCRIBE(test_output_capture)
             ASSERT_EQ(tc.cout(), std::string("out from ") + to_string(i + 1));
             ASSERT_EQ(tc.cerr(), std::string("err from ") + to_string(i + 1));
         }
+    };
+};
+
+DESCRIBE(test_suite_meta_functions)
+{
+    int x = -1;
+    int y = -1;
+    SETUP()
+    {
+        x = 0;
+        y = 0;
+    }
+    BEFORE_EACH()
+    {
+        y += 1;
+    };
+    AFTER_EACH()
+    {
+        y -= 1;
+    };
+    IT_SHOULD("setup x with 0")
+    {
+        ASSERT_ZERO(x);
+    };
+    IT_SHOULD("increment y before")
+    {
+        ASSERT_EQ(y, 1);
+    };
+    IT_SHOULD("decrement y after")
+    {
+        ASSERT_EQ(y, 1);
     };
 };
