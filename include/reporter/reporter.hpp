@@ -31,7 +31,7 @@
 
 #include "common/types.hpp"
 #include "testsuite/runner.hpp"
-#include "testsuite/statistics.hpp"
+#include "testsuite/statistic.hpp"
 #include "testsuite/testsuite.hpp"
 
 #ifdef _WIN32

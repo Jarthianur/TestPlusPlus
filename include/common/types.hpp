@@ -30,8 +30,8 @@ namespace sctf
 namespace private_
 {
 class reporter;
-
-/// Type alias for a parameterless void function, which is used to wrap the actual tests.
+class testsuite;
+using testsuite_ptr = std::shared_ptr<testsuite>;
 using test_function = std::function<void()>;
 
 /**
@@ -62,9 +62,8 @@ struct singleton final
 };
 }  // namespace private_
 
-class testsuite;
-using reporter_ptr  = std::shared_ptr<private_::reporter>;
-using testsuite_ptr = std::shared_ptr<testsuite>;
+using reporter_ptr = std::shared_ptr<private_::reporter>;
+
 }  // namespace sctf
 
 #endif  // SCTF_COMMON_TYPES_HPP

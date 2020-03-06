@@ -26,19 +26,16 @@
 
 namespace sctf
 {
-class testsuite;
-class testsuite_parallel;
-
 namespace private_
 {
 /**
  * Used for storing test results.
  */
-class statistics
+class statistic
 {
 public:
-    statistics()           = default;
-    ~statistics() noexcept = default;
+    statistic()           = default;
+    ~statistic() noexcept = default;
 
     /**
      * Get the absolute number of tests.
@@ -69,13 +66,14 @@ public:
     }
 
 protected:
-    friend sctf::testsuite;
-    friend sctf::testsuite_parallel;
+    friend class testsuite;
+    friend class testsuite_parallel;
 
     std::size_t m_num_of_tests = 0;
     std::size_t m_num_of_fails = 0;
     std::size_t m_num_of_errs  = 0;
 };
+
 }  // namespace private_
 }  // namespace sctf
 

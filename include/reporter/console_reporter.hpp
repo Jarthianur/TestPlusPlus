@@ -24,7 +24,7 @@
 
 #include "common/types.hpp"
 #include "reporter/reporter.hpp"
-#include "testsuite/statistics.hpp"
+#include "testsuite/statistic.hpp"
 #include "testsuite/testcase.hpp"
 #include "testsuite/testsuite.hpp"
 
@@ -64,7 +64,7 @@ public:
         : reporter(fname_), m_color(color_), m_capture(capture_) {}
 
 protected:
-    void report_testsuite(testsuite_ptr const ts_) override {
+    void report_testsuite(private_::testsuite_ptr const ts_) override {
         *this << "Run Testsuite [" << ts_->name() << "]; time = " << ts_->execution_time() << "ms"
               << SCTF_LF;
 

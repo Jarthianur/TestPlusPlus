@@ -24,7 +24,7 @@
 
 #include "common/types.hpp"
 #include "reporter/reporter.hpp"
-#include "testsuite/statistics.hpp"
+#include "testsuite/statistic.hpp"
 #include "testsuite/testcase.hpp"
 #include "testsuite/testsuite.hpp"
 
@@ -51,7 +51,7 @@ public:
     explicit markdown_reporter(char const* fname_) : reporter(fname_) {}
 
 protected:
-    void report_testsuite(testsuite_ptr const ts_) override {
+    void report_testsuite(private_::testsuite_ptr const ts_) override {
         *this << "## " << ts_->name() << SCTF_XLF << "|Tests|Successes|Failures|Errors|Time|"
               << SCTF_LF << "|-|-|-|-|-|" << SCTF_LF << "|" << ts_->statistics().tests() << "|"
               << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"

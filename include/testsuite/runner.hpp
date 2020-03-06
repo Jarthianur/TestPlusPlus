@@ -32,6 +32,8 @@
 
 namespace sctf
 {
+namespace private_
+{
 /**
  * Used to manage and run testsuites.
  */
@@ -76,6 +78,8 @@ public:
 private:
     std::vector<testsuite_ptr> m_testsuites;
 };
+
+}  // namespace private_
 }  // namespace sctf
 
 #endif  // SCTF_TESTSUITE_RUNNER_HPP

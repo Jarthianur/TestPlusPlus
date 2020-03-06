@@ -68,17 +68,6 @@ static std::string const& name_for_type() {
 }
 
 /**
- * Strip the namespace part of a given classname and return a pointer to the basename part.
- */
-inline char const* strip_namespace(std::string const& class_) {
-    std::size_t c;
-    if ((c = class_.find_last_of(':')) != std::string::npos) {
-        return class_.c_str() + c + 1;
-    }
-    return class_.c_str();
-}
-
-/**
  * Get a readable string representation of some escape sequences.
  */
 inline std::string escaped_char(char c_) {

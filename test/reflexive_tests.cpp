@@ -37,7 +37,7 @@ SCTF_SET_EPSILON(0.000001)
 using namespace sctf;
 using namespace private_;
 
-SUITE_PAR(test_comparators) {
+SUITE_PAR("test_comparators") {
     TEST("equals") {
         ASSERT_FALSE(!equals()(1, 1));
         ASSERT_FALSE(!equals()(equal_comparable(), equal_comparable()));
@@ -98,7 +98,7 @@ SUITE_PAR(test_comparators) {
     };
 };
 
-SUITE(test_testsuite_parallel) {
+SUITE("test_testsuite_parallel") {
     TEST("parallel_run") {
         testsuite_ptr ts = testsuite_parallel::create("ts");
         ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
@@ -124,7 +124,7 @@ SUITE(test_testsuite_parallel) {
         }
         ASSERT_EQ(ts->execution_time(), t);
 #endif
-        statistics const& stat = ts->statistics();
+        statistic const& stat = ts->statistics();
         ASSERT_EQ(stat.tests(), 6ul);
         ASSERT_EQ(stat.errors(), 2ul);
         ASSERT_EQ(stat.failures(), 2ul);
@@ -132,7 +132,7 @@ SUITE(test_testsuite_parallel) {
     };
 };
 
-SUITE(test_testsuite) {
+SUITE("test_testsuite") {
     TEST("creation") {
         auto a = std::chrono::system_clock::now();
         std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -164,7 +164,7 @@ SUITE(test_testsuite) {
         ts->test("", [] { ASSERT_TRUE(false); });
         ts->test("", [] { throw std::logic_error(""); });
         ts->run();
-        statistics const& stat = ts->statistics();
+        statistic const& stat = ts->statistics();
         ASSERT_EQ(stat.tests(), 3ul);
         ASSERT_EQ(stat.errors(), 1ul);
         ASSERT_EQ(stat.failures(), 1ul);
@@ -186,7 +186,7 @@ SUITE(test_testsuite) {
     };
 };
 
-SUITE_PAR(test_testcase) {
+SUITE_PAR("test_testcase") {
     TEST("creation") {
         testcase tc("t1", "ctx", [] {});
         testcase tc2("t2", "", [] {});
@@ -223,7 +223,7 @@ SUITE_PAR(test_testcase) {
     };
 };
 
-SUITE_PAR(test_stringify) {
+SUITE_PAR("test_stringify") {
     TEST("bool") {
         ASSERT(to_string(true), EQ, std::string("true"));
         ASSERT(to_string(false), EQ, std::string("false"));
@@ -258,7 +258,7 @@ SUITE_PAR(test_stringify) {
     };
 };
 
-SUITE_PAR(test_traits) {
+SUITE_PAR("test_traits") {
     TEST("is_streamable") {
         ASSERT_NOTHROW((throw_if_not_streamable<std::ostringstream, streamable>()));
         ASSERT_THROWS((throw_if_not_streamable<std::ostringstream, void_type>()), std::logic_error);
@@ -288,7 +288,7 @@ SUITE_PAR(test_traits) {
     };
 };
 
-SUITE_PAR(test_assertions) {
+SUITE_PAR("test_assertions") {
     TEST("assert") {  // successful
         ASSERT_NOTHROW(ASSERT(1, EQUALS, 1));
         ASSERT_NOTHROW(ASSERT(true, EQUALS, true));
@@ -401,8 +401,8 @@ SUITE_PAR(test_assertions) {
     };
 };
 
-DESCRIBE(test_output_capture) {
-    IT_SHOULD("capture the output in a single thread") {
+DESCRIBE("test_output_capture") {
+    IT("should capture the output in a single thread") {
         auto ts = testsuite::create("ts");
         for (int i = 1; i < 9; ++i) {
             ts->test("capture", [i] {
@@ -417,7 +417,7 @@ DESCRIBE(test_output_capture) {
             ASSERT_EQ(tc.cerr(), std::string("err from ") + to_string(i + 1));
         }
     };
-    IT_SHOULD("capture the output in multiple threads") {
+    IT("should capture the output in multiple threads") {
         auto ts = testsuite_parallel::create("ts");
         for (int i = 1; i < 9; ++i) {
             ts->test("capture", [i] {
@@ -434,7 +434,7 @@ DESCRIBE(test_output_capture) {
     };
 };
 
-DESCRIBE(test_suite_meta_functions) {
+DESCRIBE("test_suite_meta_functions") {
     int x = -1;
     int y = -1;
     SETUP() {
@@ -447,13 +447,13 @@ DESCRIBE(test_suite_meta_functions) {
     AFTER_EACH() {
         y -= 1;
     };
-    IT_SHOULD("setup x with 0") {
+    IT("should setup x with 0") {
         ASSERT_ZERO(x);
     };
-    IT_SHOULD("increment y before") {
+    IT("should increment y before") {
         ASSERT_EQ(y, 1);
     };
-    IT_SHOULD("decrement y after") {
+    IT("should decrement y after") {
         ASSERT_EQ(y, 1);
     };
 };

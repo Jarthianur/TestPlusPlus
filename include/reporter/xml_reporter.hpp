@@ -27,7 +27,7 @@
 
 #include "common/types.hpp"
 #include "reporter/reporter.hpp"
-#include "testsuite/statistics.hpp"
+#include "testsuite/statistic.hpp"
 #include "testsuite/testcase.hpp"
 #include "testsuite/testsuite.hpp"
 
@@ -52,7 +52,7 @@ public:
     explicit xml_reporter(char const* fname_) : reporter(fname_) {}
 
 protected:
-    void report_testsuite(testsuite_ptr const ts_) override {
+    void report_testsuite(private_::testsuite_ptr const ts_) override {
         std::time_t stamp = std::chrono::system_clock::to_time_t(ts_->timestamp());
         char        buff[128];
         std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));

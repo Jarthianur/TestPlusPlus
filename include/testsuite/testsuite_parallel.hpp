@@ -30,6 +30,8 @@
 
 namespace sctf
 {
+namespace private_
+{
 /**
  * A testsuite describes a set of tests in a certain context, like an user defined class, or
  * function. This class handles concurrently running testcases.
@@ -57,14 +59,14 @@ public:
      */
     void run() override {
         if (m_state != execution_state::DONE) {
-            if (m_testcases.size() > std::numeric_limits<long>::max()) {
+            if (m_testcases.size() > static_cast<std::size_t>(std::numeric_limits<long>::max())) {
                 throw std::overflow_error("Too many testcases! Size would overflow loop variant.");
             }
             SCTF_EXEC_SILENT(m_setup_fn)
             const long tc_size     = static_cast<long>(m_testcases.size());
             m_stats.m_num_of_tests = m_testcases.size();
-            private_::streambuf_proxy_omp mt_buf_cout(std::cout);
-            private_::streambuf_proxy_omp mt_buf_cerr(std::cerr);
+            streambuf_proxy_omp mt_buf_cout(std::cout);
+            streambuf_proxy_omp mt_buf_cerr(std::cerr);
 
 #pragma omp parallel
             {
@@ -75,12 +77,12 @@ public:
 #pragma omp for schedule(dynamic)
                 for (long i = 0; i < tc_size; ++i) {
                     auto& tc = m_testcases[static_cast<std::size_t>(i)];
-                    if (tc.state() == private_::testcase::result::NONE) {
+                    if (tc.state() == testcase::result::NONE) {
                         SCTF_EXEC_SILENT(m_pretest_fn)
                         tc();
                         switch (tc.state()) {
-                            case private_::testcase::result::FAILED: ++fails; break;
-                            case private_::testcase::result::ERROR: ++errs; break;
+                            case testcase::result::FAILED: ++fails; break;
+                            case testcase::result::ERROR: ++errs; break;
                             default: break;
                         }
                         tmp += tc.duration();
@@ -106,6 +108,8 @@ public:
 private:
     explicit testsuite_parallel(char const* name_) : testsuite(name_) {}
 };
+
+}  // namespace private_
 }  // namespace sctf
 
 #endif  // SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP

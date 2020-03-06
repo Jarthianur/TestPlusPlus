@@ -186,6 +186,7 @@ private:
     std::string   m_cerr;
     test_function m_test_func;
 };
+
 }  // namespace private_
 }  // namespace sctf
 
