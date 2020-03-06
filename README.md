@@ -31,9 +31,9 @@ Please have a look at the full [feature set](#feature-set).
   - [Contents](#contents)
   - [Feature Set](#feature-set)
   - [Usage](#usage)
-    - [Floats](#floats)
     - [Test Styles](#test-styles)
-    - [Fixtures](#fixtures)
+    - [Scopes and Fixtures](#scopes-and-fixtures)
+    - [Floating Point Numbers](#floating-point-numbers)
     - [Examples](#examples)
       - [Simple Unit Test](#simple-unit-test)
       - [Behavior Driven Test](#behavior-driven-test)
@@ -79,17 +79,45 @@ As a short summary of all features, have a look at this list.
 Just inlude the *sctf.hpp* header file into your build.
 Tests can then be written in source files and simply linked into your test binary.
 If you prefer, you can of course write tests in header files and include them in your main source file.
+*Note that it is not possible to write multiple testsuites, or tests in one line, as it would break name generation.*
 To run and report all tests, just create a reporter and call its `report()` function in your `main()`, as seen in the examples.
 Alternatively invoke the `SCTF_DEFAULT_MAIN(...)` macro in one of your source files and pass it a call to any reporter factory method.
 In order to run tests in multiple threads, you have to enable OpenMP at compilation (e.g. for gcc add `-fopenmp` flag).
 
-### Floats
-
-As floating-point comparison relies on a so called epsilon, we use the machine epsilon by default. But this may lead into false-negative test results, as it could be too accurate. In order to use a custom epsilon, there are two ways to achieve this. First, you can provide a macro in each compilation unit, which is called `SCTF_EPSILON` with a satisfying value (like 0.000001). A compiler invocation could look like "`g++ -std=c++0x test.cpp -fopenmp -DSCTF_EPSILON=0.000001`". Or you provide it before including *sctf.hpp* like in the [example](#example) below. The second way, is to provide it as an extern variable. Therefor define `SCTF_EXTERN_EPSILON` before including *sctf.hpp* and than call the `SCTF_SET_EPSILON` macro with a satisfying value in the compilation unit (cpp file). The latter one allows more fine grained control over the required epsilon value.
-
 ### Test Styles
 
-### Fixtures
+Basically two approaches of writing tests exist.
+One is the classic unit test style, where tests are generally designed around an implementation.
+The other is behavior driven test style (BDD), where tests are designed around the behavior of an implementation.
+No matter which of them you prefer, this framework serves both.
+Actually both styles require just a little different syntax.
+In the end `DESCRIBE` is just an other macro for `SUITE`, same with `IT` and `TEST`.
+If you'd wish to name them differently, just define your own wrapper macro for them with whatever name you like.
+
+### Scopes and Fixtures
+
+A testsuite is nothing else than a class definition under the hood, which is instantiated with static lifetime.
+Hence the same scoping rules as for usual class definitions apply to testsuites.
+Testcases are member functions of their testsuite.
+Hence the usual scoping rules for methods apply to them.
+
+You might know the need for fixtures, basically an instance of an unit under test (UUT), in other contexts.
+It is up to you to decide whether testcases should be isolated, or run against a designated fixture.
+This framework supports the usage of fixtures, as you can just declare any object at testsuite scope - remember, it's just a member field in the end.
+Also it is possible to define functions that will be executed once before and after all testcases, and before and after each testcase.
+But be carefull when you use these features in multithreaded tests, as there is no additional synchronization done.
+Have a look at the examples, or the [API](#api) to see how this is done exactly.
+
+### Floating Point Numbers
+
+As floating-point comparison relies on a so called epsilon, we use the machine epsilon by default.
+But this may lead into false-negative test results, as it could be too accurate.
+In order to use a custom epsilon, there are two ways to achieve this.
+First, you can provide a macro in each compilation unit, which is called `SCTF_EPSILON` with a satisfying value like `0.000001`.
+A compiler invocation could look like `g++ -std=c++0x test.cpp -DSCTF_EPSILON=0.000001`.
+Or you provide it before including *sctf.hpp* like in the example below.
+The second way, is to provide it as an extern variable.
+Therefor define `SCTF_EXTERN_EPSILON` before including *sctf.hpp* and then invoke the `SCTF_SET_EPSILON` macro with a satisfying value in the source file.
 
 ### Examples
 
@@ -101,7 +129,7 @@ As floating-point comparison relies on a so called epsilon, we use the machine e
 SCTF_SET_EPSILON(0.001)
 SCTF_DEFAULT_MAIN(create_xml_reporter())
 
-SUITE(testSomething) {
+SUITE("testSomething") {
     TEST("abc") {
         ASSERT(x+1, EQ, 11);
         ASSERT_FALSE(false);
@@ -139,7 +167,7 @@ class MyClass {
     bool function() { return true; }
 };
 
-DESCRIBE(testMyClass) {
+DESCRIBE("testMyClass") {
     MyClass my;
 
     SETUP() {
@@ -162,23 +190,23 @@ DESCRIBE(testMyClass) {
 
 ### Tests
 
-| Call                    | Arguments   | Description                                                                                                                         |
-| ----------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| SUITE, DESCRIBE         | identifier  | Create a testsuite. The given identifier must be globally unique.                                                                   |
-| SUITE_PAR, DESCRIBE_PAR | identifier  | Create a testsuite. Tests in there will be executed concurrently in multiple threads. The given identifier must be globally unique. |
-| TEST, IT                | description | Create a testcase in a testsuite. The given description is a cstring.                                                               |
-| SETUP                   |             | Define a function, which will be executed once before all testcases. Thrown exceptions will get ignored.                            |
-| TEARDOWN                |             | Define a function, which will be executed once after all testcases. Thrown exceptions will get ignored.                             |
-| BEFORE_EACH             |             | Define a function, which will be executed before each testcase. Thrown exceptions will get ignored.                                 |
-| AFTER_EACH              |             | Define a function, which will be executed after each testcase. Thrown exceptions will get ignored.                                  |
+| Macro                   | Arguments   | Description                                                                                              |
+| ----------------------- | ----------- | -------------------------------------------------------------------------------------------------------- |
+| SUITE, DESCRIBE         | description | Create a testsuite.                                                                                      |
+| SUITE_PAR, DESCRIBE_PAR | description | Create a testsuite, where all tests will get executed concurrently in multiple threads.                  |
+| TEST, IT                | description | Create a testcase in a testsuite.                                                                        |
+| SETUP                   |             | Define a function, which will be executed once before all testcases. Thrown exceptions will get ignored. |
+| TEARDOWN                |             | Define a function, which will be executed once after all testcases. Thrown exceptions will get ignored.  |
+| BEFORE_EACH             |             | Define a function, which will be executed before each testcase. Thrown exceptions will get ignored.      |
+| AFTER_EACH              |             | Define a function, which will be executed after each testcase. Thrown exceptions will get ignored.       |
 
 ### Reporters
 
 | Format            | Factory Method                                                                                                                                                            | Description |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| console_reporter  | Produces plain text, which is aimed for human-readable console output. Optionally ANSI colors can be enabled. Allows reporting of captured output from stdout and stderr. |
-| xml_reporter      | Produces JUnit like XML format.                                                                                                                                           |
-| markdown_reporter | Produces a minimalistic report in markdown format.                                                                                                                        |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| console_reporter  | Produces plain text, which is aimed for human-readable console output. Optionally ANSI colors can be enabled. Allows reporting of captured output from stdout and stderr. |             |
+| xml_reporter      | Produces JUnit like XML format.                                                                                                                                           |             |
+| markdown_reporter | Produces a minimalistic report in markdown format.                                                                                                                        |             |
 
 ### Comparators
 

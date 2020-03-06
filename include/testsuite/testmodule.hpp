@@ -54,20 +54,20 @@
     class SCTF_PRIVATE_SUITE_NS(__LINE__)::SCTF_PRIVATE_SUITE_NAME(__LINE__)          \
         : public SCTF_PRIVATE_SUITE_NS(__LINE__)::test_module
 
-#define SUITE(NAME) SCTF_PRIVATE_SUITE_WRAPPER(NAME, testsuite)
-#define SUITE_PAR(NAME) SCTF_PRIVATE_SUITE_WRAPPER(NAME, testsuite_parallel)
-#define DESCRIBE(NAME) SUITE(NAME)
-#define DESCRIBE_PAR(NAME) SUITE_PAR(NAME)
+#define SUITE(DESCR) SCTF_PRIVATE_SUITE_WRAPPER(DESCR, testsuite)
+#define SUITE_PAR(DESCR) SCTF_PRIVATE_SUITE_WRAPPER(DESCR, testsuite_parallel)
+#define DESCRIBE(DESCR) SUITE(DESCR)
+#define DESCRIBE_PAR(DESCR) SUITE_PAR(DESCR)
 
-#define TEST(NAME)                                                                               \
-    class SCTF_PRIVATE_TEST_NAME(__LINE__)                                                       \
-    {                                                                                            \
-    public:                                                                                      \
-        SCTF_PRIVATE_TEST_NAME(__LINE__)(sctf_private_mod_type_ * mod_) {                        \
-            mod_->sctf_private_m_ts_->test(                                                      \
-                NAME, std::bind(&sctf_private_mod_type_::SCTF_PRIVATE_TEST_FN(__LINE__), mod_)); \
-        }                                                                                        \
-    } SCTF_PRIVATE_TEST_INST(__LINE__){this};                                                    \
+#define TEST(DESCR)                                                                               \
+    class SCTF_PRIVATE_TEST_NAME(__LINE__)                                                        \
+    {                                                                                             \
+    public:                                                                                       \
+        SCTF_PRIVATE_TEST_NAME(__LINE__)(sctf_private_mod_type_ * mod_) {                         \
+            mod_->sctf_private_m_ts_->test(                                                       \
+                DESCR, std::bind(&sctf_private_mod_type_::SCTF_PRIVATE_TEST_FN(__LINE__), mod_)); \
+        }                                                                                         \
+    } SCTF_PRIVATE_TEST_INST(__LINE__){this};                                                     \
     void SCTF_PRIVATE_TEST_FN(__LINE__)()
 
 #define IT(DESCR) TEST("It " DESCR)
