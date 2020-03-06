@@ -101,7 +101,7 @@ protected:
     } SCTF_PRIVATE_TEST_INST(__LINE__){this};                                                    \
     void SCTF_PRIVATE_TEST_FN(__LINE__)()
 
-#define IT_SHOULD(DESCR) TEST("It should " DESCR)
+#define IT(DESCR) TEST("It " DESCR)
 
 #define SCTF_PRIVATE_FN_WRAPPER(FN)                                                 \
     class sctf_private_##FN##_                                                      \
