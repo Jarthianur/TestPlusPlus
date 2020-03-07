@@ -114,7 +114,7 @@ SUITE("test_testsuite_parallel") {
 #    ifdef __clang__
         c = 250;
 #    endif
-        ASSERT_PERFORMANCE(ts->run(), c);
+        ASSERT_RUNTIME(ts->run(), c);
         ASSERT(ts->execution_time(), LT, c);
 #else
         ts->run();
@@ -390,14 +390,14 @@ SUITE_PAR("test_assertions") {
         ASSERT_THROWS(ASSERT_NOTHROW(throw std::runtime_error("")), assertion_failure);
         ASSERT_THROWS(ASSERT_NOTHROW(throw 1), assertion_failure);
     };
-    TEST("assert_performance") {
+    TEST("assert_runtime") {
         // successful
-        ASSERT_NOTHROW(ASSERT_PERFORMANCE(return, 100));
+        ASSERT_NOTHROW(ASSERT_RUNTIME(return, 100));
         // failing
         ASSERT_THROWS(
-            ASSERT_PERFORMANCE(std::this_thread::sleep_for(std::chrono::milliseconds(100)), 10),
+            ASSERT_RUNTIME(std::this_thread::sleep_for(std::chrono::milliseconds(100)), 10),
             assertion_failure);
-        ASSERT_THROWS(ASSERT_PERFORMANCE(throw 1, 100), assertion_failure);
+        ASSERT_THROWS(ASSERT_RUNTIME(throw 1, 100), assertion_failure);
     };
 };
 

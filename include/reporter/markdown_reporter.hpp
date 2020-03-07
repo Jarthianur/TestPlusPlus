@@ -22,6 +22,8 @@
 #ifndef SCTF_REPORTER_HTML_REPORTER_HPP
 #define SCTF_REPORTER_HTML_REPORTER_HPP
 
+#include <sstream>
+
 #include "common/types.hpp"
 #include "reporter/reporter.hpp"
 #include "testsuite/statistic.hpp"
@@ -43,12 +45,13 @@ public:
     /**
      * @param stream_  The stream to report to
      */
-    explicit markdown_reporter(std::ostream& stream_) : reporter(stream_) {}
+    markdown_reporter(std::ostream& stream_, bool capture_)
+        : reporter(stream_), m_capture(capture_) {}
 
     /**
      * @param fname_   The name of the file where the report will be written
      */
-    explicit markdown_reporter(char const* fname_) : reporter(fname_) {}
+    markdown_reporter(char const* fname_, bool capture_) : reporter(fname_), m_capture(capture_) {}
 
 protected:
     void report_testsuite(private_::testsuite_ptr const ts_) override {
@@ -56,8 +59,9 @@ protected:
               << SCTF_LF << "|-|-|-|-|-|" << SCTF_LF << "|" << ts_->statistics().tests() << "|"
               << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"
               << ts_->statistics().errors() << "|" << ts_->execution_time() << "ms|" << SCTF_XLF
-              << "### Tests" << SCTF_XLF << "|Name|Context|Time|Status|" << SCTF_LF << "|-|-|-|-|"
-              << SCTF_LF;
+              << "### Tests" << SCTF_XLF << "|Name|Context|Time|Status|"
+              << (m_capture ? "System-Out|System-Err|" : "") << SCTF_LF << "|-|-|-|-|"
+              << (m_capture ? "-|-|" : "") << SCTF_LF;
         reporter::report_testsuite(ts_);
         *this << SCTF_XLF;
     }
@@ -71,7 +75,12 @@ protected:
             default: break;
         }
         *this << "|" << tc_.name() << "|" << tc_.context() << "|" << tc_.duration() << "ms|"
-              << status << "|" << SCTF_LF;
+              << status << "|";
+        if (m_capture) {
+            print_system_out(tc_.cout());
+            print_system_out(tc_.cerr());
+        }
+        *this << SCTF_LF;
     }
 
     void begin_report() override {
@@ -84,22 +93,37 @@ protected:
               << (m_abs_tests - m_abs_errs - m_abs_fails) << "|" << m_abs_fails << "|" << m_abs_errs
               << "|" << m_abs_time << "ms|" << SCTF_LF;
     }
+
+    void print_system_out(std::string const& out_) {
+        std::string        line;
+        std::istringstream io_;
+        io_.str(out_);
+        bool first = true;
+        while (std::getline(io_, line)) {
+            *this << (first ? "" : "<br>") << "`" << line << "`";
+            first = false;
+        }
+        *this << "|";
+    }
+
+    bool m_capture;
 };
 
 /**
  * Create a markdown reporter.
  * @param stream_  The stream to report to (default: stdout)
  */
-static reporter_ptr create_markdown_reporter(std::ostream& stream_ = std::cout) {
-    return std::make_shared<markdown_reporter>(stream_);
+static reporter_ptr create_markdown_reporter(std::ostream& stream_  = std::cout,
+                                             bool          capture_ = false) {
+    return std::make_shared<markdown_reporter>(stream_, capture_);
 }
 
 /**
  * Create a markdown reporter. The specified file will be overwritten if it already exists.
  * @param fname_   The name of the file where the report will be written
  */
-static reporter_ptr create_markdown_reporter(char const* file_) {
-    return std::make_shared<markdown_reporter>(file_);
+static reporter_ptr create_markdown_reporter(char const* file_, bool capture_ = false) {
+    return std::make_shared<markdown_reporter>(file_, capture_);
 }
 }  // namespace sctf
 

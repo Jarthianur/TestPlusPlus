@@ -44,12 +44,12 @@ public:
     /**
      * @param stream_  The stream to report to
      */
-    explicit xml_reporter(std::ostream& stream_) : reporter(stream_) {}
+    xml_reporter(std::ostream& stream_, bool capture_) : reporter(stream_), m_capture(capture_) {}
 
     /**
      * @param fname_   The name of the file where the report will be written
      */
-    explicit xml_reporter(char const* fname_) : reporter(fname_) {}
+    xml_reporter(char const* fname_, bool capture_) : reporter(fname_), m_capture(capture_) {}
 
 protected:
     void report_testsuite(private_::testsuite_ptr const ts_) override {
@@ -71,15 +71,29 @@ protected:
         switch (tc_.state()) {
             case private_::testcase::result::ERROR:
                 *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<error message=\""
-                      << tc_.err_msg() << "\"></error>" << SCTF_LF << SCTF_XSPACE << "</testcase>";
+                      << tc_.err_msg() << "\"></error>" << SCTF_LF;
+                if (m_capture) {
+                    print_system_out(tc_);
+                }
+                *this << SCTF_XSPACE << "</testcase>";
                 break;
             case private_::testcase::result::FAILED:
                 *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<failure message=\""
-                      << tc_.err_msg() << "\"></failure>" << SCTF_LF << SCTF_XSPACE
-                      << "</testcase>";
+                      << tc_.err_msg() << "\"></failure>" << SCTF_LF;
+                if (m_capture) {
+                    print_system_out(tc_);
+                }
+                *this << SCTF_XSPACE << "</testcase>";
                 break;
-            case private_::testcase::result::PASSED: *this << "/>"; break;
-            default: break;
+            default:
+                if (m_capture) {
+                    *this << ">" << SCTF_LF;
+                    print_system_out(tc_);
+                    *this << SCTF_XSPACE << "</testcase>";
+                } else {
+                    *this << "/>";
+                }
+                break;
         }
         *this << SCTF_LF;
     }
@@ -93,23 +107,31 @@ protected:
         *this << "</testsuites>" << SCTF_LF;
     }
 
+    void print_system_out(private_::testcase const& tc_) {
+        *this << SCTF_XSPACE << SCTF_SPACE << "<system-out>" << tc_.cout() << "</system-out>"
+              << SCTF_LF;
+        *this << SCTF_XSPACE << SCTF_SPACE << "<system-err>" << tc_.cerr() << "</system-err>"
+              << SCTF_LF;
+    }
+
     std::size_t mutable m_id = 0;
+    bool m_capture;
 };
 
 /**
  * Create a xml reporter.
  * @param stream_  The stream to report to (default: stdout)
  */
-static reporter_ptr create_xml_reporter(std::ostream& stream_ = std::cout) {
-    return std::make_shared<xml_reporter>(stream_);
+static reporter_ptr create_xml_reporter(std::ostream& stream_ = std::cout, bool capture_ = false) {
+    return std::make_shared<xml_reporter>(stream_, capture_);
 }
 
 /**
  * Create a xml reporter. The specified file will be overwritten if it already exists.
  * @param fname_   The name of the file where the report will be written
  */
-static reporter_ptr create_xml_reporter(char const* fname_) {
-    return std::make_shared<xml_reporter>(fname_);
+static reporter_ptr create_xml_reporter(char const* fname_, bool capture_ = false) {
+    return std::make_shared<xml_reporter>(fname_, capture_);
 }
 }  // namespace sctf
 

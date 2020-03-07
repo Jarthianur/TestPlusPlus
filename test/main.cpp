@@ -29,8 +29,8 @@ using namespace sctf;
 
 int main(int, char**) {
     auto rep   = create_console_reporter(true, true);
-    auto repx  = create_xml_reporter("test.xml");
-    auto repmd = create_markdown_reporter("test.md");
+    auto repx  = create_xml_reporter("test.xml", true);
+    auto repmd = create_markdown_reporter("test.md", true);
 
     try {
         basic_tests();

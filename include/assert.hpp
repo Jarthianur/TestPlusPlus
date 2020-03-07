@@ -123,7 +123,7 @@
  */
 #define ASSERT_RUNTIME(FUNC, MILLIS)                      \
     sctf::private_::assert_runtime([&] { FUNC; }, MILLIS, \
-                                       sctf::private_::code_location{__FILE__, __LINE__})
+                                   sctf::private_::code_location{__FILE__, __LINE__})
 
 namespace sctf
 {
