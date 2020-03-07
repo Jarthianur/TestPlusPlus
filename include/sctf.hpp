@@ -22,13 +22,15 @@
 #ifndef SCTF_SCTF_HPP
 #define SCTF_SCTF_HPP
 
-#define SCFT_VERSION "1.2-rc1"
+#define SCFT_VERSION "1.2-rc2"
 
 #include "common/types.hpp"
 #include "comparator/equals.hpp"
 #include "comparator/greater.hpp"
 #include "comparator/inrange.hpp"
 #include "comparator/less.hpp"
+#include "comparator/like.hpp"
+#include "comparator/match.hpp"
 #include "comparator/unequals.hpp"
 #include "reporter/console_reporter.hpp"
 #include "reporter/markdown_reporter.hpp"

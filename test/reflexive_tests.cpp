@@ -96,6 +96,10 @@ SUITE_PAR("test_comparators") {
         ASSERT_TRUE(!c);
         ASSERT(*c, EQ, std::string("Expected 1 to be unequals 1"));
     };
+    TEST("match") {
+        ASSERT("hello", MATCH, ".*");
+        ASSERT("hello", MATCH, "\\d+");
+    };
 };
 
 SUITE("test_testsuite_parallel") {
