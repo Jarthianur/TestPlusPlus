@@ -7,22 +7,20 @@
 [![codecov](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework/branch/master/graph/badge.svg)](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework)
 [![BCH compliance](https://bettercodehub.com/edge/badge/Jarthianur/simple-cpp-test-framework?branch=master)](https://bettercodehub.com/)
 
-**This is a simple header-only testing framework for C++11/14/17.**
-Featuring great **extendability** and an **easy, but powerful and modular** API.
-Additionally it serves the capability to **parallelize** tests, using *OpenMP*.
+**This is a simple header-only testing framework for C++11/14/17 featuring a simple, yet powerfull API, and the capability to parallelize tests, using *OpenMP*.**
 
-To use it, just include the all in one [header](sctf.hpp) into your builds.
+To use it, just include the all in one [header](https://github.com/Jarthianur/simple-cpp-test-framework/releases/download/1.2/sctf.hpp) into your builds.
 
 *So why actually writing a new testing framework?*
 
 There are great C++ testing frameworks available out there, but each has its pro's and con's.
 When I started to write proper tests for my projects, I couldn't find a testing framework that completely suited my needs.
-So I thought, why not just writing my own testing framework, which simply has every feature I'd like.
+So I thought, why not just writing my own, which simply has every feature I'd like.
 As a side effect this project was - and is still - a great opportunity to improve my C++ skills.
 This framework is designed around simplicity and effectiveness, for the user as well as the frameworks code itself.
 There is no excessive documentation reading required, or complicated build integration.
 Everything is hidden that distracts you from focusing on what really counts, writing qualitative tests.
-Of course this framework might not suite your needs completely, hence feel free to provide suggestions, or request a feature you'd like.
+Of course this framework might not suite all *your* needs, hence feel free to provide suggestions, or request a feature you'd wish.
 Please have a look at the full [feature set](#feature-set).
 
 ## Contents
@@ -42,13 +40,12 @@ Please have a look at the full [feature set](#feature-set).
     - [Reporters](#reporters)
     - [Comparators](#comparators)
     - [Assertions](#assertions)
-  - [Some Words About Parallelization](#some-words-about-parallelization)
-  - [Extending](#extending)
-    - [of reporters](#of-reporters)
-    - [of comparators](#of-comparators)
-    - [Stringify values](#stringify-values)
+  - [Parallelization Of Tests](#parallelization-of-tests)
+  - [How To Extend](#how-to-extend)
+    - [Reporters](#reporters-1)
+    - [Comparators](#comparators-1)
+    - [Value Stringification](#value-stringification)
   - [Contributing](#contributing)
-      - [Footnote](#footnote)
 
 ## Feature Set
 
@@ -82,7 +79,8 @@ If you prefer, you can of course write tests in header files and include them in
 *Note that it is not possible to write multiple testsuites, or tests in one line, as it would break name generation.*
 To run and report all tests, just create a reporter and call its `report()` function in your `main()`, as seen in the examples.
 Alternatively invoke the `SCTF_DEFAULT_MAIN(...)` macro in one of your source files and pass it a call to any reporter factory method.
-In order to run tests in multiple threads, you have to enable OpenMP at compilation (e.g. for gcc add `-fopenmp` flag).
+In order to run tests in multiple threads you have to enable OpenMP at compilation (e.g. for gcc add `-fopenmp` flag).
+Every output to stdout, or stderr from inside tests is captured per testcase, and can be included in the report.
 
 ### Test Styles
 
@@ -101,12 +99,14 @@ Hence the same scoping rules as for usual class definitions apply to testsuites.
 Testcases are member functions of their testsuite.
 Hence the usual scoping rules for methods apply to them.
 
-You might know the need for fixtures, basically an instance of an unit under test (UUT), in other contexts.
+You might know the need for fixtures, basically an instance of a unit under test (UUT), in other contexts.
 It is up to you to decide whether testcases should be isolated, or run against a designated fixture.
 This framework supports the usage of fixtures, as you can just declare any object at testsuite scope - remember, it's just a member field in the end.
 Also it is possible to define functions that will be executed once before and after all testcases, and before and after each testcase.
-But be carefull when you use these features in multithreaded tests, as there is no additional synchronization done.
+But be carefull when you use these features in multithreaded tests, as there is no additional synchronization happening.
 Have a look at the examples, or the [API](#api) to see how this is done exactly.
+
+The use of a testsuite wide UUT instance might also be usefull, if it is expensive to construct and initiate.
 
 ### Floating Point Numbers
 
@@ -159,12 +159,15 @@ SUITE("testSomething") {
 ```cpp
 #define SCTF_EPSILON 0.00001
 #include "sctf.hpp"
-SCTF_DEFAULT_MAIN(create_xml_reporter("test_report.xml"))
+
+int main(int argc, char** argv) {
+    return sctf::create_markdown_reporter("results.md")->report();
+}
 
 class MyClass {
     public:
-    int i = 0;
-    bool function() { return true; }
+        int i = 0;
+        bool function() { return true; }
 };
 
 DESCRIBE("testMyClass") {
@@ -202,11 +205,11 @@ DESCRIBE("testMyClass") {
 
 ### Reporters
 
-| Format            | Factory Method                                                                                                                                                            | Description |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| console_reporter  | Produces plain text, which is aimed for human-readable console output. Optionally ANSI colors can be enabled. Allows reporting of captured output from stdout and stderr. |             |
-| xml_reporter      | Produces JUnit like XML format.                                                                                                                                           |             |
-| markdown_reporter | Produces a minimalistic report in markdown format.                                                                                                                        |             |
+| Format                      | Factory Method           | Arguments (default)                                                       |
+| --------------------------- | ------------------------ | ------------------------------------------------------------------------- |
+| Console oriented plain text | create_console_reporter  | output stream/file (stdout), ANSI colors (false), captured output (false) |
+| JUnit XML                   | create_xml_reporter      | output stream/file (stdout), captured output (false)                      |
+| Markdown                    | create_markdown_reporter | output stream/file (stdout), captured output (false)                      |
 
 ### Comparators
 
@@ -214,44 +217,50 @@ DESCRIBE("testMyClass") {
 
 | Comparator   | Shortwrites               | Description                                                                                                                                          |
 | ------------ | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| equals       | EQUALS, EQ                | Compare two values to be equal, using `operator ==`.                                                                                                 |
-| unequals     | UNEQUALS, NE              | Compare two values to be not equal, using `operator !=`.                                                                                             |
-| greater_than | GREATER_THAN, GREATER, GT | Compare one value to be greater than another, using `operator >`.                                                                                    |
-| less_than    | LESS_THAN, LESS, LT       | Compare one value to be less than another, using `operator <`.                                                                                       |
+| equals       | EQUALS, EQ                | Compare two values to be equal.                                                                                                                      |
+| unequals     | UNEQUALS, NE              | Compare two values to be not equal.                                                                                                                  |
+| greater_than | GREATER_THAN, GREATER, GT | Compare one value to be greater than another.                                                                                                        |
+| less_than    | LESS_THAN, LESS, LT       | Compare one value to be less than another.                                                                                                           |
 | in_range     | IN_RANGE, IN              | Check a value to be in range of any container. This means for containers (C++ "ranges") to contain the value and for strings to contain a substring. |
 
 ### Assertions
 
-**Note:** VALUE is the actual value you want to check. EXPECT is the expected value. COMP is the comparator. FUNC is one statement, or multiple split by `;`.
+| Assertion       | Parameters          | Description                                                                                                                                                  |
+| --------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| ASSERT          | VALUE, COMP, EXPECT | Assert successfull comparison of VALUE and EXPECT with COMP.                                                                                                 |
+| ASSERT_NOT      | VALUE, COMP, EXPECT | Assert with negated comparison. Equivalent to `!COMP`.                                                                                                       |
+| ASSERT_EQ       | VALUE, EXPECT       | Assert using *EQUALS* comparator.                                                                                                                            |
+| ASSERT_TRUE     | VALUE               | Assert VALUE to be *true*.                                                                                                                                   |
+| ASSERT_FALSE    | VALUE               | Assert VALUE to be *false*.                                                                                                                                  |
+| ASSERT_NOT_NULL | VALUE               | Assert VALUE to be not *nullptr*.                                                                                                                            |
+| ASSERT_NULL     | VALUE               | Assert VALUE to be *nullptr*.                                                                                                                                |
+| ASSERT_ZERO     | VALUE               | Assert VALUE to be *0*.                                                                                                                                      |
+| ASSERT_THROWS   | STMT, TYPE          | Assert STMT to throw an exception of TYPE. Multiple statements can be split by `;`.                                                                          |
+| ASSERT_NOTHROW  | STMT                | Assert STMT not to throw any exception.  Multiple statements can be split by `;`.                                                                            |
+| ASSERT_RUNTIME  | STMT, MILLIS        | Assert STMT to run in MILLIS milliseconds at maximum. The statement is not interrupted, if the time exceeds MILLIS. Multiple statements can be split by `;`. |
 
-| Assertion          | Parameters          | Description                                                                                                              |
-| ------------------ | ------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| ASSERT             | VALUE, COMP, EXPECT | Common assert. Assert successfull comparison of VALUE and EXPECT with COMP.                                              |
-| ASSERT_NOT         | VALUE, COMP, EXPECT | Same as *assert*, but with negated comparison.                                                                           |
-| ASSERT_EQUALS      | VALUE, EXPECT       | Wrapper for *assert* using *EQUALS* comparator.                                                                          |
-| ASSERT_TRUE        | VALUE               | Assert VALUE to be *true*.                                                                                               |
-| ASSERT_FALSE       | VALUE               | Assert VALUE to be *false*.                                                                                              |
-| ASSERT_NOT_NULL    | VALUE               | Assert VALUE not to be *nullptr*.                                                                                        |
-| ASSERT_NULL        | VALUE               | Assert VALUE to be *nullptr*.                                                                                            |
-| ASSERT_ZERO        | VALUE               | Assert VALUE to be *0*, where the type of *0* will match VALUE's.                                                        |
-| ASSERT_THROWS      | FUNC, TYPE          | Assert FUNC to throw an exception of TYPE.                                                                               |
-| ASSERT_NOTHROW     | FUNC                | Assert FUNC not to throw any exception.                                                                                  |
-| ASSERT_PERFORMANCE | FUNC, MILLIS        | Assert FUNC to run in MILLIS milliseconds at maximum. The FUNC statement is not interrupted, if the time exceeds MILLIS. |
-
-## Some Words About Parallelization
+## Parallelization Of Tests
 
 This testing framework serves the capability of parallelizing tests, using OpenMP. Actually it is not really parallel, but concurrent.
 Nevertheless, it may reduce test durations massively.
 Keep in mind that tests, running concurrently, *must* be completely independent from each other.
-Also consider, spawning threads has some overhead. Thus there is no point in running just a few, anyway fast, tests concurrently.
+The same rules for usual multithreading apply here, to not produce dataraces, or deadlocks.
+As long as testcases do not share any data, it is completely threadsafe.
+If testcases share data, like fixtures, you have to take care of synchronization, meaning that all invokations on your shared data needs to be threadsafe.
+This also applies to `BEFORE_EACH` and `AFTER_EACH` definitions, while `SETUP` and `TEARDOWN` are executed synchronous.
+You may also use parallel tests to test a components threadsafety - actually not a proper way of testing threadsafety.
+Also consider, spawning threads has some overhead.
+Thus there is no point in running just a few, anyway fast tests concurrently.
+*Usually* the threadpool is kept alive in the background.
+So if you use parallel testsuites once, don't be afraid to use them wherever you can, even for short tests, as there is not much more overhead.
 
-## Extending
+## How To Extend
 
-### of reporters
+### Reporters
 
 To add a new reporter just implement the [reporter](include/reporter/reporter.hpp) interface. Have a look at the preimplemented reporters, how this is exactly done.
 
-### of comparators
+### Comparators
 
 To add a new comparator you basically just need to invoke two macros.
 For example:
@@ -261,49 +270,18 @@ COMPARATOR(pred, "predecessor of", value + 1 == expect)
 PROVIDE_COMPARATOR(pred, PRE)
 ```
 
-This will create a generic comparator function for you. The syntax is as follows:
-`COMPARATOR(NAME, CONSTRAINT, PREDICATE)`, where *NAME* is the function name. *CONSTRAINT* is a string representing what it does and is used for reporting. *PREDICATE* is the actual comparison.
+This will create a generic comparator for you. The syntax is as follows:
+`COMPARATOR(NAME, CONSTRAINT, PREDICATE)`, where *NAME* is the comparator name.
+*CONSTRAINT* is a cstring representing what it does and is used for reporting.
+*PREDICATE* is the actual comparison.
 If you need some more complex comparators, have a look at the [in_range](include/comparator/inrange.hpp) to see how it is implemented.
 
-To specialize a comparator for custom types, which do not provide a respective operator, just specialize the comparator template. For example:
+### Value Stringification
 
-```cpp
-namespace sctf {
-namespace _ {
-    template<>
-    comparison equals<Custom>(const Custom& value, const Custom& expect)
-    {
-        return value.hash() == expect.hash()
-               ? SUCCESS
-               : comparison(equals_comp_str, to_string(value),
-                            to_string(expect));
-    }
-}
-}
-```
-
-### Stringify values
-
-To allow proper reporting, every asserted value/type needs to be stringified somehow. This framework has an approach to convert every value to string if possible, else the typename is used. If you need to handle custom types in a certain way, just specialize the [to_string](include/common/stringify.hpp) template. For example:
-
-```cpp
-namespace sctf
-{
-namespace _
-{
-    template<>
-    inline std::string to_string<Custom>(const Custom& arg)
-    {
-        return arg.get_id();
-    }
-}
-}
-```
+To allow proper reporting, every asserted value/type needs to be stringified somehow.
+This framework uses an approach to convert every value to string if possible, else the typename is used.
+If you need to handle custom types in a certain way, just specialize the [to_string](include/common/stringify.hpp) template.
 
 ## Contributing
 
 Contribution to this project is always welcome.
-
-#### Footnote
-
-I have implemented this framework to test my own C++ projects with a fundamental and extendable API. Nevertheless anybody, finding this framework useful, may use, or even extend and contribute to it.

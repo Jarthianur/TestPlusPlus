@@ -121,8 +121,8 @@
  * @param FUNC The function call
  * @param MILLIS The max amount of milliseconds
  */
-#define ASSERT_PERFORMANCE(FUNC, MILLIS)                      \
-    sctf::private_::assert_performance([&] { FUNC; }, MILLIS, \
+#define ASSERT_RUNTIME(FUNC, MILLIS)                      \
+    sctf::private_::assert_runtime([&] { FUNC; }, MILLIS, \
                                        sctf::private_::code_location{__FILE__, __LINE__})
 
 namespace sctf
@@ -164,7 +164,7 @@ static void assert_nothrow(test_function&& fn_, code_location const& loc_) {
     }
 }
 
-static void assert_performance(test_function&& fn_, double max_ms_, code_location const& loc_) {
+static void assert_runtime(test_function&& fn_, double max_ms_, code_location const& loc_) {
     try {
         duration dur;
         fn_();
