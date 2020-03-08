@@ -22,6 +22,8 @@
 #ifndef SCTF_COMPARATOR_REGEX_HPP
 #define SCTF_COMPARATOR_REGEX_HPP
 
+#include <regex>
+
 #include "comparator/comparator.hpp"
 
 COMPARATOR(match, "matching", std::regex_match(actual_value, std::regex(expected_value)))

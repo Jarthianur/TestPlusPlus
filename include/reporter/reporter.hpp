@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_REPORTER_ABSTRACT_REPORTER_HPP
-#define SCTF_REPORTER_ABSTRACT_REPORTER_HPP
+#ifndef SCTF_REPORTER_REPORTER_HPP
+#define SCTF_REPORTER_REPORTER_HPP
 
 #include <algorithm>
 #include <cstddef>
@@ -29,18 +29,13 @@
 #include <stdexcept>
 #include <vector>
 
-#include "common/cpp_meta.hpp"
-#include "common/types.hpp"
-#include "testsuite/runner.hpp"
 #include "testsuite/statistic.hpp"
 #include "testsuite/testsuite.hpp"
 
-#ifdef SCTF_SYS_WIN
-#    define SCTF_LF "\r\n"
-#else
-#    define SCTF_LF "\n"
-#endif
+#include "runner.hpp"
+#include "types.hpp"
 
+#define SCTF_LF "\n"
 #define SCTF_SPACE "  "
 #define SCTF_XSPACE "    "
 
@@ -115,4 +110,4 @@ protected:
 }  // namespace private_
 }  // namespace sctf
 
-#endif  // SCTF_REPORTER_ABSTRACT_REPORTER_HPP
+#endif  // SCTF_REPORTER_REPORTER_HPP

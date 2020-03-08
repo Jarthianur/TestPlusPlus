@@ -19,16 +19,16 @@
  }
  */
 
-#ifndef SCTF_TESTSUITE_RUNNER_HPP
-#define SCTF_TESTSUITE_RUNNER_HPP
+#ifndef SCTF_RUNNER_HPP
+#define SCTF_RUNNER_HPP
 
 #include <algorithm>
 #include <vector>
 
-#include "common/stringify.hpp"
-#include "common/types.hpp"
 #include "testsuite/testsuite.hpp"
 #include "testsuite/testsuite_parallel.hpp"
+
+#include "types.hpp"
 
 namespace sctf
 {
@@ -40,9 +40,6 @@ namespace private_
 class runner
 {
 public:
-    runner()           = default;
-    ~runner() noexcept = default;
-
     /**
      * Add a testsuite to this runner.
      * @param ts_ The testsuite to add
@@ -82,4 +79,4 @@ private:
 }  // namespace private_
 }  // namespace sctf
 
-#endif  // SCTF_TESTSUITE_RUNNER_HPP
+#endif  // SCTF_RUNNER_HPP

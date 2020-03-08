@@ -28,11 +28,12 @@
 #include <utility>
 #include <vector>
 
-#include "common/streambuf_proxy.hpp"
-#include "common/stringify.hpp"
-#include "common/types.hpp"
 #include "testsuite/statistic.hpp"
-#include "testsuite/testcase.hpp"
+#include "testsuite/streambuf_proxy.hpp"
+
+#include "stringify.hpp"
+#include "testcase.hpp"
+#include "types.hpp"
 
 #define SCTF_EXEC_SILENT(F) \
     if (F) {                \

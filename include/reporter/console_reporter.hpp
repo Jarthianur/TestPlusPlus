@@ -19,14 +19,15 @@
  }
  */
 
-#ifndef SCTF_REPORTER_PLAINTEXT_REPORTER_HPP
-#define SCTF_REPORTER_PLAINTEXT_REPORTER_HPP
+#ifndef SCTF_REPORTER_CONSOLE_REPORTER_HPP
+#define SCTF_REPORTER_CONSOLE_REPORTER_HPP
 
-#include "common/types.hpp"
 #include "reporter/reporter.hpp"
 #include "testsuite/statistic.hpp"
-#include "testsuite/testcase.hpp"
 #include "testsuite/testsuite.hpp"
+
+#include "testcase.hpp"
+#include "types.hpp"
 
 #define ANSI_RED "\x1b[31m"
 #define ANSI_GREEN "\x1b[32m"
@@ -52,7 +53,7 @@ public:
      * @param color_   Whether to print ANSI colored text
      * @param capture_ Whether to report captured stdout/stderr
      */
-    explicit console_reporter(std::ostream& stream_, bool color_ = false, bool capture_ = false)
+    console_reporter(std::ostream& stream_, bool color_, bool capture_)
         : reporter(stream_), m_color(color_), m_capture(capture_) {}
 
     /**
@@ -60,7 +61,7 @@ public:
      * @param color_   Whether to print ANSI colored text
      * @param capture_ Whether to report captured stdout/stderr
      */
-    explicit console_reporter(char const* fname_, bool color_ = false, bool capture_ = false)
+    console_reporter(char const* fname_, bool color_, bool capture_)
         : reporter(fname_), m_color(color_), m_capture(capture_) {}
 
 protected:
@@ -151,4 +152,4 @@ static reporter_ptr create_console_reporter(char const* fname_, bool color_ = fa
 #undef ANSI_YELLOW
 #undef ANSI_MAGENTA
 
-#endif  // SCTF_REPORTER_PLAINTEXT_REPORTER_HPP
+#endif  // SCTF_REPORTER_CONSOLE_REPORTER_HPP

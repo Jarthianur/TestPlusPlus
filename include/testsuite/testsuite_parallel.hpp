@@ -25,7 +25,7 @@
 #include <limits>
 #include <stdexcept>
 
-#include "common/streambuf_proxy_omp.hpp"
+#include "testsuite/streambuf_proxy_omp.hpp"
 #include "testsuite/testsuite.hpp"
 
 namespace sctf

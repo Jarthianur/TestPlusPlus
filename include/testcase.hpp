@@ -19,16 +19,16 @@
  }
  */
 
-#ifndef SCTF_TESTSUITE_TESTCASE_HPP
-#define SCTF_TESTSUITE_TESTCASE_HPP
+#ifndef SCTF_TESTCASE_HPP
+#define SCTF_TESTCASE_HPP
 
 #include <cstdint>
 #include <string>
 #include <utility>
 
-#include "common/assertion_failure.hpp"
-#include "common/duration.hpp"
-#include "common/types.hpp"
+#include "assertion_failure.hpp"
+#include "duration.hpp"
+#include "types.hpp"
 
 namespace sctf
 {

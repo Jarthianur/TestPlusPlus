@@ -19,16 +19,17 @@
  }
  */
 
-#ifndef SCTF_REPORTER_HTML_REPORTER_HPP
-#define SCTF_REPORTER_HTML_REPORTER_HPP
+#ifndef SCTF_REPORTER_MARKDOWN_REPORTER_HPP
+#define SCTF_REPORTER_MARKDOWN_REPORTER_HPP
 
 #include <sstream>
 
-#include "common/types.hpp"
 #include "reporter/reporter.hpp"
 #include "testsuite/statistic.hpp"
-#include "testsuite/testcase.hpp"
 #include "testsuite/testsuite.hpp"
+
+#include "testcase.hpp"
+#include "types.hpp"
 
 #define SCTF_XLF (SCTF_LF SCTF_LF)
 
@@ -129,4 +130,4 @@ static reporter_ptr create_markdown_reporter(char const* file_, bool capture_ = 
 
 #undef SCTF_XLF
 
-#endif  // SCTF_REPORTER_HTML_REPORTER_HPP
+#endif  // SCTF_REPORTER_MARKDOWN_REPORTER_HPP

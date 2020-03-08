@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_COMMON_STRINGIFY_HPP
-#define SCTF_COMMON_STRINGIFY_HPP
+#ifndef SCTF_STRINGIFY_HPP
+#define SCTF_STRINGIFY_HPP
 
 #include <algorithm>
 #include <iomanip>
@@ -30,9 +30,10 @@
 #include <typeinfo>
 #include <utility>
 
-#include "common/cpp_meta.hpp"
-#include "common/traits.hpp"
-#include "common/types.hpp"
+#include "cpp_meta.hpp"
+#include "regex.hpp"
+#include "traits.hpp"
+#include "types.hpp"
 
 namespace sctf
 {
@@ -169,4 +170,4 @@ inline std::string to_string(regex const& arg_) {
 }  // namespace private_
 }  // namespace sctf
 
-#endif  // SCTF_COMMON_STRINGIFY_HPP
+#endif  // SCTF_STRINGIFY_HPP

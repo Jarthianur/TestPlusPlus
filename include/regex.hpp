@@ -19,38 +19,35 @@
  }
  */
 
-#ifndef SCTF_DURATION_HPP
-#define SCTF_DURATION_HPP
+#ifndef SCTF_REGEX_HPP
+#define SCTF_REGEX_HPP
 
-#include <chrono>
+#include <cstddef>
+#include <regex>
 
 namespace sctf
 {
-namespace private_
+struct regex final
 {
-/**
- * Used to measure durations in milliseconds.
- * The starting timepoint is fixed on construction.
- */
-class duration final
-{
-public:
-    duration() : m_start(std::chrono::steady_clock::now()) {}
+    regex(char const* p_, std::regex_constants::syntax_option_type flags_)
+        : pattern(p_), re(p_, flags_) {}
 
-    ~duration() noexcept = default;
-
-    /**
-     * Get the duration since start in milliseconds.
-     */
-    double get() {
-        return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - m_start)
-            .count();
+    operator std::regex() const {
+        return re;
     }
 
-private:
-    std::chrono::steady_clock::time_point const m_start;
+    char const* const pattern;
+    std::regex const  re;
 };
-}  // namespace private_
+
+inline regex operator"" _re(char const* lit_, std::size_t) {
+    return regex(lit_, std::regex::nosubs | std::regex::ECMAScript);
+}
+
+inline regex operator"" _re_i(char const* lit_, std::size_t) {
+    return regex(lit_, std::regex::nosubs | std::regex::ECMAScript | std::regex::icase);
+}
+
 }  // namespace sctf
 
-#endif  // SCTF_DURATION_HPP
+#endif  // SCTF_REGEX_HPP

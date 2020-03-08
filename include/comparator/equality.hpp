@@ -26,8 +26,9 @@
 #include <cmath>
 #include <limits>
 
-#include "common/traits.hpp"
 #include "comparator/comparator.hpp"
+
+#include "traits.hpp"
 
 namespace sctf
 {
@@ -124,6 +125,7 @@ public:
                    comparison();
     }
 };
+
 }  // namespace private_
 }  // namespace sctf
 

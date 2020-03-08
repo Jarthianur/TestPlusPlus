@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_COMMON_CPP_META_HPP
-#define SCTF_COMMON_CPP_META_HPP
+#ifndef SCTF_CPP_META_HPP
+#define SCTF_CPP_META_HPP
 
 #if __cplusplus >= 201703L
 #    define SCTF_CPP_V17
@@ -40,4 +40,4 @@
 #    error SCTF is only supported for Linux (gcc), OSX (clang), and Windows (msvc)
 #endif
 
-#endif  // SCTF_COMMON_CPP_META_HPP
+#endif  // SCTF_CPP_META_HPP

@@ -19,8 +19,8 @@
  }
  */
 
-#ifndef SCTF_COMMON_TRAITS_HPP
-#define SCTF_COMMON_TRAITS_HPP
+#ifndef SCTF_TRAITS_HPP
+#define SCTF_TRAITS_HPP
 
 #include <iterator>
 #include <type_traits>
@@ -115,7 +115,8 @@ class unequality_capability
 public:
     static const bool value = decltype(test<S, T>(0))::value;
 };
+
 }  // namespace private_
 }  // namespace sctf
 
-#endif  // SCTF_COMMON_TRAITS_HPP
+#endif  // SCTF_TRAITS_HPP

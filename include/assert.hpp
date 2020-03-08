@@ -22,13 +22,12 @@
 #ifndef SCTF_ASSERT_HPP
 #define SCTF_ASSERT_HPP
 
-#include "common/assertion_failure.hpp"
-#include "common/duration.hpp"
-#include "common/stringify.hpp"
-#include "common/types.hpp"
 #include "comparator/comparator.hpp"
-#include "comparator/equality.hpp"
-#include "comparator/range.hpp"
+
+#include "assertion_failure.hpp"
+#include "duration.hpp"
+#include "stringify.hpp"
+#include "types.hpp"
 
 /**
  * Test for successful comparison.
@@ -104,24 +103,24 @@
  * @param FUNC The function call
  * @param TYPE The exception type
  */
-#define ASSERT_THROWS(FUNC, TYPE)                      \
-    sctf::private_::assert_throws<TYPE>([&] { FUNC; }, \
+#define ASSERT_THROWS(STMT, TYPE)                      \
+    sctf::private_::assert_throws<TYPE>([&] { STMT; }, \
                                         sctf::private_::code_location{__FILE__, __LINE__})
 
 /**
  * Test for FUNC not to throw any exception.
  * @param FUNC The function call
  */
-#define ASSERT_NOTHROW(FUNC) \
-    sctf::private_::assert_nothrow([&] { FUNC; }, sctf::private_::code_location{__FILE__, __LINE__})
+#define ASSERT_NOTHROW(STMT) \
+    sctf::private_::assert_nothrow([&] { STMT; }, sctf::private_::code_location{__FILE__, __LINE__})
 
 /**
  * Test for FUNC to run faster than MILLIS.
  * @param FUNC The function call
  * @param MILLIS The max amount of milliseconds
  */
-#define ASSERT_RUNTIME(FUNC, MILLIS)                      \
-    sctf::private_::assert_runtime([&] { FUNC; }, MILLIS, \
+#define ASSERT_RUNTIME(STMT, MILLIS)                      \
+    sctf::private_::assert_runtime([&] { STMT; }, MILLIS, \
                                    sctf::private_::code_location{__FILE__, __LINE__})
 
 namespace sctf
@@ -143,21 +142,18 @@ static void assert_throws(test_function&& fn_, code_location const& loc_) {
     } catch (T const&) {
         return;
     } catch (std::exception const& e) {
-        throw assertion_failure(
-            std::string("Wrong exception thrown, caught '") + to_string(e) + "'", loc_);
+        throw assertion_failure("Wrong exception thrown, caught " + to_string(e), loc_);
     } catch (...) {
         throw assertion_failure("Wrong exception thrown", loc_);
     }
-    throw assertion_failure(
-        std::string("No exception thrown, expected '") + name_for_type<T>() + "'", loc_);
+    throw assertion_failure("No exception thrown, expected " + name_for_type<T>(), loc_);
 }
 
 static void assert_nothrow(test_function&& fn_, code_location const& loc_) {
     try {
         fn_();
     } catch (const std::exception& e) {
-        throw assertion_failure(std::string("Expected no exception, caught '") + to_string(e) + "'",
-                                loc_);
+        throw assertion_failure("Expected no exception, caught " + to_string(e), loc_);
     } catch (...) {
         throw assertion_failure("Expected no exception", loc_);
     }
@@ -169,7 +165,7 @@ static void assert_runtime(test_function&& fn_, double max_ms_, code_location co
         fn_();
         double dur_ms = dur.get();
         if (dur_ms > max_ms_) {
-            throw assertion_failure(std::string("runtime > ") + to_string(max_ms_) + "ms", loc_);
+            throw assertion_failure("runtime > " + to_string(max_ms_) + "ms", loc_);
         }
     } catch (std::exception const& e) {
         throw assertion_failure(e.what(), loc_);
@@ -177,6 +173,7 @@ static void assert_runtime(test_function&& fn_, double max_ms_, code_location co
         throw assertion_failure("Unknown exception thrown", loc_);
     }
 }
+
 }  // namespace private_
 }  // namespace sctf
 
