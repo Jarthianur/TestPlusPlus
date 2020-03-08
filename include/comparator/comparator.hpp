@@ -117,16 +117,12 @@ private:
 #endif
 };
 
-#ifdef SCTF_CPP_V11
-#    define SUCCESS comparison()
-#else
 constexpr comparison SUCCESS = comparison();
-#endif
 
 #ifdef SCTF_EPSILON
 static double epsilon = SCTF_EPSILON;
 #elif defined(SCTF_EXTERN_EPSILON)
-extern double        epsilon;
+extern double epsilon;
 #endif
 }  // namespace private_
 }  // namespace sctf

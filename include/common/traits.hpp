@@ -33,11 +33,10 @@
 #define IS(T, ...) (T<__VA_ARGS__>::value)
 #define IS_TYPE(T, R) (IS(std::is_same, T, R))
 #define IS_FLOAT(T) (IS(std::is_floating_point, T))
-#define IS_STREAMABLE(T, S) (IS(sctf::private_::is_streamable, S, T))
-#define IS_ITERABLE(T) (IS(sctf::private_::is_iterable, T))
-#define IS_ORDINAL(T) (IS(sctf::private_::is_ordinal, T))
-#define IS_EQUAL_COMPARABLE(T, R) (IS(sctf::private_::is_equal_comparable, T, R))
-#define IS_UNEQUAL_COMPARABLE(T, R) (IS(sctf::private_::is_unequal_comparable, T, R))
+#define HAS_STREAM_CAPABILITY(T, S) (IS(sctf::private_::stream_capability, S, T))
+#define HAS_ITERATOR_CAPABILITY(T) (IS(sctf::private_::iterator_capability, T))
+#define HAS_EQUALITY_CAPABILITY(T, R) (IS(sctf::private_::equality_capability, T, R))
+#define HAS_UNEQUALITY_CAPABILITY(T, R) (IS(sctf::private_::unequality_capability, T, R))
 
 namespace sctf
 {
@@ -49,7 +48,7 @@ namespace private_
  * @tparam T The type to check for
  */
 template<typename S, typename T>
-class is_streamable
+class stream_capability
 {
     template<typename SS, typename TT>
     static auto test(int) -> decltype(std::declval<SS&>() << std::declval<TT>(), std::true_type());
@@ -66,7 +65,7 @@ public:
  * @tparam T The type to check for
  */
 template<typename T>
-class is_iterable
+class iterator_capability
 {
     template<typename TT>
     static auto test(int)
@@ -87,7 +86,7 @@ public:
  * @tparam T The right hand type
  */
 template<typename S, typename T>
-class is_equal_comparable
+class equality_capability
 {
     template<typename SS, typename TT>
     static auto test(int) -> decltype(std::declval<SS>() == std::declval<TT>(), std::true_type());
@@ -105,7 +104,7 @@ public:
  * @tparam T The right hand type
  */
 template<typename S, typename T>
-class is_unequal_comparable
+class unequality_capability
 {
     template<typename SS, typename TT>
     static auto test(int) -> decltype(std::declval<SS>() != std::declval<TT>(), std::true_type());

@@ -45,7 +45,8 @@ public:
         return *this;
     }
 
-    template<typename V, typename E = V, ENABLE_IF(NOT IS_FLOAT(V) AND IS_EQUAL_COMPARABLE(V, E))>
+    template<typename V, typename E = V,
+             ENABLE_IF(NOT IS_FLOAT(V) AND HAS_EQUALITY_CAPABILITY(V, E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (actual_value == expected_value) != m_neg ?
                    SUCCESS :
@@ -54,8 +55,8 @@ public:
     }
 
     template<typename V, typename E = V,
-             ENABLE_IF(NOT IS_FLOAT(V) AND NOT IS_EQUAL_COMPARABLE(V, E)
-                           AND                 IS_UNEQUAL_COMPARABLE(V, E))>
+             ENABLE_IF(NOT IS_FLOAT(V) AND NOT HAS_EQUALITY_CAPABILITY(V, E)
+                           AND                 HAS_UNEQUALITY_CAPABILITY(V, E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (actual_value != expected_value) != m_neg ?
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
@@ -90,7 +91,8 @@ public:
         return *this;
     }
 
-    template<typename V, typename E = V, ENABLE_IF(NOT IS_FLOAT(V) AND IS_UNEQUAL_COMPARABLE(V, E))>
+    template<typename V, typename E = V,
+             ENABLE_IF(NOT IS_FLOAT(V) AND HAS_UNEQUALITY_CAPABILITY(V, E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (actual_value != expected_value) != m_neg ?
                    SUCCESS :
@@ -99,8 +101,8 @@ public:
     }
 
     template<typename V, typename E = V,
-             ENABLE_IF(NOT IS_FLOAT(V) AND NOT IS_UNEQUAL_COMPARABLE(V, E)
-                           AND                 IS_EQUAL_COMPARABLE(V, E))>
+             ENABLE_IF(NOT IS_FLOAT(V) AND NOT HAS_UNEQUALITY_CAPABILITY(V, E)
+                           AND                 HAS_EQUALITY_CAPABILITY(V, E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (actual_value == expected_value) != m_neg ?
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
