@@ -32,6 +32,7 @@ Please have a look at the full [feature set](#feature-set).
     - [Test Styles](#test-styles)
     - [Scopes and Fixtures](#scopes-and-fixtures)
     - [Floating Point Numbers](#floating-point-numbers)
+    - [Regular Expressions](#regular-expressions)
     - [Examples](#examples)
       - [Simple Unit Test](#simple-unit-test)
       - [Behavior Driven Test](#behavior-driven-test)
@@ -59,6 +60,7 @@ As a short summary of all features, have a look at this list.
   + less than
   + greater than
   + in range (substring, contains)
+  + regex match, search
 + Report generation in different formats
   + JUnit XML
   + markdown
@@ -114,10 +116,18 @@ As floating-point comparison relies on a so called epsilon, we use the machine e
 But this may lead into false-negative test results, as it could be too accurate.
 In order to use a custom epsilon, there are two ways to achieve this.
 First, you can provide a macro in each compilation unit, which is called `SCTF_EPSILON` with a satisfying value like `0.000001`.
-A compiler invocation could look like `g++ -std=c++0x test.cpp -DSCTF_EPSILON=0.000001`.
+A compiler invocation could look like `g++ -std=c++11 test.cpp -DSCTF_EPSILON=0.000001`.
 Or you provide it before including *sctf.hpp* like in the example below.
 The second way, is to provide it as an extern variable.
-Therefor define `SCTF_EXTERN_EPSILON` before including *sctf.hpp* and then invoke the `SCTF_SET_EPSILON` macro with a satisfying value in the source file.
+Therefor define `SCTF_EXTERN_EPSILON` before including *sctf.hpp* and afterwards invoke the `SCTF_SET_EPSILON(...)` macro with a satisfying value in your main source file.
+
+### Regular Expressions
+
+This framework provides two comparators for regular expression matching, `MATCH` and `LIKE`.
+The first one does a full match, while the second does a search.
+When passing a cstring, or string to these comparators a default `std::regex` is used.
+To provide better support there are literal operators `"you regex"_re`, and `"your regex"_re_i` for case insensitive matching.
+Both operators create regular expressions with *ECMAScript* syntax.
 
 ### Examples
 
@@ -132,7 +142,7 @@ SCTF_DEFAULT_MAIN(create_xml_reporter())
 SUITE("testSomething") {
     TEST("abc") {
         ASSERT(x+1, EQ, 11);
-        ASSERT_FALSE(false);
+        ASSERT("hello world", MATCH, ".*"_re);
         ASSERT("xyz"s, !IN, "hello"s);
         int i = 101;
         ASSERT_NOT_NULL(&i);
@@ -213,15 +223,17 @@ DESCRIBE("testMyClass") {
 
 ### Comparators
 
-**Note:** While the *comparator* names the function itself, the *shortwrite* is what you actually write in code. Assertions are based on comparators. Every comparator provides a negation operator `!`, which allows the logical negation of the actual comparison. For example `ASSERT(1, !EQ, 1)` and `ASSERT(1, NE, 1)` are logically equivalent.
+**Note:** Assertions are based on comparators. Every comparator provides a negation operator `!`, which allows the logical negation of the actual comparison. For example `ASSERT(1, !EQ, 1)` and `ASSERT(1, NE, 1)` are logically equivalent.
 
-| Comparator   | Shortwrites               | Description                                                                                                                                          |
-| ------------ | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| equals       | EQUALS, EQ                | Compare two values to be equal.                                                                                                                      |
-| unequals     | UNEQUALS, NE              | Compare two values to be not equal.                                                                                                                  |
-| greater_than | GREATER_THAN, GREATER, GT | Compare one value to be greater than another.                                                                                                        |
-| less_than    | LESS_THAN, LESS, LT       | Compare one value to be less than another.                                                                                                           |
-| in_range     | IN_RANGE, IN              | Check a value to be in range of any container. This means for containers (C++ "ranges") to contain the value and for strings to contain a substring. |
+| Comparator                | Description                                                                                                                                          |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| EQUALS, EQ                | Compare two values to be equal.                                                                                                                      |
+| UNEQUALS, NE              | Compare two values to be not equal.                                                                                                                  |
+| GREATER_THAN, GREATER, GT | Compare one value to be greater than another.                                                                                                        |
+| LESS_THAN, LESS, LT       | Compare one value to be less than another.                                                                                                           |
+| IN_RANGE, IN              | Check a value to be in range of any container. This means for containers (C++ "ranges") to contain the value and for strings to contain a substring. |
+| MATCH                     | Match a given string to a regular expression.                                                                                                        |
+| LIKE                      | Search a regular expression in a given string.                                                                                                       |
 
 ### Assertions
 

@@ -92,8 +92,27 @@ SUITE_PAR("test_comparators") {
         ASSERT(*c, EQ, std::string("Expected 1 to be unequals 1"));
     };
     TEST("match") {
-        ASSERT("hello", MATCH, ".*"_re);
-        ASSERT_TRUE(!like()("hello", "\\d+"_re_i));
+        ASSERT_FALSE(!match()("hello world", ".*"_re));
+        ASSERT_FALSE(!match()("hello world", "HELLO WORLD"_re_i));
+        ASSERT_FALSE(!match()("hello world", ".*"));
+        ASSERT_FALSE(!match()("hello world 11", "\\S{5}\\s.*?\\d+"_re));
+        ASSERT_FALSE(!match()(std::string("hello world"), ".*"_re));
+        ASSERT_TRUE(!match()("hello world", "\\s*"_re));
+        ASSERT_TRUE(!match()("hello world", "AAA"_re_i));
+        ASSERT_TRUE(!match()("hello world", "fff"));
+        ASSERT_TRUE(!match()("hello world 11", "\\S{7}\\s.*?\\d"_re));
+        ASSERT_TRUE(!match()(std::string("hello world"), "[+-]\\d+"_re));
+    };
+    TEST("like") {
+        ASSERT_FALSE(!like()("hello world", "hell"_re));
+        ASSERT_FALSE(!like()("hello world", "HELL"_re_i));
+        ASSERT_FALSE(!like()("hello world", ".*?"));
+        ASSERT_FALSE(!like()("hello world 11", "\\S{5}"_re));
+        ASSERT_FALSE(!like()(std::string("hello world"), "hell"_re));
+        ASSERT_TRUE(!like()("hello world", "blub"_re));
+        ASSERT_TRUE(!like()("hello world", "AAA"_re_i));
+        ASSERT_TRUE(!like()("hello world 11", "\\S{7}"_re));
+        ASSERT_TRUE(!like()(std::string("hello world"), "[+-]\\d+"_re));
     };
 };
 
