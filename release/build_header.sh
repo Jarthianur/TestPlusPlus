@@ -1,14 +1,15 @@
 #!/bin/bash
 set -eo pipefail
 
-FILES="../include/common/types.hpp
+FILES="../include/common/cpp_meta.hpp
+../include/common/types.hpp
 ../include/common/traits.hpp
 ../include/common/duration.hpp
 ../include/common/stringify.hpp
 ../include/common/streambuf_proxy_omp.hpp
 ../include/common/streambuf_proxy.hpp
 ../include/common/assertion_failure.hpp
-../include/testsuite/statistics.hpp
+../include/testsuite/statistic.hpp
 ../include/testsuite/testcase.hpp
 ../include/testsuite/testsuite.hpp
 ../include/testsuite/testsuite_parallel.hpp
@@ -18,12 +19,11 @@ FILES="../include/common/types.hpp
 ../include/reporter/xml_reporter.hpp
 ../include/reporter/console_reporter.hpp
 ../include/reporter/markdown_reporter.hpp
-../include/comparator/comparators.hpp
-../include/comparator/less.hpp
-../include/comparator/inrange.hpp
-../include/comparator/unequals.hpp
-../include/comparator/equals.hpp
-../include/comparator/greater.hpp
+../include/comparator/comparator.hpp
+../include/comparator/ordering.hpp
+../include/comparator/equality.hpp
+../include/comparator/range.hpp
+../include/comparator/regex.hpp
 ../include/assert.hpp
 ../include/sctf.hpp"
 
