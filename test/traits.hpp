@@ -24,7 +24,7 @@
 
 #include <stdexcept>
 
-#include "common/traits.hpp"
+#include "traits.hpp"
 
 /*
  * Helpers for traits

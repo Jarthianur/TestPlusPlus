@@ -24,7 +24,6 @@
 
 #define SCFT_VERSION "1.2-rc2"
 
-#include "common/types.hpp"
 #include "comparator/equality.hpp"
 #include "comparator/ordering.hpp"
 #include "comparator/range.hpp"
@@ -32,10 +31,12 @@
 #include "reporter/console_reporter.hpp"
 #include "reporter/markdown_reporter.hpp"
 #include "reporter/xml_reporter.hpp"
-#include "testsuite/runner.hpp"
-#include "testsuite/testmodule.hpp"
 
+#include "api.hpp"
 #include "assert.hpp"
+#include "regex.hpp"
+#include "runner.hpp"
+#include "types.hpp"
 
 /**
  * Define a default main function, which executes and reports all tests registered to the

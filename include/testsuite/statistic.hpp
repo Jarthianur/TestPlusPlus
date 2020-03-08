@@ -34,9 +34,6 @@ namespace private_
 class statistic
 {
 public:
-    statistic()           = default;
-    ~statistic() noexcept = default;
-
     /**
      * Get the absolute number of tests.
      */

@@ -24,8 +24,9 @@
 
 #include <algorithm>
 
-#include "common/traits.hpp"
 #include "comparator/comparator.hpp"
+
+#include "traits.hpp"
 
 namespace sctf
 {
@@ -61,6 +62,7 @@ public:
                               to_string(expected_value));
     }
 };
+
 }  // namespace private_
 }  // namespace sctf
 

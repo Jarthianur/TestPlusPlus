@@ -19,25 +19,35 @@
  }
  */
 
-#ifndef SCTF_COMMON_CPP_META_HPP
-#define SCTF_COMMON_CPP_META_HPP
+#ifndef SCTF_REGEX_HPP
+#define SCTF_REGEX_HPP
 
-#if __cplusplus >= 201703L
-#    define SCTF_CPP_V17
-#elif __cplusplus >= 201402L
-#    define SCTF_CPP_V14
-#elif __cplusplus >= 201103L
-#    define SCTF_CPP_V11
-#else
-#    error SCTF requires at least full C++11 compliance
-#endif
+#include <cstddef>
+#include <regex>
 
-#if defined(__GNUG__) || defined(__clang__)
-#    define SCTF_SYS_UNIX
-#elif defined(_WIN32)
-#    define SCTF_SYS_WIN
-#else
-#    error SCTF is only supported for Linux (gcc), OSX (clang), and Windows (msvc)
-#endif
+namespace sctf
+{
+struct regex final
+{
+    regex(char const* p_, std::regex_constants::syntax_option_type flags_)
+        : pattern(p_), re(p_, flags_) {}
 
-#endif  // SCTF_COMMON_CPP_META_HPP
+    operator std::regex() const {
+        return re;
+    }
+
+    char const* const pattern;
+    std::regex const  re;
+};
+
+inline regex operator"" _re(char const* lit_, std::size_t) {
+    return regex(lit_, std::regex::nosubs | std::regex::ECMAScript);
+}
+
+inline regex operator"" _re_i(char const* lit_, std::size_t) {
+    return regex(lit_, std::regex::nosubs | std::regex::ECMAScript | std::regex::icase);
+}
+
+}  // namespace sctf
+
+#endif  // SCTF_REGEX_HPP

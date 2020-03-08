@@ -25,11 +25,12 @@
 #include <chrono>
 #include <ctime>
 
-#include "common/types.hpp"
 #include "reporter/reporter.hpp"
 #include "testsuite/statistic.hpp"
-#include "testsuite/testcase.hpp"
 #include "testsuite/testsuite.hpp"
+
+#include "testcase.hpp"
+#include "types.hpp"
 
 namespace sctf
 {

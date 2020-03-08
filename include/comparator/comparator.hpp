@@ -24,8 +24,8 @@
 
 #include <memory>
 
-#include "common/cpp_meta.hpp"
-#include "common/stringify.hpp"
+#include "cpp_meta.hpp"
+#include "stringify.hpp"
 
 #ifdef SCTF_CPP_V17
 

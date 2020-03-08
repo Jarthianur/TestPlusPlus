@@ -19,13 +19,13 @@
  }
  */
 
-#ifndef SCTF_COMMON_ASSERTION_FAILURE_HPP
-#define SCTF_COMMON_ASSERTION_FAILURE_HPP
+#ifndef SCTF_ASSERTION_FAILURE_HPP
+#define SCTF_ASSERTION_FAILURE_HPP
 
 #include <exception>
 #include <string>
 
-#include "common/types.hpp"
+#include "types.hpp"
 
 namespace sctf
 {
@@ -56,7 +56,8 @@ public:
 protected:
     std::string const m_msg;
 };
+
 }  // namespace private_
 }  // namespace sctf
 
-#endif  // SCTF_COMMON_ASSERTION_FAILURE_HPP
+#endif  // SCTF_ASSERTION_FAILURE_HPP
