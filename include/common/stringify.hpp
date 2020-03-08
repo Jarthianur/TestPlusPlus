@@ -30,7 +30,9 @@
 #include <typeinfo>
 #include <utility>
 
+#include "common/cpp_meta.hpp"
 #include "common/traits.hpp"
+#include "common/types.hpp"
 
 namespace sctf
 {
@@ -45,7 +47,7 @@ static std::string const& name_for_type() {
     if (name.length() > 0) {
         return name;
     }
-#if defined(__GNUG__) || defined(__clang__)
+#ifdef SCTF_SYS_UNIX
     std::string const sig(__PRETTY_FUNCTION__);
     auto const        b = sig.rfind("T = ") + 4;
     name                = sig.substr(b, sig.find_first_of(";]", b) - b);
@@ -158,6 +160,10 @@ inline std::string to_string(std::nullptr_t const&) {
  */
 inline std::string to_string(bool const& arg_) {
     return arg_ ? "true" : "false";
+}
+
+inline std::string to_string(regex const& arg_) {
+    return to_string(arg_.pattern);
 }
 
 }  // namespace private_

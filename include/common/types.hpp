@@ -22,8 +22,12 @@
 #ifndef SCTF_COMMON_TYPES_HPP
 #define SCTF_COMMON_TYPES_HPP
 
+#include <cstddef>
 #include <functional>
 #include <memory>
+#include <regex>
+
+#include "common/cpp_meta.hpp"
 
 namespace sctf
 {
@@ -64,6 +68,37 @@ struct singleton final
 
 using reporter_ptr = std::shared_ptr<private_::reporter>;
 
+struct regex final
+{
+    regex(char const* p_, std::regex_constants::syntax_option_type flags_)
+        : pattern(p_), re(p_, flags_) {}
+
+    operator std::regex() const {
+        return re;
+    }
+
+    char const* const pattern;
+    std::regex const  re;
+};
+
+inline regex operator"" _re(char const* lit_, std::size_t) {
+    return regex(lit_, std::regex::nosubs | std::regex::ECMAScript);
+}
+
+inline regex operator"" _re_i(char const* lit_, std::size_t) {
+    return regex(lit_, std::regex::nosubs | std::regex::ECMAScript | std::regex::icase);
+}
+
+#ifdef SCTF_CPP_V17
+inline regex operator"" _re_m(char const* lit_, std::size_t) {
+    return regex(lit_, std::regex::nosubs | std::regex::ECMAScript | std::regex::multiline);
+}
+
+inline regex operator"" _re_mi(char const* lit_, std::size_t) {
+    return regex(lit_, std::regex::nosubs | std::regex::ECMAScript | std::regex::multiline |
+                           std::regex::icase);
+}
+#endif
 }  // namespace sctf
 
 #endif  // SCTF_COMMON_TYPES_HPP

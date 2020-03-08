@@ -19,7 +19,8 @@
  }
  */
 
-#include "reflexive_tests.h"
+#define SCTF_EXTERN_EPSILON
+//#define SCTF_EPSILON 0.000001
 
 #include <chrono>
 #include <cstddef>
@@ -30,6 +31,7 @@
 #include <utility>
 #include <vector>
 
+#include "sctf.hpp"
 #include "traits.hpp"
 
 SCTF_SET_EPSILON(0.000001)
@@ -55,10 +57,8 @@ SUITE_PAR("test_comparators") {
     };
     TEST("greater_than") {
         ASSERT_FALSE(!greater_than()(2, 1));
-        ASSERT_FALSE(!greater_than()(ordinal(), ordinal()));
         ASSERT_FALSE(!greater_than()(2.1, 1.9));
         ASSERT_TRUE(!greater_than()(1, 2));
-        ASSERT_TRUE(!greater_than()(ordinal(false), ordinal()));
         ASSERT_TRUE(!greater_than()(2.1, 3.9));
         comparison c = greater_than()(1, 2);
         ASSERT_TRUE(!c);
@@ -72,10 +72,8 @@ SUITE_PAR("test_comparators") {
     };
     TEST("less_than") {
         ASSERT_FALSE(!less_than()(1, 2));
-        ASSERT_FALSE(!less_than()(ordinal(), ordinal()));
         ASSERT_FALSE(!less_than()(1.9, 2.1));
         ASSERT_TRUE(!less_than()(2, 1));
-        ASSERT_TRUE(!less_than()(ordinal(false), ordinal()));
         ASSERT_TRUE(!less_than()(3.9, 2.1));
         comparison c = less_than()(2, 1);
         ASSERT_TRUE(!c);
@@ -97,8 +95,8 @@ SUITE_PAR("test_comparators") {
         ASSERT(*c, EQ, std::string("Expected 1 to be unequals 1"));
     };
     TEST("match") {
-        ASSERT("hello", MATCH, ".*");
-        ASSERT("hello", MATCH, "\\d+");
+        ASSERT("hello", MATCH, ".*"_re);
+        ASSERT("hello", MATCH, "\\d+"_re_i);
     };
 };
 
@@ -273,11 +271,6 @@ SUITE_PAR("test_traits") {
         ASSERT_NOTHROW((throw_if_not_iterable<iterable>()));
         ASSERT_THROWS((throw_if_not_iterable<void_type>()), std::logic_error);
         ASSERT_THROWS((throw_if_not_iterable<not_iterable>()), std::logic_error);
-    };
-    TEST("is_ordinal") {
-        ASSERT_NOTHROW((throw_if_not_ordinal<ordinal>()));
-        ASSERT_THROWS((throw_if_not_ordinal<void_type>()), std::logic_error);
-        ASSERT_THROWS((throw_if_not_ordinal<not_ordinal>()), std::logic_error);
     };
     TEST("is_equal_comparable") {
         ASSERT_NOTHROW((throw_if_not_equal_comparable<equal_comparable>()));

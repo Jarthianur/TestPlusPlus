@@ -19,13 +19,13 @@
  }
  */
 
-#ifndef SCTF_COMPARATOR_INRANGE_HPP
-#define SCTF_COMPARATOR_INRANGE_HPP
+#ifndef SCTF_COMPARATOR_RANGE_HPP
+#define SCTF_COMPARATOR_RANGE_HPP
 
 #include <algorithm>
 
 #include "common/traits.hpp"
-#include "comparator/comparators.hpp"
+#include "comparator/comparator.hpp"
 
 namespace sctf
 {
@@ -66,4 +66,4 @@ public:
 PROVIDE_COMPARATOR(in_range, IN_RANGE)
 PROVIDE_COMPARATOR(in_range, IN)
 
-#endif  // SCTF_COMPARATOR_INRANGE_HPP
+#endif  // SCTF_COMPARATOR_RANGE_HPP

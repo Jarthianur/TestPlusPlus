@@ -19,14 +19,25 @@
  }
  */
 
-#ifndef SCTF_COMPARATOR_LIKE_HPP
-#define SCTF_COMPARATOR_LIKE_HPP
+#ifndef SCTF_COMMON_CPP_META_HPP
+#define SCTF_COMMON_CPP_META_HPP
 
-#include <regex>
+#if __cplusplus >= 201703L
+#    define SCTF_CPP_V17
+#elif __cplusplus >= 201402L
+#    define SCTF_CPP_V14
+#elif __cplusplus >= 201103L
+#    define SCTF_CPP_V11
+#else
+#    error SCTF requires at least full C++11 compliance
+#endif
 
-#include "comparator/comparators.hpp"
+#if defined(__GNUG__) || defined(__clang__)
+#    define SCTF_SYS_UNIX
+#elif defined(_WIN32)
+#    define SCTF_SYS_WIN
+#else
+#    error SCTF is only supported for Linux (gcc), OSX (clang), and Windows (msvc)
+#endif
 
-COMPARATOR(like, "like", std::regex_search(actual_value, std::regex(expected_value)))
-PROVIDE_COMPARATOR(like, LIKE)
-
-#endif  // SCTF_COMPARATOR_LIKE_HPP
+#endif  // SCTF_COMMON_CPP_META_HPP

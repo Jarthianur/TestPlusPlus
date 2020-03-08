@@ -26,10 +26,9 @@
 #include "common/duration.hpp"
 #include "common/stringify.hpp"
 #include "common/types.hpp"
-#include "comparator/comparators.hpp"
-#include "comparator/equals.hpp"
-#include "comparator/inrange.hpp"
-#include "comparator/unequals.hpp"
+#include "comparator/comparator.hpp"
+#include "comparator/equality.hpp"
+#include "comparator/range.hpp"
 
 /**
  * Test for successful comparison.
@@ -37,8 +36,8 @@
  * @param COMP The Comparator
  * @param EXPECT The expected value
  */
-#define ASSERT(VALUE, COMP, EXPECT)                         \
-    sctf::private_::assert_statement(VALUE, EXPECT, COMP(), \
+#define ASSERT(VALUE, COMP, EXPECT)                               \
+    sctf::private_::assert_statement(VALUE, EXPECT, sctf::COMP(), \
                                      sctf::private_::code_location{__FILE__, __LINE__})
 
 /**
@@ -47,8 +46,8 @@
  * @param COMP The Comparator
  * @param EXPECT The expected value
  */
-#define ASSERT_NOT(VALUE, COMP, EXPECT)                      \
-    sctf::private_::assert_statement(VALUE, EXPECT, !COMP(), \
+#define ASSERT_NOT(VALUE, COMP, EXPECT)                            \
+    sctf::private_::assert_statement(VALUE, EXPECT, !sctf::COMP(), \
                                      sctf::private_::code_location{__FILE__, __LINE__})
 
 /**

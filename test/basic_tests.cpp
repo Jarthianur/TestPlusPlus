@@ -60,19 +60,6 @@ void test_traits() {
     } catch (std::logic_error const&) {
     }
 
-    // is_ordinal
-    throw_if_not_ordinal<ordinal>();
-    try {
-        throw_if_not_ordinal<void_type>();
-        throw Failure("Given type should be not ordinal");
-    } catch (std::logic_error const&) {
-    }
-    try {
-        throw_if_not_ordinal<not_ordinal>();
-        throw Failure("Given type should be not ordinal");
-    } catch (std::logic_error const&) {
-    }
-
     // is_equal_comparable
     throw_if_not_equal_comparable<equal_comparable>();
     try {

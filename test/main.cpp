@@ -22,7 +22,6 @@
 #include <iostream>
 
 #include "basic_tests.h"
-#include "reflexive_tests.h"
 #include "sctf.hpp"
 
 using namespace sctf;

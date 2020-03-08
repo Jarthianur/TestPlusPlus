@@ -110,40 +110,6 @@ void throw_if_not_iterable() {
 template<typename T, ENABLE_IF(IS_ITERABLE(T))>
 void throw_if_not_iterable() {}
 
-// is_ordinal
-
-struct ordinal
-{
-    ordinal() = default;
-
-    ordinal(bool v_) : m_v(v_) {}
-
-    bool operator<(ordinal const&) const noexcept {
-        return m_v;
-    }
-
-    bool operator>(ordinal const&) const noexcept {
-        return m_v;
-    }
-
-private:
-    bool m_v = true;
-};
-
-struct not_ordinal
-{
-    bool operator<(ordinal const&) const noexcept = delete;
-    bool operator>(ordinal const&) const noexcept = delete;
-};
-
-template<typename T, ENABLE_IF(NOT IS_ORDINAL(T))>
-void throw_if_not_ordinal() {
-    throw std::logic_error("Given type is not ordinal");
-}
-
-template<typename T, ENABLE_IF(IS_ORDINAL(T))>
-void throw_if_not_ordinal() {}
-
 // is_equal_comparable
 
 struct equal_comparable

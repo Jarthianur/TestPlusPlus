@@ -82,24 +82,6 @@ public:
 };
 
 /**
- * Type trait to check for ordinal relation (<, >) capabilities.
- * @tparam T The type to check for
- */
-template<typename T>
-class is_ordinal
-{
-    template<typename TT>
-    static auto test(int) -> decltype(std::declval<TT>() < std::declval<TT>(),
-                                      std::declval<TT>() > std::declval<TT>(), std::true_type());
-
-    template<typename>
-    static auto test(...) -> std::false_type;
-
-public:
-    static const bool value = decltype(test<T>(0))::value;
-};
-
-/**
  * Type trait to check for equality operator capability.
  * @tparam S The left hand type
  * @tparam T The right hand type
