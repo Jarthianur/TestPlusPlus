@@ -19,7 +19,6 @@
  }
  */
 
-#define SCTF_EXTERN_EPSILON
 //#define SCTF_EPSILON 0.000001
 
 #include <chrono>
@@ -33,8 +32,6 @@
 
 #include "sctf.hpp"
 #include "traits.hpp"
-
-SCTF_SET_EPSILON(0.000001)
 
 using namespace sctf;
 using namespace private_;
@@ -96,7 +93,7 @@ SUITE_PAR("test_comparators") {
     };
     TEST("match") {
         ASSERT("hello", MATCH, ".*"_re);
-        ASSERT("hello", MATCH, "\\d+"_re_i);
+        ASSERT_TRUE(!like()("hello", "\\d+"_re_i));
     };
 };
 
