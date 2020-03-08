@@ -117,8 +117,6 @@ private:
 #endif
 };
 
-constexpr comparison SUCCESS = comparison();
-
 #ifdef SCTF_EPSILON
 static double epsilon = SCTF_EPSILON;
 #elif defined(SCTF_EXTERN_EPSILON)
@@ -154,7 +152,7 @@ extern double epsilon;
         template<typename V, typename E = V>                                                  \
         comparison operator()(V const& actual_value, E const& expected_value) {               \
             return (PRED) != m_neg ?                                                          \
-                       SUCCESS :                                                              \
+                       comparison() :                                                         \
                        comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value), \
                                   to_string(expected_value));                                 \
         }                                                                                     \

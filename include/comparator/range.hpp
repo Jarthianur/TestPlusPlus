@@ -48,7 +48,7 @@ public:
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (std::find(expected_value.cbegin(), expected_value.cend(), actual_value) !=
                 expected_value.cend()) != m_neg ?
-                   SUCCESS :
+                   comparison() :
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
                               to_string(expected_value));
     }
@@ -56,7 +56,7 @@ public:
     template<typename V, typename E = V, ENABLE_IF(IS_TYPE(E, std::string))>
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (expected_value.find(actual_value) != std::string::npos) != m_neg ?
-                   SUCCESS :
+                   comparison() :
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
                               to_string(expected_value));
     }
