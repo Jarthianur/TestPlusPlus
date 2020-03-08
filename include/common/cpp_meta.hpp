@@ -19,14 +19,25 @@
  }
  */
 
-#ifndef SCTF_COMPARATOR_LESS_HPP
-#define SCTF_COMPARATOR_LESS_HPP
+#ifndef SCTF_COMMON_CPP_META_HPP
+#define SCTF_COMMON_CPP_META_HPP
 
-#include "comparator/comparators.hpp"
+#if __cplusplus >= 201703L
+#    define SCTF_CPP_V17
+#elif __cplusplus >= 201402L
+#    define SCTF_CPP_V14
+#elif __cplusplus >= 201103L
+#    define SCTF_CPP_V11
+#else
+#    error SCTF requires at least full C++11 compliance
+#endif
 
-COMPARATOR(less_than, "less than", actual_value < expected_value)
-PROVIDE_COMPARATOR(less_than, LESS_THAN)
-PROVIDE_COMPARATOR(less_than, LESS)
-PROVIDE_COMPARATOR(less_than, LT)
+#if defined(__GNUG__) || defined(__clang__)
+#    define SCTF_SYS_UNIX
+#elif defined(_WIN32)
+#    define SCTF_SYS_WIN
+#else
+#    error SCTF is only supported for Linux (gcc), OSX (clang), and Windows (msvc)
+#endif
 
-#endif  // SCTF_COMPARATOR_LESS_HPP
+#endif  // SCTF_COMMON_CPP_META_HPP

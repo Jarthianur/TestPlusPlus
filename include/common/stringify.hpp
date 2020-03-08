@@ -30,7 +30,9 @@
 #include <typeinfo>
 #include <utility>
 
+#include "common/cpp_meta.hpp"
 #include "common/traits.hpp"
+#include "common/types.hpp"
 
 namespace sctf
 {
@@ -45,7 +47,7 @@ static std::string const& name_for_type() {
     if (name.length() > 0) {
         return name;
     }
-#if defined(__GNUG__) || defined(__clang__)
+#ifdef SCTF_SYS_UNIX
     std::string const sig(__PRETTY_FUNCTION__);
     auto const        b = sig.rfind("T = ") + 4;
     name                = sig.substr(b, sig.find_first_of(";]", b) - b);
@@ -99,7 +101,7 @@ static std::string escaped_string(std::string const& str_) {
  * Get a printable string representation for any type, that is already convertable to string, but
  * not a floatingpoint type.
  */
-template<typename T, ENABLE_IF(IS_STREAMABLE(T, std::ostringstream) AND NOT IS_FLOAT(T))>
+template<typename T, ENABLE_IF(HAS_STREAM_CAPABILITY(T, std::ostringstream) AND NOT IS_FLOAT(T))>
 std::string to_string(T const& arg_) {
     std::ostringstream oss;
     oss << arg_;
@@ -109,7 +111,7 @@ std::string to_string(T const& arg_) {
 /**
  * Get a printable string representation for any floatingpoint type.
  */
-template<typename T, ENABLE_IF(IS_STREAMABLE(T, std::ostringstream) AND IS_FLOAT(T))>
+template<typename T, ENABLE_IF(HAS_STREAM_CAPABILITY(T, std::ostringstream) AND IS_FLOAT(T))>
 std::string to_string(T const& arg_) {
     std::ostringstream oss;
     oss << std::setprecision(std::numeric_limits<T>::max_digits10) << arg_;
@@ -120,7 +122,7 @@ std::string to_string(T const& arg_) {
  * Get a printable string representation for any type, that is not convertable to string.
  * The result is basically the typename.
  */
-template<typename T, ENABLE_IF(NOT IS_STREAMABLE(T, std::ostringstream))>
+template<typename T, ENABLE_IF(NOT HAS_STREAM_CAPABILITY(T, std::ostringstream))>
 std::string to_string(T const&) {
     return name_for_type<T>();
 }
@@ -158,6 +160,10 @@ inline std::string to_string(std::nullptr_t const&) {
  */
 inline std::string to_string(bool const& arg_) {
     return arg_ ? "true" : "false";
+}
+
+inline std::string to_string(regex const& arg_) {
+    return to_string(arg_.pattern);
 }
 
 }  // namespace private_

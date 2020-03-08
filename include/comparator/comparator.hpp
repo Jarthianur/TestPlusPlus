@@ -19,20 +19,21 @@
  }
  */
 
-#ifndef SCTF_COMPARATOR_COMPARATORS_HPP
-#define SCTF_COMPARATOR_COMPARATORS_HPP
+#ifndef SCTF_COMPARATOR_COMPARATOR_HPP
+#define SCTF_COMPARATOR_COMPARATOR_HPP
 
 #include <memory>
 
+#include "common/cpp_meta.hpp"
 #include "common/stringify.hpp"
 
-#if __cplusplus >= 201703L
+#ifdef SCTF_CPP_V17
 
 #    include <optional>
 using std::nullopt;
 using std::optional;
 
-#elif __cplusplus >= 201402L
+#elif defined(SCTF_CPP_V14)
 
 #    include <experimental/optional>
 using std::experimental::nullopt;
@@ -53,7 +54,34 @@ namespace private_
  */
 struct comparison final
 {
-#if __cplusplus >= 201402L
+#ifdef SCTF_CPP_V11
+    constexpr comparison() : m_success(true) {}
+
+    comparison(char const* comp_str_, std::string const& val_, std::string const& expect_)
+        : m_success(false) {
+        std::string msg;
+        msg.reserve(15 + std::strlen(comp_str_) + val_.length() + expect_.length());
+        msg = "Expected ";
+        msg.append(val_).append(" ").append(comp_str_).append(" ").append(expect_);
+        error() = msg;
+    }
+
+    explicit operator bool() {
+        return m_success;
+    }
+
+    const std::string& operator*() const {
+        return error();
+    }
+
+private:
+    bool const m_success;
+
+    std::string& error() const {
+        static thread_local std::string err_msg;
+        return err_msg;
+    }
+#else
     /**
      * Initialize the comparison as successful.
      */
@@ -86,46 +114,13 @@ struct comparison final
 
 private:
     optional<std::string> const m_failure;
-#else
-    constexpr comparison() : m_success(true) {}
-
-    comparison(char const* comp_str_, std::string const& val_, std::string const& expect_)
-        : m_success(false) {
-        std::string msg;
-        msg.reserve(15 + std::strlen(comp_str_) + val_.length() + expect_.length());
-        msg = "Expected ";
-        msg.append(val_).append(" ").append(comp_str_).append(" ").append(expect_);
-        error() = msg;
-    }
-
-    explicit operator bool() {
-        return m_success;
-    }
-
-    const std::string& operator*() const {
-        return error();
-    }
-
-private:
-    bool const m_success;
-
-    std::string& error() const {
-        static thread_local std::string err_msg;
-        return err_msg;
-    }
 #endif
 };
-
-#if __cplusplus >= 201402L
-#    define SUCCESS comparison()
-#else
-constexpr comparison SUCCESS = comparison();
-#endif
 
 #ifdef SCTF_EPSILON
 static double epsilon = SCTF_EPSILON;
 #elif defined(SCTF_EXTERN_EPSILON)
-extern double        epsilon;
+extern double epsilon;
 #endif
 }  // namespace private_
 }  // namespace sctf
@@ -157,7 +152,7 @@ extern double        epsilon;
         template<typename V, typename E = V>                                                  \
         comparison operator()(V const& actual_value, E const& expected_value) {               \
             return (PRED) != m_neg ?                                                          \
-                       SUCCESS :                                                              \
+                       comparison() :                                                         \
                        comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value), \
                                   to_string(expected_value));                                 \
         }                                                                                     \
@@ -193,4 +188,4 @@ extern double        epsilon;
     }                       \
     }
 
-#endif  // SCTF_COMPARATOR_COMPARATORS_HPP
+#endif  // SCTF_COMPARATOR_COMPARATOR_HPP

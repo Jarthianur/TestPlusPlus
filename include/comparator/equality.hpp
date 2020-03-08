@@ -19,20 +19,66 @@
  }
  */
 
-#ifndef SCTF_COMPARATOR_UNEQUALS_HPP
-#define SCTF_COMPARATOR_UNEQUALS_HPP
+#ifndef SCTF_COMPARATOR_EQUALITY_HPP
+#define SCTF_COMPARATOR_EQUALITY_HPP
 
 #include <algorithm>
 #include <cmath>
 #include <limits>
 
 #include "common/traits.hpp"
-#include "comparator/comparators.hpp"
+#include "comparator/comparator.hpp"
 
 namespace sctf
 {
 namespace private_
 {
+class equals
+{
+    static constexpr char const* m_cmp_str     = "to be equals";
+    static constexpr char const* m_neg_cmp_str = "to be not equals";
+    bool                         m_neg         = false;
+
+public:
+    equals& operator!() {
+        m_neg = !m_neg;
+        return *this;
+    }
+
+    template<typename V, typename E = V,
+             ENABLE_IF(NOT IS_FLOAT(V) AND HAS_EQUALITY_CAPABILITY(V, E))>
+    comparison operator()(V const& actual_value, E const& expected_value) {
+        return (actual_value == expected_value) != m_neg ?
+                   comparison() :
+                   comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
+                              to_string(expected_value));
+    }
+
+    template<typename V, typename E = V,
+             ENABLE_IF(NOT IS_FLOAT(V) AND NOT HAS_EQUALITY_CAPABILITY(V, E)
+                           AND                 HAS_UNEQUALITY_CAPABILITY(V, E))>
+    comparison operator()(V const& actual_value, E const& expected_value) {
+        return (actual_value != expected_value) != m_neg ?
+                   comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
+                              to_string(expected_value)) :
+                   comparison();
+    }
+
+    template<typename V, typename E = V, ENABLE_IF(IS_FLOAT(V) AND IS_FLOAT(E))>
+    comparison operator()(V const& actual_value, E const& expected_value) {
+#if defined(SCTF_EXTERN_EPSILON) || defined(SCTF_EPSILON)
+        static V epsilon_ = static_cast<V>(epsilon);
+#else
+        static V epsilon_ = std::numeric_limits<V>::epsilon();
+#endif
+        return (std::abs(actual_value - expected_value) <=
+                std::max(std::abs(actual_value), std::abs(expected_value)) * epsilon_) != m_neg ?
+                   comparison() :
+                   comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
+                              to_string(expected_value));
+    }
+};
+
 class unequals
 {
     static constexpr char const* m_cmp_str     = "to be unequals";
@@ -45,22 +91,23 @@ public:
         return *this;
     }
 
-    template<typename V, typename E = V, ENABLE_IF(NOT IS_FLOAT(V) AND IS_UNEQUAL_COMPARABLE(V, E))>
+    template<typename V, typename E = V,
+             ENABLE_IF(NOT IS_FLOAT(V) AND HAS_UNEQUALITY_CAPABILITY(V, E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (actual_value != expected_value) != m_neg ?
-                   SUCCESS :
+                   comparison() :
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
                               to_string(expected_value));
     }
 
     template<typename V, typename E = V,
-             ENABLE_IF(NOT IS_FLOAT(V) AND NOT IS_UNEQUAL_COMPARABLE(V, E)
-                           AND                 IS_EQUAL_COMPARABLE(V, E))>
+             ENABLE_IF(NOT IS_FLOAT(V) AND NOT HAS_UNEQUALITY_CAPABILITY(V, E)
+                           AND                 HAS_EQUALITY_CAPABILITY(V, E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (actual_value == expected_value) != m_neg ?
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
                               to_string(expected_value)) :
-                   SUCCESS;
+                   comparison();
     }
 
     template<typename V, typename E = V, ENABLE_IF(IS_FLOAT(V) AND IS_FLOAT(E))>
@@ -74,7 +121,7 @@ public:
                 std::max(std::abs(actual_value), std::abs(expected_value)) * epsilon_) != m_neg ?
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
                               to_string(expected_value)) :
-                   SUCCESS;
+                   comparison();
     }
 };
 }  // namespace private_
@@ -82,5 +129,7 @@ public:
 
 PROVIDE_COMPARATOR(unequals, UNEQUALS)
 PROVIDE_COMPARATOR(unequals, NE)
+PROVIDE_COMPARATOR(equals, EQUALS)
+PROVIDE_COMPARATOR(equals, EQ)
 
-#endif  // SCTF_COMPARATOR_UNEQUALS_HPP
+#endif  // SCTF_COMPARATOR_EQUALITY_HPP

@@ -29,12 +29,13 @@
 #include <stdexcept>
 #include <vector>
 
+#include "common/cpp_meta.hpp"
 #include "common/types.hpp"
 #include "testsuite/runner.hpp"
 #include "testsuite/statistic.hpp"
 #include "testsuite/testsuite.hpp"
 
-#ifdef _WIN32
+#ifdef SCTF_SYS_WIN
 #    define SCTF_LF "\r\n"
 #else
 #    define SCTF_LF "\n"

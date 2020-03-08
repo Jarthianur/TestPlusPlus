@@ -48,12 +48,12 @@ struct streamable
 struct not_streamable
 {};
 
-template<typename S, typename T, ENABLE_IF(NOT IS_STREAMABLE(T, S))>
+template<typename S, typename T, ENABLE_IF(NOT HAS_STREAM_CAPABILITY(T, S))>
 void throw_if_not_streamable() {
     throw std::logic_error("Given type is not streamable");
 }
 
-template<typename S, typename T, ENABLE_IF(IS_STREAMABLE(T, S))>
+template<typename S, typename T, ENABLE_IF(HAS_STREAM_CAPABILITY(T, S))>
 void throw_if_not_streamable() {}
 
 // is_iterable
@@ -102,47 +102,13 @@ struct not_iterable
     }
 };
 
-template<typename T, ENABLE_IF(NOT IS_ITERABLE(T))>
+template<typename T, ENABLE_IF(NOT HAS_ITERATOR_CAPABILITY(T))>
 void throw_if_not_iterable() {
     throw std::logic_error("Given type is not streamable");
 }
 
-template<typename T, ENABLE_IF(IS_ITERABLE(T))>
+template<typename T, ENABLE_IF(HAS_ITERATOR_CAPABILITY(T))>
 void throw_if_not_iterable() {}
-
-// is_ordinal
-
-struct ordinal
-{
-    ordinal() = default;
-
-    ordinal(bool v_) : m_v(v_) {}
-
-    bool operator<(ordinal const&) const noexcept {
-        return m_v;
-    }
-
-    bool operator>(ordinal const&) const noexcept {
-        return m_v;
-    }
-
-private:
-    bool m_v = true;
-};
-
-struct not_ordinal
-{
-    bool operator<(ordinal const&) const noexcept = delete;
-    bool operator>(ordinal const&) const noexcept = delete;
-};
-
-template<typename T, ENABLE_IF(NOT IS_ORDINAL(T))>
-void throw_if_not_ordinal() {
-    throw std::logic_error("Given type is not ordinal");
-}
-
-template<typename T, ENABLE_IF(IS_ORDINAL(T))>
-void throw_if_not_ordinal() {}
 
 // is_equal_comparable
 
@@ -183,12 +149,12 @@ struct not_equal_comparable
     bool operator==(equal_comparable const&) const noexcept = delete;
 };
 
-template<typename T, ENABLE_IF(NOT IS_EQUAL_COMPARABLE(T, T))>
+template<typename T, ENABLE_IF(NOT HAS_EQUALITY_CAPABILITY(T, T))>
 void throw_if_not_equal_comparable() {
     throw std::logic_error("Given type is not equal-comparable");
 }
 
-template<typename T, ENABLE_IF(IS_EQUAL_COMPARABLE(T, T))>
+template<typename T, ENABLE_IF(HAS_EQUALITY_CAPABILITY(T, T))>
 void throw_if_not_equal_comparable() {}
 
 // is_unequal_comparable
@@ -212,12 +178,12 @@ struct not_unequal_comparable
     bool operator!=(unequal_comparable const&) const noexcept = delete;
 };
 
-template<typename T, ENABLE_IF(NOT IS_UNEQUAL_COMPARABLE(T, T))>
+template<typename T, ENABLE_IF(NOT HAS_UNEQUALITY_CAPABILITY(T, T))>
 void throw_if_not_unequal_comparable() {
     throw std::logic_error("Given type is not unequal-comparable");
 }
 
-template<typename T, ENABLE_IF(IS_UNEQUAL_COMPARABLE(T, T))>
+template<typename T, ENABLE_IF(HAS_UNEQUALITY_CAPABILITY(T, T))>
 void throw_if_not_unequal_comparable() {}
 
 #endif  // TEST_TRAITS_HPP

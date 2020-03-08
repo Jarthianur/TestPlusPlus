@@ -19,12 +19,15 @@
  }
  */
 
-#ifndef TEST_REFLEXIVE_TESTS_H_
-#define TEST_REFLEXIVE_TESTS_H_
+#ifndef SCTF_COMPARATOR_REGEX_HPP
+#define SCTF_COMPARATOR_REGEX_HPP
 
-#define SCTF_EXTERN_EPSILON
-//#define SCTF_EPSILON 0.000001
+#include "comparator/comparator.hpp"
 
-#include "sctf.hpp"
+COMPARATOR(match, "matching", std::regex_match(actual_value, std::regex(expected_value)))
+PROVIDE_COMPARATOR(match, MATCH)
 
-#endif  // TEST_REFLEXIVE_TESTS_H_
+COMPARATOR(like, "like", std::regex_search(actual_value, std::regex(expected_value)))
+PROVIDE_COMPARATOR(like, LIKE)
+
+#endif  // SCTF_COMPARATOR_REGEX_HPP

@@ -19,14 +19,33 @@
  }
  */
 
-#ifndef SCTF_COMPARATOR_GREATER_HPP
-#define SCTF_COMPARATOR_GREATER_HPP
+#define SCTF_EXTERN_EPSILON
+//#define SCTF_EPSILON 0.001
+#include "sctf.hpp"
 
-#include "comparator/comparators.hpp"
+class MyClass
+{
+    int    m_i = 0;
+    double m_d = 1.0;
 
-COMPARATOR(greater_than, "greater than", actual_value > expected_value)
-PROVIDE_COMPARATOR(greater_than, GREATER_THAN)
-PROVIDE_COMPARATOR(greater_than, GREATER)
-PROVIDE_COMPARATOR(greater_than, GT)
+public:
+    void incr() {
+        m_i += 1;
+    }
+    void mult(double m) {
+        m_d *= m;
+    }
 
-#endif  // SCTF_COMPARATOR_GREATER_HPP
+    int i() const {
+        return m_i;
+    }
+    double d() const {
+        return m_d;
+    }
+};
+
+DESCRIBE_PAR("TestMyClass") {
+    TEST("check epsilon") {
+        std::cout << sctf::private_::epsilon << std::flush;
+    };
+};

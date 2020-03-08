@@ -19,11 +19,14 @@
  }
  */
 
+#define SCTF_EXTERN_EPSILON
+
 #include <iostream>
 
 #include "basic_tests.h"
-#include "reflexive_tests.h"
 #include "sctf.hpp"
+
+SCTF_SET_EPSILON(0.000001)
 
 using namespace sctf;
 
