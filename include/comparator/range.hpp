@@ -45,7 +45,7 @@ public:
     }
 
     template<typename V, typename E = V,
-             ENABLE_IF(HAS_ITERATOR_CAPABILITY(E) AND NOT IS_TYPE(E, std::string))>
+             SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_HAS_ITERATOR_CAPABILITY(E) SCTF_PRIVATE_AND SCTF_PRIVATE_NOT SCTF_PRIVATE_IS_TYPE(E, std::string))>
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (std::find(expected_value.cbegin(), expected_value.cend(), actual_value) !=
                 expected_value.cend()) != m_neg ?
@@ -54,7 +54,7 @@ public:
                               to_string(expected_value));
     }
 
-    template<typename V, typename E = V, ENABLE_IF(IS_TYPE(E, std::string))>
+    template<typename V, typename E = V, SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_IS_TYPE(E, std::string))>
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (expected_value.find(actual_value) != std::string::npos) != m_neg ?
                    comparison() :

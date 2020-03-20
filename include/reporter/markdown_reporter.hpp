@@ -29,7 +29,6 @@
 #include "testsuite/testsuite.hpp"
 
 #include "testcase.hpp"
-#include "types.hpp"
 
 #define SCTF_XLF (SCTF_LF SCTF_LF)
 

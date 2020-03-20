@@ -19,51 +19,31 @@
  }
  */
 
+/// @file
+
 #ifndef SCTF_TYPES_HPP
 #define SCTF_TYPES_HPP
 
 #include <functional>
-#include <memory>
 
 namespace sctf
 {
 namespace private_
 {
-class reporter;
-class testsuite;
-using testsuite_ptr = std::shared_ptr<testsuite>;
-using test_function = std::function<void()>;
+/// A function wrapper that takes no arguments, and does not return anything.
+using void_function = std::function<void()>;
 
 /**
- * Pack source file and line number together as a location in code.
+ * A location in source code.
  */
 struct code_location final
 {
+    /// The filename, where this location belongs to.
     char const* file;
-    int const   line;
-};
-
-/**
- * Provide a singleton pattern implementation.
- * The instance exists in global scope, thus it is not threadsafe by default.
- */
-template<typename T>
-struct singleton final
-{
-    /**
-     * Get the actual singleton instance.
-     * Construction happens only once, on first call with forwarded arguments.
-     */
-    template<typename... Args>
-    static T& instance(Args&&... args_) {
-        static T inst(std::forward<Args>(args_)...);
-        return inst;
-    }
+    /// The line number in the file.
+    int const line;
 };
 }  // namespace private_
-
-using reporter_ptr = std::shared_ptr<private_::reporter>;
-
 }  // namespace sctf
 
 #endif  // SCTF_TYPES_HPP

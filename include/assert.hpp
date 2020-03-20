@@ -136,7 +136,7 @@ static void assert_statement(V const& val_, E const& expect_, C&& cmp_, code_loc
 }
 
 template<typename T>
-static void assert_throws(test_function&& fn_, code_location const& loc_) {
+static void assert_throws(void_function&& fn_, code_location const& loc_) {
     try {
         fn_();
     } catch (T const&) {
@@ -149,7 +149,7 @@ static void assert_throws(test_function&& fn_, code_location const& loc_) {
     throw assertion_failure("No exception thrown, expected " + name_for_type<T>(), loc_);
 }
 
-static void assert_nothrow(test_function&& fn_, code_location const& loc_) {
+static void assert_nothrow(void_function&& fn_, code_location const& loc_) {
     try {
         fn_();
     } catch (const std::exception& e) {
@@ -159,7 +159,7 @@ static void assert_nothrow(test_function&& fn_, code_location const& loc_) {
     }
 }
 
-static void assert_runtime(test_function&& fn_, double max_ms_, code_location const& loc_) {
+static void assert_runtime(void_function&& fn_, double max_ms_, code_location const& loc_) {
     try {
         duration dur;
         fn_();

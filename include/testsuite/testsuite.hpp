@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <chrono>
 #include <iostream>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -33,7 +34,6 @@
 
 #include "stringify.hpp"
 #include "testcase.hpp"
-#include "types.hpp"
 
 #define SCTF_EXEC_SILENT(F) \
     if (F) {                \
@@ -47,6 +47,9 @@ namespace sctf
 {
 namespace private_
 {
+class testsuite;
+using testsuite_ptr = std::shared_ptr<testsuite>;
+
 /**
  * A testsuite describes a set of tests in a certain context, like an user defined class, or
  * function. This class handles sequentially running testcases.
@@ -110,7 +113,7 @@ public:
      * @param fn_   The test function
      * @return this testsuite for chaining
      */
-    void test(char const* name_, test_function&& fn_) {
+    void test(char const* name_, void_function&& fn_) {
         m_testcases.push_back(testcase(name_, m_name, std::move(fn_)));
         m_state = execution_state::PENDING;
     }
@@ -122,7 +125,7 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    void setup(test_function&& fn_) {
+    void setup(void_function&& fn_) {
         m_setup_fn = std::move(fn_);
     }
 
@@ -133,7 +136,7 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    void teardown(test_function&& fn_) {
+    void teardown(void_function&& fn_) {
         m_teardown_fn = std::move(fn_);
     }
 
@@ -144,7 +147,7 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    void before_each(test_function&& fn_) {
+    void before_each(void_function&& fn_) {
         m_pretest_fn = std::move(fn_);
     }
 
@@ -155,7 +158,7 @@ public:
      * @param fn_ The function
      * @return this testsuite for chaining
      */
-    void after_each(test_function&& fn_) {
+    void after_each(void_function&& fn_) {
         m_posttest_fn = std::move(fn_);
     }
 
@@ -212,10 +215,10 @@ protected:
     std::vector<testcase> m_testcases;
     execution_state       m_state = execution_state::PENDING;
 
-    test_function m_setup_fn;
-    test_function m_teardown_fn;
-    test_function m_pretest_fn;
-    test_function m_posttest_fn;
+    void_function m_setup_fn;
+    void_function m_teardown_fn;
+    void_function m_pretest_fn;
+    void_function m_posttest_fn;
 };
 
 }  // namespace private_

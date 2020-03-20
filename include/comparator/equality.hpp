@@ -47,7 +47,7 @@ public:
     }
 
     template<typename V, typename E = V,
-             ENABLE_IF(NOT IS_FLOAT(V) AND HAS_EQUALITY_CAPABILITY(V, E))>
+             SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_NOT SCTF_PRIVATE_IS_FLOAT(V) SCTF_PRIVATE_AND SCTF_PRIVATE_HAS_EQUALITY_CAPABILITY(V, E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (actual_value == expected_value) != m_neg ?
                    comparison() :
@@ -56,8 +56,8 @@ public:
     }
 
     template<typename V, typename E = V,
-             ENABLE_IF(NOT IS_FLOAT(V) AND NOT HAS_EQUALITY_CAPABILITY(V, E)
-                           AND                 HAS_UNEQUALITY_CAPABILITY(V, E))>
+             SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_NOT SCTF_PRIVATE_IS_FLOAT(V) SCTF_PRIVATE_AND SCTF_PRIVATE_NOT SCTF_PRIVATE_HAS_EQUALITY_CAPABILITY(V, E)
+                           SCTF_PRIVATE_AND                 SCTF_PRIVATE_HAS_UNEQUALITY_CAPABILITY(V, E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (actual_value != expected_value) != m_neg ?
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
@@ -65,7 +65,7 @@ public:
                    comparison();
     }
 
-    template<typename V, typename E = V, ENABLE_IF(IS_FLOAT(V) AND IS_FLOAT(E))>
+    template<typename V, typename E = V, SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_IS_FLOAT(V) SCTF_PRIVATE_AND SCTF_PRIVATE_IS_FLOAT(E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
 #if defined(SCTF_EXTERN_EPSILON) || defined(SCTF_EPSILON)
         static V epsilon_ = static_cast<V>(epsilon);
@@ -93,7 +93,7 @@ public:
     }
 
     template<typename V, typename E = V,
-             ENABLE_IF(NOT IS_FLOAT(V) AND HAS_UNEQUALITY_CAPABILITY(V, E))>
+             SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_NOT SCTF_PRIVATE_IS_FLOAT(V) SCTF_PRIVATE_AND SCTF_PRIVATE_HAS_UNEQUALITY_CAPABILITY(V, E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (actual_value != expected_value) != m_neg ?
                    comparison() :
@@ -102,8 +102,8 @@ public:
     }
 
     template<typename V, typename E = V,
-             ENABLE_IF(NOT IS_FLOAT(V) AND NOT HAS_UNEQUALITY_CAPABILITY(V, E)
-                           AND                 HAS_EQUALITY_CAPABILITY(V, E))>
+             SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_NOT SCTF_PRIVATE_IS_FLOAT(V) SCTF_PRIVATE_AND SCTF_PRIVATE_NOT SCTF_PRIVATE_HAS_UNEQUALITY_CAPABILITY(V, E)
+                           SCTF_PRIVATE_AND                 SCTF_PRIVATE_HAS_EQUALITY_CAPABILITY(V, E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (actual_value == expected_value) != m_neg ?
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
@@ -111,7 +111,7 @@ public:
                    comparison();
     }
 
-    template<typename V, typename E = V, ENABLE_IF(IS_FLOAT(V) AND IS_FLOAT(E))>
+    template<typename V, typename E = V, SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_IS_FLOAT(V) SCTF_PRIVATE_AND SCTF_PRIVATE_IS_FLOAT(E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
 #if defined(SCTF_EXTERN_EPSILON) || defined(SCTF_EPSILON)
         static V epsilon_ = static_cast<V>(epsilon);

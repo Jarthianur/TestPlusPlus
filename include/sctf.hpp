@@ -36,7 +36,6 @@
 #include "assert.hpp"
 #include "regex.hpp"
 #include "runner.hpp"
-#include "types.hpp"
 
 /**
  * Define a default main function, which executes and reports all tests registered to the

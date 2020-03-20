@@ -22,6 +22,36 @@
 #ifndef SCTF_API_HPP
 #define SCTF_API_HPP
 
+namespace sctf
+{
+namespace private_
+{
+/**
+ * Provide a singleton pattern implementation that mitigates static initialization order fiasko.
+ * The instance exists in global scope.
+ */
+template<typename T>
+struct singleton final
+{
+    /**
+     * Get the underlying instance helt by this singleton.
+     * The underlying instance is constructed once, on first call.
+     * Further calls to this singleton return the same instance.
+     *
+     * @tparam Args
+     * An unspecified generic list of arguments, which is forwarded to the constructor
+     * at first call.
+     * @return the underlying instance.
+     */
+    template<typename... Args>
+    static T& instance(Args&&... args_) {
+        static T inst(std::forward<Args>(args_)...);
+        return inst;
+    }
+};
+}  // namespace private_
+}  // namespace sctf
+
 #define SCTF_PRIVATE_CONCAT3(A, B, C) A##B##C
 #define SCTF_PRIVATE_API_TEST_NAME(ID) SCTF_PRIVATE_CONCAT3(sctf_private_test_, ID, _)
 #define SCTF_PRIVATE_API_TEST_INST(ID) SCTF_PRIVATE_CONCAT3(sctf_private_test_, ID, _inst_)

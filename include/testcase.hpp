@@ -51,7 +51,7 @@ public:
      * @param ctx_  The context of the test function
      * @param fn_   The test function
      */
-    testcase(char const* name_, char const* ctx_, test_function&& fn_)
+    testcase(char const* name_, char const* ctx_, void_function&& fn_)
         : m_name(name_), m_context(ctx_), m_test_func(std::move(fn_)) {}
 
     testcase(testcase&& other_)
@@ -184,7 +184,7 @@ private:
     std::string   m_err_msg;
     std::string   m_cout;
     std::string   m_cerr;
-    test_function m_test_func;
+    void_function m_test_func;
 };
 
 }  // namespace private_

@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <fstream>
+#include <memory>
 #include <ostream>
 #include <stdexcept>
 #include <vector>
@@ -33,7 +34,6 @@
 #include "testsuite/testsuite.hpp"
 
 #include "runner.hpp"
-#include "types.hpp"
 
 #define SCTF_LF "\n"
 #define SCTF_SPACE "  "
@@ -108,6 +108,8 @@ protected:
     double        m_abs_time  = 0;
 };
 }  // namespace private_
+
+using reporter_ptr = std::shared_ptr<private_::reporter>;
 }  // namespace sctf
 
 #endif  // SCTF_REPORTER_REPORTER_HPP

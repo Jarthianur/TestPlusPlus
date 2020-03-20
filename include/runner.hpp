@@ -28,8 +28,6 @@
 #include "testsuite/testsuite.hpp"
 #include "testsuite/testsuite_parallel.hpp"
 
-#include "types.hpp"
-
 namespace sctf
 {
 namespace private_
