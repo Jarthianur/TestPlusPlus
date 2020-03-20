@@ -111,9 +111,11 @@ namespace sctf
 namespace private_
 {
 /**
- * Type trait to check for streaming operator capability.
- * @tparam S The stream type
- * @tparam T The type to check for
+ * Type trait to check for streaming operator capability in template meta programming.
+ * S must implement operator<< for T.
+ *
+ * @tparam S is the stream type.
+ * @tparam T is the type that needs to be streamable into S.
  */
 template<typename S, typename T>
 class stream_capability
@@ -125,12 +127,16 @@ class stream_capability
     static auto test(...) -> std::false_type;
 
 public:
+    /// Resolves to true, if T is streamable to S.
     static const bool value = decltype(test<S, T>(0))::value;
 };
 
 /**
- * Type trait to check for iterator capabilities.
- * @tparam T The type to check for
+ * Type trait to check for iterator capabilities in template meta programming.
+ * T must implement begin and end, while the resulting iterator must implement operator++ and
+ * operator*.
+ *
+ * @tparam T is the type that needs to be iterable.
  */
 template<typename T>
 class iterator_capability
@@ -145,45 +151,51 @@ class iterator_capability
     static auto test(...) -> std::false_type;
 
 public:
+    /// Resolves to true, if T is iterable.
     static const bool value = decltype(test<T>(0))::value;
 };
 
 /**
- * Type trait to check for equality operator capability.
- * @tparam S The left hand type
- * @tparam T The right hand type
+ * Type trait to check for equality comparison capability in template meta programming.
+ * L must implement operator== for R.
+ *
+ * @tparam L is the left hand type.
+ * @tparam R is the right hand type.
  */
-template<typename S, typename T>
+template<typename L, typename R>
 class equality_capability
 {
-    template<typename SS, typename TT>
-    static auto test(int) -> decltype(std::declval<SS>() == std::declval<TT>(), std::true_type());
+    template<typename LL, typename RR>
+    static auto test(int) -> decltype(std::declval<LL>() == std::declval<RR>(), std::true_type());
 
     template<typename, typename>
     static auto test(...) -> std::false_type;
 
 public:
-    static const bool value = decltype(test<S, T>(0))::value;
+    /// Resolves to true, if L can be compared for equality to R.
+    static const bool value = decltype(test<L, R>(0))::value;
 };
 
 /**
- * Type trait to check for unequality operator capability.
- * @tparam S The left hand type
- * @tparam T The right hand type
+ * Type trait to check for unequality comparison capability in template meta programming.
+ * L must implement operator!= for R.
+ *
+ * @tparam L is the left hand type.
+ * @tparam R is the right hand type.
  */
-template<typename S, typename T>
+template<typename L, typename R>
 class unequality_capability
 {
-    template<typename SS, typename TT>
-    static auto test(int) -> decltype(std::declval<SS>() != std::declval<TT>(), std::true_type());
+    template<typename LL, typename RR>
+    static auto test(int) -> decltype(std::declval<LL>() != std::declval<RR>(), std::true_type());
 
     template<typename, typename>
     static auto test(...) -> std::false_type;
 
 public:
-    static const bool value = decltype(test<S, T>(0))::value;
+    /// Resolves to true, if L can be compared for unequality to R.
+    static const bool value = decltype(test<L, R>(0))::value;
 };
-
 }  // namespace private_
 }  // namespace sctf
 

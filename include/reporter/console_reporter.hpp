@@ -76,10 +76,10 @@ protected:
         }
         switch (tc_.state()) {
             case private_::testcase::result::ERROR:
-                *this << (m_color ? SCTF_ANSI_MAGENTA : "") << "ERROR! " << tc_.err_msg();
+                *this << (m_color ? SCTF_ANSI_MAGENTA : "") << "ERROR! " << tc_.reason();
                 break;
             case private_::testcase::result::FAILED:
-                *this << (m_color ? SCTF_ANSI_RED : "") << "FAILED! " << tc_.err_msg();
+                *this << (m_color ? SCTF_ANSI_RED : "") << "FAILED! " << tc_.reason();
                 break;
             case private_::testcase::result::PASSED:
                 *this << (m_color ? SCTF_ANSI_GREEN : "") << "PASSED!";

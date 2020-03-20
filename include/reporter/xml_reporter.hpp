@@ -67,7 +67,7 @@ protected:
         switch (tc_.state()) {
             case private_::testcase::result::ERROR:
                 *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<error message=\""
-                      << tc_.err_msg() << "\"></error>" << SCTF_LF;
+                      << tc_.reason() << "\"></error>" << SCTF_LF;
                 if (m_capture) {
                     print_system_out(tc_);
                 }
@@ -75,7 +75,7 @@ protected:
                 break;
             case private_::testcase::result::FAILED:
                 *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<failure message=\""
-                      << tc_.err_msg() << "\"></failure>" << SCTF_LF;
+                      << tc_.reason() << "\"></failure>" << SCTF_LF;
                 if (m_capture) {
                     print_system_out(tc_);
                 }

@@ -35,8 +35,7 @@ namespace sctf
 namespace private_
 {
 /**
- * A testcase has a test function with assertions inside.
- * If one of the assertions fails, the whole testcase fails. Otherwise the testcase passes.
+ * A wrapper, that encapsulates a single testcase, as it is used in testsuites.
  */
 class testcase
 {
@@ -47,9 +46,9 @@ public:
     ~testcase() noexcept = default;
 
     /**
-     * @param name_ The name/description of the test case
-     * @param ctx_  The context of the test function
-     * @param fn_   The test function
+     * @param name_ is the name/description for this testcase.
+     * @param ctx_  is the context (testsuite), where this testcase lives.
+     * @param fn_   is the function performing the actual test.
      */
     testcase(char const* name_, char const* ctx_, void_function&& fn_)
         : m_name(name_), m_context(ctx_), m_test_func(std::move(fn_)) {}
@@ -73,18 +72,18 @@ public:
     }
 
     /**
-     * The testcases result state.
+     * The resulting state of a testcase.
      */
     enum class result : std::int_fast8_t
     {
-        NONE,  ///< not yet executed
-        PASSED,
-        FAILED,
-        ERROR
+        NONE,    ///< not yet performed
+        PASSED,  ///< test passed successfully
+        FAILED,  ///< at least one assertion failed
+        ERROR    ///< an unexpected exception was thrown
     };
 
     /**
-     * Execute the test function and store results. Does nothing if the test was executed already.
+     * Perform the test. Returns immediately if the test was alreday performed.
      */
     void operator()() {
         if (m_state != result::NONE) return;
@@ -95,9 +94,9 @@ public:
         } catch (assertion_failure const& e) {
             fail(e.what());
         } catch (std::exception const& e) {
-            erroneous(e.what());
+            error(e.what());
         } catch (...) {
-            erroneous();
+            error();
         }
         m_duration = dur.get();
     }
@@ -110,39 +109,47 @@ public:
     }
 
     /**
-     * Get the duration of the test function in milliseconds.
+     * Get the duration of the test run in milliseconds.
      */
     inline double duration() const {
         return m_duration;
     }
 
     /**
-     * Get the error, or assertion failure reason.
+     * Get the error, or failure reason.
      * If the test passed, it is empty.
      */
-    inline std::string const& err_msg() const {
+    inline std::string const& reason() const {
         return m_err_msg;
     }
 
+    /**
+     * Get the name/description of this testcase.
+     */
     inline char const* name() const {
         return m_name;
     }
 
+    /**
+     * Get the context (testsuite), where this testcase lives.
+     */
     inline char const* context() const {
         return m_context;
     }
 
     /**
      * Set the captured stdout content for this testcase.
-     * @param str_ The captured output
+     *
+     * @param str_ is the output.
      */
     inline void cout(std::string const& str_) {
         m_cout = str_;
     }
 
     /**
-     * Set the captured stdout content for this testcase.
-     * @param str_ The captured output
+     * Set the captured stderr content for this testcase.
+     *
+     * @param str_ is the output.
      */
     inline void cerr(std::string const& str_) {
         m_cerr = str_;
@@ -163,18 +170,31 @@ public:
     }
 
 private:
+    /**
+     * Mark this testcase as successfully passed.
+     */
     inline void pass() {
         m_state = result::PASSED;
     }
 
+    /**
+     * Mark this testcase as failed.
+     *
+     * @param msg_ is the failure reason.
+     */
     inline void fail(char const* msg_) {
         m_state   = result::FAILED;
         m_err_msg = msg_;
     }
 
-    inline void erroneous(char const* err_ = "unknown error") {
+    /**
+     * Mark this testcase as erroneous.
+     *
+     * @param msg_ is the error reason.
+     */
+    inline void error(char const* msg_ = "unknown error") {
         m_state   = result::ERROR;
-        m_err_msg = err_;
+        m_err_msg = msg_;
     }
 
     char const*   m_name;
@@ -186,7 +206,6 @@ private:
     std::string   m_cerr;
     void_function m_test_func;
 };
-
 }  // namespace private_
 }  // namespace sctf
 

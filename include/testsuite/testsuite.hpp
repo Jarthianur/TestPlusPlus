@@ -32,7 +32,6 @@
 #include "testsuite/statistic.hpp"
 #include "testsuite/streambuf_proxy.hpp"
 
-#include "stringify.hpp"
 #include "testcase.hpp"
 
 #define SCTF_PRIVATE_EXEC_SILENT(F) \
