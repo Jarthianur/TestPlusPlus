@@ -26,11 +26,6 @@
 #include <ctime>
 
 #include "reporter/reporter.hpp"
-#include "testsuite/statistic.hpp"
-#include "testsuite/testsuite.hpp"
-
-#include "testcase.hpp"
-#include "types.hpp"
 
 namespace sctf
 {

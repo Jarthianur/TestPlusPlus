@@ -26,10 +26,10 @@
 
 #include "comparator/comparator.hpp"
 
-COMPARATOR(match, "matching", std::regex_match(actual_value, std::regex(expected_value)))
-PROVIDE_COMPARATOR(match, MATCH)
+SCTF_COMPARATOR(match, "matching", std::regex_match(actual_value, std::regex(expected_value)))
+SCTF_PROVIDE_COMPARATOR(match, MATCH)
 
-COMPARATOR(like, "like", std::regex_search(actual_value, std::regex(expected_value)))
-PROVIDE_COMPARATOR(like, LIKE)
+SCTF_COMPARATOR(like, "like", std::regex_search(actual_value, std::regex(expected_value)))
+SCTF_PROVIDE_COMPARATOR(like, LIKE)
 
 #endif  // SCTF_COMPARATOR_REGEX_HPP

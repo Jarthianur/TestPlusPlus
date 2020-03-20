@@ -78,12 +78,7 @@ struct singleton final
     class SCTF_PRIVATE_API_SUITE_NS(__LINE__)::SCTF_PRIVATE_API_SUITE_NAME(__LINE__)      \
         : public SCTF_PRIVATE_API_SUITE_NS(__LINE__)::test_module
 
-#define SUITE(DESCR) SCTF_PRIVATE_API_SUITE_WRAPPER(DESCR, testsuite)
-#define SUITE_PAR(DESCR) SCTF_PRIVATE_API_SUITE_WRAPPER(DESCR, testsuite_parallel)
-#define DESCRIBE(DESCR) SUITE(DESCR)
-#define DESCRIBE_PAR(DESCR) SUITE_PAR(DESCR)
-
-#define TEST(DESCR)                                                                            \
+#define SCTF_PRIVATE_API_TEST_WRAPPER(DESCR)                                                   \
     class SCTF_PRIVATE_API_TEST_NAME(__LINE__)                                                 \
     {                                                                                          \
     public:                                                                                    \
@@ -94,8 +89,6 @@ struct singleton final
         }                                                                                      \
     } SCTF_PRIVATE_API_TEST_INST(__LINE__){this};                                              \
     void SCTF_PRIVATE_API_TEST_FN(__LINE__)()
-
-#define IT(DESCR) TEST("It " DESCR)
 
 #define SCTF_PRIVATE_API_FN_WRAPPER(FN)                                             \
     class sctf_private_##FN##_                                                      \
@@ -108,6 +101,12 @@ struct singleton final
     } sctf_private_##FN##_inst_{this};                                              \
     void sctf_private_##FN##_fn_()
 
+#define SUITE(DESCR) SCTF_PRIVATE_API_SUITE_WRAPPER(DESCR, testsuite)
+#define SUITE_PAR(DESCR) SCTF_PRIVATE_API_SUITE_WRAPPER(DESCR, testsuite_parallel)
+#define DESCRIBE(DESCR) SUITE(DESCR)
+#define DESCRIBE_PAR(DESCR) SUITE_PAR(DESCR)
+#define TEST(DESCR) SCTF_PRIVATE_API_TEST_WRAPPER(DESCR)
+#define IT(DESCR) SCTF_PRIVATE_API_TEST_WRAPPER("It " DESCR)
 #define BEFORE_EACH() SCTF_PRIVATE_API_FN_WRAPPER(before_each)
 #define AFTER_EACH() SCTF_PRIVATE_API_FN_WRAPPER(after_each)
 #define SETUP() SCTF_PRIVATE_API_FN_WRAPPER(setup)

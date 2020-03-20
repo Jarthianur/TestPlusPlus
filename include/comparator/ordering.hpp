@@ -24,14 +24,14 @@
 
 #include "comparator/comparator.hpp"
 
-COMPARATOR(greater_than, "greater than", actual_value > expected_value)
-PROVIDE_COMPARATOR(greater_than, GREATER_THAN)
-PROVIDE_COMPARATOR(greater_than, GREATER)
-PROVIDE_COMPARATOR(greater_than, GT)
+SCTF_COMPARATOR(greater_than, "greater than", actual_value > expected_value)
+SCTF_PROVIDE_COMPARATOR(greater_than, GREATER_THAN)
+SCTF_PROVIDE_COMPARATOR(greater_than, GREATER)
+SCTF_PROVIDE_COMPARATOR(greater_than, GT)
 
-COMPARATOR(less_than, "less than", actual_value < expected_value)
-PROVIDE_COMPARATOR(less_than, LESS_THAN)
-PROVIDE_COMPARATOR(less_than, LESS)
-PROVIDE_COMPARATOR(less_than, LT)
+SCTF_COMPARATOR(less_than, "less than", actual_value < expected_value)
+SCTF_PROVIDE_COMPARATOR(less_than, LESS_THAN)
+SCTF_PROVIDE_COMPARATOR(less_than, LESS)
+SCTF_PROVIDE_COMPARATOR(less_than, LT)
 
 #endif  // SCTF_COMPARATOR_ORDERING_HPP

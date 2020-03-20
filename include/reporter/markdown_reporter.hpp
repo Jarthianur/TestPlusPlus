@@ -25,10 +25,6 @@
 #include <sstream>
 
 #include "reporter/reporter.hpp"
-#include "testsuite/statistic.hpp"
-#include "testsuite/testsuite.hpp"
-
-#include "testcase.hpp"
 
 #define SCTF_XLF (SCTF_LF SCTF_LF)
 

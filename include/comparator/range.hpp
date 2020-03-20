@@ -66,7 +66,7 @@ public:
 }  // namespace private_
 }  // namespace sctf
 
-PROVIDE_COMPARATOR(in_range, IN_RANGE)
-PROVIDE_COMPARATOR(in_range, IN)
+SCTF_PROVIDE_COMPARATOR(in_range, IN_RANGE)
+SCTF_PROVIDE_COMPARATOR(in_range, IN)
 
 #endif  // SCTF_COMPARATOR_RANGE_HPP

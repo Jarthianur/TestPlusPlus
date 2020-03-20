@@ -35,12 +35,12 @@
 #include "stringify.hpp"
 #include "testcase.hpp"
 
-#define SCTF_EXEC_SILENT(F) \
-    if (F) {                \
-        try {               \
-            F();            \
-        } catch (...) {     \
-        }                   \
+#define SCTF_PRIVATE_EXEC_SILENT(F) \
+    if (F) {                        \
+        try {                       \
+            F();                    \
+        } catch (...) {             \
+        }                           \
     }
 
 namespace sctf
@@ -76,7 +76,7 @@ public:
      */
     virtual void run() {
         if (m_state != execution_state::DONE) {
-            SCTF_EXEC_SILENT(m_setup_fn)
+            SCTF_PRIVATE_EXEC_SILENT(m_setup_fn)
             m_stats.m_num_of_tests = m_testcases.size();
             streambuf_proxy buf_cout(std::cout);
             streambuf_proxy buf_cerr(std::cerr);
@@ -84,7 +84,7 @@ public:
             std::for_each(m_testcases.begin(), m_testcases.end(),
                           [this, &buf_cerr, &buf_cout](testcase& tc_) {
                               if (tc_.state() == testcase::result::NONE) {
-                                  SCTF_EXEC_SILENT(m_pretest_fn)
+                                  SCTF_PRIVATE_EXEC_SILENT(m_pretest_fn)
                                   tc_();
                                   switch (tc_.state()) {
                                       case testcase::result::FAILED:
@@ -94,14 +94,14 @@ public:
                                       default: break;
                                   }
                                   m_execution_time += tc_.duration();
-                                  SCTF_EXEC_SILENT(m_posttest_fn)
+                                  SCTF_PRIVATE_EXEC_SILENT(m_posttest_fn)
                                   tc_.cout(buf_cout.str());
                                   tc_.cerr(buf_cerr.str());
                                   buf_cout.clear();
                                   buf_cerr.clear();
                               }
                           });
-            SCTF_EXEC_SILENT(m_teardown_fn)
+            SCTF_PRIVATE_EXEC_SILENT(m_teardown_fn)
             m_state = execution_state::DONE;
         }
     }

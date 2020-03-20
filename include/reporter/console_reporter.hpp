@@ -23,19 +23,14 @@
 #define SCTF_REPORTER_CONSOLE_REPORTER_HPP
 
 #include "reporter/reporter.hpp"
-#include "testsuite/statistic.hpp"
-#include "testsuite/testsuite.hpp"
 
-#include "testcase.hpp"
-#include "types.hpp"
-
-#define ANSI_RED "\x1b[31m"
-#define ANSI_GREEN "\x1b[32m"
-#define ANSI_YELLOW "\x1b[33m"
-#define ANSI_BLUE "\x1b[34m"
-#define ANSI_MAGENTA "\x1b[35m"
-#define ANSI_CYAN "\x1b[36m"
-#define ANSI_RESET "\x1b[0m"
+#define SCTF_ANSI_RED "\x1b[31m"
+#define SCTF_ANSI_GREEN "\x1b[32m"
+#define SCTF_ANSI_YELLOW "\x1b[33m"
+#define SCTF_ANSI_BLUE "\x1b[34m"
+#define SCTF_ANSI_MAGENTA "\x1b[35m"
+#define SCTF_ANSI_CYAN "\x1b[36m"
+#define SCTF_ANSI_RESET "\x1b[0m"
 
 namespace sctf
 {
@@ -81,31 +76,31 @@ protected:
         }
         switch (tc_.state()) {
             case private_::testcase::result::ERROR:
-                *this << (m_color ? ANSI_MAGENTA : "") << "ERROR! " << tc_.err_msg();
+                *this << (m_color ? SCTF_ANSI_MAGENTA : "") << "ERROR! " << tc_.err_msg();
                 break;
             case private_::testcase::result::FAILED:
-                *this << (m_color ? ANSI_RED : "") << "FAILED! " << tc_.err_msg();
+                *this << (m_color ? SCTF_ANSI_RED : "") << "FAILED! " << tc_.err_msg();
                 break;
             case private_::testcase::result::PASSED:
-                *this << (m_color ? ANSI_GREEN : "") << "PASSED!";
+                *this << (m_color ? SCTF_ANSI_GREEN : "") << "PASSED!";
                 break;
             default: break;
         }
-        *this << (m_color ? ANSI_RESET : "") << SCTF_LF;
+        *this << (m_color ? SCTF_ANSI_RESET : "") << SCTF_LF;
     }
 
     void begin_report() override {}
 
     void end_report() override {
         if (m_abs_fails >= (m_abs_tests + 1) / 2) {
-            *this << (m_color ? ANSI_YELLOW : "");
+            *this << (m_color ? SCTF_ANSI_YELLOW : "");
         } else {
-            *this << (m_color ? ANSI_CYAN : "");
+            *this << (m_color ? SCTF_ANSI_CYAN : "");
         }
         *this << "Result:: passed: " << m_abs_tests - m_abs_fails - m_abs_errs << "/" << m_abs_tests
               << " ; failed: " << m_abs_fails << "/" << m_abs_tests << " ; errors: " << m_abs_errs
               << "/" << m_abs_tests << " ; time = " << m_abs_time << "ms"
-              << (m_color ? ANSI_RESET : "") << SCTF_LF;
+              << (m_color ? SCTF_ANSI_RESET : "") << SCTF_LF;
     }
 
     bool m_color;
@@ -144,12 +139,12 @@ static reporter_ptr create_console_reporter(char const* fname_, bool color_ = fa
 }
 }  // namespace sctf
 
-#undef ANSI_RED
-#undef ANSI_BLUE
-#undef ANSI_CYAN
-#undef ANSI_GREEN
-#undef ANSI_RESET
-#undef ANSI_YELLOW
-#undef ANSI_MAGENTA
+#undef SCTF_ANSI_RED
+#undef SCTF_ANSI_BLUE
+#undef SCTF_ANSI_CYAN
+#undef SCTF_ANSI_GREEN
+#undef SCTF_ANSI_RESET
+#undef SCTF_ANSI_YELLOW
+#undef SCTF_ANSI_MAGENTA
 
 #endif  // SCTF_REPORTER_CONSOLE_REPORTER_HPP

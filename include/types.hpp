@@ -30,7 +30,6 @@ namespace sctf
 {
 namespace private_
 {
-/// A function wrapper that takes no arguments, and does not return anything.
 using void_function = std::function<void()>;
 
 /**

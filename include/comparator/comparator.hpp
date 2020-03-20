@@ -133,7 +133,7 @@ extern double epsilon;
  * @param CMPSTR A string representing the comparison constraint, like "equals"
  * @param PRED   The comparison predicate / condition
  */
-#define COMPARATOR(NAME, CMPSTR, PRED)                                                        \
+#define SCTF_COMPARATOR(NAME, CMPSTR, PRED)                                                   \
     namespace sctf                                                                            \
     {                                                                                         \
     namespace private_                                                                        \
@@ -166,12 +166,12 @@ extern double epsilon;
  * @param COMP The comparator function
  * @param NAME The final shortwrite
  */
-#define PROVIDE_COMPARATOR(COMP, NAME) \
-    namespace sctf                     \
-    {                                  \
-    static private_::COMP NAME() {     \
-        return private_::COMP();       \
-    }                                  \
+#define SCTF_PROVIDE_COMPARATOR(COMP, NAME) \
+    namespace sctf                          \
+    {                                       \
+    static private_::COMP NAME() {          \
+        return private_::COMP();            \
+    }                                       \
     }
 
 /**

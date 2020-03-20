@@ -28,9 +28,7 @@
 #include <memory>
 #include <ostream>
 #include <stdexcept>
-#include <vector>
 
-#include "testsuite/statistic.hpp"
 #include "testsuite/testsuite.hpp"
 
 #include "runner.hpp"
