@@ -101,7 +101,9 @@ static std::string escaped_string(std::string const& str_) {
  * Get a printable string representation for any type, that is already convertable to string, but
  * not a floatingpoint type.
  */
-template<typename T, SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_HAS_STREAM_CAPABILITY(T, std::ostringstream) SCTF_PRIVATE_AND SCTF_PRIVATE_NOT SCTF_PRIVATE_IS_FLOAT(T))>
+template<typename T,
+         SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_HAS_STREAM_CAPABILITY(T, std::ostringstream)
+                                    SCTF_PRIVATE_AND SCTF_PRIVATE_NOT SCTF_PRIVATE_IS_FLOAT(T))>
 std::string to_string(T const& arg_) {
     std::ostringstream oss;
     oss << arg_;
@@ -111,7 +113,8 @@ std::string to_string(T const& arg_) {
 /**
  * Get a printable string representation for any floatingpoint type.
  */
-template<typename T, SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_HAS_STREAM_CAPABILITY(T, std::ostringstream) SCTF_PRIVATE_AND SCTF_PRIVATE_IS_FLOAT(T))>
+template<typename T, SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_HAS_STREAM_CAPABILITY(
+                         T, std::ostringstream) SCTF_PRIVATE_AND SCTF_PRIVATE_IS_FLOAT(T))>
 std::string to_string(T const& arg_) {
     std::ostringstream oss;
     oss << std::setprecision(std::numeric_limits<T>::max_digits10) << arg_;
@@ -122,7 +125,8 @@ std::string to_string(T const& arg_) {
  * Get a printable string representation for any type, that is not convertable to string.
  * The result is basically the typename.
  */
-template<typename T, SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_NOT SCTF_PRIVATE_HAS_STREAM_CAPABILITY(T, std::ostringstream))>
+template<typename T, SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_NOT SCTF_PRIVATE_HAS_STREAM_CAPABILITY(
+                         T, std::ostringstream))>
 std::string to_string(T const&) {
     return name_for_type<T>();
 }
