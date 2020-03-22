@@ -26,7 +26,7 @@
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 /**
  * Used for storing test results.

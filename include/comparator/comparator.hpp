@@ -47,7 +47,7 @@ using std::experimental::optional;
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 /**
  * Result of an actual comparison performed by any comparator.

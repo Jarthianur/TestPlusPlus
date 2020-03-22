@@ -19,9 +19,12 @@
  }
  */
 
+/// @file
+
 #ifndef SCTF_SCTF_HPP
 #define SCTF_SCTF_HPP
 
+/// SCTF release version this source belongs to.
 #define SCFT_VERSION "1.2-rc2"
 
 #include "comparator/equality.hpp"
@@ -38,10 +41,10 @@
 #include "runner.hpp"
 
 /**
- * Define a default main function, which executes and reports all tests registered to the
- * default runner.
- * @param REPORTER The reporter creation function invocation
- * @return the number of failed and erroneous tests
+ * Define a default main function, which performs all tests, and produces the report with specified
+ * reporter.
+ *
+ * @param REPORTER is the reporters factory method invokation.
  */
 #define SCTF_DEFAULT_MAIN(REPORTER)                        \
     int main(int /*argc*/, char** /*argv*/) {              \

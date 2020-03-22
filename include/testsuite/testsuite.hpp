@@ -44,7 +44,7 @@
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 class testsuite;
 using testsuite_ptr = std::shared_ptr<testsuite>;

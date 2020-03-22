@@ -29,7 +29,7 @@
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 /**
  * Used to be thrown when an assertion fails.

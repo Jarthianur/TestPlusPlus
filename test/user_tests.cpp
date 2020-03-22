@@ -46,6 +46,6 @@ public:
 
 DESCRIBE_PAR("TestMyClass") {
     TEST("check epsilon") {
-        std::cout << sctf::private_::epsilon << std::flush;
+        std::cout << sctf::intern::epsilon << std::flush;
     };
 };

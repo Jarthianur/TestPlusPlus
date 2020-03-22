@@ -26,7 +26,7 @@
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 /**
  * Used to measure durations in milliseconds.

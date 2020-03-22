@@ -32,7 +32,7 @@
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 class equals
 {

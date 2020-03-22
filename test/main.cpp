@@ -31,9 +31,9 @@ SCTF_SET_EPSILON(0.000001)
 using namespace sctf;
 
 int main(int, char**) {
-    auto rep   = create_console_reporter(true, true);
-    auto repx  = create_xml_reporter("test.xml", true);
-    auto repmd = create_markdown_reporter("test.md", true);
+    auto rep   = console_reporter::create(true, true);
+    auto repx  = xml_reporter::create("test.xml", true);
+    auto repmd = markdown_reporter::create("test.md", true);
 
     try {
         basic_tests();

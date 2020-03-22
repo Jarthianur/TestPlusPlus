@@ -33,11 +33,28 @@ namespace sctf
 /**
  * Reporter implementation with markdown format.
  */
-class markdown_reporter : public private_::reporter
+class markdown_reporter : public intern::reporter
 {
 public:
     ~markdown_reporter() noexcept override = default;
 
+    /**
+     * Create a markdown reporter.
+     * @param stream_  The stream to report to (default: stdout)
+     */
+    static reporter_ptr create(std::ostream& stream_ = std::cout, bool capture_ = false) {
+        return std::make_shared<markdown_reporter>(stream_, capture_);
+    }
+
+    /**
+     * Create a markdown reporter. The specified file will be overwritten if it already exists.
+     * @param fname_   The name of the file where the report will be written
+     */
+    static reporter_ptr create(char const* file_, bool capture_ = false) {
+        return std::make_shared<markdown_reporter>(file_, capture_);
+    }
+
+protected:
     /**
      * @param stream_  The stream to report to
      */
@@ -48,9 +65,7 @@ public:
      * @param fname_   The name of the file where the report will be written
      */
     markdown_reporter(char const* fname_, bool capture_) : reporter(fname_), m_capture(capture_) {}
-
-protected:
-    void report_testsuite(private_::testsuite_ptr const ts_) override {
+    void report_testsuite(intern::testsuite_ptr const ts_) override {
         *this << "## " << ts_->name() << SCTF_XLF << "|Tests|Successes|Failures|Errors|Time|"
               << SCTF_LF << "|-|-|-|-|-|" << SCTF_LF << "|" << ts_->statistics().tests() << "|"
               << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"
@@ -62,12 +77,12 @@ protected:
         *this << SCTF_XLF;
     }
 
-    void report_testcase(private_::testcase const& tc_) override {
+    void report_testcase(intern::testcase const& tc_) override {
         char const* status = "";
         switch (tc_.state()) {
-            case private_::testcase::result::ERROR: status = "ERROR"; break;
-            case private_::testcase::result::FAILED: status = "FAILED"; break;
-            case private_::testcase::result::PASSED: status = "PASSED"; break;
+            case intern::testcase::result::ERROR: status = "ERROR"; break;
+            case intern::testcase::result::FAILED: status = "FAILED"; break;
+            case intern::testcase::result::PASSED: status = "PASSED"; break;
             default: break;
         }
         *this << "|" << tc_.name() << "|" << tc_.context() << "|" << tc_.duration() << "ms|"
@@ -104,23 +119,6 @@ protected:
 
     bool m_capture;
 };
-
-/**
- * Create a markdown reporter.
- * @param stream_  The stream to report to (default: stdout)
- */
-static reporter_ptr create_markdown_reporter(std::ostream& stream_  = std::cout,
-                                             bool          capture_ = false) {
-    return std::make_shared<markdown_reporter>(stream_, capture_);
-}
-
-/**
- * Create a markdown reporter. The specified file will be overwritten if it already exists.
- * @param fname_   The name of the file where the report will be written
- */
-static reporter_ptr create_markdown_reporter(char const* file_, bool capture_ = false) {
-    return std::make_shared<markdown_reporter>(file_, capture_);
-}
 }  // namespace sctf
 
 #undef SCTF_XLF

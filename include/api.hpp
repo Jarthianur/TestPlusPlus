@@ -24,7 +24,7 @@
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 /**
  * Provide a singleton pattern implementation that mitigates static initialization order fiasko.

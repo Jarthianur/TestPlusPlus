@@ -34,7 +34,7 @@
 #include "traits.hpp"
 
 using namespace sctf;
-using namespace private_;
+using namespace intern;
 
 SUITE_PAR("test_comparators") {
     TEST("equals") {

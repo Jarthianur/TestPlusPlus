@@ -30,7 +30,7 @@
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 /**
  * Used to manage and run testsuites.

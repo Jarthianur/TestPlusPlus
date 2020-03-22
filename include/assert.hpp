@@ -125,7 +125,7 @@
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 template<typename C, typename V, typename E = V>
 static void assert_statement(V const& val_, E const& expect_, C&& cmp_, code_location const& loc_) {

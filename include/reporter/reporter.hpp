@@ -39,7 +39,7 @@
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 /**
  * Abstract reporter type. Used as base class for specific reporter implementations.
@@ -107,7 +107,7 @@ protected:
 };
 }  // namespace private_
 
-using reporter_ptr = std::shared_ptr<private_::reporter>;
+using reporter_ptr = std::shared_ptr<intern::reporter>;
 }  // namespace sctf
 
 #endif  // SCTF_REPORTER_REPORTER_HPP

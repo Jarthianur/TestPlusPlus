@@ -32,7 +32,7 @@
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 /**
  * A wrapper, that encapsulates a single testcase, as it is used in testsuites.
@@ -197,16 +197,16 @@ private:
         m_err_msg = msg_;
     }
 
-    char const*   m_name;
-    char const*   m_context;
-    result        m_state    = result::NONE;
-    double        m_duration = 0.0;
-    std::string   m_err_msg;
-    std::string   m_cout;
-    std::string   m_cerr;
-    void_function m_test_func;
+    char const*   m_name;     ///< Name or description of this testcase.
+    char const*   m_context;  ///< Context description (testsuite) where this testcase lives.
+    result        m_state    = result::NONE;  ///< Result produced by the test function.
+    double        m_duration = 0.0;  ///< Time in milliseconds, that the test function consumed.
+    std::string   m_err_msg;         ///< Message describing the reason for failure, or error.
+    std::string   m_cout;            ///< Captured output to stdout.
+    std::string   m_cerr;            ///< Captured output to stderr.
+    void_function m_test_func;       ///< Test function that performs the actual test.
 };
-}  // namespace private_
+}  // namespace intern
 }  // namespace sctf
 
 #endif  // SCTF_TESTSUITE_TESTCASE_HPP

@@ -30,7 +30,7 @@
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 /**
  * A testsuite describes a set of tests in a certain context, like an user defined class, or

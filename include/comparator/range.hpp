@@ -30,7 +30,7 @@
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 class in_range
 {

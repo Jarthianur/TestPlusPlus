@@ -32,11 +32,28 @@ namespace sctf
 /**
  * Reporter implementation with JUnit like XML format.
  */
-class xml_reporter : public private_::reporter
+class xml_reporter : public intern::reporter
 {
 public:
     ~xml_reporter() noexcept override = default;
 
+    /**
+     * Create a xml reporter.
+     * @param stream_  The stream to report to (default: stdout)
+     */
+    static reporter_ptr create(std::ostream& stream_ = std::cout, bool capture_ = false) {
+        return std::make_shared<xml_reporter>(stream_, capture_);
+    }
+
+    /**
+     * Create a xml reporter. The specified file will be overwritten if it already exists.
+     * @param fname_   The name of the file where the report will be written
+     */
+    static reporter_ptr create(char const* fname_, bool capture_ = false) {
+        return std::make_shared<xml_reporter>(fname_, capture_);
+    }
+
+protected:
     /**
      * @param stream_  The stream to report to
      */
@@ -47,8 +64,7 @@ public:
      */
     xml_reporter(char const* fname_, bool capture_) : reporter(fname_), m_capture(capture_) {}
 
-protected:
-    void report_testsuite(private_::testsuite_ptr const ts_) override {
+    void report_testsuite(intern::testsuite_ptr const ts_) override {
         std::time_t stamp = std::chrono::system_clock::to_time_t(ts_->timestamp());
         char        buff[128];
         std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
@@ -61,11 +77,11 @@ protected:
         *this << SCTF_SPACE << "</testsuite>" << SCTF_LF;
     }
 
-    void report_testcase(private_::testcase const& tc_) override {
+    void report_testcase(intern::testcase const& tc_) override {
         *this << SCTF_XSPACE << "<testcase name=\"" << tc_.name() << "\" classname=\""
               << tc_.context() << "\" time=\"" << tc_.duration() << "\"";
         switch (tc_.state()) {
-            case private_::testcase::result::ERROR:
+            case intern::testcase::result::ERROR:
                 *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<error message=\""
                       << tc_.reason() << "\"></error>" << SCTF_LF;
                 if (m_capture) {
@@ -73,7 +89,7 @@ protected:
                 }
                 *this << SCTF_XSPACE << "</testcase>";
                 break;
-            case private_::testcase::result::FAILED:
+            case intern::testcase::result::FAILED:
                 *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<failure message=\""
                       << tc_.reason() << "\"></failure>" << SCTF_LF;
                 if (m_capture) {
@@ -103,7 +119,7 @@ protected:
         *this << "</testsuites>" << SCTF_LF;
     }
 
-    void print_system_out(private_::testcase const& tc_) {
+    void print_system_out(intern::testcase const& tc_) {
         *this << SCTF_XSPACE << SCTF_SPACE << "<system-out>" << tc_.cout() << "</system-out>"
               << SCTF_LF;
         *this << SCTF_XSPACE << SCTF_SPACE << "<system-err>" << tc_.cerr() << "</system-err>"
@@ -113,22 +129,6 @@ protected:
     std::size_t mutable m_id = 0;
     bool m_capture;
 };
-
-/**
- * Create a xml reporter.
- * @param stream_  The stream to report to (default: stdout)
- */
-static reporter_ptr create_xml_reporter(std::ostream& stream_ = std::cout, bool capture_ = false) {
-    return std::make_shared<xml_reporter>(stream_, capture_);
-}
-
-/**
- * Create a xml reporter. The specified file will be overwritten if it already exists.
- * @param fname_   The name of the file where the report will be written
- */
-static reporter_ptr create_xml_reporter(char const* fname_, bool capture_ = false) {
-    return std::make_shared<xml_reporter>(fname_, capture_);
-}
 }  // namespace sctf
 
 #endif  // SCTF_REPORTER_XML_REPORTER_HPP

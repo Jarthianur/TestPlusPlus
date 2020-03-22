@@ -36,7 +36,7 @@
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 /**
  * Streambuffer proxy to capture everything sent to a stream in a multithreaded context with

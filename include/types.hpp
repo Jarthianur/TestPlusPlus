@@ -28,7 +28,7 @@
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 using void_function = std::function<void()>;
 

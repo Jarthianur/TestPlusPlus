@@ -108,7 +108,7 @@
 
 namespace sctf
 {
-namespace private_
+namespace intern
 {
 /**
  * Type trait to check for streaming operator capability in template meta programming.
