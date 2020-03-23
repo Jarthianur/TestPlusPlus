@@ -40,15 +40,15 @@ class runner
 public:
     /**
      * Add a testsuite to this runner.
-     * @param ts_ The testsuite to add
-     * @return the added testsuite
+     *
+     * @param ts_ is the testsuite to add
      */
     void add_testsuite(testsuite_ptr ts_) {
         m_testsuites.push_back(ts_);
     }
 
     /**
-     * Run all testsuites knwon to this runner.
+     * Run all contained testsuites, what inherently performs all tests.
      */
     void run() noexcept {
         std::for_each(m_testsuites.begin(), m_testsuites.end(),
@@ -56,14 +56,14 @@ public:
     }
 
     /**
-     * Get all the testsuites known to this runner.
+     * Get the contained testsuites.
      */
     std::vector<testsuite_ptr> const& testsuites() {
         return m_testsuites;
     }
 
     /**
-     * Get a runner instance, which is used as the default one.
+     * Get a runner instance, as singleton.
      */
     static runner& instance() {
         static runner r;
@@ -71,10 +71,9 @@ public:
     }
 
 private:
-    std::vector<testsuite_ptr> m_testsuites;
+    std::vector<testsuite_ptr> m_testsuites;  ///< Testsuites contained in this runner.
 };
-
-}  // namespace private_
+}  // namespace intern
 }  // namespace sctf
 
 #endif  // SCTF_RUNNER_HPP

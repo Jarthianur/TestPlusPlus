@@ -3,6 +3,7 @@
 !.github/**
 !/include/**
 !/test/**
+!/docs/**
 !.clang-format
 !.gitattributes
 !.gitignore

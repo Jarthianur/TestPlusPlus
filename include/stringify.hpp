@@ -116,8 +116,8 @@ static std::string escaped_string(std::string const& str_) {
  * @param arg_ is the value to convert to string.
  */
 template<typename T,
-         SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_HAS_STREAM_CAPABILITY(T, std::ostringstream)
-                                    SCTF_PRIVATE_AND SCTF_PRIVATE_NOT SCTF_PRIVATE_IS_FLOAT(T))>
+         SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream)
+                                   SCTF_INTERN_AND SCTF_INTERN_NOT SCTF_INTERN_IS_FLOAT(T))>
 std::string to_string(T const& arg_) {
     std::ostringstream oss;
     oss << arg_;
@@ -130,7 +130,7 @@ std::string to_string(T const& arg_) {
  * @tparam T is the floating point type.
  * @param arg_ is the number to convert to string.
  */
-template<typename T, SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_IS_FLOAT(T))>
+template<typename T, SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_FLOAT(T))>
 std::string to_string(T const& arg_) {
     std::ostringstream oss;
     oss << std::setprecision(std::numeric_limits<T>::max_digits10) << arg_;
@@ -145,8 +145,8 @@ std::string to_string(T const& arg_) {
  * @param arg_ is the value to convert to string.
  * @return the typename for T, as there is no information about the value available.
  */
-template<typename T, SCTF_PRIVATE_ENABLE_IF(SCTF_PRIVATE_NOT SCTF_PRIVATE_HAS_STREAM_CAPABILITY(
-                         T, std::ostringstream))>
+template<typename T, SCTF_INTERN_ENABLE_IF(
+                         SCTF_INTERN_NOT SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream))>
 std::string to_string(T const&) {
     return name_for_type<T>();
 }

@@ -30,17 +30,16 @@ namespace intern
 {
 /**
  * Used to measure durations in milliseconds.
- * The starting timepoint is fixed on construction.
+ * The starting timepoint is fixed upon construction.
  */
 class duration final
 {
 public:
     duration() : m_start(std::chrono::steady_clock::now()) {}
-
     ~duration() noexcept = default;
 
     /**
-     * Get the duration since start in milliseconds.
+     * Get the duration since starting point in milliseconds.
      */
     double get() {
         return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - m_start)
@@ -48,9 +47,9 @@ public:
     }
 
 private:
-    std::chrono::steady_clock::time_point const m_start;
+    std::chrono::steady_clock::time_point const m_start;  ///< Starting timepoint.
 };
-}  // namespace private_
+}  // namespace intern
 }  // namespace sctf
 
 #endif  // SCTF_DURATION_HPP

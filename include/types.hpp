@@ -42,7 +42,7 @@ struct code_location final
     /// The line number in the file.
     int const line;
 };
-}  // namespace private_
+}  // namespace intern
 }  // namespace sctf
 
 #endif  // SCTF_TYPES_HPP
