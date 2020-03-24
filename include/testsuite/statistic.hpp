@@ -70,8 +70,7 @@ protected:
     std::size_t m_num_of_fails = 0;
     std::size_t m_num_of_errs  = 0;
 };
-
-}  // namespace private_
+}  // namespace intern
 }  // namespace sctf
 
 #endif  // SCTF_TESTSUITE_STATISTICS_HPP

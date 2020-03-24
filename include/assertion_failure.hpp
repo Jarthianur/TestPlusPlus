@@ -25,7 +25,7 @@
 #include <exception>
 #include <string>
 
-#include "types.hpp"
+#include "loc.hpp"
 
 namespace sctf
 {
@@ -38,26 +38,25 @@ class assertion_failure : public std::exception
 {
 public:
     /**
-     * @param msg_ The error message
-     * @param loc_ The code location where the assertion took place
+     * @param msg_ is the failure message
+     * @param loc_ is the line of code where the assertion took place
      */
-    assertion_failure(std::string const& msg_, code_location const& loc_)
+    assertion_failure(std::string const& msg_, loc const& loc_)
         : m_msg(msg_ + " at " + loc_.file + ":" + std::to_string(loc_.line)) {}
 
     virtual ~assertion_failure() noexcept override = default;
 
     /**
-     * Get the error message.
+     * Get the failure message.
      */
     inline char const* what() const noexcept override {
         return m_msg.c_str();
     }
 
 protected:
-    std::string const m_msg;
+    std::string const m_msg;  ///< Message describing the failure cause.
 };
-
-}  // namespace private_
+}  // namespace intern
 }  // namespace sctf
 
 #endif  // SCTF_ASSERTION_FAILURE_HPP

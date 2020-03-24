@@ -49,9 +49,7 @@ namespace intern
 template<typename T>
 static std::string const& name_for_type() {
     static thread_local std::string name;
-    if (name.length() > 0) {
-        return name;
-    }
+    if (name.length() > 0) { return name; }
 #ifdef SCTF_SYS_UNIX
     std::string const sig(__PRETTY_FUNCTION__);
     auto const        b = sig.rfind("T = ") + 4;
@@ -116,8 +114,8 @@ static std::string escaped_string(std::string const& str_) {
  * @param arg_ is the value to convert to string.
  */
 template<typename T,
-         SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream)
-                                   SCTF_INTERN_AND SCTF_INTERN_NOT SCTF_INTERN_IS_FLOAT(T))>
+         SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream) &&
+                               !SCTF_INTERN_IS_FLOAT(T))>
 std::string to_string(T const& arg_) {
     std::ostringstream oss;
     oss << arg_;
@@ -145,8 +143,8 @@ std::string to_string(T const& arg_) {
  * @param arg_ is the value to convert to string.
  * @return the typename for T, as there is no information about the value available.
  */
-template<typename T, SCTF_INTERN_ENABLE_IF(
-                         SCTF_INTERN_NOT SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream))>
+template<typename T,
+         SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream))>
 std::string to_string(T const&) {
     return name_for_type<T>();
 }

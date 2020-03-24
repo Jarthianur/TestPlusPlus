@@ -19,6 +19,8 @@
  }
  */
 
+/// @file
+
 #ifndef SCTF_REGEX_HPP
 #define SCTF_REGEX_HPP
 

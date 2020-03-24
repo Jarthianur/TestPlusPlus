@@ -122,7 +122,7 @@ static double epsilon = SCTF_EPSILON;
 #elif defined(SCTF_EXTERN_EPSILON)
 extern double epsilon;
 #endif
-}  // namespace private_
+}  // namespace intern
 }  // namespace sctf
 
 /**
@@ -136,7 +136,7 @@ extern double epsilon;
 #define SCTF_COMPARATOR(NAME, CMPSTR, PRED)                                                   \
     namespace sctf                                                                            \
     {                                                                                         \
-    namespace private_                                                                        \
+    namespace intern                                                                          \
     {                                                                                         \
     class NAME                                                                                \
     {                                                                                         \
@@ -169,8 +169,8 @@ extern double epsilon;
 #define SCTF_PROVIDE_COMPARATOR(COMP, NAME) \
     namespace sctf                          \
     {                                       \
-    static private_::COMP NAME() {          \
-        return private_::COMP();            \
+    static intern::COMP NAME() {            \
+        return intern::COMP();              \
     }                                       \
     }
 
@@ -182,7 +182,7 @@ extern double epsilon;
 #define SCTF_SET_EPSILON(E) \
     namespace sctf          \
     {                       \
-    namespace private_      \
+    namespace intern        \
     {                       \
     double epsilon = E;     \
     }                       \

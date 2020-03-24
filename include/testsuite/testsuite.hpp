@@ -33,14 +33,7 @@
 #include "testsuite/streambuf_proxy.hpp"
 
 #include "testcase.hpp"
-
-#define SCTF_PRIVATE_EXEC_SILENT(F) \
-    if (F) {                        \
-        try {                       \
-            F();                    \
-        } catch (...) {             \
-        }                           \
-    }
+#include "types.hpp"
 
 namespace sctf
 {
@@ -75,7 +68,7 @@ public:
      */
     virtual void run() {
         if (m_state != execution_state::DONE) {
-            SCTF_PRIVATE_EXEC_SILENT(m_setup_fn)
+            m_setup_fn();
             m_stats.m_num_of_tests = m_testcases.size();
             streambuf_proxy buf_cout(std::cout);
             streambuf_proxy buf_cerr(std::cerr);
@@ -83,7 +76,7 @@ public:
             std::for_each(m_testcases.begin(), m_testcases.end(),
                           [this, &buf_cerr, &buf_cout](testcase& tc_) {
                               if (tc_.state() == testcase::result::NONE) {
-                                  SCTF_PRIVATE_EXEC_SILENT(m_pretest_fn)
+                                  m_pretest_fn();
                                   tc_();
                                   switch (tc_.state()) {
                                       case testcase::result::FAILED:
@@ -93,14 +86,14 @@ public:
                                       default: break;
                                   }
                                   m_execution_time += tc_.duration();
-                                  SCTF_PRIVATE_EXEC_SILENT(m_posttest_fn)
+                                  m_posttest_fn();
                                   tc_.cout(buf_cout.str());
                                   tc_.cerr(buf_cerr.str());
                                   buf_cout.clear();
                                   buf_cerr.clear();
                               }
                           });
-            SCTF_PRIVATE_EXEC_SILENT(m_teardown_fn)
+            m_teardown_fn();
             m_state = execution_state::DONE;
         }
     }
@@ -125,7 +118,7 @@ public:
      * @return this testsuite for chaining
      */
     void setup(void_function&& fn_) {
-        m_setup_fn = std::move(fn_);
+        m_setup_fn.fn = std::move(fn_);
     }
 
     /**
@@ -136,7 +129,7 @@ public:
      * @return this testsuite for chaining
      */
     void teardown(void_function&& fn_) {
-        m_teardown_fn = std::move(fn_);
+        m_teardown_fn.fn = std::move(fn_);
     }
 
     /**
@@ -147,7 +140,7 @@ public:
      * @return this testsuite for chaining
      */
     void before_each(void_function&& fn_) {
-        m_pretest_fn = std::move(fn_);
+        m_pretest_fn.fn = std::move(fn_);
     }
 
     /**
@@ -158,7 +151,7 @@ public:
      * @return this testsuite for chaining
      */
     void after_each(void_function&& fn_) {
-        m_posttest_fn = std::move(fn_);
+        m_posttest_fn.fn = std::move(fn_);
     }
 
     /**
@@ -197,6 +190,20 @@ public:
     }
 
 protected:
+    struct silent_functor final
+    {
+        silent_functor& operator()() {
+            if (fn) {
+                try {
+                    fn();
+                } catch (...) {}
+            }
+            return *this;
+        }
+
+        void_function fn;
+    };
+
     enum class execution_state : std::int_fast8_t
     {
         PENDING,
@@ -214,13 +221,13 @@ protected:
     std::vector<testcase> m_testcases;
     execution_state       m_state = execution_state::PENDING;
 
-    void_function m_setup_fn;
-    void_function m_teardown_fn;
-    void_function m_pretest_fn;
-    void_function m_posttest_fn;
+    silent_functor m_setup_fn;
+    silent_functor m_teardown_fn;
+    silent_functor m_pretest_fn;
+    silent_functor m_posttest_fn;
 };
 
-}  // namespace private_
+}  // namespace intern
 }  // namespace sctf
 
 #endif  // SCTF_TESTSUITE_TESTSUITE_HPP

@@ -84,17 +84,13 @@ protected:
             case intern::testcase::result::ERROR:
                 *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<error message=\""
                       << tc_.reason() << "\"></error>" << SCTF_LF;
-                if (m_capture) {
-                    print_system_out(tc_);
-                }
+                if (m_capture) { print_system_out(tc_); }
                 *this << SCTF_XSPACE << "</testcase>";
                 break;
             case intern::testcase::result::FAILED:
                 *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<failure message=\""
                       << tc_.reason() << "\"></failure>" << SCTF_LF;
-                if (m_capture) {
-                    print_system_out(tc_);
-                }
+                if (m_capture) { print_system_out(tc_); }
                 *this << SCTF_XSPACE << "</testcase>";
                 break;
             default:

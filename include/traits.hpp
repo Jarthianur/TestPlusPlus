@@ -39,15 +39,6 @@
  */
 #define SCTF_INTERN_ENABLE_IF(C) typename std::enable_if<C>::type* = nullptr
 
-/// Logical conjunction for use in template meta programming.
-#define SCTF_INTERN_AND &&
-
-/// Logical disjunction for use in template meta programming.
-#define SCTF_INTERN_OR ||
-
-/// Logical negation for use in template meta programming.
-#define SCTF_INTERN_NOT !
-
 /**
  * Generically check for a trait to be fulfilled.
  *

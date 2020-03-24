@@ -45,8 +45,8 @@ public:
     }
 
     template<typename V, typename E = V,
-             SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_ITERATOR_CAPABILITY(
-                 E) SCTF_INTERN_AND SCTF_INTERN_NOT SCTF_INTERN_IS_TYPE(E, std::string))>
+             SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_ITERATOR_CAPABILITY(E) &&
+                                   !SCTF_INTERN_IS_TYPE(E, std::string))>
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (std::find(expected_value.cbegin(), expected_value.cend(), actual_value) !=
                 expected_value.cend()) != m_neg ?
@@ -55,8 +55,7 @@ public:
                               to_string(expected_value));
     }
 
-    template<typename V, typename E = V,
-             SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_TYPE(E, std::string))>
+    template<typename V, typename E = V, SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_TYPE(E, std::string))>
     comparison operator()(V const& actual_value, E const& expected_value) {
         return (expected_value.find(actual_value) != std::string::npos) != m_neg ?
                    comparison() :
@@ -64,8 +63,7 @@ public:
                               to_string(expected_value));
     }
 };
-
-}  // namespace private_
+}  // namespace intern
 }  // namespace sctf
 
 SCTF_PROVIDE_COMPARATOR(in_range, IN_RANGE)

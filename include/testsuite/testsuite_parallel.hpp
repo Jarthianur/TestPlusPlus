@@ -62,7 +62,7 @@ public:
             if (m_testcases.size() > static_cast<std::size_t>(std::numeric_limits<long>::max())) {
                 throw std::overflow_error("Too many testcases! Size would overflow loop variant.");
             }
-            SCTF_PRIVATE_EXEC_SILENT(m_setup_fn)
+            m_setup_fn();
             const long tc_size     = static_cast<long>(m_testcases.size());
             m_stats.m_num_of_tests = m_testcases.size();
             streambuf_proxy_omp mt_buf_cout(std::cout);
@@ -78,7 +78,7 @@ public:
                 for (long i = 0; i < tc_size; ++i) {
                     auto& tc = m_testcases[static_cast<std::size_t>(i)];
                     if (tc.state() == testcase::result::NONE) {
-                        SCTF_PRIVATE_EXEC_SILENT(m_pretest_fn)
+                        m_pretest_fn();
                         tc();
                         switch (tc.state()) {
                             case testcase::result::FAILED: ++fails; break;
@@ -86,7 +86,7 @@ public:
                             default: break;
                         }
                         tmp += tc.duration();
-                        SCTF_PRIVATE_EXEC_SILENT(m_posttest_fn)
+                        m_posttest_fn();
                         tc.cout(mt_buf_cout.str());
                         tc.cerr(mt_buf_cerr.str());
                         mt_buf_cout.clear();
@@ -100,7 +100,7 @@ public:
                     m_execution_time = std::max(m_execution_time, tmp);
                 }  // END critical section
             }      // END parallel section
-            SCTF_PRIVATE_EXEC_SILENT(m_teardown_fn)
+            m_teardown_fn();
             m_state = execution_state::DONE;
         }
     }
@@ -109,7 +109,7 @@ private:
     explicit testsuite_parallel(char const* name_) : testsuite(name_) {}
 };
 
-}  // namespace private_
+}  // namespace intern
 }  // namespace sctf
 
 #endif  // SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP

@@ -44,7 +44,7 @@ namespace intern
  */
 class streambuf_proxy_omp : public std::streambuf
 {
-#define SCTF_PRIVATE_CURRENT_THREAD_BUFFER() \
+#define SCTF_INTERN_CURRENT_THREAD_BUFFER() \
     (m_thd_buffers.at(static_cast<std::size_t>(omp_get_thread_num())))
 
 public:
@@ -69,37 +69,37 @@ public:
      * Get the current buffer content for the executing thread.
      */
     std::string str() const {
-        return SCTF_PRIVATE_CURRENT_THREAD_BUFFER().str();
+        return SCTF_INTERN_CURRENT_THREAD_BUFFER().str();
     }
 
     /**
      * Clear the buffer for the executing thread.
      */
     void clear() {
-        SCTF_PRIVATE_CURRENT_THREAD_BUFFER().str("");
+        SCTF_INTERN_CURRENT_THREAD_BUFFER().str("");
     }
 
 protected:
     virtual int_type overflow(int_type c_) override {
-        return SCTF_PRIVATE_CURRENT_THREAD_BUFFER().sputc(
+        return SCTF_INTERN_CURRENT_THREAD_BUFFER().sputc(
             std::stringbuf::traits_type::to_char_type(c_));
     }
 
     virtual std::streamsize xsputn(char const* s_, std::streamsize n_) override {
-        return SCTF_PRIVATE_CURRENT_THREAD_BUFFER().sputn(s_, n_);
+        return SCTF_INTERN_CURRENT_THREAD_BUFFER().sputn(s_, n_);
     }
 
     std::streambuf*             m_orig_buf;
     std::ostream&               m_orig_stream;
     std::vector<std::stringbuf> m_thd_buffers;
 };
-}  // namespace private_
+}  // namespace intern
 }  // namespace sctf
 
 #ifndef _OPENMP
 #    undef omp_get_max_threads
 #    undef omp_get_thread_num
 #endif
-#undef SCTF_PRIVATE_CURRENT_THREAD_BUFFER
+#undef SCTF_INTERN_CURRENT_THREAD_BUFFER
 
 #endif  // SCTF_TESTSUITE_STREAMBUF_PROXY_OMP_HPP

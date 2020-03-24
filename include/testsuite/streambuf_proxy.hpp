@@ -78,7 +78,7 @@ protected:
     std::ostream&   m_orig_stream;
     std::stringbuf  m_buffer;
 };
-}  // namespace private_
+}  // namespace intern
 }  // namespace sctf
 
 #endif  // SCTF_TESTSUITE_STREAMBUF_PROXY_HPP

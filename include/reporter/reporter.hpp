@@ -78,9 +78,7 @@ public:
 protected:
     explicit reporter(std::ostream& stream_) : mr_out_stream(stream_) {}
     explicit reporter(char const* fname_) : m_out_file(fname_), mr_out_stream(m_out_file) {
-        if (!mr_out_stream) {
-            throw std::runtime_error("Could not open file.");
-        }
+        if (!mr_out_stream) { throw std::runtime_error("Could not open file."); }
     }
 
     inline virtual void report_testsuite(testsuite_ptr const ts_) {
@@ -105,7 +103,7 @@ protected:
     std::size_t   m_abs_errs  = 0;
     double        m_abs_time  = 0;
 };
-}  // namespace private_
+}  // namespace intern
 
 using reporter_ptr = std::shared_ptr<intern::reporter>;
 }  // namespace sctf

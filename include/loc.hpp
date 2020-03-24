@@ -19,20 +19,24 @@
  }
  */
 
-/// @file
-
-#ifndef SCTF_TYPES_HPP
-#define SCTF_TYPES_HPP
-
-#include <functional>
+#ifndef SCTF_LOC_HPP
+#define SCTF_LOC_HPP
 
 namespace sctf
 {
 namespace intern
 {
-/// A function that does not take arguments, and does not return any value.
-using void_function = std::function<void()>;
+/**
+ * A line of code, specified by its line number and filename.
+ */
+struct loc final
+{
+    /// The filename, where this location belongs to.
+    char const* file;
+    /// The line number in the file.
+    int const line;
+};
 }  // namespace intern
 }  // namespace sctf
 
-#endif  // SCTF_TYPES_HPP
+#endif  // SCTF_LOC_HPP

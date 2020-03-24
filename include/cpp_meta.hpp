@@ -19,25 +19,41 @@
  }
  */
 
+/// @file
+
 #ifndef SCTF_CPP_META_HPP
 #define SCTF_CPP_META_HPP
 
 #if __cplusplus >= 201703L
+/// C++17 enabled
 #    define SCTF_CPP_V17
+
 #elif __cplusplus >= 201402L
+/// C++14 enabled
 #    define SCTF_CPP_V14
+
 #elif __cplusplus >= 201103L
+/// C++11 enabled
 #    define SCTF_CPP_V11
+
 #else
+
 #    error SCTF requires at least full C++11 compliance
+
 #endif
 
 #if defined(__GNUG__) || defined(__clang__)
+/// UNIX system (gcc/clang)
 #    define SCTF_SYS_UNIX
+
 #elif defined(_WIN32)
+/// Windows system (msvc)
 #    define SCTF_SYS_WIN
+
 #else
+
 #    error SCTF is only supported for Linux (gcc), OSX (clang), and Windows (msvc)
+
 #endif
 
 #endif  // SCTF_CPP_META_HPP
