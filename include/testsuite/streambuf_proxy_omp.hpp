@@ -40,10 +40,11 @@ namespace intern
 {
 /**
  * Streambuffer proxy to capture everything sent to a stream in a multithreaded context with
- * OpenMP.
+ * OpenMP. Every thread has its own underlying buffer, thus output is distinct to each thread.
  */
 class streambuf_proxy_omp : public std::streambuf
 {
+/// Get the buffer for the current thread.
 #define SCTF_INTERN_CURRENT_THREAD_BUFFER() \
     (m_thd_buffers.at(static_cast<std::size_t>(omp_get_thread_num())))
 
@@ -51,6 +52,8 @@ public:
     /**
      * Replace the underlying buffer of the stream.
      * As long as this object lives, everything sent to be stream is captured.
+     *
+     * @param stream_ is the stream to capture from.
      */
     streambuf_proxy_omp(std::ostream& stream_)
         : m_orig_buf(stream_.rdbuf(this)),
@@ -89,9 +92,9 @@ protected:
         return SCTF_INTERN_CURRENT_THREAD_BUFFER().sputn(s_, n_);
     }
 
-    std::streambuf*             m_orig_buf;
-    std::ostream&               m_orig_stream;
-    std::vector<std::stringbuf> m_thd_buffers;
+    std::streambuf*             m_orig_buf;     ///< Target streams original buffer.
+    std::ostream&               m_orig_stream;  ///< Target stream
+    std::vector<std::stringbuf> m_thd_buffers;  ///< Buffer to store captured output.
 };
 }  // namespace intern
 }  // namespace sctf

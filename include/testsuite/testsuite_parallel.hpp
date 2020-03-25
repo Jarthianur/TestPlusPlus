@@ -33,8 +33,8 @@ namespace sctf
 namespace intern
 {
 /**
- * A testsuite describes a set of tests in a certain context, like an user defined class, or
- * function. This class handles concurrently running testcases.
+ * Group testcases together in a testsuite. Testcases share this testsuite as their context.
+ * Testcases are run in parallel.
  */
 class testsuite_parallel : public testsuite
 {
@@ -46,16 +46,16 @@ public:
 
     /**
      * Create a new testsuite.
-     * @param name_ The name/description
-     * @return the newly created testsuite
+     *
+     * @param name_ is the name, or description of the testsuite.
      */
     static testsuite_ptr create(char const* name_) {
         return testsuite_ptr(new testsuite_parallel(name_));
     }
 
     /**
-     * Execute all testcases concurrently.
-     * @throws std::overflow_error if there are too many testcases for openmp to handle.
+     * Run all testcases in this suite.
+     * @throw std::overflow_error if there are too many testcases for openmp to handle.
      */
     void run() override {
         if (m_state != execution_state::DONE) {
@@ -67,7 +67,6 @@ public:
             m_stats.m_num_of_tests = m_testcases.size();
             streambuf_proxy_omp mt_buf_cout(std::cout);
             streambuf_proxy_omp mt_buf_cerr(std::cerr);
-
 #pragma omp parallel
             {  // BEGIN parallel section
                 double      tmp   = 0.0;
@@ -97,7 +96,7 @@ public:
                 {  // BEGIN critical section
                     m_stats.m_num_of_fails += fails;
                     m_stats.m_num_of_errs += errs;
-                    m_execution_time = std::max(m_execution_time, tmp);
+                    m_exec_dur = std::max(m_exec_dur, tmp);
                 }  // END critical section
             }      // END parallel section
             m_teardown_fn();
@@ -106,9 +105,11 @@ public:
     }
 
 private:
+    /**
+     * @param name_ is the name, or description of the testsuite.
+     */
     explicit testsuite_parallel(char const* name_) : testsuite(name_) {}
 };
-
 }  // namespace intern
 }  // namespace sctf
 

@@ -163,7 +163,9 @@ struct singleton final
  *
  * EXAMPLE:
  * @code
- * SUITE("test some stuff") { \/\* testcases \*\/ };
+ * SUITE("test some stuff") {
+ *   // testcases
+ * };
  * @endcode
  *
  * @param DESCR is a cstring with the description, or name of the testsuite.
@@ -175,7 +177,9 @@ struct singleton final
  *
  * EXAMPLE:
  * @code
- * SUITE_PAR("test some stuff in parallel") { \/\* testcases \*\/ };
+ * SUITE_PAR("test some stuff in parallel") {
+ *   // testcases
+ * };
  * @endcode
  *
  * @param DESCR is a cstring with the description, or name of the testsuite.
@@ -193,9 +197,9 @@ struct singleton final
  *
  * EXAMPLE:
  * @code
- * \/\/ ...
- * TEST("some test") { \/\* assertions \*\/ }
- * \/\/ ...
+ * TEST("some test") {
+ *   // assertions
+ * }
  * @endcode
  *
  * @param DESCR is a cstring with the description, or name of the testcase.
@@ -211,7 +215,9 @@ struct singleton final
  *
  * EXAMPLE:
  * @code
- * BEFORE_EACH() { \/\* do something \*\/ }
+ * BEFORE_EACH() {
+ *   // do something
+ * }
  * @endcode
  */
 #define BEFORE_EACH() SCTF_INTERN_API_FN_WRAPPER(before_each)
@@ -222,7 +228,9 @@ struct singleton final
  *
  * EXAMPLE:
  * @code
- * AFTER_EACH() { \/\* do something \*\/ }
+ * AFTER_EACH() {
+ *   // do something
+ * }
  * @endcode
  */
 #define AFTER_EACH() SCTF_INTERN_API_FN_WRAPPER(after_each)
@@ -233,7 +241,9 @@ struct singleton final
  *
  * EXAMPLE:
  * @code
- * SETUP() { \/\* do something \*\/ }
+ * SETUP() {
+ *   // do something
+ * }
  * @endcode
  */
 #define SETUP() SCTF_INTERN_API_FN_WRAPPER(setup)
@@ -244,7 +254,9 @@ struct singleton final
  *
  * EXAMPLE:
  * @code
- * TEARDOWN() { \/\* do something \*\/ }
+ * TEARDOWN() {
+ *   // do something
+ * }
  * @endcode
  */
 #define TEARDOWN() SCTF_INTERN_API_FN_WRAPPER(teardown)

@@ -19,6 +19,8 @@
  }
  */
 
+/// @file
+
 #ifndef SCTF_REPORTER_REPORTER_HPP
 #define SCTF_REPORTER_REPORTER_HPP
 
@@ -32,10 +34,6 @@
 #include "testsuite/testsuite.hpp"
 
 #include "runner.hpp"
-
-#define SCTF_LF "\n"
-#define SCTF_SPACE "  "
-#define SCTF_XSPACE "    "
 
 namespace sctf
 {
@@ -68,7 +66,7 @@ public:
                           m_abs_errs += ts_->statistics().errors();
                           m_abs_fails += ts_->statistics().failures();
                           m_abs_tests += ts_->statistics().tests();
-                          m_abs_time += ts_->execution_time();
+                          m_abs_time += ts_->execution_duration();
                           report_testsuite(ts_);
                       });
         end_report();
@@ -78,7 +76,9 @@ public:
 protected:
     explicit reporter(std::ostream& stream_) : mr_out_stream(stream_) {}
     explicit reporter(char const* fname_) : m_out_file(fname_), mr_out_stream(m_out_file) {
-        if (!mr_out_stream) { throw std::runtime_error("Could not open file."); }
+        if (!mr_out_stream) {
+            throw std::runtime_error("Could not open file.");
+        }
     }
 
     inline virtual void report_testsuite(testsuite_ptr const ts_) {

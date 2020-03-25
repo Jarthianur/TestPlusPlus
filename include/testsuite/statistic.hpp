@@ -29,13 +29,13 @@ namespace sctf
 namespace intern
 {
 /**
- * Used for storing test results.
+ * Used for storing results per testsuite.
  */
 class statistic
 {
 public:
     /**
-     * Get the absolute number of tests.
+     * Get the total number of tests.
      */
     inline std::size_t tests() const {
         return m_num_of_tests;
@@ -66,9 +66,9 @@ protected:
     friend class testsuite;
     friend class testsuite_parallel;
 
-    std::size_t m_num_of_tests = 0;
-    std::size_t m_num_of_fails = 0;
-    std::size_t m_num_of_errs  = 0;
+    std::size_t m_num_of_tests = 0;  ///< Total number of tests.
+    std::size_t m_num_of_fails = 0;  ///< Number of failed tests.
+    std::size_t m_num_of_errs  = 0;  ///< Number of erroneous tests.
 };
 }  // namespace intern
 }  // namespace sctf

@@ -39,6 +39,8 @@ public:
     /**
      * Replace the underlying buffer of the stream.
      * As long as this object lives, everything sent to be stream is captured.
+     *
+     * @param stream_ is the stream to capture from.
      */
     streambuf_proxy(std::ostream& stream_)
         : m_orig_buf(stream_.rdbuf(this)), m_orig_stream(stream_) {}
@@ -74,9 +76,9 @@ protected:
         return m_buffer.sputn(s_, n_);
     }
 
-    std::streambuf* m_orig_buf;
-    std::ostream&   m_orig_stream;
-    std::stringbuf  m_buffer;
+    std::streambuf* m_orig_buf;     ///< Target streams original buffer.
+    std::ostream&   m_orig_stream;  ///< Target stream
+    std::stringbuf  m_buffer;       ///< Buffer to store captured output.
 };
 }  // namespace intern
 }  // namespace sctf

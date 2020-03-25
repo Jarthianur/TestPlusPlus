@@ -19,6 +19,8 @@
  }
  */
 
+/// @file
+
 #ifndef SCTF_TESTSUITE_TESTSUITE_HPP
 #define SCTF_TESTSUITE_TESTSUITE_HPP
 
@@ -43,8 +45,8 @@ class testsuite;
 using testsuite_ptr = std::shared_ptr<testsuite>;
 
 /**
- * A testsuite describes a set of tests in a certain context, like an user defined class, or
- * function. This class handles sequentially running testcases.
+ * Group testcases together in a testsuite. Testcases share this testsuite as their context.
+ * Testcases are run sequentially.
  */
 class testsuite
 {
@@ -56,15 +58,15 @@ public:
 
     /**
      * Create a new testsuite.
-     * @param name_ The name/description
-     * @return the newly created testsuite
+     *
+     * @param name_ is the name, or description of the testsuite.
      */
     static testsuite_ptr create(char const* name_) {
         return testsuite_ptr(new testsuite(name_));
     }
 
     /**
-     * Execute all testcases sequentially.
+     * Run all testcases in this suite.
      */
     virtual void run() {
         if (m_state != execution_state::DONE) {
@@ -72,7 +74,6 @@ public:
             m_stats.m_num_of_tests = m_testcases.size();
             streambuf_proxy buf_cout(std::cout);
             streambuf_proxy buf_cerr(std::cerr);
-
             std::for_each(m_testcases.begin(), m_testcases.end(),
                           [this, &buf_cerr, &buf_cout](testcase& tc_) {
                               if (tc_.state() == testcase::result::NONE) {
@@ -85,7 +86,7 @@ public:
                                       case testcase::result::ERROR: ++m_stats.m_num_of_errs; break;
                                       default: break;
                                   }
-                                  m_execution_time += tc_.duration();
+                                  m_exec_dur += tc_.duration();
                                   m_posttest_fn();
                                   tc_.cout(buf_cout.str());
                                   tc_.cerr(buf_cerr.str());
@@ -99,11 +100,10 @@ public:
     }
 
     /**
-     * Add a new testcase to this testsuite, where the context of the test is inherited from the
-     * suite.
-     * @param name_ The name/description
-     * @param fn_   The test function
-     * @return this testsuite for chaining
+     * Add a new testcase to this testsuite.
+     *
+     * @param name_ is the name, or description of the testcase.
+     * @param fn_   is the function performing the test.
      */
     void test(char const* name_, void_function&& fn_) {
         m_testcases.push_back(testcase(name_, m_name, std::move(fn_)));
@@ -112,10 +112,9 @@ public:
 
     /**
      * Set a function, which will be executed once before all testcases.
-     * Overwrites the old setup-function, if any was set yet.
      * Exceptions thrown by the function will be ignored.
-     * @param fn_ The function
-     * @return this testsuite for chaining
+     *
+     * @param fn_ is the function to set.
      */
     void setup(void_function&& fn_) {
         m_setup_fn.fn = std::move(fn_);
@@ -123,10 +122,9 @@ public:
 
     /**
      * Set a function, which will be executed once after all testcases.
-     * Overwrites the old teardown-function, if any was set yet.
      * Exceptions thrown by the function will be ignored.
-     * @param fn_ The function
-     * @return this testsuite for chaining
+     *
+     * @param fn_ is the function to set.
      */
     void teardown(void_function&& fn_) {
         m_teardown_fn.fn = std::move(fn_);
@@ -134,10 +132,9 @@ public:
 
     /**
      * Set a function, which will be executed before each testcase.
-     * Overwrites the old before-function, if any was set yet.
      * Exceptions thrown by the function will be ignored.
-     * @param fn_ The function
-     * @return this testsuite for chaining
+     *
+     * @param fn_ is the function to set.
      */
     void before_each(void_function&& fn_) {
         m_pretest_fn.fn = std::move(fn_);
@@ -145,10 +142,9 @@ public:
 
     /**
      * Set a function, which will be executed after each testcase.
-     * Overwrites the old after-function, if any was set yet.
      * Exceptions thrown by the function will be ignored.
-     * @param fn_ The function
-     * @return this testsuite for chaining
+     *
+     * @param fn_ is the function to set.
      */
     void after_each(void_function&& fn_) {
         m_posttest_fn.fn = std::move(fn_);
@@ -162,10 +158,10 @@ public:
     }
 
     /**
-     * Get the testsuite timestamp of instantiation.
+     * Get the timestamp of instantiation.
      */
     inline std::chrono::system_clock::time_point const& timestamp() const {
-        return m_timestamp;
+        return m_create_time;
     }
 
     /**
@@ -178,8 +174,8 @@ public:
     /**
      * Get the accumulated time spent on all tests.
      */
-    inline double execution_time() const {
-        return m_execution_time;
+    inline double execution_duration() const {
+        return m_exec_dur;
     }
 
     /**
@@ -190,13 +186,23 @@ public:
     }
 
 protected:
+    /**
+     * @param name_ is the name, or description of the testsuite.
+     */
+    explicit testsuite(char const* name_)
+        : m_name(name_), m_create_time(std::chrono::system_clock::now()) {}
+
+    /**
+     * Hold a function optionally, that can be executed without throwing any exception.
+     */
     struct silent_functor final
     {
         silent_functor& operator()() {
             if (fn) {
                 try {
                     fn();
-                } catch (...) {}
+                } catch (...) {
+                }
             }
             return *this;
         }
@@ -204,29 +210,30 @@ protected:
         void_function fn;
     };
 
+    /**
+     * State whether there are testcases, which not have been run.
+     */
     enum class execution_state : std::int_fast8_t
     {
-        PENDING,
-        DONE
+        PENDING,  /// At least one testcase has not been run.
+        DONE      /// All testcases have been run.
     };
 
-    explicit testsuite(char const* name_)
-        : m_name(name_), m_timestamp(std::chrono::system_clock::now()) {}
+    char const* m_name;  ///< Name, or description of this testsuite.
+    std::chrono::system_clock::time_point const
+           m_create_time;     ///< Point in time, when this testsuite was created.
+    double m_exec_dur = 0.0;  ///< Time in milliseconds, the whole testsuite needed to complete.
 
-    char const*                                 m_name;
-    std::chrono::system_clock::time_point const m_timestamp;
-    double                                      m_execution_time = 0.0;
+    statistic             m_stats;      ///< Stores test results.
+    std::vector<testcase> m_testcases;  ///< Stores testcases.
+    execution_state       m_state =
+        execution_state::PENDING;  ///< States, whether all testcases have been executed.
 
-    statistic             m_stats;
-    std::vector<testcase> m_testcases;
-    execution_state       m_state = execution_state::PENDING;
-
-    silent_functor m_setup_fn;
-    silent_functor m_teardown_fn;
-    silent_functor m_pretest_fn;
-    silent_functor m_posttest_fn;
+    silent_functor m_setup_fn;     ///< Optional function, that is executed before all testcases.
+    silent_functor m_teardown_fn;  ///< Optional function, that is executed after all testcases.
+    silent_functor m_pretest_fn;   ///< Optional function, that is executed before all testcases.
+    silent_functor m_posttest_fn;  ///< Optional function, that is executed before all testcases.
 };
-
 }  // namespace intern
 }  // namespace sctf
 
