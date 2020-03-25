@@ -44,11 +44,11 @@
  * Define a default main function, which performs all tests, and produces the report with specified
  * reporter.
  *
- * @param REPORTER is the reporters factory method invokation.
+ * @param R is the reporters factory method invokation.
  */
-#define SCTF_DEFAULT_MAIN(REPORTER)                        \
-    int main(int /*argc*/, char** /*argv*/) {              \
-        return static_cast<int>(sctf::REPORTER->report()); \
+#define SCTF_DEFAULT_MAIN(R)                        \
+    int main(int /*argc*/, char** /*argv*/) {       \
+        return static_cast<int>(sctf::R->report()); \
     }
 
 #endif  // SCTF_SCTF_HPP

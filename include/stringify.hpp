@@ -49,7 +49,9 @@ namespace intern
 template<typename T>
 static std::string const& name_for_type() {
     static thread_local std::string name;
-    if (name.length() > 0) { return name; }
+    if (name.length() > 0) {
+        return name;
+    }
 #ifdef SCTF_SYS_UNIX
     std::string const sig(__PRETTY_FUNCTION__);
     auto const        b = sig.rfind("T = ") + 4;
