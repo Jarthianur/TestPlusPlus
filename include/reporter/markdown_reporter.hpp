@@ -26,8 +26,6 @@
 
 #include "reporter/reporter.hpp"
 
-#define SCTF_XLF (SCTF_LF SCTF_LF)
-
 namespace sctf
 {
 /**
@@ -40,41 +38,39 @@ public:
 
     /**
      * Create a markdown reporter.
-     * @param stream_  The stream to report to (default: stdout)
+     *
+     * @param stream_ is the stream where to print the report. (default: stdout)
+     * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
     static reporter_ptr create(std::ostream& stream_ = std::cout, bool capture_ = false) {
         return std::make_shared<markdown_reporter>(stream_, capture_);
     }
 
     /**
-     * Create a markdown reporter. The specified file will be overwritten if it already exists.
-     * @param fname_   The name of the file where the report will be written
+     * Create a markdown reporter.
+     *
+     * @param fname_ is the filename where to print the report.
+     * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
-    static reporter_ptr create(char const* file_, bool capture_ = false) {
-        return std::make_shared<markdown_reporter>(file_, capture_);
+    static reporter_ptr create(char const* fname_, bool capture_ = false) {
+        return std::make_shared<markdown_reporter>(fname_, capture_);
     }
 
-protected:
-    /**
-     * @param stream_  The stream to report to
-     */
+private:
     markdown_reporter(std::ostream& stream_, bool capture_)
         : reporter(stream_), m_capture(capture_) {}
 
-    /**
-     * @param fname_   The name of the file where the report will be written
-     */
     markdown_reporter(char const* fname_, bool capture_) : reporter(fname_), m_capture(capture_) {}
     void report_testsuite(intern::testsuite_ptr const ts_) override {
-        *this << "## " << ts_->name() << SCTF_XLF << "|Tests|Successes|Failures|Errors|Time|"
-              << SCTF_LF << "|-|-|-|-|-|" << SCTF_LF << "|" << ts_->statistics().tests() << "|"
+        *this << "## " << ts_->name() << XLF << "|Tests|Successes|Failures|Errors|Time|" << LF
+              << "|-|-|-|-|-|" << LF << "|" << ts_->statistics().tests() << "|"
               << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"
-              << ts_->statistics().errors() << "|" << ts_->execution_time() << "ms|" << SCTF_XLF
-              << "### Tests" << SCTF_XLF << "|Name|Context|Time|Status|"
-              << (m_capture ? "System-Out|System-Err|" : "") << SCTF_LF << "|-|-|-|-|"
-              << (m_capture ? "-|-|" : "") << SCTF_LF;
+              << ts_->statistics().errors() << "|" << ts_->execution_duration() << "ms|" << XLF
+              << "### Tests" << XLF << "|Name|Context|Time|Status|"
+              << (m_capture ? "System-Out|System-Err|" : "") << LF << "|-|-|-|-|"
+              << (m_capture ? "-|-|" : "") << LF;
         reporter::report_testsuite(ts_);
-        *this << SCTF_XLF;
+        *this << XLF;
     }
 
     void report_testcase(intern::testcase const& tc_) override {
@@ -91,20 +87,25 @@ protected:
             print_system_out(tc_.cout());
             print_system_out(tc_.cerr());
         }
-        *this << SCTF_LF;
+        *this << LF;
     }
 
     void begin_report() override {
-        *this << "# Test Report" << SCTF_XLF;
+        *this << "# Test Report" << XLF;
     }
 
     void end_report() override {
-        *this << "## Summary" << SCTF_XLF << "|Tests|Successes|Failures|Errors|Time|" << SCTF_LF
-              << "|-|-|-|-|-|" << SCTF_LF << "|" << m_abs_tests << "|"
+        *this << "## Summary" << XLF << "|Tests|Successes|Failures|Errors|Time|" << LF
+              << "|-|-|-|-|-|" << LF << "|" << m_abs_tests << "|"
               << (m_abs_tests - m_abs_errs - m_abs_fails) << "|" << m_abs_fails << "|" << m_abs_errs
-              << "|" << m_abs_time << "ms|" << SCTF_LF;
+              << "|" << m_abs_time << "ms|" << LF;
     }
 
+    /**
+     * Print the captured output of a testcase to the report.
+     *
+     * @param out_ is the captured output.
+     */
     void print_system_out(std::string const& out_) {
         std::string        line;
         std::istringstream io_;
@@ -117,10 +118,8 @@ protected:
         *this << "|";
     }
 
-    bool m_capture;
+    bool m_capture;  ///< Flags whether to report captured output from testcases.
 };
 }  // namespace sctf
-
-#undef SCTF_XLF
 
 #endif  // SCTF_REPORTER_MARKDOWN_REPORTER_HPP

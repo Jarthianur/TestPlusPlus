@@ -30,14 +30,14 @@
 #ifdef SCTF_CPP_V17
 
 #    include <optional>
-using std::nullopt;
-using std::optional;
+using sctf::intern::nullopt  = std::nullopt;
+using sctf::intern::optional = std::optional;
 
 #elif defined(SCTF_CPP_V14)
 
 #    include <experimental/optional>
-using std::experimental::nullopt;
-using std::experimental::optional;
+using sctf::intern::nullopt  = std::experimental::nullopt;
+using sctf::intern::optional = std::experimental::optional;
 
 #else
 
@@ -55,6 +55,7 @@ namespace intern
 struct comparison final
 {
 #ifdef SCTF_CPP_V11
+
     constexpr comparison() : m_success(true) {}
 
     comparison(char const* comp_str_, std::string const& val_, std::string const& expect_)
@@ -81,47 +82,34 @@ private:
         static thread_local std::string err_msg;
         return err_msg;
     }
+
 #else
-    /**
-     * Initialize the comparison as successful.
-     */
+
     constexpr comparison() : m_failure(nullopt) {}
 
-    /**
-     * Initialize the comparison as failed.
-     * @param comp_str_ The expression of the performed comparison
-     * @param val_      The actual value
-     * @param expect_   The expected value
-     */
     comparison(char const* comp_str_, std::string const& val_, std::string const& expect_)
         : m_failure("Expected " + val_ + " " + comp_str_ + " " + expect_) {}
 
-    /**
-     * Allow conversion to boolean.
-     * @return true, if comparison was successful, else false
-     */
     explicit operator bool() {
         return !m_failure;
     }
 
-    /**
-     * Get the message describing the reason for failure.
-     * May only be called, if the comparison returns false.
-     */
     std::string const& operator*() const {
         return *m_failure;
     }
 
 private:
     optional<std::string> const m_failure;
+
 #endif
 };
 
 #ifdef SCTF_EPSILON
+
 static double epsilon = SCTF_EPSILON;
-#elif defined(SCTF_EXTERN_EPSILON)
-extern double epsilon;
+
 #endif
+
 }  // namespace intern
 }  // namespace sctf
 
@@ -129,9 +117,10 @@ extern double epsilon;
  * Define a comparator.
  * In PRED the two elements are named 'actual_value' and 'expected_value'.
  * The comparison is considered successful if PRED returns true, while false results in failure.
- * @param NAME   The name of this function
- * @param CMPSTR A string representing the comparison constraint, like "equals"
- * @param PRED   The comparison predicate / condition
+ *
+ * @param NAME is the name of the comparator.
+ * @param CMPSTR is a cstring representing the comparison constraint, like "equals".
+ * @param PRED is the comparison predicate / condition.
  */
 #define SCTF_COMPARATOR(NAME, CMPSTR, PRED)                                                   \
     namespace sctf                                                                            \
@@ -162,9 +151,10 @@ extern double epsilon;
 
 /**
  * Provide a shortwrite function which returns the respective
- * comparator.
- * @param COMP The comparator function
- * @param NAME The final shortwrite
+ * comparator. This shortwrite can then be used in assertions.
+ *
+ * @param COMP is the comparator to use.
+ * @param NAME is the shortwrite function name.
  */
 #define SCTF_PROVIDE_COMPARATOR(COMP, NAME) \
     namespace sctf                          \
@@ -172,20 +162,6 @@ extern double epsilon;
     static intern::COMP NAME() {            \
         return intern::COMP();              \
     }                                       \
-    }
-
-/**
- * Define the epsilon value used by equality comparison of floating point numbers.
- * Only used when SCTF_EXTERN_EPSILON is defined.
- * @param E The epsilon value
- */
-#define SCTF_SET_EPSILON(E) \
-    namespace sctf          \
-    {                       \
-    namespace intern        \
-    {                       \
-    double epsilon = E;     \
-    }                       \
     }
 
 #endif  // SCTF_COMPARATOR_COMPARATOR_HPP

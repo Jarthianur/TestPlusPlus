@@ -39,91 +39,94 @@ public:
 
     /**
      * Create a xml reporter.
-     * @param stream_  The stream to report to (default: stdout)
+     *
+     * @param stream_ is the stream where to print the report. (default: stdout)
+     * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
     static reporter_ptr create(std::ostream& stream_ = std::cout, bool capture_ = false) {
         return std::make_shared<xml_reporter>(stream_, capture_);
     }
 
     /**
-     * Create a xml reporter. The specified file will be overwritten if it already exists.
-     * @param fname_   The name of the file where the report will be written
+     * Create a xml reporter.
+     *
+     * @param fname_ is the filename where to print the report.
+     * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
     static reporter_ptr create(char const* fname_, bool capture_ = false) {
         return std::make_shared<xml_reporter>(fname_, capture_);
     }
 
-protected:
-    /**
-     * @param stream_  The stream to report to
-     */
+private:
     xml_reporter(std::ostream& stream_, bool capture_) : reporter(stream_), m_capture(capture_) {}
-
-    /**
-     * @param fname_   The name of the file where the report will be written
-     */
     xml_reporter(char const* fname_, bool capture_) : reporter(fname_), m_capture(capture_) {}
 
     void report_testsuite(intern::testsuite_ptr const ts_) override {
         std::time_t stamp = std::chrono::system_clock::to_time_t(ts_->timestamp());
         char        buff[128];
         std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
-        *this << SCTF_SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name()
+        *this << SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name()
               << "\" errors=\"" << ts_->statistics().errors() << "\" tests=\""
               << ts_->statistics().tests() << "\" failures=\"" << ts_->statistics().failures()
-              << "\" skipped=\"0\" time=\"" << ts_->execution_time() << "\" timestamp=\"" << buff
-              << "\">" << SCTF_LF;
+              << "\" skipped=\"0\" time=\"" << ts_->execution_duration() << "\" timestamp=\""
+              << buff << "\">" << LF;
         reporter::report_testsuite(ts_);
-        *this << SCTF_SPACE << "</testsuite>" << SCTF_LF;
+        *this << SPACE << "</testsuite>" << LF;
     }
 
     void report_testcase(intern::testcase const& tc_) override {
-        *this << SCTF_XSPACE << "<testcase name=\"" << tc_.name() << "\" classname=\""
-              << tc_.context() << "\" time=\"" << tc_.duration() << "\"";
+        *this << XSPACE << "<testcase name=\"" << tc_.name() << "\" classname=\"" << tc_.context()
+              << "\" time=\"" << tc_.duration() << "\"";
         switch (tc_.state()) {
             case intern::testcase::result::ERROR:
-                *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<error message=\""
-                      << tc_.reason() << "\"></error>" << SCTF_LF;
-                if (m_capture) { print_system_out(tc_); }
-                *this << SCTF_XSPACE << "</testcase>";
+                *this << ">" << LF << XSPACE << SPACE << "<error message=\"" << tc_.reason()
+                      << "\"></error>" << LF;
+                if (m_capture) {
+                    print_system_out(tc_);
+                }
+                *this << XSPACE << "</testcase>";
                 break;
             case intern::testcase::result::FAILED:
-                *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<failure message=\""
-                      << tc_.reason() << "\"></failure>" << SCTF_LF;
-                if (m_capture) { print_system_out(tc_); }
-                *this << SCTF_XSPACE << "</testcase>";
+                *this << ">" << LF << XSPACE << SPACE << "<failure message=\"" << tc_.reason()
+                      << "\"></failure>" << LF;
+                if (m_capture) {
+                    print_system_out(tc_);
+                }
+                *this << XSPACE << "</testcase>";
                 break;
             default:
                 if (m_capture) {
-                    *this << ">" << SCTF_LF;
+                    *this << ">" << LF;
                     print_system_out(tc_);
-                    *this << SCTF_XSPACE << "</testcase>";
+                    *this << XSPACE << "</testcase>";
                 } else {
                     *this << "/>";
                 }
                 break;
         }
-        *this << SCTF_LF;
+        *this << LF;
     }
 
     void begin_report() override {
-        *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << SCTF_LF << "<testsuites>"
-              << SCTF_LF;
+        *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << LF << "<testsuites>" << LF;
     }
 
     void end_report() override {
-        *this << "</testsuites>" << SCTF_LF;
+        *this << "</testsuites>" << LF;
     }
 
+    /**
+     * Print the captured output of a testcase to the report.
+     *
+     * @param tc_ is the testcase whose output to print.
+     */
     void print_system_out(intern::testcase const& tc_) {
-        *this << SCTF_XSPACE << SCTF_SPACE << "<system-out>" << tc_.cout() << "</system-out>"
-              << SCTF_LF;
-        *this << SCTF_XSPACE << SCTF_SPACE << "<system-err>" << tc_.cerr() << "</system-err>"
-              << SCTF_LF;
+        *this << XSPACE << SPACE << "<system-out>" << tc_.cout() << "</system-out>" << LF;
+        *this << XSPACE << SPACE << "<system-err>" << tc_.cerr() << "</system-err>" << LF;
     }
 
-    std::size_t mutable m_id = 0;
-    bool m_capture;
+    std::size_t mutable m_id = 0;  ///< Report wide incremental ID for testsuites.
+    bool m_capture;                ///< Flags whether to report captured output from testcases.
 };
 }  // namespace sctf
 

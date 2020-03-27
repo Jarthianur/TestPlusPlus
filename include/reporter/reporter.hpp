@@ -40,7 +40,7 @@ namespace sctf
 namespace intern
 {
 /**
- * Abstract reporter type. Used as base class for specific reporter implementations.
+ * Abstract base class for specific reporter implementations.
  */
 class reporter
 {
@@ -48,9 +48,10 @@ public:
     virtual ~reporter() noexcept = default;
 
     /**
-     * Generate the report.
-     * As side effect, all pending testcases in runner_ are executed.
-     * @return the sum of failed tests and errors
+     * Generate the report. Testsuites that are not yet completed will be run by a call to this
+     * function.
+     *
+     * @return the sum of failed and erroneous tests
      */
     std::size_t report() {
         m_abs_errs     = 0;
@@ -74,34 +75,74 @@ public:
     }
 
 protected:
+    /**
+     * @param stream_ is the output stream for reports.
+     */
     explicit reporter(std::ostream& stream_) : mr_out_stream(stream_) {}
+
+    /**
+     * @param fname_ is the output filename for reports.
+     * @throw std::runtime_error if the file can not be opened for writing.
+     */
     explicit reporter(char const* fname_) : m_out_file(fname_), mr_out_stream(m_out_file) {
         if (!mr_out_stream) {
             throw std::runtime_error("Could not open file.");
         }
     }
 
+    /**
+     * Generate a part of the report for a single testsuite.
+     * This method is used for every testsuite. It may be overridden in derived classes.
+     *
+     * @param ts_ is the testsuite to generate the report for.
+     */
     inline virtual void report_testsuite(testsuite_ptr const ts_) {
         std::for_each(ts_->testcases().begin(), ts_->testcases().end(),
                       [this](const testcase& tc) { report_testcase(tc); });
     }
 
+    /**
+     * Generate a part of the report for a single testcase.
+     * This method is used for every testcase. It must be implemented in derived classes.
+     *
+     * @param tc_ is the testcase to generate the report for.
+     */
     virtual void report_testcase(testcase const& tc_) = 0;
-    virtual void begin_report()                       = 0;
-    virtual void end_report()                         = 0;
 
+    /**
+     * Generate the report prologue. This method must be implemented in derived classes.
+     */
+    virtual void begin_report() = 0;
+
+    /**
+     * Generate the report epilogue. This method must be implemented in derived classes.
+     */
+    virtual void end_report() = 0;
+
+    /**
+     * Print anything to the specified output stream, or file.
+     *
+     * @tparam T is the type of t_.
+     * @param t_ is the thing to print.
+     */
     template<typename T>
     std::ostream& operator<<(T const& t_) {
         mr_out_stream << t_;
         return mr_out_stream;
     }
 
-    std::ofstream m_out_file;
-    std::ostream& mr_out_stream;
-    std::size_t   m_abs_tests = 0;
-    std::size_t   m_abs_fails = 0;
-    std::size_t   m_abs_errs  = 0;
-    double        m_abs_time  = 0;
+    std::ofstream
+                  m_out_file;  ///< Filestream that is used, if a file is specified as output target.
+    std::ostream& mr_out_stream;    ///< Outstream that handles printing the report.
+    std::size_t   m_abs_tests = 0;  ///< Total number of testcases over all testsuites.
+    std::size_t   m_abs_fails = 0;  ///< Total number of failed testcases over all testsuites.
+    std::size_t   m_abs_errs  = 0;  ///< Total number of erroneous testcases over all testsuites.
+    double        m_abs_time  = 0;  ///< Total amount of time spent on all testsuites.
+
+    static constexpr char const* const SPACE  = "  ";    ///< Indentation with two spaces.
+    static constexpr char const* const XSPACE = "    ";  ///< Indentation with four spaces.
+    static constexpr char const* const LF     = "\n";    ///< Single linefeed.
+    static constexpr char const* const XLF    = "\n\n";  ///< Double linefeed.
 };
 }  // namespace intern
 

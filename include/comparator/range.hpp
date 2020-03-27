@@ -32,6 +32,9 @@ namespace sctf
 {
 namespace intern
 {
+/**
+ * Comparator to check for existence of elements in ranges.
+ */
 class in_range
 {
     static constexpr char const* m_cmp_str     = "to be in range of";

@@ -34,6 +34,9 @@ namespace sctf
 {
 namespace intern
 {
+/**
+ * Comparator to check for equality.
+ */
 class equals
 {
     static constexpr char const* m_cmp_str     = "to be equals";
@@ -70,7 +73,7 @@ public:
     template<typename V, typename E = V,
              SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_FLOAT(V) && SCTF_INTERN_IS_FLOAT(E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
-#if defined(SCTF_EXTERN_EPSILON) || defined(SCTF_EPSILON)
+#ifdef SCTF_EPSILON
         static V epsilon_ = static_cast<V>(epsilon);
 #else
         static V epsilon_ = std::numeric_limits<V>::epsilon();
@@ -83,6 +86,9 @@ public:
     }
 };
 
+/**
+ * Comparator to check for unequality.
+ */
 class unequals
 {
     static constexpr char const* m_cmp_str     = "to be unequals";
@@ -119,7 +125,7 @@ public:
     template<typename V, typename E = V,
              SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_FLOAT(V) && SCTF_INTERN_IS_FLOAT(E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
-#if defined(SCTF_EXTERN_EPSILON) || defined(SCTF_EPSILON)
+#ifdef SCTF_EPSILON
         static V epsilon_ = static_cast<V>(epsilon);
 #else
         static V epsilon_ = std::numeric_limits<V>::epsilon();
