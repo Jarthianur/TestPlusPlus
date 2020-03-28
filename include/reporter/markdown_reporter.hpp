@@ -43,7 +43,7 @@ public:
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
     static reporter_ptr create(std::ostream& stream_ = std::cout, bool capture_ = false) {
-        return std::make_shared<markdown_reporter>(stream_, capture_);
+        return reporter_ptr(new markdown_reporter(stream_, capture_));
     }
 
     /**
@@ -53,7 +53,7 @@ public:
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
     static reporter_ptr create(char const* fname_, bool capture_ = false) {
-        return std::make_shared<markdown_reporter>(fname_, capture_);
+        return reporter_ptr(new markdown_reporter(fname_, capture_));
     }
 
 private:
@@ -62,15 +62,15 @@ private:
 
     markdown_reporter(char const* fname_, bool capture_) : reporter(fname_), m_capture(capture_) {}
     void report_testsuite(intern::testsuite_ptr const ts_) override {
-        *this << "## " << ts_->name() << XLF << "|Tests|Successes|Failures|Errors|Time|" << LF
-              << "|-|-|-|-|-|" << LF << "|" << ts_->statistics().tests() << "|"
-              << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"
-              << ts_->statistics().errors() << "|" << ts_->execution_duration() << "ms|" << XLF
-              << "### Tests" << XLF << "|Name|Context|Time|Status|"
-              << (m_capture ? "System-Out|System-Err|" : "") << LF << "|-|-|-|-|"
-              << (m_capture ? "-|-|" : "") << LF;
+        *this << "## " << ts_->name() << intern::XLF << "|Tests|Successes|Failures|Errors|Time|"
+              << intern::LF << "|-|-|-|-|-|" << intern::LF << "|" << ts_->statistics().tests()
+              << "|" << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"
+              << ts_->statistics().errors() << "|" << ts_->execution_duration() << "ms|"
+              << intern::XLF << "### Tests" << intern::XLF << "|Name|Context|Time|Status|"
+              << (m_capture ? "System-Out|System-Err|" : "") << intern::LF << "|-|-|-|-|"
+              << (m_capture ? "-|-|" : "") << intern::LF;
         reporter::report_testsuite(ts_);
-        *this << XLF;
+        *this << intern::XLF;
     }
 
     void report_testcase(intern::testcase const& tc_) override {
@@ -87,18 +87,18 @@ private:
             print_system_out(tc_.cout());
             print_system_out(tc_.cerr());
         }
-        *this << LF;
+        *this << intern::LF;
     }
 
     void begin_report() override {
-        *this << "# Test Report" << XLF;
+        *this << "# Test Report" << intern::XLF;
     }
 
     void end_report() override {
-        *this << "## Summary" << XLF << "|Tests|Successes|Failures|Errors|Time|" << LF
-              << "|-|-|-|-|-|" << LF << "|" << m_abs_tests << "|"
+        *this << "## Summary" << intern::XLF << "|Tests|Successes|Failures|Errors|Time|"
+              << intern::LF << "|-|-|-|-|-|" << intern::LF << "|" << m_abs_tests << "|"
               << (m_abs_tests - m_abs_errs - m_abs_fails) << "|" << m_abs_fails << "|" << m_abs_errs
-              << "|" << m_abs_time << "ms|" << LF;
+              << "|" << m_abs_time << "ms|" << intern::LF;
     }
 
     /**

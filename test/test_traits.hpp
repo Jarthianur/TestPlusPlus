@@ -48,12 +48,12 @@ struct streamable
 struct not_streamable
 {};
 
-template<typename S, typename T, ENABLE_IF(NOT HAS_STREAM_CAPABILITY(T, S))>
+template<typename S, typename T, SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_HAS_STREAM_CAPABILITY(T, S))>
 void throw_if_not_streamable() {
     throw std::logic_error("Given type is not streamable");
 }
 
-template<typename S, typename T, ENABLE_IF(HAS_STREAM_CAPABILITY(T, S))>
+template<typename S, typename T, SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_STREAM_CAPABILITY(T, S))>
 void throw_if_not_streamable() {}
 
 // is_iterable
@@ -102,12 +102,12 @@ struct not_iterable
     }
 };
 
-template<typename T, ENABLE_IF(NOT HAS_ITERATOR_CAPABILITY(T))>
+template<typename T, SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_HAS_ITERATOR_CAPABILITY(T))>
 void throw_if_not_iterable() {
     throw std::logic_error("Given type is not streamable");
 }
 
-template<typename T, ENABLE_IF(HAS_ITERATOR_CAPABILITY(T))>
+template<typename T, SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_ITERATOR_CAPABILITY(T))>
 void throw_if_not_iterable() {}
 
 // is_equal_comparable
@@ -149,12 +149,12 @@ struct not_equal_comparable
     bool operator==(equal_comparable const&) const noexcept = delete;
 };
 
-template<typename T, ENABLE_IF(NOT HAS_EQUALITY_CAPABILITY(T, T))>
+template<typename T, SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_HAS_EQUALITY_CAPABILITY(T, T))>
 void throw_if_not_equal_comparable() {
     throw std::logic_error("Given type is not equal-comparable");
 }
 
-template<typename T, ENABLE_IF(HAS_EQUALITY_CAPABILITY(T, T))>
+template<typename T, SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_EQUALITY_CAPABILITY(T, T))>
 void throw_if_not_equal_comparable() {}
 
 // is_unequal_comparable
@@ -178,12 +178,12 @@ struct not_unequal_comparable
     bool operator!=(unequal_comparable const&) const noexcept = delete;
 };
 
-template<typename T, ENABLE_IF(NOT HAS_UNEQUALITY_CAPABILITY(T, T))>
+template<typename T, SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_HAS_UNEQUALITY_CAPABILITY(T, T))>
 void throw_if_not_unequal_comparable() {
     throw std::logic_error("Given type is not unequal-comparable");
 }
 
-template<typename T, ENABLE_IF(HAS_UNEQUALITY_CAPABILITY(T, T))>
+template<typename T, SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_UNEQUALITY_CAPABILITY(T, T))>
 void throw_if_not_unequal_comparable() {}
 
 #endif  // TEST_TRAITS_HPP

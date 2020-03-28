@@ -23,7 +23,7 @@
 
 #include <sstream>
 
-#include "traits.hpp"
+#include "test_traits.hpp"
 
 using namespace sctf;
 

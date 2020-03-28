@@ -30,14 +30,6 @@
 #ifdef SCTF_CPP_V17
 
 #    include <optional>
-using sctf::intern::nullopt  = std::nullopt;
-using sctf::intern::optional = std::optional;
-
-#elif defined(SCTF_CPP_V14)
-
-#    include <experimental/optional>
-using sctf::intern::nullopt  = std::experimental::nullopt;
-using sctf::intern::optional = std::experimental::optional;
 
 #else
 
@@ -54,9 +46,27 @@ namespace intern
  */
 struct comparison final
 {
-#ifdef SCTF_CPP_V11
+#ifdef SCTF_CPP_V17
 
-    constexpr comparison() : m_success(true) {}
+    comparison() : m_failure(std::nullopt) {}
+
+    comparison(char const* comp_str_, std::string const& val_, std::string const& expect_)
+        : m_failure("Expected " + val_ + " " + comp_str_ + " " + expect_) {}
+
+    explicit operator bool() {
+        return !m_failure;
+    }
+
+    std::string const& operator*() const {
+        return *m_failure;
+    }
+
+private:
+    std::optional<std::string> const m_failure;
+
+#else
+
+    comparison() : m_success(true) {}
 
     comparison(char const* comp_str_, std::string const& val_, std::string const& expect_)
         : m_success(false) {
@@ -83,32 +93,11 @@ private:
         return err_msg;
     }
 
-#else
-
-    constexpr comparison() : m_failure(nullopt) {}
-
-    comparison(char const* comp_str_, std::string const& val_, std::string const& expect_)
-        : m_failure("Expected " + val_ + " " + comp_str_ + " " + expect_) {}
-
-    explicit operator bool() {
-        return !m_failure;
-    }
-
-    std::string const& operator*() const {
-        return *m_failure;
-    }
-
-private:
-    optional<std::string> const m_failure;
-
 #endif
 };
 
-#ifdef SCTF_EPSILON
-
-static double epsilon = SCTF_EPSILON;
-
-#endif
+/// Epsilon that is used as floating point threshold in equality comparisons.
+extern double epsilon;
 
 }  // namespace intern
 }  // namespace sctf
@@ -163,5 +152,7 @@ static double epsilon = SCTF_EPSILON;
         return intern::COMP();              \
     }                                       \
     }
+
+#define SCTF_SET_EPSILON(E) double sctf::intern::epsilon = E;
 
 #endif  // SCTF_COMPARATOR_COMPARATOR_HPP

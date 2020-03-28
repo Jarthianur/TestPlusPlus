@@ -31,7 +31,7 @@
 #include <vector>
 
 #include "sctf.hpp"
-#include "traits.hpp"
+#include "test_traits.hpp"
 
 using namespace sctf;
 using namespace intern;
@@ -133,14 +133,14 @@ SUITE("test_testsuite_parallel") {
         c = 250;
 #    endif
         ASSERT_RUNTIME(ts->run(), c);
-        ASSERT(ts->execution_time(), LT, c);
+        ASSERT(ts->execution_duration(), LT, c);
 #else
         ts->run();
         double t = 0.0;
         for (auto const& tc : ts->testcases()) {
             t += tc.duration();
         }
-        ASSERT_EQ(ts->execution_time(), t);
+        ASSERT_EQ(ts->execution_duration(), t);
 #endif
         statistic const& stat = ts->statistics();
         ASSERT_EQ(stat.tests(), 6ul);
@@ -200,7 +200,7 @@ SUITE("test_testsuite") {
         for (auto const& tc : ts->testcases()) {
             t += tc.duration();
         }
-        ASSERT_EQ(t, ts->execution_time());
+        ASSERT_EQ(t, ts->execution_duration());
     };
 };
 
@@ -218,7 +218,7 @@ SUITE_PAR("test_testcase") {
         tc();
         ASSERT_EQ(tc.state(), testcase::result::PASSED);
         ASSERT(tc.duration(), GT, 0.0);
-        ASSERT_ZERO(tc.err_msg().size());
+        ASSERT_ZERO(tc.reason().size());
     };
     TEST("failed_execution") {
         testcase tc("t1", "ctx", [] { ASSERT_TRUE(false); });
@@ -231,13 +231,13 @@ SUITE_PAR("test_testcase") {
         tc();
         ASSERT_EQ(tc.state(), testcase::result::ERROR);
         ASSERT(tc.duration(), GT, 0.0);
-        ASSERT(tc.err_msg(), EQ, std::string("err"));
+        ASSERT(tc.reason(), EQ, std::string("err"));
 
         testcase tc2("t2", "ctx", [] { throw 1; });
         tc2();
         ASSERT_EQ(tc2.state(), testcase::result::ERROR);
         ASSERT(tc2.duration(), GT, 0.0);
-        ASSERT(tc2.err_msg(), EQ, std::string("unknown error"));
+        ASSERT(tc2.reason(), EQ, std::string("unknown error"));
     };
 };
 

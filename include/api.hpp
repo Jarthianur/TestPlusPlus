@@ -106,23 +106,23 @@ struct singleton final
  * @param DESCR is a cstring with the description of the testsuite.
  * @param BASE is the testsuite base type to use.
  */
-#define SCTF_INTERN_API_SUITE_WRAPPER(DESCR, BASE)                                 \
-    namespace SCTF_INTERN_API_SUITE_NS(__LINE__) {                                 \
-        class test_module                                                          \
-        {                                                                          \
-        protected:                                                                 \
-            virtual ~test_module() noexcept = default;                             \
-            test_module() : sctf_intern_m_ts_(sctf::intern::BASE::create(DESCR)) { \
-                sctf::intern::runner::instance().add_testsuite(sctf_intern_m_ts_); \
-            }                                                                      \
-            sctf::intern::testsuite_ptr sctf_intern_m_ts_;                         \
-        };                                                                         \
-        class SCTF_INTERN_API_SUITE_NAME(__LINE__);                                \
-        /* static const auto& sctf_intern_mod_ =  */                               \
-        sctf::intern::singleton<SCTF_INTERN_API_SUITE_NAME(__LINE__)>::instance(); \
-        using sctf_intern_mod_type_ = SCTF_INTERN_API_SUITE_NAME(__LINE__);        \
-    }                                                                              \
-    class SCTF_INTERN_API_SUITE_NS(__LINE__)::SCTF_INTERN_API_SUITE_NAME(__LINE__) \
+#define SCTF_INTERN_API_SUITE_WRAPPER(DESCR, BASE)                                     \
+    namespace SCTF_INTERN_API_SUITE_NS(__LINE__) {                                     \
+        class test_module                                                              \
+        {                                                                              \
+        protected:                                                                     \
+            virtual ~test_module() noexcept = default;                                 \
+            test_module() : sctf_intern_m_ts_(sctf::intern::BASE::create(DESCR)) {     \
+                sctf::intern::runner::instance().add_testsuite(sctf_intern_m_ts_);     \
+            }                                                                          \
+            sctf::intern::testsuite_ptr sctf_intern_m_ts_;                             \
+        };                                                                             \
+        class SCTF_INTERN_API_SUITE_NAME(__LINE__);                                    \
+        static const auto& sctf_intern_mod_ =                                          \
+            sctf::intern::singleton<SCTF_INTERN_API_SUITE_NAME(__LINE__)>::instance(); \
+        using sctf_intern_mod_type_ = SCTF_INTERN_API_SUITE_NAME(__LINE__);            \
+    }                                                                                  \
+    class SCTF_INTERN_API_SUITE_NS(__LINE__)::SCTF_INTERN_API_SUITE_NAME(__LINE__)     \
         : public SCTF_INTERN_API_SUITE_NS(__LINE__)::test_module
 
 /**

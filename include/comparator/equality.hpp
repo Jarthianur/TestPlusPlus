@@ -73,11 +73,7 @@ public:
     template<typename V, typename E = V,
              SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_FLOAT(V) && SCTF_INTERN_IS_FLOAT(E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
-#ifdef SCTF_EPSILON
-        static V epsilon_ = static_cast<V>(epsilon);
-#else
-        static V epsilon_ = std::numeric_limits<V>::epsilon();
-#endif
+        V epsilon_ = static_cast<V>(epsilon);
         return (std::abs(actual_value - expected_value) <=
                 std::max(std::abs(actual_value), std::abs(expected_value)) * epsilon_) != m_neg ?
                    comparison() :
@@ -125,11 +121,7 @@ public:
     template<typename V, typename E = V,
              SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_FLOAT(V) && SCTF_INTERN_IS_FLOAT(E))>
     comparison operator()(V const& actual_value, E const& expected_value) {
-#ifdef SCTF_EPSILON
-        static V epsilon_ = static_cast<V>(epsilon);
-#else
-        static V epsilon_ = std::numeric_limits<V>::epsilon();
-#endif
+        V epsilon_ = static_cast<V>(epsilon);
         return (std::abs(actual_value - expected_value) <=
                 std::max(std::abs(actual_value), std::abs(expected_value)) * epsilon_) != m_neg ?
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),

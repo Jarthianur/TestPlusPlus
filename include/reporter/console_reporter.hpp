@@ -43,7 +43,7 @@ public:
      */
     static reporter_ptr create(std::ostream& stream_ = std::cout, bool color_ = false,
                                bool capture_ = false) {
-        return std::make_shared<console_reporter>(stream_, color_, capture_);
+        return reporter_ptr(new console_reporter(stream_, color_, capture_));
     }
 
     /**
@@ -54,10 +54,10 @@ public:
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
     static reporter_ptr create(char const* fname_, bool color_ = false, bool capture_ = false) {
-        return std::make_shared<console_reporter>(fname_, color_, capture_);
+        return reporter_ptr(new console_reporter(fname_, color_, capture_));
     }
 
-protected:
+private:
     console_reporter(std::ostream& stream_, bool color_, bool capture_)
         : reporter(stream_), m_color(color_), m_capture(capture_) {}
 
@@ -66,17 +66,17 @@ protected:
 
     void report_testsuite(intern::testsuite_ptr const ts_) override {
         *this << "Run Testsuite [" << ts_->name() << "]; time = " << ts_->execution_duration()
-              << "ms" << LF;
+              << "ms" << intern::LF;
 
         reporter::report_testsuite(ts_);
     }
 
     void report_testcase(intern::testcase const& tc_) override {
-        *this << SPACE << "Run Testcase [" << tc_.name() << "](" << tc_.context()
-              << "); time = " << tc_.duration() << "ms" << LF << XSPACE;
+        *this << intern::SPACE << "Run Testcase [" << tc_.name() << "](" << tc_.context()
+              << "); time = " << tc_.duration() << "ms" << intern::LF << intern::XSPACE;
         if (m_capture) {
-            *this << "stdout = \"" << tc_.cout() << "\"" << LF << XSPACE;
-            *this << "stderr = \"" << tc_.cerr() << "\"" << LF << XSPACE;
+            *this << "stdout = \"" << tc_.cout() << "\"" << intern::LF << intern::XSPACE;
+            *this << "stderr = \"" << tc_.cerr() << "\"" << intern::LF << intern::XSPACE;
         }
         switch (tc_.state()) {
             case intern::testcase::result::ERROR:
@@ -90,7 +90,7 @@ protected:
                 break;
             default: break;
         }
-        *this << (m_color ? ANSI_RESET : "") << LF;
+        *this << (m_color ? ANSI_RESET : "") << intern::LF;
     }
 
     void begin_report() override {}
@@ -104,7 +104,7 @@ protected:
         *this << "Result:: passed: " << m_abs_tests - m_abs_fails - m_abs_errs << "/" << m_abs_tests
               << " ; failed: " << m_abs_fails << "/" << m_abs_tests << " ; errors: " << m_abs_errs
               << "/" << m_abs_tests << " ; time = " << m_abs_time << "ms"
-              << (m_color ? ANSI_RESET : "") << LF;
+              << (m_color ? ANSI_RESET : "") << intern::LF;
     }
 
     bool m_color;    ///< Flags whether print colored results.

@@ -138,12 +138,12 @@ protected:
     std::size_t   m_abs_fails = 0;  ///< Total number of failed testcases over all testsuites.
     std::size_t   m_abs_errs  = 0;  ///< Total number of erroneous testcases over all testsuites.
     double        m_abs_time  = 0;  ///< Total amount of time spent on all testsuites.
-
-    static constexpr char const* const SPACE  = "  ";    ///< Indentation with two spaces.
-    static constexpr char const* const XSPACE = "    ";  ///< Indentation with four spaces.
-    static constexpr char const* const LF     = "\n";    ///< Single linefeed.
-    static constexpr char const* const XLF    = "\n\n";  ///< Double linefeed.
 };
+
+static constexpr char const* const SPACE  = "  ";    ///< Indentation with two spaces.
+static constexpr char const* const XSPACE = "    ";  ///< Indentation with four spaces.
+static constexpr char const* const LF     = "\n";    ///< Single linefeed.
+static constexpr char const* const XLF    = "\n\n";  ///< Double linefeed.
 }  // namespace intern
 
 using reporter_ptr = std::shared_ptr<intern::reporter>;
