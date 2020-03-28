@@ -59,6 +59,7 @@ matrix:
     env:
     - BADGE=windows
     script:
+    - ls -Force "C:\Program Files (x86)\Microsoft Visual Studio"
     - cmd.exe /C '"C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat" && build.bat'
     - test/cpp11_seq.exe
     - test/cpp11_par.exe
