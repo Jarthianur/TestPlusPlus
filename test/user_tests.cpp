@@ -19,8 +19,6 @@
  }
  */
 
-#define SCTF_EXTERN_EPSILON
-//#define SCTF_EPSILON 0.001
 #include "sctf.hpp"
 
 class MyClass
@@ -46,6 +44,6 @@ public:
 
 DESCRIBE_PAR("TestMyClass") {
     TEST("check epsilon") {
-        std::cout << sctf::intern::epsilon << std::flush;
+        std::cout << sctf::epsilon << std::flush;
     };
 };
