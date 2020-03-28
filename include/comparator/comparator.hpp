@@ -95,10 +95,6 @@ private:
 
 #endif
 };
-
-/// Epsilon that is used as floating point threshold in equality comparisons.
-extern double epsilon;
-
 }  // namespace intern
 }  // namespace sctf
 
@@ -145,14 +141,13 @@ extern double epsilon;
  * @param COMP is the comparator to use.
  * @param NAME is the shortwrite function name.
  */
-#define SCTF_PROVIDE_COMPARATOR(COMP, NAME) \
-    namespace sctf                          \
-    {                                       \
-    static intern::COMP NAME() {            \
-        return intern::COMP();              \
-    }                                       \
+#define SCTF_PROVIDE_COMPARATOR(COMP, NAME)               \
+    namespace sctf                                        \
+    {                                                     \
+    template<typename... Args>                            \
+    static intern::COMP NAME(Args&&... args) {            \
+        return intern::COMP(std::forward<Args>(args)...); \
+    }                                                     \
     }
-
-#define SCTF_SET_EPSILON(E) double sctf::intern::epsilon = E;
 
 #endif  // SCTF_COMPARATOR_COMPARATOR_HPP

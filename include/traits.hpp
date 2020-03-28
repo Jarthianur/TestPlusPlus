@@ -79,24 +79,6 @@
 #define SCTF_INTERN_HAS_ITERATOR_CAPABILITY(T) \
     (SCTF_INTERN_IS(sctf::intern::iterator_capability, T))
 
-/**
- * Check for a type to have equality comparison capabilities for another given type.
- *
- * @param L is the left hand type to check.
- * @param R is the right hand type.
- */
-#define SCTF_INTERN_HAS_EQUALITY_CAPABILITY(L, R) \
-    (SCTF_INTERN_IS(sctf::intern::equality_capability, L, R))
-
-/**
- * Check for a type to have unequality comparison capabilities for another given type.
- *
- * @param L is the left hand type to check.
- * @param R is the right hand type.
- */
-#define SCTF_INTERN_HAS_UNEQUALITY_CAPABILITY(T, R) \
-    (SCTF_INTERN_IS(sctf::intern::unequality_capability, T, R))
-
 namespace sctf
 {
 namespace intern
@@ -144,48 +126,6 @@ class iterator_capability
 public:
     /// Resolves to true, if T is iterable.
     static const bool value = decltype(test<T>(0))::value;
-};
-
-/**
- * Type trait to check for equality comparison capability in template meta programming.
- * L must implement operator== for R.
- *
- * @tparam L is the left hand type.
- * @tparam R is the right hand type.
- */
-template<typename L, typename R>
-class equality_capability
-{
-    template<typename LL, typename RR>
-    static auto test(int) -> decltype(std::declval<LL>() == std::declval<RR>(), std::true_type());
-
-    template<typename, typename>
-    static auto test(...) -> std::false_type;
-
-public:
-    /// Resolves to true, if L can be compared for equality to R.
-    static const bool value = decltype(test<L, R>(0))::value;
-};
-
-/**
- * Type trait to check for unequality comparison capability in template meta programming.
- * L must implement operator!= for R.
- *
- * @tparam L is the left hand type.
- * @tparam R is the right hand type.
- */
-template<typename L, typename R>
-class unequality_capability
-{
-    template<typename LL, typename RR>
-    static auto test(int) -> decltype(std::declval<LL>() != std::declval<RR>(), std::true_type());
-
-    template<typename, typename>
-    static auto test(...) -> std::false_type;
-
-public:
-    /// Resolves to true, if L can be compared for unequality to R.
-    static const bool value = decltype(test<L, R>(0))::value;
 };
 }  // namespace intern
 }  // namespace sctf

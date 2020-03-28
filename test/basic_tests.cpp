@@ -59,30 +59,4 @@ void test_traits() {
         throw Failure("Given type should be not iterable");
     } catch (std::logic_error const&) {
     }
-
-    // is_equal_comparable
-    throw_if_not_equal_comparable<equal_comparable>();
-    try {
-        throw_if_not_equal_comparable<void_type>();
-        throw Failure("Given type should be not equal-comparable");
-    } catch (std::logic_error const&) {
-    }
-    try {
-        throw_if_not_equal_comparable<not_equal_comparable>();
-        throw Failure("Given type should be not equal-comparable");
-    } catch (std::logic_error const&) {
-    }
-
-    // is_unequal_comparable
-    throw_if_not_unequal_comparable<unequal_comparable>();
-    try {
-        throw_if_not_unequal_comparable<void_type>();
-        throw Failure("Given type should be not unequal-comparable");
-    } catch (std::logic_error const&) {
-    }
-    try {
-        throw_if_not_unequal_comparable<not_unequal_comparable>();
-        throw Failure("Given type should be not unequal-comparable");
-    } catch (std::logic_error const&) {
-    }
 }

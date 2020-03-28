@@ -19,6 +19,8 @@
  }
  */
 
+/// @file
+
 #ifndef SCTF_COMPARATOR_EQUALITY_HPP
 #define SCTF_COMPARATOR_EQUALITY_HPP
 
@@ -30,111 +32,57 @@
 
 #include "traits.hpp"
 
+SCTF_COMPARATOR(equals, "equals", actual_value == expected_value)
+SCTF_PROVIDE_COMPARATOR(equals, EQUALS)
+SCTF_PROVIDE_COMPARATOR(equals, EQ)
+
+#define SCTF_EPSILON(E) double sctf::epsilon = E;
+
 namespace sctf
 {
+/// Epsilon that is used as floating point threshold in equality comparisons.
+extern double epsilon;
+
 namespace intern
 {
 /**
- * Comparator to check for equality.
+ * Comparator to check for equality floating point numbers.
  */
-class equals
+class f_equals
 {
     static constexpr char const* m_cmp_str     = "to be equals";
     static constexpr char const* m_neg_cmp_str = "to be not equals";
     bool                         m_neg         = false;
+    double                       m_eps         = epsilon;
 
 public:
-    equals& operator!() {
+    f_equals() = default;
+
+    f_equals(double eps_) : m_eps(eps_) {}
+
+    f_equals& operator!() {
         m_neg = !m_neg;
         return *this;
     }
 
-    template<typename V, typename E = V,
-             SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_IS_FLOAT(V) &&
-                                   SCTF_INTERN_HAS_EQUALITY_CAPABILITY(V, E))>
+    template<typename V, typename E = V>
     comparison operator()(V const& actual_value, E const& expected_value) {
-        return (actual_value == expected_value) != m_neg ?
-                   comparison() :
-                   comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
-                              to_string(expected_value));
-    }
+        static_assert(
+            SCTF_INTERN_IS_FLOAT(V) && SCTF_INTERN_IS_FLOAT(E),
+            "The floating point comparator must not be used with other types than float, or double!");
 
-    template<typename V, typename E = V,
-             SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_IS_FLOAT(V) &&
-                                   !SCTF_INTERN_HAS_EQUALITY_CAPABILITY(V, E) &&
-                                   SCTF_INTERN_HAS_UNEQUALITY_CAPABILITY(V, E))>
-    comparison operator()(V const& actual_value, E const& expected_value) {
-        return (actual_value != expected_value) != m_neg ?
-                   comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
-                              to_string(expected_value)) :
-                   comparison();
-    }
-
-    template<typename V, typename E = V,
-             SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_FLOAT(V) && SCTF_INTERN_IS_FLOAT(E))>
-    comparison operator()(V const& actual_value, E const& expected_value) {
-        V epsilon_ = static_cast<V>(epsilon);
+        V epsilon_ = static_cast<V>(m_eps);
         return (std::abs(actual_value - expected_value) <=
                 std::max(std::abs(actual_value), std::abs(expected_value)) * epsilon_) != m_neg ?
                    comparison() :
                    comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
                               to_string(expected_value));
-    }
-};
-
-/**
- * Comparator to check for unequality.
- */
-class unequals
-{
-    static constexpr char const* m_cmp_str     = "to be unequals";
-    static constexpr char const* m_neg_cmp_str = "to be not unequals";
-    bool                         m_neg         = false;
-
-public:
-    unequals& operator!() {
-        m_neg = !m_neg;
-        return *this;
-    }
-
-    template<typename V, typename E = V,
-             SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_IS_FLOAT(V) &&
-                                   SCTF_INTERN_HAS_UNEQUALITY_CAPABILITY(V, E))>
-    comparison operator()(V const& actual_value, E const& expected_value) {
-        return (actual_value != expected_value) != m_neg ?
-                   comparison() :
-                   comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
-                              to_string(expected_value));
-    }
-
-    template<typename V, typename E = V,
-             SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_IS_FLOAT(V) &&
-                                   !SCTF_INTERN_HAS_UNEQUALITY_CAPABILITY(V, E) &&
-                                   SCTF_INTERN_HAS_EQUALITY_CAPABILITY(V, E))>
-    comparison operator()(V const& actual_value, E const& expected_value) {
-        return (actual_value == expected_value) != m_neg ?
-                   comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
-                              to_string(expected_value)) :
-                   comparison();
-    }
-
-    template<typename V, typename E = V,
-             SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_FLOAT(V) && SCTF_INTERN_IS_FLOAT(E))>
-    comparison operator()(V const& actual_value, E const& expected_value) {
-        V epsilon_ = static_cast<V>(epsilon);
-        return (std::abs(actual_value - expected_value) <=
-                std::max(std::abs(actual_value), std::abs(expected_value)) * epsilon_) != m_neg ?
-                   comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
-                              to_string(expected_value)) :
-                   comparison();
     }
 };
 }  // namespace intern
 }  // namespace sctf
 
-SCTF_PROVIDE_COMPARATOR(unequals, UNEQUALS)
-SCTF_PROVIDE_COMPARATOR(unequals, NE)
-SCTF_PROVIDE_COMPARATOR(equals, EQUALS)
-SCTF_PROVIDE_COMPARATOR(equals, EQ)
+SCTF_PROVIDE_COMPARATOR(f_equals, F_EQUALS)
+SCTF_PROVIDE_COMPARATOR(f_equals, FEQ)
 
 #endif  // SCTF_COMPARATOR_EQUALITY_HPP

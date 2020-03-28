@@ -44,7 +44,7 @@
  * @param EXP is the expected value.
  */
 #define ASSERT(VAL, CMP, EXP) \
-    sctf::intern::assert_statement(VAL, EXP, sctf::CMP(), sctf::intern::loc{__FILE__, __LINE__})
+    sctf::intern::assert_statement(VAL, EXP, sctf::CMP, sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Generic assertion to compare two values, where the comparison is logically negated.
@@ -60,7 +60,7 @@
  * @param EXP is the expected value.
  */
 #define ASSERT_NOT(VAL, CMP, EXP) \
-    sctf::intern::assert_statement(VAL, EXP, !sctf::CMP(), sctf::intern::loc{__FILE__, __LINE__})
+    sctf::intern::assert_statement(VAL, EXP, !sctf::CMP, sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert two values to be equal.
@@ -128,8 +128,8 @@
  *
  * @param PTR is the actual pointer.
  */
-#define ASSERT_NOT_NULL(PTR)                                                                 \
-    sctf::intern::assert_statement(static_cast<void const*>(PTR), nullptr, sctf::UNEQUALS(), \
+#define ASSERT_NOT_NULL(PTR)                                                                \
+    sctf::intern::assert_statement(static_cast<void const*>(PTR), nullptr, !sctf::EQUALS(), \
                                    sctf::intern::loc{__FILE__, __LINE__})
 
 /**
