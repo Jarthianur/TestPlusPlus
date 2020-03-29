@@ -65,55 +65,56 @@ private:
         std::time_t stamp = std::chrono::system_clock::to_time_t(ts_->timestamp());
         char        buff[128];
         std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
-        *this << intern::SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name()
+        *this << intern::fmt::SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name()
               << "\" errors=\"" << ts_->statistics().errors() << "\" tests=\""
               << ts_->statistics().tests() << "\" failures=\"" << ts_->statistics().failures()
               << "\" skipped=\"0\" time=\"" << ts_->execution_duration() << "\" timestamp=\""
-              << buff << "\">" << intern::LF;
+              << buff << "\">" << intern::fmt::LF;
         reporter::report_testsuite(ts_);
-        *this << intern::SPACE << "</testsuite>" << intern::LF;
+        *this << intern::fmt::SPACE << "</testsuite>" << intern::fmt::LF;
     }
 
     void report_testcase(intern::testcase const& tc_) override {
-        *this << intern::XSPACE << "<testcase name=\"" << tc_.name() << "\" classname=\""
+        *this << intern::fmt::XSPACE << "<testcase name=\"" << tc_.name() << "\" classname=\""
               << tc_.context() << "\" time=\"" << tc_.duration() << "\"";
         switch (tc_.state()) {
             case intern::testcase::result::ERROR:
-                *this << ">" << intern::LF << intern::XSPACE << intern::SPACE << "<error message=\""
-                      << tc_.reason() << "\"></error>" << intern::LF;
+                *this << ">" << intern::fmt::LF << intern::fmt::XSPACE << intern::fmt::SPACE
+                      << "<error message=\"" << tc_.reason() << "\"></error>" << intern::fmt::LF;
                 if (m_capture) {
                     print_system_out(tc_);
                 }
-                *this << intern::XSPACE << "</testcase>";
+                *this << intern::fmt::XSPACE << "</testcase>";
                 break;
             case intern::testcase::result::FAILED:
-                *this << ">" << intern::LF << intern::XSPACE << intern::SPACE
-                      << "<failure message=\"" << tc_.reason() << "\"></failure>" << intern::LF;
+                *this << ">" << intern::fmt::LF << intern::fmt::XSPACE << intern::fmt::SPACE
+                      << "<failure message=\"" << tc_.reason() << "\"></failure>"
+                      << intern::fmt::LF;
                 if (m_capture) {
                     print_system_out(tc_);
                 }
-                *this << intern::XSPACE << "</testcase>";
+                *this << intern::fmt::XSPACE << "</testcase>";
                 break;
             default:
                 if (m_capture) {
-                    *this << ">" << intern::LF;
+                    *this << ">" << intern::fmt::LF;
                     print_system_out(tc_);
-                    *this << intern::XSPACE << "</testcase>";
+                    *this << intern::fmt::XSPACE << "</testcase>";
                 } else {
                     *this << "/>";
                 }
                 break;
         }
-        *this << intern::LF;
+        *this << intern::fmt::LF;
     }
 
     void begin_report() override {
-        *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << intern::LF << "<testsuites>"
-              << intern::LF;
+        *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << intern::fmt::LF << "<testsuites>"
+              << intern::fmt::LF;
     }
 
     void end_report() override {
-        *this << "</testsuites>" << intern::LF;
+        *this << "</testsuites>" << intern::fmt::LF;
     }
 
     /**
@@ -122,10 +123,10 @@ private:
      * @param tc_ is the testcase whose output to print.
      */
     void print_system_out(intern::testcase const& tc_) {
-        *this << intern::XSPACE << intern::SPACE << "<system-out>" << tc_.cout() << "</system-out>"
-              << intern::LF;
-        *this << intern::XSPACE << intern::SPACE << "<system-err>" << tc_.cerr() << "</system-err>"
-              << intern::LF;
+        *this << intern::fmt::XSPACE << intern::fmt::SPACE << "<system-out>" << tc_.cout()
+              << "</system-out>" << intern::fmt::LF;
+        *this << intern::fmt::XSPACE << intern::fmt::SPACE << "<system-err>" << tc_.cerr()
+              << "</system-err>" << intern::fmt::LF;
     }
 
     std::size_t mutable m_id = 0;  ///< Report wide incremental ID for testsuites.

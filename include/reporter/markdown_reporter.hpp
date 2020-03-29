@@ -62,15 +62,16 @@ private:
 
     markdown_reporter(char const* fname_, bool capture_) : reporter(fname_), m_capture(capture_) {}
     void report_testsuite(intern::testsuite_ptr const ts_) override {
-        *this << "## " << ts_->name() << intern::XLF << "|Tests|Successes|Failures|Errors|Time|"
-              << intern::LF << "|-|-|-|-|-|" << intern::LF << "|" << ts_->statistics().tests()
-              << "|" << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"
+        *this << "## " << ts_->name() << intern::fmt::XLF
+              << "|Tests|Successes|Failures|Errors|Time|" << intern::fmt::LF << "|-|-|-|-|-|"
+              << intern::fmt::LF << "|" << ts_->statistics().tests() << "|"
+              << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"
               << ts_->statistics().errors() << "|" << ts_->execution_duration() << "ms|"
-              << intern::XLF << "### Tests" << intern::XLF << "|Name|Context|Time|Status|"
-              << (m_capture ? "System-Out|System-Err|" : "") << intern::LF << "|-|-|-|-|"
-              << (m_capture ? "-|-|" : "") << intern::LF;
+              << intern::fmt::XLF << "### Tests" << intern::fmt::XLF << "|Name|Context|Time|Status|"
+              << (m_capture ? "System-Out|System-Err|" : "") << intern::fmt::LF << "|-|-|-|-|"
+              << (m_capture ? "-|-|" : "") << intern::fmt::LF;
         reporter::report_testsuite(ts_);
-        *this << intern::XLF;
+        *this << intern::fmt::XLF;
     }
 
     void report_testcase(intern::testcase const& tc_) override {
@@ -87,18 +88,18 @@ private:
             print_system_out(tc_.cout());
             print_system_out(tc_.cerr());
         }
-        *this << intern::LF;
+        *this << intern::fmt::LF;
     }
 
     void begin_report() override {
-        *this << "# Test Report" << intern::XLF;
+        *this << "# Test Report" << intern::fmt::XLF;
     }
 
     void end_report() override {
-        *this << "## Summary" << intern::XLF << "|Tests|Successes|Failures|Errors|Time|"
-              << intern::LF << "|-|-|-|-|-|" << intern::LF << "|" << m_abs_tests << "|"
+        *this << "## Summary" << intern::fmt::XLF << "|Tests|Successes|Failures|Errors|Time|"
+              << intern::fmt::LF << "|-|-|-|-|-|" << intern::fmt::LF << "|" << m_abs_tests << "|"
               << (m_abs_tests - m_abs_errs - m_abs_fails) << "|" << m_abs_fails << "|" << m_abs_errs
-              << "|" << m_abs_time << "ms|" << intern::LF;
+              << "|" << m_abs_time << "ms|" << intern::fmt::LF;
     }
 
     /**

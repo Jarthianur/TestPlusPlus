@@ -140,10 +140,13 @@ protected:
     double        m_abs_time  = 0;  ///< Total amount of time spent on all testsuites.
 };
 
+namespace fmt
+{
 static constexpr char const* const SPACE  = "  ";    ///< Indentation with two spaces.
 static constexpr char const* const XSPACE = "    ";  ///< Indentation with four spaces.
 static constexpr char const* const LF     = "\n";    ///< Single linefeed.
 static constexpr char const* const XLF    = "\n\n";  ///< Double linefeed.
+}  // namespace fmt
 }  // namespace intern
 
 using reporter_ptr = std::shared_ptr<intern::reporter>;
