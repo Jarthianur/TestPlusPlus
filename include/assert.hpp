@@ -19,230 +19,263 @@
  }
  */
 
+/// @file
+
 #ifndef SCTF_ASSERT_HPP
 #define SCTF_ASSERT_HPP
 
-#include "common/assertion_failure.hpp"
-#include "common/duration.hpp"
-#include "common/stringify.hpp"
-#include "common/types.hpp"
-#include "comparator/comparators.hpp"
-#include "comparator/equals.hpp"
-#include "comparator/inrange.hpp"
-#include "comparator/unequals.hpp"
+#include "comparator/comparator.hpp"
 
-// disable assert macro
-#ifdef assert
-#    undef assert
-#endif
-
-// provide assertion macros and wrappers
-/**
- * @def assert(VALUE, EXPECT, COMP)
- * @brief Assert wrapper. Test for successful comparison.
- * @note Type is deduced from arguments.
- * @param VALUE The actual value
- * @param COMP The Comparator
- * @param EXPECT The expected value
- */
-#define assert(VALUE, COMP, EXPECT)                                                     \
-    sctf::_::_assertStatement(VALUE, EXPECT, COMP<decltype(VALUE), decltype(EXPECT)>(), \
-                              sctf::_::location{__FILE__, __LINE__})
+#include "assertion_failure.hpp"
+#include "duration.hpp"
+#include "loc.hpp"
+#include "types.hpp"
 
 /**
- * @def assertT(VALUE, EXPECT, COMP, TYPE)
- * @brief Assert wrapper. Test for successful comparison.
- * @note Type is specialized.
- * @param VALUE The actual value
- * @param COMP The Comparator
- * @param EXPECT The expected value
- * @param TYPE The value type
+ * Generic assertion to compare two values.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT(1, EQ, 1);
+ * @endcode
+ *
+ * @param VAL is the actual value.
+ * @param CMP is the comparator to use.
+ * @param EXP is the expected value.
  */
-#define assertT(VALUE, COMP, EXPECT, TYPE)                                   \
-    sctf::_::_assertStatement<TYPE, TYPE>(VALUE, EXPECT, COMP<TYPE, TYPE>(), \
-                                          sctf::_::location{__FILE__, __LINE__})
+#define ASSERT(VAL, CMP, EXP) \
+    sctf::intern::assert_statement(VAL, EXP, sctf::CMP, sctf::intern::loc{__FILE__, __LINE__})
 
 /**
- * @def assertEquals(VALUE, EXPECT)
- * @brief Assert wrapper. Test for equality.
- * @param VALUE The actual value
- * @param EXPECT The expected value
+ * Generic assertion to compare two values, where the comparison is logically negated.
+ * This is equivalent to prefixing a comparator with '!'.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_NOT(2, EQ, 1);
+ * @endcode
+ *
+ * @param VAL is the actual value.
+ * @param CMP is the comparator to use.
+ * @param EXP is the expected value.
  */
-#define assertEquals(VALUE, EXPECT) assertT(VALUE, EQUALS, EXPECT, decltype(VALUE))
+#define ASSERT_NOT(VAL, CMP, EXP) \
+    sctf::intern::assert_statement(VAL, EXP, !sctf::CMP, sctf::intern::loc{__FILE__, __LINE__})
 
 /**
- * @def assertTrue(VALUE)
- * @brief Assert wrapper. Test value to be true.
- * @param VALUE The value
+ * Assert two values to be equal.
+ * This is equivalent to using ASSERT with EQUALS comparator.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_EQ(1, 1);
+ * @endcode
+ *
+ * @param VAL is the actual value.
+ * @param EXP is the expected value.
  */
-#define assertTrue(VALUE)                                              \
-    sctf::_::_assertStatement<bool>(VALUE, true, sctf::EQUALS<bool>(), \
-                                    sctf::_::location{__FILE__, __LINE__})
+#define ASSERT_EQ(VAL, EXP) \
+    sctf::intern::assert_statement(VAL, EXP, sctf::EQUALS(), sctf::intern::loc{__FILE__, __LINE__})
 
 /**
- * @def assertFalse(VALUE)
- * @brief Assert wrapper. Test value to be false.
- * @param VALUE The value
+ * Assert a value to be true.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_TRUE(true);
+ * @endcode
+ *
+ * @param VAL is the actual value.
  */
-#define assertFalse(VALUE)                                              \
-    sctf::_::_assertStatement<bool>(VALUE, false, sctf::EQUALS<bool>(), \
-                                    sctf::_::location{__FILE__, __LINE__})
+#define ASSERT_TRUE(VAL) \
+    sctf::intern::assert_statement(VAL, true, sctf::EQUALS(), sctf::intern::loc{__FILE__, __LINE__})
 
 /**
- * @def assertNotNull(VALUE)
- * @brief Assert wrapper. Test value to be not nullptr.
- * @param VALUE The value
+ * Assert a value to be false.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_FALSE(false);
+ * @endcode
+ *
+ * @param VAL is the actual value.
  */
-#define assertNotNull(VALUE)                                                 \
-    sctf::_::_assertStatement(static_cast<void* const>(VALUE), nullptr,      \
-                              sctf::UNEQUALS<void* const, std::nullptr_t>(), \
-                              sctf::_::location{__FILE__, __LINE__})
+#define ASSERT_FALSE(VAL)                                      \
+    sctf::intern::assert_statement(VAL, false, sctf::EQUALS(), \
+                                   sctf::intern::loc{__FILE__, __LINE__})
 
 /**
- * @def assertZero(VALUE, TYPE)
- * @brief Assert wrapper. Test value to be 0 as specified type.
- * @param VALUE The value
- * @param TYPE The type of value
+ * Assert a pointer to be nullptr.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_NULL(&var);
+ * @endcode
+ *
+ * @param PTR is the actual pointer.
  */
-#define assertZero(VALUE)                                             \
-    sctf::_::_assertStatement(VALUE, static_cast<decltype(VALUE)>(0), \
-                              sctf::EQUALS<decltype(VALUE)>(),        \
-                              sctf::_::location{__FILE__, __LINE__})
+#define ASSERT_NULL(PTR)                                                                   \
+    sctf::intern::assert_statement(static_cast<void const*>(PTR), nullptr, sctf::EQUALS(), \
+                                   sctf::intern::loc{__FILE__, __LINE__})
 
 /**
- * @def assertException(FUNC, TYPE)
- * @brief Assert exception wrapper. Test for FUNC to throw TYPE.
- * @param FUNC The function call
- * @param TYPE The exception type
+ * Assert a pointer to be not nullptr.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_NOT_NULL(&var);
+ * @endcode
+ *
+ * @param PTR is the actual pointer.
  */
-#define assertException(FUNC, TYPE) \
-    sctf::_::_assertException<TYPE>([&] { FUNC; }, sctf::_::location{__FILE__, __LINE__})
+#define ASSERT_NOT_NULL(PTR)                                                                \
+    sctf::intern::assert_statement(static_cast<void const*>(PTR), nullptr, !sctf::EQUALS(), \
+                                   sctf::intern::loc{__FILE__, __LINE__})
 
 /**
- * @def assertNoExcept(FUNC)
- * @brief Assert no exception wrapper. Test for FUNC not to throw any exception.
- * @param FUNC The function call
+ * Assert a value to be zero.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_ZERO(0);
+ * @endcode
+ *
+ * @param VAL is the actual value.
  */
-#define assertNoExcept(FUNC) \
-    sctf::_::_assertNoExcept([&] { FUNC; }, sctf::_::location{__FILE__, __LINE__})
+#define ASSERT_ZERO(VAL)                                                               \
+    sctf::intern::assert_statement(VAL, static_cast<decltype(VAL)>(0), sctf::EQUALS(), \
+                                   sctf::intern::loc{__FILE__, __LINE__})
 
 /**
- * @def assertPerformance(FUNC, MILLIS)
- * @brief Assert performance wrapper. Test for FUNC to run shorter than MILLIS.
- * @param FUNC The function call
- * @param MILLIS The max amount of milliseconds
+ * Assert an expression to throw a specific throwable type.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_THROWS(func(), std::exception);
+ * @endcode
+ *
+ * @param FN is the expression / invokation.
+ * @param TRW is the expected throwable type.
  */
-#define assertPerformance(FUNC, MILLIS) \
-    sctf::_::_assertPerformance([&] { FUNC; }, MILLIS, sctf::_::location{__FILE__, __LINE__})
+#define ASSERT_THROWS(FN, TRW) \
+    sctf::intern::assert_throws<TRW>([&] { FN; }, #TRW, sctf::intern::loc{__FILE__, __LINE__})
+
+/**
+ * Assert an expression to not throw anything.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_NOTHROW(func());
+ * @endcode
+ *
+ * @param FN is the expression / invokation.
+ */
+#define ASSERT_NOTHROW(FN) \
+    sctf::intern::assert_nothrow([&] { FN; }, sctf::intern::loc{__FILE__, __LINE__})
+
+/**
+ * Assert an expression to run in certain amount of time.
+ * This may be usefull, when testing fixed timing constraints.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_RUNTIME(func());
+ * @endcode
+ *
+ * @param FN is the expression / invokation.
+ * @param MAX is the maximum amount of time in milliseconds.
+ */
+#define ASSERT_RUNTIME(FN, MAX) \
+    sctf::intern::assert_runtime([&] { FN; }, MAX, sctf::intern::loc{__FILE__, __LINE__})
 
 namespace sctf
 {
-namespace _
+namespace intern
 {
 /**
- * @brief Assert a value to be compared successfully to an expected value.
- * @tparam V The type of value
- * * @tparam V The type of expect
- * @param value The actual value
- * @param expect The expected value
- * @param comp The Comparator
- * @throw AssertionFailure if the assertion failed.
+ * Apply an assertion on two values by using the specified comparator.
+ *
+ * @tparam C is the type of cmp_.
+ * @tparam V is the type of val_.
+ * @tparam E is the type of exp_.
+ * @param val_ is the actual value.
+ * @param exp_ is the expected value.
+ * @param cmp_ is the comparator to use.
+ * @param loc_ is the line of code where the assertion took place.
+ * @throw sctf::intern::assertion_failure if the assertion fails according to the comparator.
  */
-template<typename V, typename E = V>
-static void _assertStatement(const V& value, const E& expect, comparator<V, E> comp,
-                             const location& loc)
-{
-    comparison res = (*comp)(value, expect);
-    if (!res)
-    {
-        throw assertion_failure(*res, loc);
+template<typename C, typename V, typename E = V>
+static void assert_statement(V const& val_, E const& exp_, C&& cmp_, loc const& loc_) {
+    comparison res = cmp_(val_, exp_);
+    if (!res) {
+        throw assertion_failure(*res, loc_);
     }
 }
 
 /**
- * @brief Assert a function to throw a specific exception.
- * @tparam T The exception type
- * @param func The test function
- * @param file The source file
- * @param line The source line in file
- * @throw AssertionFailure if any other or no exception is caught at all.
+ * Apply a throw-assertion on a function invokation.
+ *
+ * @tparam T is the throwable type to expect.
+ * @param fn_ is the wrapper function to assert for.
+ * @param tname_ is the throwable types name.
+ * @param loc_ is the line of code where the assertion took place.
+ * @throw sctf::intern::assertion_failure if a different, or no throwable type is thrown by fn_.
  */
 template<typename T>
-static void _assertException(const test_function& func, const location& loc)
-{
-    try
-    {
-        func();
-    }
-    catch (const T&)
-    {
+static void assert_throws(void_function&& fn_, char const* tname_, loc const& loc_) {
+    try {
+        fn_();
+    } catch (T const&) {
         return;
+    } catch (std::exception const& e) {
+        throw assertion_failure("Wrong exception thrown, caught " + to_string(e), loc_);
+    } catch (...) {
+        throw assertion_failure("Wrong exception thrown", loc_);
     }
-    catch (const std::exception& e)
-    {
-        throw assertion_failure(
-            std::string("Wrong exception thrown, caught '") + to_string(e) + "'", loc);
-    }
-    catch (...)
-    {
-        throw assertion_failure("Wrong exception thrown", loc);
-    }
-    throw assertion_failure(
-        std::string("No exception thrown, expected '") + name_for_type<T>() + "'", loc);
+    throw assertion_failure(std::string("No exception thrown, expected ") + tname_, loc_);
 }
 
 /**
- * @brief Assert a function not to throw any exception.
- * @param func The test function
- * @param file The source file
- * @param line The source line in file
- * @throw AssertionFailure if any exception is caught.
+ * Apply a nothrow-assertion on a function invokation.
+ *
+ * @param fn_ is the wrapper function to assert for.
+ * @param loc_ is the line of code where the assertion took place.
+ * @throw sctf::intern::assertion_failure if a any throwable type is thrown by fn_.
  */
-static void _assertNoExcept(const test_function& func, const location& loc)
-{
-    try
-    {
-        func();
-    }
-    catch (const std::exception& e)
-    {
-        throw assertion_failure(std::string("Expected no exception, caught '") + to_string(e) + "'",
-                                loc);
-    }
-    catch (...)
-    {
-        throw assertion_failure("Expected no exception", loc);
+static void assert_nothrow(void_function&& fn_, loc const& loc_) {
+    try {
+        fn_();
+    } catch (std::exception const& e) {
+        throw assertion_failure("Expected no exception, caught " + to_string(e), loc_);
+    } catch (...) {
+        throw assertion_failure("Expected no exception", loc_);
     }
 }
 
 /**
- * @brief Assert a given test function to run under given time.
- * @param func The test function
- * @param max_millis The max duration in milliseconds
+ * Apply a runtime-assertion on a function invokation.
+ *
+ * @param fn_ is the wrapper function to assert for.
+ * @param max_ms_ is the maximum amount of time in milliseconds.
+ * @param loc_ is the line of code where the assertion took place.
+ * @throw sctf::intern::assertion_failure if fn_ does not complete within max_ms_, or any throwable
+ * type is thrown by fn_.
  */
-static void _assertPerformance(const test_function& func, double max_millis, const location& loc)
-{
-    try
-    {
+static void assert_runtime(void_function&& fn_, double max_ms_, loc const& loc_) {
+    try {
         duration dur;
-        func();
+        fn_();
         double dur_ms = dur.get();
-        if (dur_ms > max_millis)
-        {
-            throw assertion_failure(std::string("runtime > ") + to_string(max_millis) + "ms", loc);
+        if (dur_ms > max_ms_) {
+            throw assertion_failure("runtime > " + to_string(max_ms_) + "ms", loc_);
         }
-    }
-    catch (const std::exception& e)
-    {
-        throw assertion_failure(e.what(), loc);
-    }
-    catch (...)
-    {
-        throw assertion_failure("Unknown exception thrown", loc);
+    } catch (std::exception const& e) {
+        throw assertion_failure(e.what(), loc_);
+    } catch (...) {
+        throw assertion_failure("Unknown exception thrown", loc_);
     }
 }
-
-}  // namespace _
+}  // namespace intern
 }  // namespace sctf
 
 #endif  // SCTF_ASSERT_HPP

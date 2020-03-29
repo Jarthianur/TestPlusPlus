@@ -19,36 +19,32 @@
  }
  */
 
+#define SCTF_EXTERN_EPSILON
+
 #include <iostream>
 
 #include "basic_tests.h"
-#include "reflexive_tests.h"
 #include "sctf.hpp"
+
+SCTF_EPSILON(0.000001)
 
 using namespace sctf;
 
-int main(int, char**)
-{
-    auto rep  = createPlainTextReporter(true, true);
-    auto repx = createXmlReporter("test.xml");
+int main(int, char**) {
+    auto rep   = console_reporter::create(std::cout, true, true);
+    auto repx  = xml_reporter::create("test.xml", true);
+    auto repmd = markdown_reporter::create("test.md", true);
 
-    try
-    {
+    try {
         basic_tests();
-    }
-    catch (const std::exception& e)
-    {
+    } catch (std::exception const& e) {
         std::cout << "Basic tests have failed! [" << e.what() << "]" << std::endl;
         return 1;
-    }
-    catch (...)
-    {
+    } catch (...) {
         std::cout << "Basic tests have failed!" << std::endl;
         return 1;
     }
     std::cout << "Basic tests have succeeded!" << std::endl;
 
-    reflexive_tests();
-
-    return rep->report() + repx->report() > 0 ? 1 : 0;
+    return rep->report() + repx->report() + repmd->report() > 0 ? 1 : 0;
 }

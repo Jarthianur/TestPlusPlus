@@ -25,119 +25,112 @@
 #include <chrono>
 #include <ctime>
 
-#include "common/types.hpp"
-#include "reporter/abstract_reporter.hpp"
-#include "testsuite/statistics.hpp"
-#include "testsuite/testcase.hpp"
-#include "testsuite/testsuite.hpp"
+#include "reporter/reporter.hpp"
 
 namespace sctf
 {
 /**
- * @brief Concrete reporter featuring JUnit like XML format.
+ * Reporter implementation with JUnit like XML format.
  */
-class xml_reporter : public _::abstract_reporter
+class xml_reporter : public intern::reporter
 {
 public:
     ~xml_reporter() noexcept override = default;
 
     /**
-     * @brief Constructor
-     * @param stream The stream to write to
+     * Create a xml reporter.
+     *
+     * @param stream_ is the stream where to print the report. (default: stdout)
+     * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
-    explicit xml_reporter(std::ostream& stream) : abstract_reporter(stream) {}
+    static reporter_ptr create(std::ostream& stream_ = std::cout, bool capture_ = false) {
+        return reporter_ptr(new xml_reporter(stream_, capture_));
+    }
 
     /**
-     * @brief Constructor
-     * @param fname The file to write to
+     * Create a xml reporter.
+     *
+     * @param fname_ is the filename where to print the report.
+     * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
-    explicit xml_reporter(const char* fname) : abstract_reporter(fname) {}
+    static reporter_ptr create(char const* fname_, bool capture_ = false) {
+        return reporter_ptr(new xml_reporter(fname_, capture_));
+    }
 
-protected:
-    /**
-     * @brief Implement AbstractReporter#report_ts
-     */
-    void report_ts(const testsuite_shared ts) override
-    {
-        std::time_t stamp = std::chrono::system_clock::to_time_t(ts->timestamp());
+private:
+    xml_reporter(std::ostream& stream_, bool capture_) : reporter(stream_), m_capture(capture_) {}
+    xml_reporter(char const* fname_, bool capture_) : reporter(fname_), m_capture(capture_) {}
+
+    void report_testsuite(intern::testsuite_ptr const ts_) override {
+        std::time_t stamp = std::chrono::system_clock::to_time_t(ts_->timestamp());
         char        buff[128];
         std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
-
-        *this << SCTF_SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts->name()
-              << "\" errors=\"" << ts->statistics().errors() << "\" tests=\""
-              << ts->statistics().tests() << "\" failures=\"" << ts->statistics().failures()
-              << "\" skipped=\"0\" time=\"" << ts->time() << "\" timestamp=\"" << buff << "\">"
-              << SCTF_LF;
-
-        abstract_reporter::report_ts(ts);
-
-        *this << SCTF_SPACE << "</testsuite>" << SCTF_LF;
+        *this << intern::SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name()
+              << "\" errors=\"" << ts_->statistics().errors() << "\" tests=\""
+              << ts_->statistics().tests() << "\" failures=\"" << ts_->statistics().failures()
+              << "\" skipped=\"0\" time=\"" << ts_->execution_duration() << "\" timestamp=\""
+              << buff << "\">" << intern::LF;
+        reporter::report_testsuite(ts_);
+        *this << intern::SPACE << "</testsuite>" << intern::LF;
     }
 
-    /**
-     * @brief Implement AbstractReporter#report_tc
-     */
-    void report_tc(const _::testcase& tc) override
-    {
-        *this << SCTF_XSPACE << "<testcase name=\"" << tc.name() << "\" classname=\""
-              << tc.context() << "\" time=\"" << tc.duration() << "\"";
-        switch (tc.state())
-        {
-            case _::testcase::result::ERROR:
-                *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<error message=\""
-                      << tc.err_msg() << "\"></error>" << SCTF_LF << SCTF_XSPACE << "</testcase>";
+    void report_testcase(intern::testcase const& tc_) override {
+        *this << intern::XSPACE << "<testcase name=\"" << tc_.name() << "\" classname=\""
+              << tc_.context() << "\" time=\"" << tc_.duration() << "\"";
+        switch (tc_.state()) {
+            case intern::testcase::result::ERROR:
+                *this << ">" << intern::LF << intern::XSPACE << intern::SPACE << "<error message=\""
+                      << tc_.reason() << "\"></error>" << intern::LF;
+                if (m_capture) {
+                    print_system_out(tc_);
+                }
+                *this << intern::XSPACE << "</testcase>";
                 break;
-            case _::testcase::result::FAILED:
-                *this << ">" << SCTF_LF << SCTF_XSPACE << SCTF_SPACE << "<failure message=\""
-                      << tc.err_msg() << "\"></failure>" << SCTF_LF << SCTF_XSPACE << "</testcase>";
+            case intern::testcase::result::FAILED:
+                *this << ">" << intern::LF << intern::XSPACE << intern::SPACE
+                      << "<failure message=\"" << tc_.reason() << "\"></failure>" << intern::LF;
+                if (m_capture) {
+                    print_system_out(tc_);
+                }
+                *this << intern::XSPACE << "</testcase>";
                 break;
-            case _::testcase::result::PASSED: *this << "/>"; break;
-            default: break;
+            default:
+                if (m_capture) {
+                    *this << ">" << intern::LF;
+                    print_system_out(tc_);
+                    *this << intern::XSPACE << "</testcase>";
+                } else {
+                    *this << "/>";
+                }
+                break;
         }
-        *this << SCTF_LF;
+        *this << intern::LF;
+    }
+
+    void begin_report() override {
+        *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << intern::LF << "<testsuites>"
+              << intern::LF;
+    }
+
+    void end_report() override {
+        *this << "</testsuites>" << intern::LF;
     }
 
     /**
-     * @brief Implement AbstractReporter#begin_report
+     * Print the captured output of a testcase to the report.
+     *
+     * @param tc_ is the testcase whose output to print.
      */
-    void begin_report() override
-    {
-        *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << SCTF_LF << "<testsuites>"
-              << SCTF_LF;
+    void print_system_out(intern::testcase const& tc_) {
+        *this << intern::XSPACE << intern::SPACE << "<system-out>" << tc_.cout() << "</system-out>"
+              << intern::LF;
+        *this << intern::XSPACE << intern::SPACE << "<system-err>" << tc_.cerr() << "</system-err>"
+              << intern::LF;
     }
 
-    /**
-     * @brief Implement AbstractReporter#end_report
-     */
-    void end_report() override
-    {
-        *this << "</testsuites>" << SCTF_LF;
-    }
-
-    /// @brief The incremental testsuite id
-    mutable std::size_t m_id = 0;
+    std::size_t mutable m_id = 0;  ///< Report wide incremental ID for testsuites.
+    bool m_capture;                ///< Flags whether to report captured output from testcases.
 };
-
-/**
- * @brief Create a XmlReporter
- * @param stream The stream to use, defaults to stdout
- * @return a shared pointer to the reporter
- */
-static reporter_shared createXmlReporter(std::ostream& stream = std::cout)
-{
-    return std::make_shared<xml_reporter>(stream);
-}
-
-/**
- * @brief Create a XmlReporter
- * @param file The filename to use
- * @return a shared pointer to the reporter
- */
-static reporter_shared createXmlReporter(const char* file)
-{
-    return std::make_shared<xml_reporter>(file);
-}
-
 }  // namespace sctf
 
 #endif  // SCTF_REPORTER_XML_REPORTER_HPP

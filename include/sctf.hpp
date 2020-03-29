@@ -19,35 +19,36 @@
  }
  */
 
+/// @file
+
 #ifndef SCTF_SCTF_HPP
 #define SCTF_SCTF_HPP
 
-#include "common/types.hpp"
-#include "comparator/equals.hpp"
-#include "comparator/greater.hpp"
-#include "comparator/inrange.hpp"
-#include "comparator/less.hpp"
-#include "comparator/unequals.hpp"
-#include "reporter/html_reporter.hpp"
-#include "reporter/plaintext_reporter.hpp"
-#include "reporter/xml_reporter.hpp"
-#include "testsuite/runner.hpp"
-#include "testsuite/testmodule.hpp"
+/// SCTF release version this source belongs to.
+#define SCFT_VERSION "1.2-rc2"
 
+#include "comparator/equality.hpp"
+#include "comparator/ordering.hpp"
+#include "comparator/range.hpp"
+#include "comparator/regex.hpp"
+#include "reporter/console_reporter.hpp"
+#include "reporter/markdown_reporter.hpp"
+#include "reporter/xml_reporter.hpp"
+
+#include "api.hpp"
 #include "assert.hpp"
+#include "regex.hpp"
+#include "runner.hpp"
 
 /**
- * @def SCTF_DEFAULT_MAIN(REPORTER)
- * @brief Define a default main function, which executes and reports all tests registered to the
- * default runner.
- * @param REPORTER The reporter creation function invocation
- * @return the number of failed and erroneous tests
+ * Define a default main function, which performs all tests, and produces the report with specified
+ * reporter.
+ *
+ * @param R is the reporters factory method invokation.
  */
-#define SCTF_DEFAULT_MAIN(REPORTER, ...)                   \
-    int main(int /*argc*/, char** /*argv*/)                \
-    {                                                      \
-        __VA_ARGS__;                                       \
-        return static_cast<int>(sctf::REPORTER->report()); \
+#define SCTF_DEFAULT_MAIN(R)                        \
+    int main(int /*argc*/, char** /*argv*/) {       \
+        return static_cast<int>(sctf::R->report()); \
     }
 
 #endif  // SCTF_SCTF_HPP

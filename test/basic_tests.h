@@ -29,17 +29,16 @@ void basic_tests();
 class Failure : public std::exception
 {
 public:
-    Failure(const char* msg) : std::exception(), m_msg(msg) {}
+    Failure(char const* msg_) : std::exception(), m_msg(msg_) {}
 
     ~Failure() noexcept override = default;
 
-    const char* what() const noexcept override
-    {
+    char const* what() const noexcept override {
         return m_msg;
     }
 
 private:
-    const char* m_msg;
+    char const* m_msg;
 };
 
 #endif  // TEST_BASIC_TESTS_H_

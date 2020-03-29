@@ -1,30 +1,32 @@
 #!/bin/bash
 set -eo pipefail
 
-FILES="../include/common/types.hpp
-../include/common/traits.hpp
-../include/common/duration.hpp
-../include/common/stringify.hpp
-../include/common/streambuf_proxy_omp.hpp
-../include/common/streambuf_proxy.hpp
-../include/common/assertion_failure.hpp
-../include/testsuite/statistics.hpp
-../include/testsuite/testcase.hpp
+FILES="../include/cpp_meta.hpp
+../include/types.hpp
+../include/loc.hpp
+../include/traits.hpp
+../include/duration.hpp
+../include/regex.hpp
+../include/stringify.hpp
+../include/assertion_failure.hpp
+../include/testcase.hpp
+../include/testsuite/streambuf_proxy_omp.hpp
+../include/testsuite/streambuf_proxy.hpp
+../include/testsuite/statistic.hpp
 ../include/testsuite/testsuite.hpp
 ../include/testsuite/testsuite_parallel.hpp
-../include/testsuite/runner.hpp
-../include/testsuite/testmodule.hpp
-../include/reporter/abstract_reporter.hpp
+../include/runner.hpp
+../include/reporter/reporter.hpp
 ../include/reporter/xml_reporter.hpp
-../include/reporter/plaintext_reporter.hpp
-../include/reporter/html_reporter.hpp
-../include/comparator/comparators.hpp
-../include/comparator/less.hpp
-../include/comparator/inrange.hpp
-../include/comparator/unequals.hpp
-../include/comparator/equals.hpp
-../include/comparator/greater.hpp
+../include/reporter/console_reporter.hpp
+../include/reporter/markdown_reporter.hpp
+../include/comparator/comparator.hpp
+../include/comparator/ordering.hpp
+../include/comparator/equality.hpp
+../include/comparator/range.hpp
+../include/comparator/regex.hpp
 ../include/assert.hpp
+../include/api.hpp
 ../include/sctf.hpp"
 
 TARGET="sctf.hpp"
@@ -57,7 +59,7 @@ done
 
 grep '#include' $TARGET.tmp > .includes
 perl -0pi -e 's/#include [<"].*[">]//g' $TARGET.tmp
-perl -0pi -e 's%///.*|/\*[\w\W\n]*?\*/%%g' $TARGET.tmp
+perl -0pi -e 's%///[<]? .*|/\*[\w\W\n]*?\*/%%g' $TARGET.tmp
 
 echo "$COPYRIGHT" > $TARGET
 echo "#ifndef SCTF_RELEASE_SCTF_HPP" >> $TARGET
