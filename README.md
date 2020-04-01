@@ -56,7 +56,6 @@ As a short summary of all features, have a look at this list.
 + Self registering test suites
 + Comparator based assertions
   + equals
-  + unequals
   + less than
   + greater than
   + in range (substring, contains)
@@ -75,8 +74,8 @@ As a short summary of all features, have a look at this list.
 
 ## Usage
 
-Just inlude the *sctf.hpp* header file into your build.
-Tests can then be written in source files and simply linked into your test binary.
+Just inlude the release *sctf.hpp* header file into your build.
+Tests can then be written in source files and simply linked into your test binaries.
 If you prefer, you can of course write tests in header files and include them in your main source file.
 *Note that it is not possible to write multiple testsuites, or tests in one line, as it would break name generation.*
 To run and report all tests, just create a reporter and call its `report()` function in your `main()`, as seen in the examples.
@@ -112,14 +111,13 @@ The use of a testsuite wide UUT instance might also be usefull, if it is expensi
 
 ### Floating Point Numbers
 
-As floating-point comparison relies on a so called epsilon, we use the machine epsilon by default.
-But this may lead into false-negative test results, as it could be too accurate.
-In order to use a custom epsilon, there are two ways to achieve this.
-First, you can provide a macro in each compilation unit, which is called `SCTF_EPSILON` with a satisfying value like `0.000001`.
-A compiler invocation could look like `g++ -std=c++11 test.cpp -DSCTF_EPSILON=0.000001`.
-Or you provide it before including *sctf.hpp* like in the example below.
-The second way, is to provide it as an extern variable.
-Therefor define `SCTF_EXTERN_EPSILON` before including *sctf.hpp* and afterwards invoke the `SCTF_SET_EPSILON(...)` macro with a satisfying value in your main source file.
+As floating-point equality comparison relies on a so called epsilon, we need to define such an epsilon.
+In order to not make you paying for things you don't use, there is a special comparator for floating point numbers, called F_EQUALS.
+It uses the global epsilon value by default, but allows to pass it a certain epsilon value for a single comparison.
+If you use this comparator at any point, you must define the global epsilon by invoking `SCTF_EPSILON(...)` macro once.
+You could use the machine epsilon, but this may lead into false-negative test results, as it could be too accurate.
+This epsilon is actually not the epsilon as per definition, but a precision threshold.
+For example if you use *0.001* as *epsilon*, *0.100234* and *0.100345* will be considered equals.
 
 ### Regular Expressions
 
@@ -134,16 +132,15 @@ Both operators create regular expressions with *ECMAScript* syntax.
 #### Simple Unit Test
 
 ```cpp
-#define SCTF_EXTERN_EPSILON
 #include "sctf.hpp"
-SCTF_SET_EPSILON(0.001)
-SCTF_DEFAULT_MAIN(create_xml_reporter())
+SCTF_EPSILON(0.001)
+SCTF_DEFAULT_MAIN(xml_reporter::create())
 
 SUITE("testSomething") {
     TEST("abc") {
-        ASSERT(x+1, EQ, 11);
-        ASSERT("hello world", MATCH, ".*"_re);
-        ASSERT("xyz"s, !IN, "hello"s);
+        ASSERT(x+1, EQ(), 11);
+        ASSERT("hello world", MATCH(), ".*"_re);
+        ASSERT("xyz"s, !IN(), "hello"s);
         int i = 101;
         ASSERT_NOT_NULL(&i);
     }
@@ -151,12 +148,12 @@ SUITE("testSomething") {
         ASSERT_EQUALS(0, 0);
         ASSERT_ZERO(0.0);
         ASSERT_TRUE(true);
-        ASSERT_NOT(.0, EQUALS, 1.0);
-        ASSERT(6, IN_RANGE, std::pair<int, int>(1, 5));
+        ASSERT_NOT(.0, FEQ(0.01), 1.0);
+        ASSERT(6, IN_RANGE(), std::pair<int, int>(1, 5));
     }
     TEST("ranges") {
-        ASSERT('w', IN, std::string("world"));
-        ASSERT(std::string(""), IN, std::vector<std::string>{""});
+        ASSERT('w', IN(), std::string("world"));
+        ASSERT(std::string(""), IN(), std::vector<std::string>{""});
     }
     TEST("exceptions") {
         ASSERT_THROWS(throw std::logic_error(""), std::logic_error);
@@ -167,11 +164,10 @@ SUITE("testSomething") {
 #### Behavior Driven Test
 
 ```cpp
-#define SCTF_EPSILON 0.00001
 #include "sctf.hpp"
 
 int main(int argc, char** argv) {
-    return sctf::create_markdown_reporter("results.md")->report();
+    return sctf::markdown_reporter::create("results.md")->report();
 }
 
 class MyClass {
@@ -194,7 +190,7 @@ DESCRIBE("testMyClass") {
         ASSERT_TRUE(my.function());
     }
     IT("should hold i larger than 0") {
-        ASSERT(my.i, GT, 0);
+        ASSERT(my.i, GT(), 0);
     }
 };
 ```
@@ -205,9 +201,9 @@ DESCRIBE("testMyClass") {
 
 | Macro                   | Arguments   | Description                                                                                              |
 | ----------------------- | ----------- | -------------------------------------------------------------------------------------------------------- |
-| SUITE, DESCRIBE         | description | Create a testsuite.                                                                                      |
-| SUITE_PAR, DESCRIBE_PAR | description | Create a testsuite, where all tests will get executed concurrently in multiple threads.                  |
-| TEST, IT                | description | Create a testcase in a testsuite.                                                                        |
+| SUITE, DESCRIBE         | description (cstring) | Create a testsuite.                                                                                      |
+| SUITE_PAR, DESCRIBE_PAR | description (cstring) | Create a testsuite, where all tests will get executed concurrently in multiple threads.                  |
+| TEST, IT                | description (cstring) | Create a testcase in a testsuite.                                                                        |
 | SETUP                   |             | Define a function, which will be executed once before all testcases. Thrown exceptions will get ignored. |
 | TEARDOWN                |             | Define a function, which will be executed once after all testcases. Thrown exceptions will get ignored.  |
 | BEFORE_EACH             |             | Define a function, which will be executed before each testcase. Thrown exceptions will get ignored.      |
@@ -217,18 +213,18 @@ DESCRIBE("testMyClass") {
 
 | Format                      | Factory Method           | Arguments (default)                                                       |
 | --------------------------- | ------------------------ | ------------------------------------------------------------------------- |
-| Console oriented plain text | create_console_reporter  | output stream/file (stdout), ANSI colors (false), captured output (false) |
-| JUnit XML                   | create_xml_reporter      | output stream/file (stdout), captured output (false)                      |
-| Markdown                    | create_markdown_reporter | output stream/file (stdout), captured output (false)                      |
+| Console oriented plain text | console_reporter::create  | output stream/file (stdout), ANSI colors (false), captured output (false) |
+| JUnit XML                   | xml_reporter::create      | output stream/file (stdout), captured output (false)                      |
+| Markdown                    | markdown_reporter::create | output stream/file (stdout), captured output (false)                      |
 
 ### Comparators
 
-**Note:** Assertions are based on comparators. Every comparator provides a negation operator `!`, which allows the logical negation of the actual comparison. For example `ASSERT(1, !EQ, 1)` and `ASSERT(1, NE, 1)` are logically equivalent.
+**Note:** Assertions are based on comparators. Every comparator provides a negation operator `!`, which allows the logical negation of the actual comparison. For example `ASSERT(1, !EQ, 1)`.
 
 | Comparator                | Description                                                                                                                                          |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | EQUALS, EQ                | Compare two values to be equal.                                                                                                                      |
-| UNEQUALS, NE              | Compare two values to be not equal.                                                                                                                  |
+| F_EQUALS, FEQ              | Compare two floating point numbers to be equal. Optionally takes a precision threshold as argument, and uses the global epsilon otherwise.                                                                                                                |
 | GREATER_THAN, GREATER, GT | Compare one value to be greater than another.                                                                                                        |
 | LESS_THAN, LESS, LT       | Compare one value to be less than another.                                                                                                           |
 | IN_RANGE, IN              | Check a value to be in range of any container. This means for containers (C++ "ranges") to contain the value and for strings to contain a substring. |
