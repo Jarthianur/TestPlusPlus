@@ -36,6 +36,12 @@ SCTF_COMPARATOR(equals, "equals", actual_value == expected_value)
 SCTF_PROVIDE_COMPARATOR(equals, EQUALS)
 SCTF_PROVIDE_COMPARATOR(equals, EQ)
 
+/**
+ * Define a global epsilon value, that will be used for every floating point equality comparison by
+ * default. This can be used only once per linked binary.
+ *
+ * @param E is the epsilon value.
+ */
 #define SCTF_EPSILON(E) double sctf::epsilon = E;
 
 namespace sctf

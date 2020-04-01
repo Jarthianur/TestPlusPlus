@@ -19,6 +19,8 @@
  }
  */
 
+/// @file
+
 #ifndef SCTF_COMPARATOR_COMPARATOR_HPP
 #define SCTF_COMPARATOR_COMPARATOR_HPP
 

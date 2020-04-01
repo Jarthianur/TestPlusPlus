@@ -19,6 +19,8 @@
  }
  */
 
+#include "api.hpp"
+#include "assert.hpp"
 #include "sctf.hpp"
 
 class MyClass
@@ -43,6 +45,22 @@ public:
 };
 
 DESCRIBE_PAR("TestMyClass") {
+    MyClass fixture_;
+
+    BEFORE_EACH() {
+        fixture_.incr();
+    };
+    AFTER_EACH() {
+        fixture_.mult(2.);
+    };
+
+    TEST("some test with i") {
+        ASSERT(fixture_.i(), GT(), 0);
+    };
+    TEST("some test with d") {
+        ASSERT(fixture_.d(), LT(), 5.0);
+    };
+
     TEST("check epsilon") {
         std::cout << sctf::epsilon << std::flush;
     };

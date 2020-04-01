@@ -96,7 +96,7 @@ protected:
      *
      * @param ts_ is the testsuite to generate the report for.
      */
-    inline virtual void report_testsuite(testsuite_ptr const ts_) {
+    virtual void report_testsuite(testsuite_ptr const ts_) {
         std::for_each(ts_->testcases().begin(), ts_->testcases().end(),
                       [this](const testcase& tc) { report_testcase(tc); });
     }
