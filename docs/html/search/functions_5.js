@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['failures',['failures',['../classsctf_1_1private___1_1statistic.html#a359ddfd364e8c3eeafe550acdd9a1f9d',1,'sctf::private_::statistic']]]
+  ['failures',['failures',['../classsctf_1_1intern_1_1statistic.html#add573fbdbe78a9fc1deb9abc8d985f48',1,'sctf::intern::statistic']]]
 ];

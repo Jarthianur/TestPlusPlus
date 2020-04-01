@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Simple C++ Test Framework
-   &#160;<span id="projectnumber">1.2-rc2</span>
+   &#160;<span id="projectnumber">2.0-rc1</span>
    </div>
   </td>
  </tr>
@@ -71,25 +71,100 @@ $(function() {
 <div class="title">sctf::regex Struct Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="regex_8hpp_source.html">regex.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab5e5948462c61c806b4737f79a25d2ba"><td class="memItemLeft" align="right" valign="top"><a id="ab5e5948462c61c806b4737f79a25d2ba"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>regex</b> (char const *p_, std::regex_constants::syntax_option_type flags_)</td></tr>
+<tr class="memitem:ab5e5948462c61c806b4737f79a25d2ba"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsctf_1_1regex.html#ab5e5948462c61c806b4737f79a25d2ba">regex</a> (char const *p_, std::regex_constants::syntax_option_type flags_)</td></tr>
 <tr class="separator:ab5e5948462c61c806b4737f79a25d2ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9018b0b7fecc85249ef76415eddc0b7"><td class="memItemLeft" align="right" valign="top"><a id="ac9018b0b7fecc85249ef76415eddc0b7"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>operator std::regex</b> () const</td></tr>
+<tr class="memitem:ac9018b0b7fecc85249ef76415eddc0b7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsctf_1_1regex.html#ac9018b0b7fecc85249ef76415eddc0b7">operator std::regex</a> () const</td></tr>
 <tr class="separator:ac9018b0b7fecc85249ef76415eddc0b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:adde9a9db4d0e372c8f6c19680e3667e7"><td class="memItemLeft" align="right" valign="top"><a id="adde9a9db4d0e372c8f6c19680e3667e7"></a>
-char const  *const&#160;</td><td class="memItemRight" valign="bottom"><b>pattern</b></td></tr>
+char const  *const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsctf_1_1regex.html#adde9a9db4d0e372c8f6c19680e3667e7">pattern</a></td></tr>
+<tr class="memdesc:adde9a9db4d0e372c8f6c19680e3667e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Regular expression pattern. <br /></td></tr>
 <tr class="separator:adde9a9db4d0e372c8f6c19680e3667e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa139d0e046eaf4d2298f0eaa8148d53a"><td class="memItemLeft" align="right" valign="top"><a id="aa139d0e046eaf4d2298f0eaa8148d53a"></a>
-std::regex const&#160;</td><td class="memItemRight" valign="bottom"><b>re</b></td></tr>
+std::regex const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsctf_1_1regex.html#aa139d0e046eaf4d2298f0eaa8148d53a">re</a></td></tr>
+<tr class="memdesc:aa139d0e046eaf4d2298f0eaa8148d53a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compiled regex. <br /></td></tr>
 <tr class="separator:aa139d0e046eaf4d2298f0eaa8148d53a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A wrapper for regular expressions, that contains the compiled regex as well as the expression pattern. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="ab5e5948462c61c806b4737f79a25d2ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5e5948462c61c806b4737f79a25d2ba">&#9670;&nbsp;</a></span>regex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">sctf::regex::regex </td>
+          <td>(</td>
+          <td class="paramtype">char const *&#160;</td>
+          <td class="paramname"><em>p_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::regex_constants::syntax_option_type&#160;</td>
+          <td class="paramname"><em>flags_</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p_</td><td>is the regular expression pattern. </td></tr>
+    <tr><td class="paramname">flags_</td><td>is a bit pattern of regex options. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ac9018b0b7fecc85249ef76415eddc0b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9018b0b7fecc85249ef76415eddc0b7">&#9670;&nbsp;</a></span>operator std::regex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">sctf::regex::operator std::regex </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Convert this wrapper to std::regex. </p>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>include/<a class="el" href="regex_8hpp_source.html">regex.hpp</a></li>
 </ul>

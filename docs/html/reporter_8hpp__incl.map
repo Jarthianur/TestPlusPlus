@@ -1,0 +1,13 @@
+<map id="include/reporter/reporter.hpp" name="include/reporter/reporter.hpp">
+<area shape="rect" id="node8" href="$testsuite_8hpp.html" title="testsuite/testsuite.hpp" alt="" coords="566,251,734,278"/>
+<area shape="rect" id="node26" href="$runner_8hpp_source.html" title="runner.hpp" alt="" coords="813,80,903,107"/>
+<area shape="rect" id="node13" href="$statistic_8hpp_source.html" title="testsuite/statistic.hpp" alt="" coords="203,341,366,367"/>
+<area shape="rect" id="node14" href="$streambuf__proxy_8hpp_source.html" title="testsuite/streambuf\l_proxy.hpp" alt="" coords="776,333,927,375"/>
+<area shape="rect" id="node17" href="$testcase_8hpp_source.html" title="testcase.hpp" alt="" coords="441,341,547,367"/>
+<area shape="rect" id="node24" href="$types_8hpp.html" title="types.hpp" alt="" coords="100,423,187,449"/>
+<area shape="rect" id="node20" href="$assertion__failure_8hpp_source.html" title="assertion_failure.hpp" alt="" coords="353,423,512,449"/>
+<area shape="rect" id="node23" href="$duration_8hpp_source.html" title="duration.hpp" alt="" coords="537,423,641,449"/>
+<area shape="rect" id="node22" href="$loc_8hpp_source.html" title="loc.hpp" alt="" coords="495,497,565,524"/>
+<area shape="rect" id="node27" href="$testsuite__parallel_8hpp_source.html" title="testsuite/testsuite\l_parallel.hpp" alt="" coords="788,155,928,196"/>
+<area shape="rect" id="node29" href="$streambuf__proxy__omp_8hpp_source.html" title="testsuite/streambuf\l_proxy_omp.hpp" alt="" coords="1105,244,1256,285"/>
+</map>

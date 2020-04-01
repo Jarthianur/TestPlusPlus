@@ -1,14 +1,15 @@
 var searchData=
 [
-  ['sctf_5fprivate_5fand',['SCTF_PRIVATE_AND',['../traits_8hpp.html#a0f14ea2b909c2f7c44f96a29d26b3fdd',1,'traits.hpp']]],
-  ['sctf_5fprivate_5fenable_5fif',['SCTF_PRIVATE_ENABLE_IF',['../traits_8hpp.html#a8880a725a696e546417937ad7b6d8834',1,'traits.hpp']]],
-  ['sctf_5fprivate_5fhas_5fequality_5fcapability',['SCTF_PRIVATE_HAS_EQUALITY_CAPABILITY',['../traits_8hpp.html#a23362db04832a0aa228ef31023fa763d',1,'traits.hpp']]],
-  ['sctf_5fprivate_5fhas_5fiterator_5fcapability',['SCTF_PRIVATE_HAS_ITERATOR_CAPABILITY',['../traits_8hpp.html#aedba0631559e07ac35928f7e3353ab25',1,'traits.hpp']]],
-  ['sctf_5fprivate_5fhas_5fstream_5fcapability',['SCTF_PRIVATE_HAS_STREAM_CAPABILITY',['../traits_8hpp.html#aba31a7704c5c9cd1762bd3342a1d6a50',1,'traits.hpp']]],
-  ['sctf_5fprivate_5fhas_5funequality_5fcapability',['SCTF_PRIVATE_HAS_UNEQUALITY_CAPABILITY',['../traits_8hpp.html#af972ddc5db9b65bd02094e4299f30af0',1,'traits.hpp']]],
-  ['sctf_5fprivate_5fis',['SCTF_PRIVATE_IS',['../traits_8hpp.html#a5832329071949cb46307c149cf296aa8',1,'traits.hpp']]],
-  ['sctf_5fprivate_5fis_5ffloat',['SCTF_PRIVATE_IS_FLOAT',['../traits_8hpp.html#acf13105d41970f100142b1a855ea55c5',1,'traits.hpp']]],
-  ['sctf_5fprivate_5fis_5ftype',['SCTF_PRIVATE_IS_TYPE',['../traits_8hpp.html#a3dfa6fb3e1d47f1cf6827b50f1638e8e',1,'traits.hpp']]],
-  ['sctf_5fprivate_5fnot',['SCTF_PRIVATE_NOT',['../traits_8hpp.html#ad94dffbeb613f62a150fbacb492b1cc7',1,'traits.hpp']]],
-  ['sctf_5fprivate_5for',['SCTF_PRIVATE_OR',['../traits_8hpp.html#afb30dd34a56ef0739d869c577fa31ef9',1,'traits.hpp']]]
+  ['after_5feach',['AFTER_EACH',['../api_8hpp.html#aea53691a648900fccaea44045dd3c8d0',1,'api.hpp']]],
+  ['assert',['ASSERT',['../assert_8hpp.html#a3ffcd9946aaa0bb84fe9add54490a66a',1,'assert.hpp']]],
+  ['assert_5feq',['ASSERT_EQ',['../assert_8hpp.html#ab89e0ada284159beeb824e97f99da3d8',1,'assert.hpp']]],
+  ['assert_5ffalse',['ASSERT_FALSE',['../assert_8hpp.html#a712de5f91a0f0886f8762185013162a6',1,'assert.hpp']]],
+  ['assert_5fnot',['ASSERT_NOT',['../assert_8hpp.html#aebecf37e88c1f11551b2afbab452680b',1,'assert.hpp']]],
+  ['assert_5fnot_5fnull',['ASSERT_NOT_NULL',['../assert_8hpp.html#a6791cd1c8e48f76c4a1ebf89f9986f36',1,'assert.hpp']]],
+  ['assert_5fnothrow',['ASSERT_NOTHROW',['../assert_8hpp.html#a0c90432290aff4ff8b6db0c818a94cbe',1,'assert.hpp']]],
+  ['assert_5fnull',['ASSERT_NULL',['../assert_8hpp.html#a6200be5426fbb75a0fbe4bdac245206a',1,'assert.hpp']]],
+  ['assert_5fruntime',['ASSERT_RUNTIME',['../assert_8hpp.html#a4216b544f8d6aafbc10d9830f1b1a21b',1,'assert.hpp']]],
+  ['assert_5fthrows',['ASSERT_THROWS',['../assert_8hpp.html#a9fb1990f1258b554ea914563a65ff236',1,'assert.hpp']]],
+  ['assert_5ftrue',['ASSERT_TRUE',['../assert_8hpp.html#abd77077d4c303e008f5ca79fdfe16071',1,'assert.hpp']]],
+  ['assert_5fzero',['ASSERT_ZERO',['../assert_8hpp.html#a1e876017a56b2599be78952209478cfb',1,'assert.hpp']]]
 ];

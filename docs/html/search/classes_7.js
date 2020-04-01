@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['singleton',['singleton',['../structsctf_1_1private___1_1singleton.html',1,'sctf::private_']]],
-  ['statistic',['statistic',['../classsctf_1_1private___1_1statistic.html',1,'sctf::private_']]],
-  ['stream_5fcapability',['stream_capability',['../classsctf_1_1private___1_1stream__capability.html',1,'sctf::private_']]],
-  ['streambuf_5fproxy',['streambuf_proxy',['../classsctf_1_1private___1_1streambuf__proxy.html',1,'sctf::private_']]],
-  ['streambuf_5fproxy_5fomp',['streambuf_proxy_omp',['../classsctf_1_1private___1_1streambuf__proxy__omp.html',1,'sctf::private_']]]
+  ['regex',['regex',['../structsctf_1_1regex.html',1,'sctf']]],
+  ['reporter',['reporter',['../classsctf_1_1intern_1_1reporter.html',1,'sctf::intern']]],
+  ['runner',['runner',['../classsctf_1_1intern_1_1runner.html',1,'sctf::intern']]]
 ];

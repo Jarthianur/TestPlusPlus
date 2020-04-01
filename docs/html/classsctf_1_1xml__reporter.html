@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Simple C++ Test Framework
-   &#160;<span id="projectnumber">1.2-rc2</span>
+   &#160;<span id="projectnumber">2.0-rc1</span>
    </div>
   </td>
  </tr>
@@ -64,9 +64,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classsctf_1_1xml__reporter-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">sctf::xml_reporter Class Reference</div>  </div>
@@ -79,7 +77,7 @@ Inheritance diagram for sctf::xml_reporter:</div>
 <div class="dyncontent">
 <div class="center"><img src="classsctf_1_1xml__reporter__inherit__graph.png" border="0" usemap="#sctf_1_1xml__reporter_inherit__map" alt="Inheritance graph"/></div>
 <map name="sctf_1_1xml__reporter_inherit__map" id="sctf_1_1xml__reporter_inherit__map">
-<area shape="rect" id="node2" href="classsctf_1_1private___1_1reporter.html" title="sctf::private_::reporter" alt="" coords="5,5,172,32"/>
+<area shape="rect" id="node2" href="classsctf_1_1intern_1_1reporter.html" title="sctf::intern::reporter" alt="" coords="5,5,157,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
@@ -87,82 +85,61 @@ Collaboration diagram for sctf::xml_reporter:</div>
 <div class="dyncontent">
 <div class="center"><img src="classsctf_1_1xml__reporter__coll__graph.png" border="0" usemap="#sctf_1_1xml__reporter_coll__map" alt="Collaboration graph"/></div>
 <map name="sctf_1_1xml__reporter_coll__map" id="sctf_1_1xml__reporter_coll__map">
-<area shape="rect" id="node2" href="classsctf_1_1private___1_1reporter.html" title="sctf::private_::reporter" alt="" coords="5,5,172,32"/>
+<area shape="rect" id="node2" href="classsctf_1_1intern_1_1reporter.html" title="sctf::intern::reporter" alt="" coords="5,5,157,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
-Public Member Functions</h2></td></tr>
-<tr class="memitem:a8a0725c86d868c1845df4a6be27852c5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1xml__reporter.html#a8a0725c86d868c1845df4a6be27852c5">xml_reporter</a> (std::ostream &amp;stream_, bool capture_)</td></tr>
-<tr class="separator:a8a0725c86d868c1845df4a6be27852c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad72fb92d770be13fbc5ebc140362aa6b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1xml__reporter.html#ad72fb92d770be13fbc5ebc140362aa6b">xml_reporter</a> (char const *fname_, bool capture_)</td></tr>
-<tr class="separator:ad72fb92d770be13fbc5ebc140362aa6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classsctf_1_1private___1_1reporter"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classsctf_1_1private___1_1reporter')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classsctf_1_1private___1_1reporter.html">sctf::private_::reporter</a></td></tr>
-<tr class="memitem:a0f9441ed35dc6c4ff176d15927c2d534 inherit pub_methods_classsctf_1_1private___1_1reporter"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1private___1_1reporter.html#a0f9441ed35dc6c4ff176d15927c2d534">report</a> ()</td></tr>
-<tr class="separator:a0f9441ed35dc6c4ff176d15927c2d534 inherit pub_methods_classsctf_1_1private___1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:ad854e87fc6bf1de93b6bc4c5c780f44d"><td class="memItemLeft" align="right" valign="top">static reporter_ptr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1xml__reporter.html#ad854e87fc6bf1de93b6bc4c5c780f44d">create</a> (std::ostream &amp;stream_=std::cout, bool capture_=false)</td></tr>
+<tr class="separator:ad854e87fc6bf1de93b6bc4c5c780f44d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35a81a0ec2df65b9e39b301272d1998d"><td class="memItemLeft" align="right" valign="top">static reporter_ptr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1xml__reporter.html#a35a81a0ec2df65b9e39b301272d1998d">create</a> (char const *fname_, bool capture_=false)</td></tr>
+<tr class="separator:a35a81a0ec2df65b9e39b301272d1998d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:a10c4dcdc0642633846926e964f5aff2b"><td class="memItemLeft" align="right" valign="top"><a id="a10c4dcdc0642633846926e964f5aff2b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>report_testsuite</b> (private_::testsuite_ptr const ts_) override</td></tr>
-<tr class="separator:a10c4dcdc0642633846926e964f5aff2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa02d8946a5d436a096fe0ec4c828ad9"><td class="memItemLeft" align="right" valign="top"><a id="aaa02d8946a5d436a096fe0ec4c828ad9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>report_testcase</b> (<a class="el" href="classsctf_1_1private___1_1testcase.html">private_::testcase</a> const &amp;tc_) override</td></tr>
-<tr class="separator:aaa02d8946a5d436a096fe0ec4c828ad9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05b1a2fdcf87dc808eb304729e68ea01"><td class="memItemLeft" align="right" valign="top"><a id="a05b1a2fdcf87dc808eb304729e68ea01"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>begin_report</b> () override</td></tr>
-<tr class="separator:a05b1a2fdcf87dc808eb304729e68ea01"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a1226cec950f182c5abb3ce49e75677"><td class="memItemLeft" align="right" valign="top"><a id="a5a1226cec950f182c5abb3ce49e75677"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>end_report</b> () override</td></tr>
-<tr class="separator:a5a1226cec950f182c5abb3ce49e75677"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc9b746d84f45472e5bf376f4b187e9b"><td class="memItemLeft" align="right" valign="top"><a id="abc9b746d84f45472e5bf376f4b187e9b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>print_system_out</b> (<a class="el" href="classsctf_1_1private___1_1testcase.html">private_::testcase</a> const &amp;tc_)</td></tr>
-<tr class="separator:abc9b746d84f45472e5bf376f4b187e9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_methods_classsctf_1_1private___1_1reporter"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classsctf_1_1private___1_1reporter')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classsctf_1_1private___1_1reporter.html">sctf::private_::reporter</a></td></tr>
-<tr class="memitem:aea730185f12ce0785d82d922abf7225c inherit pro_methods_classsctf_1_1private___1_1reporter"><td class="memItemLeft" align="right" valign="top"><a id="aea730185f12ce0785d82d922abf7225c"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>reporter</b> (std::ostream &amp;stream_)</td></tr>
-<tr class="separator:aea730185f12ce0785d82d922abf7225c inherit pro_methods_classsctf_1_1private___1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39880f8c3429df7ecee7000bbe0a90c4 inherit pro_methods_classsctf_1_1private___1_1reporter"><td class="memItemLeft" align="right" valign="top"><a id="a39880f8c3429df7ecee7000bbe0a90c4"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>reporter</b> (char const *fname_)</td></tr>
-<tr class="separator:a39880f8c3429df7ecee7000bbe0a90c4 inherit pro_methods_classsctf_1_1private___1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd8704ee05684f8f2f69eee249bf7616 inherit pro_methods_classsctf_1_1private___1_1reporter"><td class="memTemplParams" colspan="2"><a id="abd8704ee05684f8f2f69eee249bf7616"></a>
-template&lt;typename T &gt; </td></tr>
-<tr class="memitem:abd8704ee05684f8f2f69eee249bf7616 inherit pro_methods_classsctf_1_1private___1_1reporter"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator&lt;&lt;</b> (T const &amp;t_)</td></tr>
-<tr class="separator:abd8704ee05684f8f2f69eee249bf7616 inherit pro_methods_classsctf_1_1private___1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
-<tr class="memitem:a2f4f7aa93cb524b7c815ab18135a4965"><td class="memItemLeft" align="right" valign="top"><a id="a2f4f7aa93cb524b7c815ab18135a4965"></a>
-std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_id</b> = 0</td></tr>
-<tr class="separator:a2f4f7aa93cb524b7c815ab18135a4965"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef65bc087342f815f454ed3c3ba3973a"><td class="memItemLeft" align="right" valign="top"><a id="aef65bc087342f815f454ed3c3ba3973a"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_capture</b></td></tr>
-<tr class="separator:aef65bc087342f815f454ed3c3ba3973a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_attribs_classsctf_1_1private___1_1reporter"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classsctf_1_1private___1_1reporter')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classsctf_1_1private___1_1reporter.html">sctf::private_::reporter</a></td></tr>
-<tr class="memitem:aab36e87fc5779e5cb6ef484b13bcffb9 inherit pro_attribs_classsctf_1_1private___1_1reporter"><td class="memItemLeft" align="right" valign="top"><a id="aab36e87fc5779e5cb6ef484b13bcffb9"></a>
-std::ofstream&#160;</td><td class="memItemRight" valign="bottom"><b>m_out_file</b></td></tr>
-<tr class="separator:aab36e87fc5779e5cb6ef484b13bcffb9 inherit pro_attribs_classsctf_1_1private___1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad22b5ddd33fb02eb3f3a268233d9b4e1 inherit pro_attribs_classsctf_1_1private___1_1reporter"><td class="memItemLeft" align="right" valign="top"><a id="ad22b5ddd33fb02eb3f3a268233d9b4e1"></a>
-std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>mr_out_stream</b></td></tr>
-<tr class="separator:ad22b5ddd33fb02eb3f3a268233d9b4e1 inherit pro_attribs_classsctf_1_1private___1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9275a431099055ffc3bd4607de40b1c4 inherit pro_attribs_classsctf_1_1private___1_1reporter"><td class="memItemLeft" align="right" valign="top"><a id="a9275a431099055ffc3bd4607de40b1c4"></a>
-std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_abs_tests</b> = 0</td></tr>
-<tr class="separator:a9275a431099055ffc3bd4607de40b1c4 inherit pro_attribs_classsctf_1_1private___1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9aa1d06e86409b6b718c8fa1c9e69174 inherit pro_attribs_classsctf_1_1private___1_1reporter"><td class="memItemLeft" align="right" valign="top"><a id="a9aa1d06e86409b6b718c8fa1c9e69174"></a>
-std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_abs_fails</b> = 0</td></tr>
-<tr class="separator:a9aa1d06e86409b6b718c8fa1c9e69174 inherit pro_attribs_classsctf_1_1private___1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5253ba23cd7042bfbaa296972548e72 inherit pro_attribs_classsctf_1_1private___1_1reporter"><td class="memItemLeft" align="right" valign="top"><a id="ad5253ba23cd7042bfbaa296972548e72"></a>
-std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_abs_errs</b> = 0</td></tr>
-<tr class="separator:ad5253ba23cd7042bfbaa296972548e72 inherit pro_attribs_classsctf_1_1private___1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97e4bf278fbba84fadaf66766bd75131 inherit pro_attribs_classsctf_1_1private___1_1reporter"><td class="memItemLeft" align="right" valign="top"><a id="a97e4bf278fbba84fadaf66766bd75131"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>m_abs_time</b> = 0</td></tr>
-<tr class="separator:a97e4bf278fbba84fadaf66766bd75131 inherit pro_attribs_classsctf_1_1private___1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_methods_classsctf_1_1intern_1_1reporter"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classsctf_1_1intern_1_1reporter')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classsctf_1_1intern_1_1reporter.html">sctf::intern::reporter</a></td></tr>
+<tr class="memitem:a2f184c039bd6780b20a67b4c80246b21 inherit pub_methods_classsctf_1_1intern_1_1reporter"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1reporter.html#a2f184c039bd6780b20a67b4c80246b21">report</a> ()</td></tr>
+<tr class="separator:a2f184c039bd6780b20a67b4c80246b21 inherit pub_methods_classsctf_1_1intern_1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_classsctf_1_1intern_1_1reporter"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classsctf_1_1intern_1_1reporter')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classsctf_1_1intern_1_1reporter.html">sctf::intern::reporter</a></td></tr>
+<tr class="memitem:a49740c177339689d3d930e7f229cc40a inherit pro_methods_classsctf_1_1intern_1_1reporter"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1reporter.html#a49740c177339689d3d930e7f229cc40a">reporter</a> (std::ostream &amp;stream_)</td></tr>
+<tr class="separator:a49740c177339689d3d930e7f229cc40a inherit pro_methods_classsctf_1_1intern_1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb84e0d60c7c7137978e9206d6eccf5a inherit pro_methods_classsctf_1_1intern_1_1reporter"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1reporter.html#acb84e0d60c7c7137978e9206d6eccf5a">reporter</a> (char const *fname_)</td></tr>
+<tr class="separator:acb84e0d60c7c7137978e9206d6eccf5a inherit pro_methods_classsctf_1_1intern_1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8bc06f8c1b8dca7d0eab8fccddb333df inherit pro_methods_classsctf_1_1intern_1_1reporter"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a8bc06f8c1b8dca7d0eab8fccddb333df inherit pro_methods_classsctf_1_1intern_1_1reporter"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1reporter.html#a8bc06f8c1b8dca7d0eab8fccddb333df">operator&lt;&lt;</a> (T const &amp;t_)</td></tr>
+<tr class="separator:a8bc06f8c1b8dca7d0eab8fccddb333df inherit pro_methods_classsctf_1_1intern_1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_classsctf_1_1intern_1_1reporter"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classsctf_1_1intern_1_1reporter')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classsctf_1_1intern_1_1reporter.html">sctf::intern::reporter</a></td></tr>
+<tr class="memitem:a0b729e80f4982a2233bd08712a4d6ba7 inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="memItemLeft" align="right" valign="top"><a id="a0b729e80f4982a2233bd08712a4d6ba7"></a>
+std::ofstream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1reporter.html#a0b729e80f4982a2233bd08712a4d6ba7">m_out_file</a></td></tr>
+<tr class="memdesc:a0b729e80f4982a2233bd08712a4d6ba7 inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="mdescLeft">&#160;</td><td class="mdescRight">Filestream that is used, if a file is specified as output target. <br /></td></tr>
+<tr class="separator:a0b729e80f4982a2233bd08712a4d6ba7 inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d08021ab8426db752947a86a805a1e2 inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="memItemLeft" align="right" valign="top"><a id="a4d08021ab8426db752947a86a805a1e2"></a>
+std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1reporter.html#a4d08021ab8426db752947a86a805a1e2">mr_out_stream</a></td></tr>
+<tr class="memdesc:a4d08021ab8426db752947a86a805a1e2 inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outstream that handles printing the report. <br /></td></tr>
+<tr class="separator:a4d08021ab8426db752947a86a805a1e2 inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af300e9583efb4a309a774f344dd6d26f inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="memItemLeft" align="right" valign="top"><a id="af300e9583efb4a309a774f344dd6d26f"></a>
+std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1reporter.html#af300e9583efb4a309a774f344dd6d26f">m_abs_tests</a> = 0</td></tr>
+<tr class="memdesc:af300e9583efb4a309a774f344dd6d26f inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total number of testcases over all testsuites. <br /></td></tr>
+<tr class="separator:af300e9583efb4a309a774f344dd6d26f inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30504a29cf302f42dd8cab13a7e7d3aa inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="memItemLeft" align="right" valign="top"><a id="a30504a29cf302f42dd8cab13a7e7d3aa"></a>
+std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1reporter.html#a30504a29cf302f42dd8cab13a7e7d3aa">m_abs_fails</a> = 0</td></tr>
+<tr class="memdesc:a30504a29cf302f42dd8cab13a7e7d3aa inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total number of failed testcases over all testsuites. <br /></td></tr>
+<tr class="separator:a30504a29cf302f42dd8cab13a7e7d3aa inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b289deefd9301b2f7062975ce3a22a8 inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="memItemLeft" align="right" valign="top"><a id="a3b289deefd9301b2f7062975ce3a22a8"></a>
+std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1reporter.html#a3b289deefd9301b2f7062975ce3a22a8">m_abs_errs</a> = 0</td></tr>
+<tr class="memdesc:a3b289deefd9301b2f7062975ce3a22a8 inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total number of erroneous testcases over all testsuites. <br /></td></tr>
+<tr class="separator:a3b289deefd9301b2f7062975ce3a22a8 inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37795f7953e8dfeb1879f14da63b76f8 inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="memItemLeft" align="right" valign="top"><a id="a37795f7953e8dfeb1879f14da63b76f8"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1reporter.html#a37795f7953e8dfeb1879f14da63b76f8">m_abs_time</a> = 0</td></tr>
+<tr class="memdesc:a37795f7953e8dfeb1879f14da63b76f8 inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total amount of time spent on all testsuites. <br /></td></tr>
+<tr class="separator:a37795f7953e8dfeb1879f14da63b76f8 inherit pro_attribs_classsctf_1_1intern_1_1reporter"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Reporter implementation with JUnit like XML format. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a8a0725c86d868c1845df4a6be27852c5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8a0725c86d868c1845df4a6be27852c5">&#9670;&nbsp;</a></span>xml_reporter() <span class="overload">[1/2]</span></h2>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="ad854e87fc6bf1de93b6bc4c5c780f44d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad854e87fc6bf1de93b6bc4c5c780f44d">&#9670;&nbsp;</a></span>create() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -171,16 +148,16 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>m_abs_time</b> = 0<
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">sctf::xml_reporter::xml_reporter </td>
+          <td class="memname">static reporter_ptr sctf::xml_reporter::create </td>
           <td>(</td>
           <td class="paramtype">std::ostream &amp;&#160;</td>
-          <td class="paramname"><em>stream_</em>, </td>
+          <td class="paramname"><em>stream_</em> = <code>std::cout</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>capture_</em>&#160;</td>
+          <td class="paramname"><em>capture_</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -190,21 +167,23 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>m_abs_time</b> = 0<
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Create a xml reporter.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">stream_</td><td>The stream to report to </td></tr>
+    <tr><td class="paramname">stream_</td><td>is the stream where to print the report. (default: stdout) </td></tr>
+    <tr><td class="paramname">capture_</td><td>is the flag to enable reporting of captured output. (default: false) </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="ad72fb92d770be13fbc5ebc140362aa6b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad72fb92d770be13fbc5ebc140362aa6b">&#9670;&nbsp;</a></span>xml_reporter() <span class="overload">[2/2]</span></h2>
+<a id="a35a81a0ec2df65b9e39b301272d1998d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35a81a0ec2df65b9e39b301272d1998d">&#9670;&nbsp;</a></span>create() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -213,7 +192,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>m_abs_time</b> = 0<
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">sctf::xml_reporter::xml_reporter </td>
+          <td class="memname">static reporter_ptr sctf::xml_reporter::create </td>
           <td>(</td>
           <td class="paramtype">char const *&#160;</td>
           <td class="paramname"><em>fname_</em>, </td>
@@ -222,7 +201,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>m_abs_time</b> = 0<
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>capture_</em>&#160;</td>
+          <td class="paramname"><em>capture_</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -232,13 +211,15 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>m_abs_time</b> = 0<
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Create a xml reporter.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fname_</td><td>The name of the file where the report will be written </td></tr>
+    <tr><td class="paramname">fname_</td><td>is the filename where to print the report. </td></tr>
+    <tr><td class="paramname">capture_</td><td>is the flag to enable reporting of captured output. (default: false) </td></tr>
   </table>
   </dd>
 </dl>

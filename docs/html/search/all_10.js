@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['value',['value',['../classsctf_1_1private___1_1stream__capability.html#a19bb110f6b0a52d499b8fe34d608ca1e',1,'sctf::private_::stream_capability::value()'],['../classsctf_1_1private___1_1iterator__capability.html#a03567b39a5bd5747be79669981d7ffb3',1,'sctf::private_::iterator_capability::value()'],['../classsctf_1_1private___1_1equality__capability.html#a04a01b7c9ee997b997235ce0db31a77f',1,'sctf::private_::equality_capability::value()'],['../classsctf_1_1private___1_1unequality__capability.html#ab741f20832b39ffb9b7ffab135ee5cdc',1,'sctf::private_::unequality_capability::value()']]]
+  ['value',['value',['../classsctf_1_1intern_1_1stream__capability.html#a1104000acef0dd382075b424dbc1b434',1,'sctf::intern::stream_capability::value()'],['../classsctf_1_1intern_1_1iterator__capability.html#aa813d10755b62440ac6fc35fdbddbe94',1,'sctf::intern::iterator_capability::value()']]],
+  ['void_5ffunction',['void_function',['../types_8hpp.html#aaa87da5d1bcf4ad6d7c0b32b834ffa1a',1,'sctf::intern']]]
 ];

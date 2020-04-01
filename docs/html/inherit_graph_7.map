@@ -1,3 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classsctf_1_1private___1_1iterator__capability.html" title="sctf::private_::iterator\l_capability\&lt; T \&gt;" alt="" coords="5,5,168,47"/>
+<area shape="rect" id="node1" href="$classsctf_1_1intern_1_1reporter.html" title="sctf::intern::reporter" alt="" coords="5,56,157,83"/>
+<area shape="rect" id="node2" href="$classsctf_1_1console__reporter.html" title="sctf::console_reporter" alt="" coords="215,5,378,32"/>
+<area shape="rect" id="node3" href="$classsctf_1_1markdown__reporter.html" title="sctf::markdown_reporter" alt="" coords="205,56,388,83"/>
+<area shape="rect" id="node4" href="$classsctf_1_1xml__reporter.html" title="sctf::xml_reporter" alt="" coords="227,107,366,133"/>
 </map>
