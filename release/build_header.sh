@@ -34,8 +34,8 @@ TARGET="sctf.hpp"
 COPYRIGHT="/*
  Copyright_License {
 
- Copyright (C) 2017 Julian P. Becht
- Author: Julian P. Becht
+ Copyright (C) 2017 Jarthianur
+ Author: Jarthianur
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License version 3
