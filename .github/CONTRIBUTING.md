@@ -11,8 +11,6 @@ But to handle Your request as effective as possible, there are some guidelines w
   + [Feature requests](#feature-requests)
   + [Bug reports](#bug-reports)
 + [Pull Requests](#pull-requests)
-+ [Codestyle](#codestyle)
-+ [Documentation](#documentation)
 
 ## I just have a question
 
@@ -36,26 +34,3 @@ Also simply fill out the according points in the Issue template. Please provide 
 ## Pull Requests
 
 A PR may contain any change to the code, documentation, or whatever. We have a [template](pull_request_template.md) for that purpose, which should make it easier for You to create and us to process the PR. Every PR **must** build passing and be reviewed by, at least, one of the [codeowners](CODEOWNERS). Especially changes to the code should be reviewed and approved by people, who were involved in code development before. The coverage ratio must not decrease, which means, adding code includes unit tests. We use a custom framework, given as submodule, for this purpose. We also have [style](#codestyle) and [doc](#documentation) guidelines for code, which **should be followed, as far as possible**. Merging a PR may take some time, as we are testing this piece of Software really conscientious. This includes testing the system live, what might not always be immediately possible.
-
-## Codestyle
-
-We have some simple, but effective guidelines, on how the code should look like.
-
-+ The code is written in STL only C++11, while features from newer standards can be toggled conditionally
-+ This framework is an header-only implementation
-+ Namings are short, but expressive
-+ Main code is placed in */src/*, tests in */test/*
-+ Sourcefiles follow a package structure, with according namespaces
-+ Buffer accessing functions, without range check, are not permitted, instead use their safe candidates (sprintf -> snprintf)
-+ Smart pointers are preferred over raw pointers
-
-## Documentation
-
-The project documentation should be easy to understand, sometimes less words mean more.
-The code documentation should follow some guidelines listed here.
-
-+ Every sourcefile begins with the copyright license
-+ Descriptions are short, but expressive
-+ The code documentation is based on Doxygen
-+ Class and function descriptions should not contain implementation details
-+ See [Doxygen](http://www.stack.nl/~dimitri/doxygen/manual/commands.html) for a command list

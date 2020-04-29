@@ -9,7 +9,7 @@
 
 **This is a simple header-only testing framework for C++11/14/17 featuring a simple, yet powerfull API, and the capability to parallelize tests, using *OpenMP*.**
 
-To use it, just include the all in one [header](https://github.com/Jarthianur/simple-cpp-test-framework/releases/download/1.2/sctf.hpp) into your builds.
+To use it, just include the all in one [header](https://github.com/Jarthianur/simple-cpp-test-framework/releases/download/2.0/sctf.hpp) into your builds.
 
 *So why actually writing a new testing framework?*
 
@@ -19,7 +19,7 @@ So I thought, why not just writing my own, which simply has every feature I'd li
 As a side effect this project was - and is still - a great opportunity to improve my C++ skills.
 This framework is designed around simplicity and effectiveness, for the user as well as the frameworks code itself.
 There is no excessive documentation reading required, or complicated build integration.
-Everything is hidden that distracts you from focusing on what really counts, writing qualitative tests.
+Everything is hidden that distracts you from focusing on what really counts - writing qualitative tests.
 Of course this framework might not suite all *your* needs, hence feel free to provide suggestions, or request a feature you'd wish.
 Please have a look at the full [feature set](#feature-set).
 
