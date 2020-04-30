@@ -59,9 +59,7 @@ matrix:
     env:
     - BADGE=windows
     script:
-    - cmd.exe /C 'build.bat'
-    - test/cpp11_seq.exe
-    - test/cpp11_par.exe
+    - cmd.exe //C 'build.bat'
     - test/cpp14_seq.exe
     - test/cpp14_par.exe
     - test/cpp17_seq.exe
