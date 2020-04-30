@@ -32,7 +32,13 @@ namespace sctf
 class markdown_reporter : public intern::reporter
 {
 public:
-    ~markdown_reporter() noexcept override = default;
+    ~markdown_reporter() noexcept override      = default;
+    markdown_reporter(markdown_reporter const&) = delete;
+    markdown_reporter& operator=(markdown_reporter const&) = delete;
+    markdown_reporter& operator=(markdown_reporter&& other_) noexcept = delete;
+
+    markdown_reporter(markdown_reporter&& other_) noexcept
+        : reporter(std::move(other_)), m_capture(other_.m_capture) {}
 
     /**
      * Create a markdown reporter.

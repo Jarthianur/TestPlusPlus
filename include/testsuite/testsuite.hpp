@@ -51,8 +51,9 @@ class testsuite
 public:
     testsuite(testsuite const&) = delete;
     testsuite& operator=(testsuite const&) = delete;
-
-    virtual ~testsuite() noexcept = default;
+    testsuite(testsuite&&) noexcept        = delete;
+    testsuite& operator=(testsuite&&) noexcept = delete;
+    virtual ~testsuite() noexcept              = default;
 
     /**
      * Create a new testsuite.
@@ -104,7 +105,7 @@ public:
      * @param fn_   is the function performing the test.
      */
     void test(char const* name_, void_function&& fn_) {
-        m_testcases.push_back(testcase(name_, m_name, std::move(fn_)));
+        m_testcases.emplace_back(name_, m_name, std::move(fn_));
         m_state = execution_state::PENDING;
     }
 

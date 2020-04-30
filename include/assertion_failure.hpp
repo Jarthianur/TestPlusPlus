@@ -42,8 +42,6 @@ public:
     assertion_failure(std::string const& msg_, loc const& loc_)
         : m_msg(msg_ + " at " + loc_.file + ":" + std::to_string(loc_.line)) {}
 
-    virtual ~assertion_failure() noexcept override = default;
-
     /**
      * Get the failure message.
      */
@@ -51,7 +49,7 @@ public:
         return m_msg.c_str();
     }
 
-protected:
+private:
     std::string const m_msg;  ///< Message describing the failure cause.
 };
 }  // namespace intern

@@ -34,7 +34,6 @@ class duration final
 {
 public:
     duration() : m_start(std::chrono::steady_clock::now()) {}
-    ~duration() noexcept = default;
 
     /**
      * Get the duration since starting point in milliseconds.

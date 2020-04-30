@@ -51,7 +51,13 @@ static constexpr char const* const ANSI_RESET = "\x1b[0m";
 class console_reporter : public intern::reporter
 {
 public:
-    ~console_reporter() noexcept override = default;
+    ~console_reporter() noexcept override     = default;
+    console_reporter(console_reporter const&) = delete;
+    console_reporter& operator=(console_reporter const&) = delete;
+    console_reporter& operator=(console_reporter&& other_) noexcept = delete;
+
+    console_reporter(console_reporter&& other_) noexcept
+        : reporter(std::move(other_)), m_color(other_.m_color), m_capture(other_.m_capture) {}
 
     /**
      * Create a console reporter.
