@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Simple C++ Test Framework
-   &#160;<span id="projectnumber">2.0-rc1</span>
+   &#160;<span id="projectnumber">2.0-rc3</span>
    </div>
   </td>
  </tr>
@@ -87,6 +87,18 @@ Inheritance diagram for sctf::intern::reporter:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a941c397f60573f85f8d85063e71eea04"><td class="memItemLeft" align="right" valign="top"><a id="a941c397f60573f85f8d85063e71eea04"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>reporter</b> (<a class="el" href="classsctf_1_1intern_1_1reporter.html">reporter</a> const &amp;)=delete</td></tr>
+<tr class="separator:a941c397f60573f85f8d85063e71eea04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b4369a7743bc135c45570e868e2dfd8"><td class="memItemLeft" align="right" valign="top"><a id="a3b4369a7743bc135c45570e868e2dfd8"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>reporter</b> (<a class="el" href="classsctf_1_1intern_1_1reporter.html">reporter</a> &amp;&amp;) noexcept=delete</td></tr>
+<tr class="separator:a3b4369a7743bc135c45570e868e2dfd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7672a63c522821fd35115ade41adde17"><td class="memItemLeft" align="right" valign="top"><a id="a7672a63c522821fd35115ade41adde17"></a>
+<a class="el" href="classsctf_1_1intern_1_1reporter.html">reporter</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classsctf_1_1intern_1_1reporter.html">reporter</a> const &amp;)=delete</td></tr>
+<tr class="separator:a7672a63c522821fd35115ade41adde17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27ce54e37387a97b2d77457282a91550"><td class="memItemLeft" align="right" valign="top"><a id="a27ce54e37387a97b2d77457282a91550"></a>
+<a class="el" href="classsctf_1_1intern_1_1reporter.html">reporter</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classsctf_1_1intern_1_1reporter.html">reporter</a> &amp;&amp;) noexcept=delete</td></tr>
+<tr class="separator:a27ce54e37387a97b2d77457282a91550"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f184c039bd6780b20a67b4c80246b21"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1reporter.html#a2f184c039bd6780b20a67b4c80246b21">report</a> ()</td></tr>
 <tr class="separator:a2f184c039bd6780b20a67b4c80246b21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -114,10 +126,10 @@ Protected Attributes</h2></td></tr>
 std::ofstream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1reporter.html#a0b729e80f4982a2233bd08712a4d6ba7">m_out_file</a></td></tr>
 <tr class="memdesc:a0b729e80f4982a2233bd08712a4d6ba7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Filestream that is used, if a file is specified as output target. <br /></td></tr>
 <tr class="separator:a0b729e80f4982a2233bd08712a4d6ba7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d08021ab8426db752947a86a805a1e2"><td class="memItemLeft" align="right" valign="top"><a id="a4d08021ab8426db752947a86a805a1e2"></a>
-std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1reporter.html#a4d08021ab8426db752947a86a805a1e2">mr_out_stream</a></td></tr>
-<tr class="memdesc:a4d08021ab8426db752947a86a805a1e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outstream that handles printing the report. <br /></td></tr>
-<tr class="separator:a4d08021ab8426db752947a86a805a1e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa899b895dac09b3e0fd590069d768f0"><td class="memItemLeft" align="right" valign="top"><a id="afa899b895dac09b3e0fd590069d768f0"></a>
+std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1reporter.html#afa899b895dac09b3e0fd590069d768f0">m_out_stream</a></td></tr>
+<tr class="memdesc:afa899b895dac09b3e0fd590069d768f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outstream that handles printing the report. <br /></td></tr>
+<tr class="separator:afa899b895dac09b3e0fd590069d768f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af300e9583efb4a309a774f344dd6d26f"><td class="memItemLeft" align="right" valign="top"><a id="af300e9583efb4a309a774f344dd6d26f"></a>
 std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1reporter.html#af300e9583efb4a309a774f344dd6d26f">m_abs_tests</a> = 0</td></tr>
 <tr class="memdesc:af300e9583efb4a309a774f344dd6d26f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total number of testcases over all testsuites. <br /></td></tr>
