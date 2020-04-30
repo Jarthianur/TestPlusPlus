@@ -1,54 +1,48 @@
 /*
- Copyright_License {
+    Copyright (C) 2017 Jarthianur
 
- Copyright (C) 2017 Julian P. Becht
- Author: Julian P. Becht
+    This file is part of simple-cpp-test-framework.
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License version 3
- as published by the Free Software Foundation.
+    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- }
- */
+    You should have received a copy of the GNU General Public License
+    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+#define SCTF_EXTERN_EPSILON
 
 #include <iostream>
 
 #include "basic_tests.h"
-#include "reflexive_tests.h"
 #include "sctf.hpp"
+
+SCTF_EPSILON(0.000001)
 
 using namespace sctf;
 
-int main(int, char**)
-{
-    auto rep  = createPlainTextReporter(true, true);
-    auto repx = createXmlReporter("test.xml");
+int main(int, char**) {
+    auto rep   = console_reporter::create(std::cout, true, true);
+    auto repx  = xml_reporter::create("test.xml", true);
+    auto repmd = markdown_reporter::create("test.md", true);
 
-    try
-    {
+    try {
         basic_tests();
-    }
-    catch (const std::exception& e)
-    {
+    } catch (std::exception const& e) {
         std::cout << "Basic tests have failed! [" << e.what() << "]" << std::endl;
         return 1;
-    }
-    catch (...)
-    {
+    } catch (...) {
         std::cout << "Basic tests have failed!" << std::endl;
         return 1;
     }
     std::cout << "Basic tests have succeeded!" << std::endl;
 
-    reflexive_tests();
-
-    return rep->report() + repx->report() > 0 ? 1 : 0;
+    return rep->report() + repx->report() + repmd->report() > 0 ? 1 : 0;
 }

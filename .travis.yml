@@ -59,7 +59,7 @@ matrix:
     env:
     - BADGE=windows
     script:
-    - cmd.exe /C '"C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat" && build.bat'
+    - cmd.exe /C 'build.bat'
     - test/cpp11_seq.exe
     - test/cpp11_par.exe
     - test/cpp14_seq.exe
@@ -67,6 +67,7 @@ matrix:
     - test/cpp17_seq.exe
     - test/cpp17_par.exe
     - cat test.xml
+    - cat test.md
 
 notifications:
     email:
