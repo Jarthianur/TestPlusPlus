@@ -37,9 +37,15 @@ SUITE_PAR("test_comparators") {
         ASSERT_FALSE(!equals()(1, 1));
         ASSERT_FALSE(!f_equals()(1.0, 1.0));
         ASSERT_FALSE(!f_equals()(1.0f, 1.0f));
+        ASSERT_TRUE(!(!equals())(1, 1));
+        ASSERT_TRUE(!(!f_equals())(1.0, 1.0));
+        ASSERT_TRUE(!(!f_equals())(1.0f, 1.0f));
         ASSERT_TRUE(!equals()(2, 1));
         ASSERT_TRUE(!f_equals()(1.1, 2.0));
         ASSERT_TRUE(!f_equals()(1.1f, 2.0f));
+        ASSERT_FALSE(!(!equals())(2, 1));
+        ASSERT_FALSE(!(!f_equals())(1.1, 2.0));
+        ASSERT_FALSE(!(!f_equals())(1.1f, 2.0f));
         comparison c = equals()(1, 2);
         ASSERT_TRUE(!c);
         ASSERT(*c, EQ(), std::string("Expected 1 to be equals 2"));
@@ -47,8 +53,12 @@ SUITE_PAR("test_comparators") {
     TEST("greater_than") {
         ASSERT_FALSE(!greater_than()(2, 1));
         ASSERT_FALSE(!greater_than()(2.1, 1.9));
+        ASSERT_TRUE(!(!greater_than())(2, 1));
+        ASSERT_TRUE(!(!greater_than())(2.1, 1.9));
         ASSERT_TRUE(!greater_than()(1, 2));
         ASSERT_TRUE(!greater_than()(2.1, 3.9));
+        ASSERT_FALSE(!(!greater_than())(1, 2));
+        ASSERT_FALSE(!(!greater_than())(2.1, 3.9));
         comparison c = greater_than()(1, 2);
         ASSERT_TRUE(!c);
         ASSERT(*c, EQ(), std::string("Expected 1 to be greater than 2"));
@@ -56,14 +66,22 @@ SUITE_PAR("test_comparators") {
     TEST("in_range") {
         ASSERT_FALSE(!(in_range()(1, std::vector<int>{1})));
         ASSERT_FALSE(!(in_range()("a", std::string("a"))));
+        ASSERT_TRUE(!((!in_range())(1, std::vector<int>{1})));
+        ASSERT_TRUE(!((!in_range())("a", std::string("a"))));
         ASSERT_TRUE(!(in_range()(2, std::vector<int>{1})));
         ASSERT_TRUE(!(in_range()("b", std::string("a"))));
+        ASSERT_FALSE(!((!in_range())(2, std::vector<int>{1})));
+        ASSERT_FALSE(!((!in_range())("b", std::string("a"))));
     };
     TEST("less_than") {
         ASSERT_FALSE(!less_than()(1, 2));
         ASSERT_FALSE(!less_than()(1.9, 2.1));
+        ASSERT_TRUE(!(!less_than())(1, 2));
+        ASSERT_TRUE(!(!less_than())(1.9, 2.1));
         ASSERT_TRUE(!less_than()(2, 1));
         ASSERT_TRUE(!less_than()(3.9, 2.1));
+        ASSERT_FALSE(!(!less_than())(2, 1));
+        ASSERT_FALSE(!(!less_than())(3.9, 2.1));
         comparison c = less_than()(2, 1);
         ASSERT_TRUE(!c);
         ASSERT(*c, EQ(), std::string("Expected 2 to be less than 1"));
@@ -74,11 +92,21 @@ SUITE_PAR("test_comparators") {
         ASSERT_FALSE(!match()("hello world", ".*"));
         ASSERT_FALSE(!match()("hello world 11", "\\S{5}\\s.*?\\d+"_re));
         ASSERT_FALSE(!match()(std::string("hello world"), ".*"_re));
+        ASSERT_TRUE(!(!match())("hello world", ".*"_re));
+        ASSERT_TRUE(!(!match())("hello world", "HELLO WORLD"_re_i));
+        ASSERT_TRUE(!(!match())("hello world", ".*"));
+        ASSERT_TRUE(!(!match())("hello world 11", "\\S{5}\\s.*?\\d+"_re));
+        ASSERT_TRUE(!(!match())(std::string("hello world"), ".*"_re));
         ASSERT_TRUE(!match()("hello world", "\\s*"_re));
         ASSERT_TRUE(!match()("hello world", "AAA"_re_i));
         ASSERT_TRUE(!match()("hello world", "fff"));
         ASSERT_TRUE(!match()("hello world 11", "\\S{7}\\s.*?\\d"_re));
         ASSERT_TRUE(!match()(std::string("hello world"), "[+-]\\d+"_re));
+        ASSERT_FALSE(!(!match())("hello world", "\\s*"_re));
+        ASSERT_FALSE(!(!match())("hello world", "AAA"_re_i));
+        ASSERT_FALSE(!(!match())("hello world", "fff"));
+        ASSERT_FALSE(!(!match())("hello world 11", "\\S{7}\\s.*?\\d"_re));
+        ASSERT_FALSE(!(!match())(std::string("hello world"), "[+-]\\d+"_re));
     };
     TEST("like") {
         ASSERT_FALSE(!like()("hello world", "hell"_re));
@@ -86,10 +114,19 @@ SUITE_PAR("test_comparators") {
         ASSERT_FALSE(!like()("hello world", ".*?"));
         ASSERT_FALSE(!like()("hello world 11", "\\S{5}"_re));
         ASSERT_FALSE(!like()(std::string("hello world"), "hell"_re));
+        ASSERT_TRUE(!(!like())("hello world", "hell"_re));
+        ASSERT_TRUE(!(!like())("hello world", "HELL"_re_i));
+        ASSERT_TRUE(!(!like())("hello world", ".*?"));
+        ASSERT_TRUE(!(!like())("hello world 11", "\\S{5}"_re));
+        ASSERT_TRUE(!(!like())(std::string("hello world"), "hell"_re));
         ASSERT_TRUE(!like()("hello world", "blub"_re));
         ASSERT_TRUE(!like()("hello world", "AAA"_re_i));
         ASSERT_TRUE(!like()("hello world 11", "\\S{7}"_re));
         ASSERT_TRUE(!like()(std::string("hello world"), "[+-]\\d+"_re));
+        ASSERT_FALSE(!(!like())("hello world", "blub"_re));
+        ASSERT_FALSE(!(!like())("hello world", "AAA"_re_i));
+        ASSERT_FALSE(!(!like())("hello world 11", "\\S{7}"_re));
+        ASSERT_FALSE(!(!like())(std::string("hello world"), "[+-]\\d+"_re));
     };
 };
 
