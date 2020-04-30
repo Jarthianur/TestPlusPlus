@@ -8,8 +8,6 @@ set CL_ARGS=/GS /Zi /Od /W3 /WX /wd4996 /FC /EHsc /nologo /I..\include
 set CL_FILES=main.cpp reflexive_tests.cpp basic_tests.cpp user_tests.cpp
 
 pushd test
-cl %CL_ARGS% /Zc:__cplusplus         %CL_FILES% /link /out:cpp11_seq.exe
-cl %CL_ARGS% /Zc:__cplusplus /openmp %CL_FILES% /link /out:cpp11_par.exe
 cl %CL_ARGS% /std:c++14              %CL_FILES% /link /out:cpp14_seq.exe
 cl %CL_ARGS% /std:c++14      /openmp %CL_FILES% /link /out:cpp14_par.exe
 cl %CL_ARGS% /std:c++17              %CL_FILES% /link /out:cpp17_seq.exe
