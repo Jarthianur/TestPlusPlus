@@ -47,9 +47,9 @@ class streambuf_proxy_omp : public std::streambuf
     (m_thd_buffers.at(static_cast<std::size_t>(omp_get_thread_num())))
 
 public:
-    streambuf_proxy_omp(streambuf_proxy_omp const&) = delete;
+    streambuf_proxy_omp(streambuf_proxy_omp const&)     = delete;
+    streambuf_proxy_omp(streambuf_proxy_omp&&) noexcept = delete;
     streambuf_proxy_omp& operator=(streambuf_proxy_omp const&) = delete;
-    streambuf_proxy_omp(streambuf_proxy_omp&&) noexcept        = delete;
     streambuf_proxy_omp& operator=(streambuf_proxy_omp&&) noexcept = delete;
 
     /**

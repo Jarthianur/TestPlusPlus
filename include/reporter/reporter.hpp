@@ -43,19 +43,11 @@ namespace intern
 class reporter
 {
 public:
-    virtual ~reporter() noexcept = default;
-
-    reporter(reporter const&) = delete;
+    reporter(reporter const&)     = delete;
+    reporter(reporter&&) noexcept = delete;
     reporter& operator=(reporter const&) = delete;
-    reporter& operator=(reporter&& other_) noexcept = delete;
-
-    reporter(reporter&& other_) noexcept
-        : m_out_file(std::move(other_.m_out_file)),
-          m_out_stream(std::ref(other_.m_out_stream)),
-          m_abs_tests(other_.m_abs_tests),
-          m_abs_fails(other_.m_abs_fails),
-          m_abs_errs(other_.m_abs_errs),
-          m_abs_time(other_.m_abs_time) {}
+    reporter& operator=(reporter&&) noexcept = delete;
+    virtual ~reporter() noexcept             = default;
 
     /**
      * Generate the report. Testsuites that are not yet completed will be run by a call to this

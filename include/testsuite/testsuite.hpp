@@ -49,9 +49,9 @@ using testsuite_ptr = std::shared_ptr<testsuite>;
 class testsuite
 {
 public:
-    testsuite(testsuite const&) = delete;
+    testsuite(testsuite const&)     = delete;
+    testsuite(testsuite&&) noexcept = delete;
     testsuite& operator=(testsuite const&) = delete;
-    testsuite(testsuite&&) noexcept        = delete;
     testsuite& operator=(testsuite&&) noexcept = delete;
     virtual ~testsuite() noexcept              = default;
 

@@ -33,13 +33,11 @@ namespace sctf
 class xml_reporter : public intern::reporter
 {
 public:
-    ~xml_reporter() noexcept override = default;
-    xml_reporter(xml_reporter const&) = delete;
+    xml_reporter(xml_reporter const&)     = delete;
+    xml_reporter(xml_reporter&&) noexcept = delete;
     xml_reporter& operator=(xml_reporter const&) = delete;
-    xml_reporter& operator=(xml_reporter&& other_) noexcept = delete;
-
-    xml_reporter(xml_reporter&& other_) noexcept
-        : reporter(std::move(other_)), m_id(other_.m_id), m_capture(other_.m_capture) {}
+    xml_reporter& operator=(xml_reporter&&) noexcept = delete;
+    ~xml_reporter() noexcept override                = default;
 
     /**
      * Create a xml reporter.

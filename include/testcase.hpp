@@ -40,7 +40,7 @@ class testcase
 public:
     testcase(testcase const&) = delete;
     testcase& operator=(testcase const&) = delete;
-    ~testcase() noexcept = default;
+    ~testcase() noexcept                 = default;
 
     /**
      * @param name_ is the name/description for this testcase.

@@ -38,9 +38,9 @@ namespace intern
 class testsuite_parallel : public testsuite
 {
 public:
-    testsuite_parallel(testsuite_parallel const&) = delete;
+    testsuite_parallel(testsuite_parallel const&)     = delete;
+    testsuite_parallel(testsuite_parallel&&) noexcept = delete;
     testsuite_parallel& operator=(testsuite_parallel const&) = delete;
-    testsuite_parallel(testsuite_parallel&&) noexcept        = delete;
     testsuite_parallel& operator=(testsuite_parallel&&) noexcept = delete;
     ~testsuite_parallel() noexcept override                      = default;
 

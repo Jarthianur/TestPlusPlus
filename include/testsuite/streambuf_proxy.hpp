@@ -34,9 +34,9 @@ namespace intern
 class streambuf_proxy : public std::streambuf
 {
 public:
-    streambuf_proxy(streambuf_proxy const&) = delete;
+    streambuf_proxy(streambuf_proxy const&)     = delete;
+    streambuf_proxy(streambuf_proxy&&) noexcept = delete;
     streambuf_proxy& operator=(streambuf_proxy const&) = delete;
-    streambuf_proxy(streambuf_proxy&&) noexcept        = delete;
     streambuf_proxy& operator=(streambuf_proxy&&) noexcept = delete;
 
     /**
