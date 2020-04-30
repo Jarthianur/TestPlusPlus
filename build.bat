@@ -4,7 +4,7 @@ call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\Too
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\Tools\VsDevCmd.bat" -test
 where cl >nul 2>nul
 IF %ERRORLEVEL% NEQ 0 (echo ERROR: cl is not in PATH) && exit 1
-set CL_ARGS=/GS /Zi /Od /W3 /WX /wd4996 /FC /EHsc /nologo /I..\include
+set CL_ARGS=/GS /Zi /Od /W3 /WX /wd4996 /FC /EHsc /nologo /Zc:__cplusplus /I..\include
 set CL_FILES=main.cpp reflexive_tests.cpp basic_tests.cpp user_tests.cpp
 
 pushd test
