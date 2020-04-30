@@ -41,7 +41,7 @@ public:
      *
      * @param ts_ is the testsuite to add
      */
-    void add_testsuite(testsuite_ptr ts_) {
+    void add_testsuite(testsuite_ptr const& ts_) {
         m_testsuites.push_back(ts_);
     }
 

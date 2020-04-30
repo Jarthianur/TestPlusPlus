@@ -60,7 +60,7 @@ public:
         return m_num_of_errs;
     }
 
-protected:
+private:
     friend class testsuite;
     friend class testsuite_parallel;
 

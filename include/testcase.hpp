@@ -40,8 +40,7 @@ class testcase
 public:
     testcase(testcase const&) = delete;
     testcase& operator=(testcase const&) = delete;
-
-    ~testcase() noexcept = default;
+    ~testcase() noexcept                 = default;
 
     /**
      * @param name_ is the name/description for this testcase.
@@ -51,7 +50,7 @@ public:
     testcase(char const* name_, char const* ctx_, void_function&& fn_)
         : m_name(name_), m_context(ctx_), m_test_func(std::move(fn_)) {}
 
-    testcase(testcase&& other_)
+    testcase(testcase&& other_) noexcept
         : m_name(other_.m_name),
           m_context(other_.m_context),
           m_state(other_.m_state),
@@ -59,7 +58,7 @@ public:
           m_err_msg(std::move(other_.m_err_msg)),
           m_test_func(std::move(other_.m_test_func)) {}
 
-    testcase& operator=(testcase&& other_) {
+    testcase& operator=(testcase&& other_) noexcept {
         m_name      = other_.m_name;
         m_context   = other_.m_context;
         m_state     = other_.m_state;
@@ -84,7 +83,9 @@ public:
      * Perform the test. Returns immediately if the test was alreday performed.
      */
     void operator()() {
-        if (m_state != result::NONE) return;
+        if (m_state != result::NONE) {
+            return;
+        }
         class duration dur;
         try {
             m_test_func();

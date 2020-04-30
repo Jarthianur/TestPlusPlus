@@ -116,7 +116,7 @@ struct singleton final
             sctf::intern::testsuite_ptr sctf_intern_m_ts_;                             \
         };                                                                             \
         class SCTF_INTERN_API_SUITE_NAME(__LINE__);                                    \
-        static const auto& sctf_intern_mod_ =                                          \
+        static auto const& sctf_intern_mod_ =                                          \
             sctf::intern::singleton<SCTF_INTERN_API_SUITE_NAME(__LINE__)>::instance(); \
         using sctf_intern_mod_type_ = SCTF_INTERN_API_SUITE_NAME(__LINE__);            \
     }                                                                                  \
@@ -128,16 +128,15 @@ struct singleton final
  *
  * @param DESCR is a cstring with the description of the testcase.
  */
-#define SCTF_INTERN_API_TEST_WRAPPER(DESCR)                                                  \
-    class SCTF_INTERN_API_TEST_NAME(__LINE__)                                                \
-    {                                                                                        \
-    public:                                                                                  \
-        SCTF_INTERN_API_TEST_NAME(__LINE__)(sctf_intern_mod_type_ * mod_) {                  \
-            mod_->sctf_intern_m_ts_->test(                                                   \
-                DESCR,                                                                       \
-                std::bind(&sctf_intern_mod_type_::SCTF_INTERN_API_TEST_FN(__LINE__), mod_)); \
-        }                                                                                    \
-    } SCTF_INTERN_API_TEST_INST(__LINE__){this};                                             \
+#define SCTF_INTERN_API_TEST_WRAPPER(DESCR)                                                    \
+    class SCTF_INTERN_API_TEST_NAME(__LINE__)                                                  \
+    {                                                                                          \
+    public:                                                                                    \
+        explicit SCTF_INTERN_API_TEST_NAME(__LINE__)(sctf_intern_mod_type_ * mod_) {           \
+            mod_->sctf_intern_m_ts_->test(DESCR,                                               \
+                                          [=] { mod_->SCTF_INTERN_API_TEST_FN(__LINE__)(); }); \
+        }                                                                                      \
+    } SCTF_INTERN_API_TEST_INST(__LINE__){this};                                               \
     void SCTF_INTERN_API_TEST_FN(__LINE__)()
 
 /**
@@ -149,9 +148,8 @@ struct singleton final
     class sctf_intern_##FN##_                                                     \
     {                                                                             \
     public:                                                                       \
-        sctf_intern_##FN##_(sctf_intern_mod_type_* mod_) {                        \
-            mod_->sctf_intern_m_ts_->FN(                                          \
-                std::bind(&sctf_intern_mod_type_::sctf_intern_##FN##_fn_, mod_)); \
+        explicit sctf_intern_##FN##_(sctf_intern_mod_type_* mod_) {               \
+            mod_->sctf_intern_m_ts_->FN([=] { mod_->sctf_intern_##FN##_fn_(); }); \
         }                                                                         \
     } sctf_intern_##FN##_inst_{this};                                             \
     void sctf_intern_##FN##_fn_()

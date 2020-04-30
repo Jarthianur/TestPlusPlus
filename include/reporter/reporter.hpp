@@ -43,7 +43,11 @@ namespace intern
 class reporter
 {
 public:
-    virtual ~reporter() noexcept = default;
+    reporter(reporter const&)     = delete;
+    reporter(reporter&&) noexcept = delete;
+    reporter& operator=(reporter const&) = delete;
+    reporter& operator=(reporter&&) noexcept = delete;
+    virtual ~reporter() noexcept             = default;
 
     /**
      * Generate the report. Testsuites that are not yet completed will be run by a call to this
@@ -76,14 +80,14 @@ protected:
     /**
      * @param stream_ is the output stream for reports.
      */
-    explicit reporter(std::ostream& stream_) : mr_out_stream(stream_) {}
+    explicit reporter(std::ostream& stream_) : m_out_stream(stream_) {}
 
     /**
      * @param fname_ is the output filename for reports.
      * @throw std::runtime_error if the file can not be opened for writing.
      */
-    explicit reporter(char const* fname_) : m_out_file(fname_), mr_out_stream(m_out_file) {
-        if (!mr_out_stream) {
+    explicit reporter(char const* fname_) : m_out_file(fname_), m_out_stream(m_out_file) {
+        if (!m_out_stream) {
             throw std::runtime_error("Could not open file.");
         }
     }
@@ -125,13 +129,13 @@ protected:
      */
     template<typename T>
     std::ostream& operator<<(T const& t_) {
-        mr_out_stream << t_;
-        return mr_out_stream;
+        m_out_stream << t_;
+        return m_out_stream;
     }
 
     std::ofstream
                   m_out_file;  ///< Filestream that is used, if a file is specified as output target.
-    std::ostream& mr_out_stream;    ///< Outstream that handles printing the report.
+    std::ostream& m_out_stream;     ///< Outstream that handles printing the report.
     std::size_t   m_abs_tests = 0;  ///< Total number of testcases over all testsuites.
     std::size_t   m_abs_fails = 0;  ///< Total number of failed testcases over all testsuites.
     std::size_t   m_abs_errs  = 0;  ///< Total number of erroneous testcases over all testsuites.

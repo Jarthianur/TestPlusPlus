@@ -70,7 +70,7 @@ public:
     }
 
     template<typename V, typename E = V>
-    comparison operator()(V const& actual_value, E const& expected_value) {
+    comparison operator()(V const& actual_value, E const& expected_value) const {
         static_assert(
             SCTF_INTERN_IS_FLOAT(V) && SCTF_INTERN_IS_FLOAT(E),
             "The floating point comparator must not be used with other types than float, or double!");

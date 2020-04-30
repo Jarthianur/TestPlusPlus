@@ -78,17 +78,15 @@ static std::string const& name_for_type() {
  * @param c_ is the char to stringify.
  */
 inline std::string escaped_char(char c_) {
-    char const* ret;
     switch (c_) {
-        case '\r': ret = "\\r"; break;
-        case '\n': ret = "\\n"; break;
-        case '\t': ret = "\\t"; break;
-        case '\f': ret = "\\f"; break;
-        case '\v': ret = "\\v"; break;
-        case '\"': ret = "\\\""; break;
-        default: return std::string(1, c_);
+        case '\r': return "\\r";
+        case '\n': return "\\n";
+        case '\t': return "\\t";
+        case '\f': return "\\f";
+        case '\v': return "\\v";
+        case '\"': return "\\\"";
     }
-    return ret;
+    return std::string(1, c_);
 }
 
 /**

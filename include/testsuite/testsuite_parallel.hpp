@@ -20,6 +20,7 @@
 #ifndef SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP
 #define SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP
 
+#include <cstdint>
 #include <limits>
 #include <stdexcept>
 
@@ -37,10 +38,11 @@ namespace intern
 class testsuite_parallel : public testsuite
 {
 public:
-    testsuite_parallel(testsuite_parallel const&) = delete;
+    testsuite_parallel(testsuite_parallel const&)     = delete;
+    testsuite_parallel(testsuite_parallel&&) noexcept = delete;
     testsuite_parallel& operator=(testsuite_parallel const&) = delete;
-
-    virtual ~testsuite_parallel() noexcept override = default;
+    testsuite_parallel& operator=(testsuite_parallel&&) noexcept = delete;
+    ~testsuite_parallel() noexcept override                      = default;
 
     /**
      * Create a new testsuite.
@@ -57,11 +59,12 @@ public:
      */
     void run() override {
         if (m_state != execution_state::DONE) {
-            if (m_testcases.size() > static_cast<std::size_t>(std::numeric_limits<long>::max())) {
+            if (m_testcases.size() >
+                static_cast<std::size_t>(std::numeric_limits<std::int64_t>::max())) {
                 throw std::overflow_error("Too many testcases! Size would overflow loop variant.");
             }
             m_setup_fn();
-            const long tc_size     = static_cast<long>(m_testcases.size());
+            auto const tc_size     = static_cast<std::int64_t>(m_testcases.size());
             m_stats.m_num_of_tests = m_testcases.size();
             streambuf_proxy_omp mt_buf_cout(std::cout);
             streambuf_proxy_omp mt_buf_cerr(std::cerr);
@@ -72,7 +75,7 @@ public:
                 std::size_t errs  = 0;
                 // OpenMP 2 compatible - MSVC not supporting higher version
 #pragma omp for schedule(dynamic)
-                for (long i = 0; i < tc_size; ++i) {
+                for (std::int64_t i = 0; i < tc_size; ++i) {
                     auto& tc = m_testcases[static_cast<std::size_t>(i)];
                     if (tc.state() == testcase::result::NONE) {
                         m_pretest_fn();

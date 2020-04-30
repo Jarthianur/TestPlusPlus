@@ -66,7 +66,7 @@ private:
 
 #else
 
-    comparison() : m_success(true) {}
+    comparison() = default;
 
     comparison(char const* comp_str_, std::string const& val_, std::string const& expect_)
         : m_success(false) {
@@ -77,16 +77,16 @@ private:
         error() = msg;
     }
 
-    explicit operator bool() {
+    explicit operator bool() const {
         return m_success;
     }
 
-    const std::string& operator*() const {
+    std::string const& operator*() const {
         return error();
     }
 
 private:
-    bool const m_success;
+    bool const m_success = true;
 
     std::string& error() const {
         static thread_local std::string err_msg;
@@ -124,7 +124,7 @@ private:
             return *this;                                                                     \
         }                                                                                     \
         template<typename V, typename E = V>                                                  \
-        comparison operator()(V const& actual_value, E const& expected_value) {               \
+        comparison operator()(V const& actual_value, E const& expected_value) const {         \
             return (PRED) != m_neg ?                                                          \
                        comparison() :                                                         \
                        comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value), \
