@@ -124,7 +124,7 @@ private:
             return *this;                                                                     \
         }                                                                                     \
         template<typename V, typename E = V>                                                  \
-        auto operator()(V&& actual_value, E&& expected_value) const -> comparison {           \
+        auto operator()(V const& actual_value, E const& expected_value) const -> comparison { \
             return (PRED) != m_neg ?                                                          \
                        comparison() :                                                         \
                        comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value), \
