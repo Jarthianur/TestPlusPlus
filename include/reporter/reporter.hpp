@@ -77,6 +77,7 @@ public:
     }
 
 protected:
+    /// Helper type to prevent public constructor usage.
     struct enable
     {};
 
