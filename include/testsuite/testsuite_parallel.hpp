@@ -68,7 +68,7 @@ public:
             m_stats.m_num_of_tests = m_testcases.size();
             streambuf_proxy_omp mt_buf_cout(std::cout);
             streambuf_proxy_omp mt_buf_cerr(std::cerr);
-#pragma omp parallel default(none) shared(tc_size, mt_buf_cout, mt_buf_cerr)
+#pragma omp parallel default(shared)
             {  // BEGIN parallel section
                 double      tmp   = 0.0;
                 std::size_t fails = 0;
