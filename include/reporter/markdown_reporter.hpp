@@ -46,7 +46,7 @@ public:
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
     static auto create(std::ostream& stream_ = std::cout) -> std::shared_ptr<markdown_reporter> {
-        return std::make_shared<markdown_reporter>(stream_);
+        return std::make_shared<markdown_reporter>(enable{}, stream_);
     }
 
     /**
@@ -56,7 +56,7 @@ public:
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
     static auto create(char const* fname_) -> std::shared_ptr<markdown_reporter> {
-        return std::make_shared<markdown_reporter>(fname_);
+        return std::make_shared<markdown_reporter>(enable{}, fname_);
     }
 
     auto with_captured_output() -> std::shared_ptr<markdown_reporter> {
@@ -64,10 +64,11 @@ public:
         return std::static_pointer_cast<markdown_reporter>(shared_from_this());
     }
 
-private:
-    explicit markdown_reporter(std::ostream& stream_) : reporter(stream_) {}
+    explicit markdown_reporter(enable, std::ostream& stream_) : reporter(stream_) {}
 
-    explicit markdown_reporter(char const* fname_) : reporter(fname_) {}
+    explicit markdown_reporter(enable, char const* fname_) : reporter(fname_) {}
+
+private:
     void report_testsuite(intern::testsuite_ptr const& ts_) override {
         *this << "## " << ts_->name() << intern::fmt::XLF
               << "|Tests|Successes|Failures|Errors|Time|" << intern::fmt::LF << "|-|-|-|-|-|"

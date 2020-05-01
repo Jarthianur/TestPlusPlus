@@ -67,7 +67,7 @@ public:
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
     static auto create(std::ostream& stream_ = std::cout) -> std::shared_ptr<console_reporter> {
-        return std::make_shared<console_reporter>(stream_);
+        return std::make_shared<console_reporter>(enable{}, stream_);
     }
 
     /**
@@ -78,7 +78,7 @@ public:
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
     static auto create(char const* fname_) -> std::shared_ptr<console_reporter> {
-        return std::make_shared<console_reporter>(fname_);
+        return std::make_shared<console_reporter>(enable{}, fname_);
     }
 
     auto with_color() -> std::shared_ptr<console_reporter> {
@@ -91,11 +91,11 @@ public:
         return std::static_pointer_cast<console_reporter>(shared_from_this());
     }
 
+    explicit console_reporter(enable, std::ostream& stream_) : reporter(stream_) {}
+
+    explicit console_reporter(enable, char const* fname_) : reporter(fname_) {}
+
 private:
-    explicit console_reporter(std::ostream& stream_) : reporter(stream_) {}
-
-    explicit console_reporter(char const* fname_) : reporter(fname_) {}
-
     void report_testsuite(intern::testsuite_ptr const& ts_) override {
         *this << "Run Testsuite [" << ts_->name() << "]; time = " << ts_->execution_duration()
               << "ms" << intern::fmt::LF;

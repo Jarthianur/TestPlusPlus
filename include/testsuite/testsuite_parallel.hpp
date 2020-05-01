@@ -50,7 +50,7 @@ public:
      * @param name_ is the name, or description of the testsuite.
      */
     static auto create(char const* name_) -> testsuite_ptr {
-        return testsuite_ptr(new testsuite_parallel(name_));
+        return std::make_shared<testsuite_parallel>(enable{}, name_);
     }
 
     /**
@@ -105,11 +105,10 @@ public:
         }
     }
 
-private:
     /**
      * @param name_ is the name, or description of the testsuite.
      */
-    explicit testsuite_parallel(char const* name_) : testsuite(name_) {}
+    explicit testsuite_parallel(enable e_, char const* name_) : testsuite(e_, name_) {}
 };
 }  // namespace intern
 }  // namespace sctf

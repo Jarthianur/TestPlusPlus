@@ -77,6 +77,9 @@ public:
     }
 
 protected:
+    struct enable
+    {};
+
     /**
      * @param stream_ is the output stream for reports.
      */

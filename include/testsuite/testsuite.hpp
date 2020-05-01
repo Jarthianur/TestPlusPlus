@@ -48,6 +48,10 @@ using testsuite_ptr = std::shared_ptr<testsuite>;
  */
 class testsuite
 {
+protected:
+    struct enable
+    {};
+
 public:
     testsuite(testsuite const&)     = delete;
     testsuite(testsuite&&) noexcept = delete;
@@ -61,7 +65,7 @@ public:
      * @param name_ is the name, or description of the testsuite.
      */
     static auto create(char const* name_) -> testsuite_ptr {
-        return testsuite_ptr(new testsuite(name_));
+        return std::make_shared<testsuite>(enable{}, name_);
     }
 
     /**
@@ -184,13 +188,13 @@ public:
         return m_testcases;
     }
 
-protected:
     /**
      * @param name_ is the name, or description of the testsuite.
      */
-    explicit testsuite(char const* name_)
+    explicit testsuite(enable, char const* name_)
         : m_name(name_), m_create_time(std::chrono::system_clock::now()) {}
 
+protected:
     /**
      * Hold a function optionally, that can be executed without throwing any exception.
      */

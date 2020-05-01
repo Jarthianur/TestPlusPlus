@@ -48,7 +48,7 @@ public:
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
     static auto create(std::ostream& stream_ = std::cout) -> std::shared_ptr<xml_reporter> {
-        return std::make_shared<xml_reporter>(stream_);
+        return std::make_shared<xml_reporter>(enable{}, stream_);
     }
 
     /**
@@ -58,7 +58,7 @@ public:
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
     static auto create(char const* fname_) -> std::shared_ptr<xml_reporter> {
-        return std::make_shared<xml_reporter>(fname_);
+        return std::make_shared<xml_reporter>(enable{}, fname_);
     }
 
     auto with_captured_output() -> std::shared_ptr<xml_reporter> {
@@ -66,10 +66,11 @@ public:
         return std::static_pointer_cast<xml_reporter>(shared_from_this());
     }
 
-private:
-    explicit xml_reporter(std::ostream& stream_) : reporter(stream_) {}
-    explicit xml_reporter(char const* fname_) : reporter(fname_) {}
+    explicit xml_reporter(enable, std::ostream& stream_) : reporter(stream_) {}
 
+    explicit xml_reporter(enable, char const* fname_) : reporter(fname_) {}
+
+private:
     void report_testsuite(intern::testsuite_ptr const& ts_) override {
         std::time_t           stamp = std::chrono::system_clock::to_time_t(ts_->timestamp());
         std::array<char, 128> buff{};
