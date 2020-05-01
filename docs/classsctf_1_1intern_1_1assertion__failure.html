@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Simple C++ Test Framework
-   &#160;<span id="projectnumber">2.0-rc3</span>
+   &#160;<span id="projectnumber">2.0-rc4</span>
    </div>
   </td>
  </tr>
@@ -91,8 +91,8 @@ Collaboration diagram for sctf::intern::assertion_failure:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a4c49069cf26501dc6107a735e1e87d13"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1assertion__failure.html#a4c49069cf26501dc6107a735e1e87d13">assertion_failure</a> (std::string const &amp;msg_, <a class="el" href="structsctf_1_1intern_1_1loc.html">loc</a> const &amp;loc_)</td></tr>
 <tr class="separator:a4c49069cf26501dc6107a735e1e87d13"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74dd77df0a9c569038a1fcf948867f98"><td class="memItemLeft" align="right" valign="top">char const  *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1assertion__failure.html#a74dd77df0a9c569038a1fcf948867f98">what</a> () const noexcept override</td></tr>
-<tr class="separator:a74dd77df0a9c569038a1fcf948867f98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab182a99bf864a5556ff7e4692129e532"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1assertion__failure.html#ab182a99bf864a5556ff7e4692129e532">what</a> () const noexcept -&gt; char const *override</td></tr>
+<tr class="separator:ab182a99bf864a5556ff7e4692129e532"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Used to be thrown when an assertion fails. </p>
@@ -141,8 +141,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a74dd77df0a9c569038a1fcf948867f98"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74dd77df0a9c569038a1fcf948867f98">&#9670;&nbsp;</a></span>what()</h2>
+<a id="ab182a99bf864a5556ff7e4692129e532"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab182a99bf864a5556ff7e4692129e532">&#9670;&nbsp;</a></span>what()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -151,10 +151,10 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">char const* sctf::intern::assertion_failure::what </td>
+          <td class="memname">auto sctf::intern::assertion_failure::what </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td> const -&gt; char const*</td>
         </tr>
       </table>
   </td>

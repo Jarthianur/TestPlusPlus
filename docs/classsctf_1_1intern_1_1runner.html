@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Simple C++ Test Framework
-   &#160;<span id="projectnumber">2.0-rc3</span>
+   &#160;<span id="projectnumber">2.0-rc4</span>
    </div>
   </td>
  </tr>
@@ -80,13 +80,13 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:afdf4824a90324ca4cdf4d03ca9451808"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a016069c399b9b4184c6a367ca8abf348"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1runner.html#a016069c399b9b4184c6a367ca8abf348">run</a> () noexcept</td></tr>
 <tr class="separator:a016069c399b9b4184c6a367ca8abf348"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab48849a6380c46f523aa641e333c37b1"><td class="memItemLeft" align="right" valign="top">std::vector&lt; testsuite_ptr &gt; const  &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1runner.html#ab48849a6380c46f523aa641e333c37b1">testsuites</a> ()</td></tr>
-<tr class="separator:ab48849a6380c46f523aa641e333c37b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aceb095e92268b6cb891660b716d77f66"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1runner.html#aceb095e92268b6cb891660b716d77f66">testsuites</a> () -&gt; std::vector&lt; testsuite_ptr &gt; const &amp;</td></tr>
+<tr class="separator:aceb095e92268b6cb891660b716d77f66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a587357f061d6d26e6c174e608f5c1da4"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classsctf_1_1intern_1_1runner.html">runner</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1runner.html#a587357f061d6d26e6c174e608f5c1da4">instance</a> ()</td></tr>
-<tr class="separator:a587357f061d6d26e6c174e608f5c1da4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd2db6ca171d8ab37f435368ac2f4534"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1runner.html#afd2db6ca171d8ab37f435368ac2f4534">instance</a> () -&gt; <a class="el" href="classsctf_1_1intern_1_1runner.html">runner</a> &amp;</td></tr>
+<tr class="separator:afd2db6ca171d8ab37f435368ac2f4534"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Used to manage and run testsuites. </p>
@@ -124,8 +124,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a587357f061d6d26e6c174e608f5c1da4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a587357f061d6d26e6c174e608f5c1da4">&#9670;&nbsp;</a></span>instance()</h2>
+<a id="afd2db6ca171d8ab37f435368ac2f4534"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd2db6ca171d8ab37f435368ac2f4534">&#9670;&nbsp;</a></span>instance()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -134,10 +134,10 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static <a class="el" href="classsctf_1_1intern_1_1runner.html">runner</a>&amp; sctf::intern::runner::instance </td>
+          <td class="memname">static auto sctf::intern::runner::instance </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> -&gt; <a class="el" href="classsctf_1_1intern_1_1runner.html">runner</a>&amp; </td>
         </tr>
       </table>
   </td>
@@ -176,8 +176,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ab48849a6380c46f523aa641e333c37b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab48849a6380c46f523aa641e333c37b1">&#9670;&nbsp;</a></span>testsuites()</h2>
+<a id="aceb095e92268b6cb891660b716d77f66"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aceb095e92268b6cb891660b716d77f66">&#9670;&nbsp;</a></span>testsuites()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -186,10 +186,10 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;testsuite_ptr&gt; const&amp; sctf::intern::runner::testsuites </td>
+          <td class="memname">auto sctf::intern::runner::testsuites </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> -&gt; std::vector&lt;testsuite_ptr&gt; const&amp; </td>
         </tr>
       </table>
   </td>
