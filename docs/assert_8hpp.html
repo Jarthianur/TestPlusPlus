@@ -64,16 +64,17 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#define-members">Macros</a>  </div>
+<a href="#define-members">Macros</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">assert.hpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="comparator_8hpp_source.html">comparator/comparator.hpp</a>&quot;</code><br />
+<div class="textblock"><code>#include &lt;tuple&gt;</code><br />
+<code>#include &quot;<a class="el" href="comparator_8hpp_source.html">comparator/comparator.hpp</a>&quot;</code><br />
 <code>#include &quot;assertion_failure.hpp&quot;</code><br />
 <code>#include &quot;duration.hpp&quot;</code><br />
 <code>#include &quot;loc.hpp&quot;</code><br />
-<code>#include &quot;<a class="el" href="types_8hpp_source.html">types.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for assert.hpp:</div>
 <div class="dyncontent">
@@ -93,13 +94,13 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a3ffcd9946aaa0bb84fe9add54490a66a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#a3ffcd9946aaa0bb84fe9add54490a66a">ASSERT</a>(VAL,  CMP,  EXP)&#160;&#160;&#160;sctf::intern::assert_statement(VAL, EXP, sctf::CMP, <a class="el" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</td></tr>
+<tr class="memitem:a3ffcd9946aaa0bb84fe9add54490a66a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#a3ffcd9946aaa0bb84fe9add54490a66a">ASSERT</a>(VAL,  CMP,  EXP)</td></tr>
 <tr class="separator:a3ffcd9946aaa0bb84fe9add54490a66a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aebecf37e88c1f11551b2afbab452680b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#aebecf37e88c1f11551b2afbab452680b">ASSERT_NOT</a>(VAL,  CMP,  EXP)&#160;&#160;&#160;sctf::intern::assert_statement(VAL, EXP, !sctf::CMP, <a class="el" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</td></tr>
+<tr class="memitem:aebecf37e88c1f11551b2afbab452680b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#aebecf37e88c1f11551b2afbab452680b">ASSERT_NOT</a>(VAL,  CMP,  EXP)</td></tr>
 <tr class="separator:aebecf37e88c1f11551b2afbab452680b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab89e0ada284159beeb824e97f99da3d8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#ab89e0ada284159beeb824e97f99da3d8">ASSERT_EQ</a>(VAL,  EXP)&#160;&#160;&#160;sctf::intern::assert_statement(VAL, EXP, sctf::EQUALS(), <a class="el" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</td></tr>
+<tr class="memitem:ab89e0ada284159beeb824e97f99da3d8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#ab89e0ada284159beeb824e97f99da3d8">ASSERT_EQ</a>(VAL,  EXP)</td></tr>
 <tr class="separator:ab89e0ada284159beeb824e97f99da3d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd77077d4c303e008f5ca79fdfe16071"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#abd77077d4c303e008f5ca79fdfe16071">ASSERT_TRUE</a>(VAL)&#160;&#160;&#160;sctf::intern::assert_statement(VAL, true, sctf::EQUALS(), <a class="el" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</td></tr>
+<tr class="memitem:abd77077d4c303e008f5ca79fdfe16071"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#abd77077d4c303e008f5ca79fdfe16071">ASSERT_TRUE</a>(VAL)</td></tr>
 <tr class="separator:abd77077d4c303e008f5ca79fdfe16071"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a712de5f91a0f0886f8762185013162a6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#a712de5f91a0f0886f8762185013162a6">ASSERT_FALSE</a>(VAL)</td></tr>
 <tr class="separator:a712de5f91a0f0886f8762185013162a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -115,6 +116,21 @@ Macros</h2></td></tr>
 <tr class="separator:a0c90432290aff4ff8b6db0c818a94cbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4216b544f8d6aafbc10d9830f1b1a21b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#a4216b544f8d6aafbc10d9830f1b1a21b">ASSERT_RUNTIME</a>(FN,  MAX)&#160;&#160;&#160;sctf::intern::assert_runtime([&amp;] { FN; }, MAX, <a class="el" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</td></tr>
 <tr class="separator:a4216b544f8d6aafbc10d9830f1b1a21b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a66ea33d2f70b9fe0e0aae7f21e8801c2"><td class="memTemplParams" colspan="2">template&lt;typename S &gt; </td></tr>
+<tr class="memitem:a66ea33d2f70b9fe0e0aae7f21e8801c2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a> (S &amp;&amp;stmt_, loc const &amp;loc_)</td></tr>
+<tr class="separator:a66ea33d2f70b9fe0e0aae7f21e8801c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a654bc2c877a97a5fba04b5d9b80f9d50"><td class="memTemplParams" colspan="2">template&lt;typename T , typename F &gt; </td></tr>
+<tr class="memitem:a654bc2c877a97a5fba04b5d9b80f9d50"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#a654bc2c877a97a5fba04b5d9b80f9d50">sctf::intern::assert_throws</a> (F &amp;&amp;fn_, char const *tname_, loc const &amp;loc_)</td></tr>
+<tr class="separator:a654bc2c877a97a5fba04b5d9b80f9d50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad465710725143b4c5cb4773a0669bd23"><td class="memTemplParams" colspan="2">template&lt;typename F &gt; </td></tr>
+<tr class="memitem:ad465710725143b4c5cb4773a0669bd23"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#ad465710725143b4c5cb4773a0669bd23">sctf::intern::assert_nothrow</a> (F &amp;&amp;fn_, loc const &amp;loc_)</td></tr>
+<tr class="separator:ad465710725143b4c5cb4773a0669bd23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7461cebf839c544ca54c78c91fb6aea8"><td class="memTemplParams" colspan="2">template&lt;typename F &gt; </td></tr>
+<tr class="memitem:a7461cebf839c544ca54c78c91fb6aea8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="assert_8hpp.html#a7461cebf839c544ca54c78c91fb6aea8">sctf::intern::assert_runtime</a> (F &amp;&amp;fn_, double max_ms_, loc const &amp;loc_)</td></tr>
+<tr class="separator:a7461cebf839c544ca54c78c91fb6aea8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a3ffcd9946aaa0bb84fe9add54490a66a"></a>
@@ -144,11 +160,13 @@ Macros</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;sctf::intern::assert_statement(VAL, EXP, sctf::CMP, <a class="el" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Generic assertion to compare two values.</p>
+<b>Value:</b><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a>(std::forward_as_tuple(sctf::CMP, VAL, EXP), \</div><div class="line">                                   <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="assert_8hpp_html_a66ea33d2f70b9fe0e0aae7f21e8801c2"><div class="ttname"><a href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a></div><div class="ttdeci">void assert_statement(S &amp;&amp;stmt_, loc const &amp;loc_)</div><div class="ttdef"><b>Definition:</b> assert.hpp:211</div></div>
+<div class="ttc" id="structsctf_1_1intern_1_1loc_html"><div class="ttname"><a href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a></div><div class="ttdef"><b>Definition:</b> loc.hpp:30</div></div>
+</div><!-- fragment --><p>Generic assertion to compare two values.</p>
 <p>EXAMPLE: </p><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a3ffcd9946aaa0bb84fe9add54490a66a">ASSERT</a>(1, EQ, 1);</div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">VAL</td><td>is the actual value. </td></tr>
@@ -181,11 +199,13 @@ Macros</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;sctf::intern::assert_statement(VAL, EXP, sctf::EQUALS(), <a class="el" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Assert two values to be equal. This is equivalent to using ASSERT with EQUALS comparator.</p>
+<b>Value:</b><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a>(std::forward_as_tuple(sctf::EQUALS(), VAL, EXP), \</div><div class="line">                                   <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="assert_8hpp_html_a66ea33d2f70b9fe0e0aae7f21e8801c2"><div class="ttname"><a href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a></div><div class="ttdeci">void assert_statement(S &amp;&amp;stmt_, loc const &amp;loc_)</div><div class="ttdef"><b>Definition:</b> assert.hpp:211</div></div>
+<div class="ttc" id="structsctf_1_1intern_1_1loc_html"><div class="ttname"><a href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a></div><div class="ttdef"><b>Definition:</b> loc.hpp:30</div></div>
+</div><!-- fragment --><p>Assert two values to be equal. This is equivalent to using ASSERT with EQUALS comparator.</p>
 <p>EXAMPLE: </p><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#ab89e0ada284159beeb824e97f99da3d8">ASSERT_EQ</a>(1, 1);</div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">VAL</td><td>is the actual value. </td></tr>
@@ -211,7 +231,8 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">sctf::intern::assert_statement(VAL, <span class="keyword">false</span>, sctf::EQUALS(), \</div><div class="line">                                   <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="structsctf_1_1intern_1_1loc_html"><div class="ttname"><a href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a></div><div class="ttdef"><b>Definition:</b> loc.hpp:30</div></div>
+<b>Value:</b><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a>(std::forward_as_tuple(sctf::EQUALS(), VAL, <span class="keyword">false</span>), \</div><div class="line">                                   <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="assert_8hpp_html_a66ea33d2f70b9fe0e0aae7f21e8801c2"><div class="ttname"><a href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a></div><div class="ttdeci">void assert_statement(S &amp;&amp;stmt_, loc const &amp;loc_)</div><div class="ttdef"><b>Definition:</b> assert.hpp:211</div></div>
+<div class="ttc" id="structsctf_1_1intern_1_1loc_html"><div class="ttname"><a href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a></div><div class="ttdef"><b>Definition:</b> loc.hpp:30</div></div>
 </div><!-- fragment --><p>Assert a value to be false.</p>
 <p>EXAMPLE: </p><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a712de5f91a0f0886f8762185013162a6">ASSERT_FALSE</a>(<span class="keyword">false</span>);</div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -249,11 +270,13 @@ Macros</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;sctf::intern::assert_statement(VAL, EXP, !sctf::CMP, <a class="el" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Generic assertion to compare two values, where the comparison is logically negated. This is equivalent to prefixing a comparator with '!'.</p>
+<b>Value:</b><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a>(std::forward_as_tuple(!sctf::CMP, VAL, EXP), \</div><div class="line">                                   <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="assert_8hpp_html_a66ea33d2f70b9fe0e0aae7f21e8801c2"><div class="ttname"><a href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a></div><div class="ttdeci">void assert_statement(S &amp;&amp;stmt_, loc const &amp;loc_)</div><div class="ttdef"><b>Definition:</b> assert.hpp:211</div></div>
+<div class="ttc" id="structsctf_1_1intern_1_1loc_html"><div class="ttname"><a href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a></div><div class="ttdef"><b>Definition:</b> loc.hpp:30</div></div>
+</div><!-- fragment --><p>Generic assertion to compare two values, where the comparison is logically negated. This is equivalent to prefixing a comparator with '!'.</p>
 <p>EXAMPLE: </p><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#aebecf37e88c1f11551b2afbab452680b">ASSERT_NOT</a>(2, EQ, 1);</div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">VAL</td><td>is the actual value. </td></tr>
@@ -280,7 +303,8 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">sctf::intern::assert_statement(static_cast&lt;void const*&gt;(PTR), <span class="keyword">nullptr</span>, !sctf::EQUALS(), \</div><div class="line">                                   <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="structsctf_1_1intern_1_1loc_html"><div class="ttname"><a href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a></div><div class="ttdef"><b>Definition:</b> loc.hpp:30</div></div>
+<b>Value:</b><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a>(                                                     \</div><div class="line">        std::forward_as_tuple(!sctf::EQUALS(), static_cast&lt;void const*&gt;(PTR), <span class="keyword">nullptr</span>), \</div><div class="line">        <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="assert_8hpp_html_a66ea33d2f70b9fe0e0aae7f21e8801c2"><div class="ttname"><a href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a></div><div class="ttdeci">void assert_statement(S &amp;&amp;stmt_, loc const &amp;loc_)</div><div class="ttdef"><b>Definition:</b> assert.hpp:211</div></div>
+<div class="ttc" id="structsctf_1_1intern_1_1loc_html"><div class="ttname"><a href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a></div><div class="ttdef"><b>Definition:</b> loc.hpp:30</div></div>
 </div><!-- fragment --><p>Assert a pointer to be not nullptr.</p>
 <p>EXAMPLE: </p><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a6791cd1c8e48f76c4a1ebf89f9986f36">ASSERT_NOT_NULL</a>(&amp;var);</div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -331,7 +355,8 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">sctf::intern::assert_statement(static_cast&lt;void const*&gt;(PTR), <span class="keyword">nullptr</span>, sctf::EQUALS(), \</div><div class="line">                                   <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="structsctf_1_1intern_1_1loc_html"><div class="ttname"><a href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a></div><div class="ttdef"><b>Definition:</b> loc.hpp:30</div></div>
+<b>Value:</b><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a>(                                                    \</div><div class="line">        std::forward_as_tuple(sctf::EQUALS(), static_cast&lt;void const*&gt;(PTR), <span class="keyword">nullptr</span>), \</div><div class="line">        <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="assert_8hpp_html_a66ea33d2f70b9fe0e0aae7f21e8801c2"><div class="ttname"><a href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a></div><div class="ttdeci">void assert_statement(S &amp;&amp;stmt_, loc const &amp;loc_)</div><div class="ttdef"><b>Definition:</b> assert.hpp:211</div></div>
+<div class="ttc" id="structsctf_1_1intern_1_1loc_html"><div class="ttname"><a href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a></div><div class="ttdef"><b>Definition:</b> loc.hpp:30</div></div>
 </div><!-- fragment --><p>Assert a pointer to be nullptr.</p>
 <p>EXAMPLE: </p><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a6200be5426fbb75a0fbe4bdac245206a">ASSERT_NULL</a>(&amp;var);</div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -425,11 +450,13 @@ Macros</h2></td></tr>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname">VAL</td><td>)</td>
-          <td>&#160;&#160;&#160;sctf::intern::assert_statement(VAL, true, sctf::EQUALS(), <a class="el" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</td>
+          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Assert a value to be true.</p>
+<b>Value:</b><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a>(std::forward_as_tuple(sctf::EQUALS(), VAL, <span class="keyword">true</span>), \</div><div class="line">                                   <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="assert_8hpp_html_a66ea33d2f70b9fe0e0aae7f21e8801c2"><div class="ttname"><a href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a></div><div class="ttdeci">void assert_statement(S &amp;&amp;stmt_, loc const &amp;loc_)</div><div class="ttdef"><b>Definition:</b> assert.hpp:211</div></div>
+<div class="ttc" id="structsctf_1_1intern_1_1loc_html"><div class="ttname"><a href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a></div><div class="ttdef"><b>Definition:</b> loc.hpp:30</div></div>
+</div><!-- fragment --><p>Assert a value to be true.</p>
 <p>EXAMPLE: </p><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#abd77077d4c303e008f5ca79fdfe16071">ASSERT_TRUE</a>(<span class="keyword">true</span>);</div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">VAL</td><td>is the actual value. </td></tr>
@@ -454,11 +481,215 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">sctf::intern::assert_statement(VAL, <span class="keyword">static_cast&lt;</span>decltype(VAL)<span class="keyword">&gt;</span>(0), sctf::EQUALS(), \</div><div class="line">                                   <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="structsctf_1_1intern_1_1loc_html"><div class="ttname"><a href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a></div><div class="ttdef"><b>Definition:</b> loc.hpp:30</div></div>
+<b>Value:</b><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a>(                                                \</div><div class="line">        std::forward_as_tuple(sctf::EQUALS(), VAL, <span class="keyword">static_cast&lt;</span>decltype(VAL)<span class="keyword">&gt;</span>(0)), \</div><div class="line">        <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="assert_8hpp_html_a66ea33d2f70b9fe0e0aae7f21e8801c2"><div class="ttname"><a href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a></div><div class="ttdeci">void assert_statement(S &amp;&amp;stmt_, loc const &amp;loc_)</div><div class="ttdef"><b>Definition:</b> assert.hpp:211</div></div>
+<div class="ttc" id="structsctf_1_1intern_1_1loc_html"><div class="ttname"><a href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a></div><div class="ttdef"><b>Definition:</b> loc.hpp:30</div></div>
 </div><!-- fragment --><p>Assert a value to be zero.</p>
 <p>EXAMPLE: </p><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a1e876017a56b2599be78952209478cfb">ASSERT_ZERO</a>(0);</div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">VAL</td><td>is the actual value. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="file_ad465710725143b4c5cb4773a0669bd23"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_ad465710725143b4c5cb4773a0669bd23">&#9670;&nbsp;</a></span>assert_nothrow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename F &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void sctf::intern::assert_nothrow </td>
+          <td>(</td>
+          <td class="paramtype">F &amp;&amp;&#160;</td>
+          <td class="paramname"><em>fn_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structsctf_1_1intern_1_1loc.html">loc</a> const &amp;&#160;</td>
+          <td class="paramname"><em>loc_</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Apply a nothrow-assertion on a function invokation.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fn_</td><td>is the wrapper function to assert for. </td></tr>
+    <tr><td class="paramname">loc_</td><td>is the line of code where the assertion took place. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsctf_1_1intern_1_1assertion__failure.html">sctf::intern::assertion_failure</a></td><td>if a any throwable type is thrown by fn_. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="file_a7461cebf839c544ca54c78c91fb6aea8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a7461cebf839c544ca54c78c91fb6aea8">&#9670;&nbsp;</a></span>assert_runtime()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename F &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void sctf::intern::assert_runtime </td>
+          <td>(</td>
+          <td class="paramtype">F &amp;&amp;&#160;</td>
+          <td class="paramname"><em>fn_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>max_ms_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structsctf_1_1intern_1_1loc.html">loc</a> const &amp;&#160;</td>
+          <td class="paramname"><em>loc_</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Apply a runtime-assertion on a function invokation.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fn_</td><td>is the wrapper function to assert for. </td></tr>
+    <tr><td class="paramname">max_ms_</td><td>is the maximum amount of time in milliseconds. </td></tr>
+    <tr><td class="paramname">loc_</td><td>is the line of code where the assertion took place. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsctf_1_1intern_1_1assertion__failure.html">sctf::intern::assertion_failure</a></td><td>if fn_ does not complete within max_ms_, or any throwable type is thrown by fn_. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="file_a66ea33d2f70b9fe0e0aae7f21e8801c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a66ea33d2f70b9fe0e0aae7f21e8801c2">&#9670;&nbsp;</a></span>assert_statement()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename S &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void sctf::intern::assert_statement </td>
+          <td>(</td>
+          <td class="paramtype">S &amp;&amp;&#160;</td>
+          <td class="paramname"><em>stmt_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structsctf_1_1intern_1_1loc.html">loc</a> const &amp;&#160;</td>
+          <td class="paramname"><em>loc_</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Apply an assertion on two values by using the specified comparator.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">S</td><td>is the statement to assert, constisting of comparator, actual value, and expected value. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stmt_</td><td>is the comparison statement to assert. </td></tr>
+    <tr><td class="paramname">loc_</td><td>is the line of code where the assertion took place. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsctf_1_1intern_1_1assertion__failure.html">sctf::intern::assertion_failure</a></td><td>if the assertion fails according to the comparator. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="file_a654bc2c877a97a5fba04b5d9b80f9d50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a654bc2c877a97a5fba04b5d9b80f9d50">&#9670;&nbsp;</a></span>assert_throws()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename F &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void sctf::intern::assert_throws </td>
+          <td>(</td>
+          <td class="paramtype">F &amp;&amp;&#160;</td>
+          <td class="paramname"><em>fn_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char const *&#160;</td>
+          <td class="paramname"><em>tname_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structsctf_1_1intern_1_1loc.html">loc</a> const &amp;&#160;</td>
+          <td class="paramname"><em>loc_</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Apply a throw-assertion on a function invokation.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>is the throwable type to expect. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fn_</td><td>is the wrapper function to assert for. </td></tr>
+    <tr><td class="paramname">tname_</td><td>is the throwable types name. </td></tr>
+    <tr><td class="paramname">loc_</td><td>is the line of code where the assertion took place. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsctf_1_1intern_1_1assertion__failure.html">sctf::intern::assertion_failure</a></td><td>if a different, or no throwable type is thrown by fn_. </td></tr>
   </table>
   </dd>
 </dl>

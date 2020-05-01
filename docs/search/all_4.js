@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['enable',['enable',['../structsctf_1_1intern_1_1testsuite_1_1enable.html',1,'sctf::intern::testsuite::enable'],['../structsctf_1_1intern_1_1reporter_1_1enable.html',1,'sctf::intern::reporter::enable']]],
   ['end_5freport',['end_report',['../classsctf_1_1intern_1_1reporter.html#a68d69e327feea0534382b611dee5f628',1,'sctf::intern::reporter']]],
   ['epsilon',['epsilon',['../equality_8hpp.html#a816dad3de0f99ac0486ebc93a4d61ad4',1,'sctf']]],
   ['equality_2ehpp',['equality.hpp',['../equality_8hpp.html',1,'']]],

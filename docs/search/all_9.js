@@ -16,5 +16,5 @@ var searchData=
   ['m_5fstats',['m_stats',['../classsctf_1_1intern_1_1testsuite.html#a770a0653b6942e1014b741ec27b89ec4',1,'sctf::intern::testsuite']]],
   ['m_5fteardown_5ffn',['m_teardown_fn',['../classsctf_1_1intern_1_1testsuite.html#ac8954c175a42f913ea4e060f16fb3a88',1,'sctf::intern::testsuite']]],
   ['m_5ftestcases',['m_testcases',['../classsctf_1_1intern_1_1testsuite.html#a60b69409b407c395707db2536acd3ebe',1,'sctf::intern::testsuite']]],
-  ['markdown_5freporter',['markdown_reporter',['../classsctf_1_1markdown__reporter.html',1,'sctf']]]
+  ['markdown_5freporter',['markdown_reporter',['../classsctf_1_1markdown__reporter.html',1,'sctf::markdown_reporter'],['../classsctf_1_1markdown__reporter.html#aeeebb424e61beab9b71d12631a0033a5',1,'sctf::markdown_reporter::markdown_reporter(enable, std::ostream &amp;stream_)'],['../classsctf_1_1markdown__reporter.html#a062bc54652e375ed0b38ffb01df40952',1,'sctf::markdown_reporter::markdown_reporter(enable, char const *fname_)']]]
 ];

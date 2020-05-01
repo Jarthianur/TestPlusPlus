@@ -91,8 +91,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:abd1c1b744c6bcd9c9d2ace918c82a9ee"><td class="memItemLeft" align="right" valign="top"><a id="abd1c1b744c6bcd9c9d2ace918c82a9ee"></a>
 auto&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classsctf_1_1intern_1_1testcase.html">testcase</a> const &amp;) -&gt; <a class="el" href="classsctf_1_1intern_1_1testcase.html">testcase</a> &amp;=delete</td></tr>
 <tr class="separator:abd1c1b744c6bcd9c9d2ace918c82a9ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e8694a7221b63cd61fa917f6d3f232e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1testcase.html#a2e8694a7221b63cd61fa917f6d3f232e">testcase</a> (char const *name_, char const *ctx_, <a class="el" href="types_8hpp.html#aaa87da5d1bcf4ad6d7c0b32b834ffa1a">void_function</a> &amp;&amp;fn_)</td></tr>
-<tr class="separator:a2e8694a7221b63cd61fa917f6d3f232e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c51ac0c454d32283c4e32d214d026d6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsctf_1_1intern_1_1testcase.html#a9c51ac0c454d32283c4e32d214d026d6">testcase</a> (std::tuple&lt; char const *, char const *&gt; &amp;&amp;ctx_, <a class="el" href="types_8hpp.html#aaa87da5d1bcf4ad6d7c0b32b834ffa1a">void_function</a> &amp;&amp;fn_)</td></tr>
+<tr class="separator:a9c51ac0c454d32283c4e32d214d026d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f3ef1fbfe7816912f7030c547c83614"><td class="memItemLeft" align="right" valign="top"><a id="a5f3ef1fbfe7816912f7030c547c83614"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>testcase</b> (<a class="el" href="classsctf_1_1intern_1_1testcase.html">testcase</a> &amp;&amp;other_) noexcept</td></tr>
 <tr class="separator:a5f3ef1fbfe7816912f7030c547c83614"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,8 +157,8 @@ auto&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a cla
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a2e8694a7221b63cd61fa917f6d3f232e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2e8694a7221b63cd61fa917f6d3f232e">&#9670;&nbsp;</a></span>testcase()</h2>
+<a id="a9c51ac0c454d32283c4e32d214d026d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c51ac0c454d32283c4e32d214d026d6">&#9670;&nbsp;</a></span>testcase()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -169,13 +169,7 @@ auto&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a cla
         <tr>
           <td class="memname">sctf::intern::testcase::testcase </td>
           <td>(</td>
-          <td class="paramtype">char const *&#160;</td>
-          <td class="paramname"><em>name_</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char const *&#160;</td>
+          <td class="paramtype">std::tuple&lt; char const *, char const *&gt; &amp;&amp;&#160;</td>
           <td class="paramname"><em>ctx_</em>, </td>
         </tr>
         <tr>
@@ -198,8 +192,7 @@ auto&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a cla
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">name_</td><td>is the name/description for this testcase. </td></tr>
-    <tr><td class="paramname">ctx_</td><td>is the context (testsuite), where this testcase lives. </td></tr>
+    <tr><td class="paramname">ctx_</td><td>is the contextual description. 0 =&gt; name, 1 =&gt; testsuites name. </td></tr>
     <tr><td class="paramname">fn_</td><td>is the function performing the actual test. </td></tr>
   </table>
   </dd>
