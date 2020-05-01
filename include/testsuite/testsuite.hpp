@@ -26,6 +26,7 @@
 #include <chrono>
 #include <iostream>
 #include <memory>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -109,7 +110,7 @@ public:
      * @param fn_   is the function performing the test.
      */
     void test(char const* name_, void_function&& fn_) {
-        m_testcases.emplace_back(name_, m_name, std::move(fn_));
+        m_testcases.emplace_back(std::forward_as_tuple(name_, m_name), std::move(fn_));
         m_state = execution_state::PENDING;
     }
 

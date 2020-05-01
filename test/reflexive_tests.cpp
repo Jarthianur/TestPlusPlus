@@ -220,34 +220,34 @@ SUITE("test_testsuite") {
 
 SUITE_PAR("test_testcase") {
     TEST("creation") {
-        testcase tc("t1", "ctx", [] {});
-        testcase tc2("t2", "", [] {});
+        testcase tc({"t1", "ctx"}, [] {});
+        testcase tc2({"t2", ""}, [] {});
         ASSERT_EQ(tc.state(), testcase::result::NONE);
         ASSERT(tc.context(), EQ(), std::string("ctx"));
         ASSERT(tc2.context(), EQ(), std::string(""));
         ASSERT(tc.name(), EQ(), std::string("t1"));
     };
     TEST("successful_execution") {
-        testcase tc("t1", "ctx", [] {});
+        testcase tc({"t1", "ctx"}, [] {});
         tc();
         ASSERT_EQ(tc.state(), testcase::result::PASSED);
         ASSERT(tc.duration(), GT(), 0.0);
         ASSERT_ZERO(tc.reason().size());
     };
     TEST("failed_execution") {
-        testcase tc("t1", "ctx", [] { ASSERT_TRUE(false); });
+        testcase tc({"t1", "ctx"}, [] { ASSERT_TRUE(false); });
         tc();
         ASSERT_EQ(tc.state(), testcase::result::FAILED);
         ASSERT(tc.duration(), GT(), 0.0);
     };
     TEST("erroneous_execution") {
-        testcase tc("t1", "ctx", [] { throw std::logic_error("err"); });
+        testcase tc({"t1", "ctx"}, [] { throw std::logic_error("err"); });
         tc();
         ASSERT_EQ(tc.state(), testcase::result::ERROR);
         ASSERT(tc.duration(), GT(), 0.0);
         ASSERT(tc.reason(), EQ(), std::string("err"));
 
-        testcase tc2("t2", "ctx", [] { throw 1; });
+        testcase tc2({"t2", "ctx"}, [] { throw 1; });
         tc2();
         ASSERT_EQ(tc2.state(), testcase::result::ERROR);
         ASSERT(tc2.duration(), GT(), 0.0);

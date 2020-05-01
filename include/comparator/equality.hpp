@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <tuple>
 
 #include "comparator/comparator.hpp"
 
@@ -79,8 +80,9 @@ public:
         return (std::abs(actual_value - expected_value) <=
                 std::max(std::abs(actual_value), std::abs(expected_value)) * epsilon_) != m_neg ?
                    comparison() :
-                   comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
-                              to_string(expected_value));
+                   comparison(
+                       m_neg ? m_neg_cmp_str : m_cmp_str,
+                       std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
     }
 };
 }  // namespace intern

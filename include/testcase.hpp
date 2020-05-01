@@ -22,6 +22,7 @@
 
 #include <cstdint>
 #include <string>
+#include <tuple>
 #include <utility>
 
 #include "assertion_failure.hpp"
@@ -47,8 +48,8 @@ public:
      * @param ctx_  is the context (testsuite), where this testcase lives.
      * @param fn_   is the function performing the actual test.
      */
-    testcase(char const* name_, char const* ctx_, void_function&& fn_)
-        : m_name(name_), m_context(ctx_), m_test_func(std::move(fn_)) {}
+    testcase(std::tuple<char const*, char const*>&& ctx_, void_function&& fn_)
+        : m_name(std::get<0>(ctx_)), m_context(std::get<1>(ctx_)), m_test_func(std::move(fn_)) {}
 
     testcase(testcase&& other_) noexcept
         : m_name(other_.m_name),
