@@ -22,6 +22,8 @@
 #ifndef SCTF_ASSERT_HPP
 #define SCTF_ASSERT_HPP
 
+#include <tuple>
+
 #include "comparator/comparator.hpp"
 
 #include "assertion_failure.hpp"
@@ -41,8 +43,9 @@
  * @param CMP is the comparator to use.
  * @param EXP is the expected value.
  */
-#define ASSERT(VAL, CMP, EXP) \
-    sctf::intern::assert_statement(VAL, EXP, sctf::CMP, sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT(VAL, CMP, EXP)                                                  \
+    sctf::intern::assert_statement(std::forward_as_tuple(VAL, EXP), sctf::CMP, \
+                                   sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Generic assertion to compare two values, where the comparison is logically negated.
@@ -57,8 +60,9 @@
  * @param CMP is the comparator to use.
  * @param EXP is the expected value.
  */
-#define ASSERT_NOT(VAL, CMP, EXP) \
-    sctf::intern::assert_statement(VAL, EXP, !sctf::CMP, sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_NOT(VAL, CMP, EXP)                                               \
+    sctf::intern::assert_statement(std::forward_as_tuple(VAL, EXP), !sctf::CMP, \
+                                   sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert two values to be equal.
@@ -72,8 +76,9 @@
  * @param VAL is the actual value.
  * @param EXP is the expected value.
  */
-#define ASSERT_EQ(VAL, EXP) \
-    sctf::intern::assert_statement(VAL, EXP, sctf::EQUALS(), sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_EQ(VAL, EXP)                                                         \
+    sctf::intern::assert_statement(std::forward_as_tuple(VAL, EXP), sctf::EQUALS(), \
+                                   sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert a value to be true.
@@ -85,8 +90,9 @@
  *
  * @param VAL is the actual value.
  */
-#define ASSERT_TRUE(VAL) \
-    sctf::intern::assert_statement(VAL, true, sctf::EQUALS(), sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_TRUE(VAL)                                                             \
+    sctf::intern::assert_statement(std::forward_as_tuple(VAL, true), sctf::EQUALS(), \
+                                   sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert a value to be false.
@@ -98,8 +104,8 @@
  *
  * @param VAL is the actual value.
  */
-#define ASSERT_FALSE(VAL)                                      \
-    sctf::intern::assert_statement(VAL, false, sctf::EQUALS(), \
+#define ASSERT_FALSE(VAL)                                                             \
+    sctf::intern::assert_statement(std::forward_as_tuple(VAL, false), sctf::EQUALS(), \
                                    sctf::intern::loc{__FILE__, __LINE__})
 
 /**
@@ -112,9 +118,9 @@
  *
  * @param PTR is the actual pointer.
  */
-#define ASSERT_NULL(PTR)                                                                   \
-    sctf::intern::assert_statement(static_cast<void const*>(PTR), nullptr, sctf::EQUALS(), \
-                                   sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_NULL(PTR)                                                                          \
+    sctf::intern::assert_statement(std::forward_as_tuple(static_cast<void const*>(PTR), nullptr), \
+                                   sctf::EQUALS(), sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert a pointer to be not nullptr.
@@ -126,9 +132,9 @@
  *
  * @param PTR is the actual pointer.
  */
-#define ASSERT_NOT_NULL(PTR)                                                                \
-    sctf::intern::assert_statement(static_cast<void const*>(PTR), nullptr, !sctf::EQUALS(), \
-                                   sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_NOT_NULL(PTR)                                                                      \
+    sctf::intern::assert_statement(std::forward_as_tuple(static_cast<void const*>(PTR), nullptr), \
+                                   !sctf::EQUALS(), sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert a value to be zero.
@@ -140,9 +146,9 @@
  *
  * @param VAL is the actual value.
  */
-#define ASSERT_ZERO(VAL)                                                               \
-    sctf::intern::assert_statement(VAL, static_cast<decltype(VAL)>(0), sctf::EQUALS(), \
-                                   sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_ZERO(VAL)                                                                      \
+    sctf::intern::assert_statement(std::forward_as_tuple(VAL, static_cast<decltype(VAL)>(0)), \
+                                   sctf::EQUALS(), sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert an expression to throw a specific throwable type.
@@ -202,9 +208,9 @@ namespace intern
  * @param loc_ is the line of code where the assertion took place.
  * @throw sctf::intern::assertion_failure if the assertion fails according to the comparator.
  */
-template<typename C, typename V, typename E = V>
-static void assert_statement(V const& val_, E const& exp_, C&& cmp_, loc const& loc_) {
-    comparison res = cmp_(val_, exp_);
+template<typename C, typename V>
+static void assert_statement(V&& val_, C&& cmp_, loc const& loc_) {
+    comparison res = cmp_(std::get<0>(val_), std::get<1>(val_));
     if (!res) {
         throw assertion_failure(*res, loc_);
     }
