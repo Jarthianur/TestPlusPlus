@@ -23,6 +23,7 @@
 #include <array>
 #include <chrono>
 #include <ctime>
+#include <memory>
 
 #include "reporter/reporter.hpp"
 
@@ -46,8 +47,8 @@ public:
      * @param stream_ is the stream where to print the report. (default: stdout)
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
-    static auto create(std::ostream& stream_ = std::cout, bool capture_ = false) -> reporter_ptr {
-        return reporter_ptr(new xml_reporter(stream_, capture_));
+    static auto create(std::ostream& stream_ = std::cout) -> std::shared_ptr<xml_reporter> {
+        return std::make_shared<xml_reporter>(stream_);
     }
 
     /**
@@ -56,13 +57,18 @@ public:
      * @param fname_ is the filename where to print the report.
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
-    static auto create(char const* fname_, bool capture_ = false) -> reporter_ptr {
-        return reporter_ptr(new xml_reporter(fname_, capture_));
+    static auto create(char const* fname_) -> std::shared_ptr<xml_reporter> {
+        return std::make_shared<xml_reporter>(fname_);
+    }
+
+    auto with_captured_output() -> std::shared_ptr<xml_reporter> {
+        m_capture = true;
+        return std::static_pointer_cast<xml_reporter>(shared_from_this());
     }
 
 private:
-    xml_reporter(std::ostream& stream_, bool capture_) : reporter(stream_), m_capture(capture_) {}
-    xml_reporter(char const* fname_, bool capture_) : reporter(fname_), m_capture(capture_) {}
+    explicit xml_reporter(std::ostream& stream_) : reporter(stream_) {}
+    explicit xml_reporter(char const* fname_) : reporter(fname_) {}
 
     void report_testsuite(intern::testsuite_ptr const& ts_) override {
         std::time_t           stamp = std::chrono::system_clock::to_time_t(ts_->timestamp());
@@ -132,8 +138,8 @@ private:
               << "</system-err>" << intern::fmt::LF;
     }
 
-    std::size_t mutable m_id = 0;  ///< Report wide incremental ID for testsuites.
-    bool m_capture;                ///< Flags whether to report captured output from testcases.
+    std::size_t mutable m_id = 0;      ///< Report wide incremental ID for testsuites.
+    bool m_capture           = false;  ///< Flags whether to report captured output from testcases.
 };
 }  // namespace sctf
 

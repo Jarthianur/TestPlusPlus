@@ -40,7 +40,7 @@ namespace intern
 /**
  * Abstract base class for specific reporter implementations.
  */
-class reporter
+class reporter : public std::enable_shared_from_this<reporter>
 {
 public:
     reporter(reporter const&)     = delete;
