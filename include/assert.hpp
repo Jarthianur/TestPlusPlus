@@ -29,7 +29,6 @@
 #include "assertion_failure.hpp"
 #include "duration.hpp"
 #include "loc.hpp"
-#include "types.hpp"
 
 /**
  * Generic assertion to compare two values.
@@ -44,7 +43,7 @@
  * @param EXP is the expected value.
  */
 #define ASSERT(VAL, CMP, EXP)                                                  \
-    sctf::intern::assert_statement(std::forward_as_tuple(VAL, EXP), sctf::CMP, \
+    sctf::intern::assert_statement(std::forward_as_tuple(sctf::CMP, VAL, EXP), \
                                    sctf::intern::loc{__FILE__, __LINE__})
 
 /**
@@ -61,7 +60,7 @@
  * @param EXP is the expected value.
  */
 #define ASSERT_NOT(VAL, CMP, EXP)                                               \
-    sctf::intern::assert_statement(std::forward_as_tuple(VAL, EXP), !sctf::CMP, \
+    sctf::intern::assert_statement(std::forward_as_tuple(!sctf::CMP, VAL, EXP), \
                                    sctf::intern::loc{__FILE__, __LINE__})
 
 /**
@@ -77,7 +76,7 @@
  * @param EXP is the expected value.
  */
 #define ASSERT_EQ(VAL, EXP)                                                         \
-    sctf::intern::assert_statement(std::forward_as_tuple(VAL, EXP), sctf::EQUALS(), \
+    sctf::intern::assert_statement(std::forward_as_tuple(sctf::EQUALS(), VAL, EXP), \
                                    sctf::intern::loc{__FILE__, __LINE__})
 
 /**
@@ -91,7 +90,7 @@
  * @param VAL is the actual value.
  */
 #define ASSERT_TRUE(VAL)                                                             \
-    sctf::intern::assert_statement(std::forward_as_tuple(VAL, true), sctf::EQUALS(), \
+    sctf::intern::assert_statement(std::forward_as_tuple(sctf::EQUALS(), VAL, true), \
                                    sctf::intern::loc{__FILE__, __LINE__})
 
 /**
@@ -105,7 +104,7 @@
  * @param VAL is the actual value.
  */
 #define ASSERT_FALSE(VAL)                                                             \
-    sctf::intern::assert_statement(std::forward_as_tuple(VAL, false), sctf::EQUALS(), \
+    sctf::intern::assert_statement(std::forward_as_tuple(sctf::EQUALS(), VAL, false), \
                                    sctf::intern::loc{__FILE__, __LINE__})
 
 /**
@@ -118,9 +117,10 @@
  *
  * @param PTR is the actual pointer.
  */
-#define ASSERT_NULL(PTR)                                                                          \
-    sctf::intern::assert_statement(std::forward_as_tuple(static_cast<void const*>(PTR), nullptr), \
-                                   sctf::EQUALS(), sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_NULL(PTR)                                                               \
+    sctf::intern::assert_statement(                                                    \
+        std::forward_as_tuple(sctf::EQUALS(), static_cast<void const*>(PTR), nullptr), \
+        sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert a pointer to be not nullptr.
@@ -132,9 +132,10 @@
  *
  * @param PTR is the actual pointer.
  */
-#define ASSERT_NOT_NULL(PTR)                                                                      \
-    sctf::intern::assert_statement(std::forward_as_tuple(static_cast<void const*>(PTR), nullptr), \
-                                   !sctf::EQUALS(), sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_NOT_NULL(PTR)                                                            \
+    sctf::intern::assert_statement(                                                     \
+        std::forward_as_tuple(!sctf::EQUALS(), static_cast<void const*>(PTR), nullptr), \
+        sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert a value to be zero.
@@ -146,9 +147,10 @@
  *
  * @param VAL is the actual value.
  */
-#define ASSERT_ZERO(VAL)                                                                      \
-    sctf::intern::assert_statement(std::forward_as_tuple(VAL, static_cast<decltype(VAL)>(0)), \
-                                   sctf::EQUALS(), sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_ZERO(VAL)                                                           \
+    sctf::intern::assert_statement(                                                \
+        std::forward_as_tuple(sctf::EQUALS(), VAL, static_cast<decltype(VAL)>(0)), \
+        sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert an expression to throw a specific throwable type.
@@ -208,9 +210,9 @@ namespace intern
  * @param loc_ is the line of code where the assertion took place.
  * @throw sctf::intern::assertion_failure if the assertion fails according to the comparator.
  */
-template<typename C, typename V>
-static void assert_statement(V&& val_, C&& cmp_, loc const& loc_) {
-    comparison res = cmp_(std::get<0>(val_), std::get<1>(val_));
+template<typename S>
+void assert_statement(S&& stmt_, loc const& loc_) {
+    comparison res = std::get<0>(stmt_)(std::get<1>(stmt_), std::get<2>(stmt_));
     if (!res) {
         throw assertion_failure(*res, loc_);
     }
@@ -225,8 +227,8 @@ static void assert_statement(V&& val_, C&& cmp_, loc const& loc_) {
  * @param loc_ is the line of code where the assertion took place.
  * @throw sctf::intern::assertion_failure if a different, or no throwable type is thrown by fn_.
  */
-template<typename T>
-static void assert_throws(void_function&& fn_, char const* tname_, loc const& loc_) {
+template<typename T, typename F>
+void assert_throws(F&& fn_, char const* tname_, loc const& loc_) {
     try {
         fn_();
     } catch (T const&) {
@@ -246,7 +248,8 @@ static void assert_throws(void_function&& fn_, char const* tname_, loc const& lo
  * @param loc_ is the line of code where the assertion took place.
  * @throw sctf::intern::assertion_failure if a any throwable type is thrown by fn_.
  */
-static void assert_nothrow(void_function&& fn_, loc const& loc_) {
+template<typename F>
+void assert_nothrow(F&& fn_, loc const& loc_) {
     try {
         fn_();
     } catch (std::exception const& e) {
@@ -265,7 +268,8 @@ static void assert_nothrow(void_function&& fn_, loc const& loc_) {
  * @throw sctf::intern::assertion_failure if fn_ does not complete within max_ms_, or any throwable
  * type is thrown by fn_.
  */
-static void assert_runtime(void_function&& fn_, double max_ms_, loc const& loc_) {
+template<typename F>
+void assert_runtime(F&& fn_, double max_ms_, loc const& loc_) {
     try {
         duration dur;
         fn_();
