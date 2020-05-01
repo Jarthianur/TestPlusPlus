@@ -34,10 +34,10 @@ public:
         m_d *= m;
     }
 
-    int i() const {
+    auto i() const -> int {
         return m_i;
     }
-    double d() const {
+    auto d() const -> double {
         return m_d;
     }
 };

@@ -26,6 +26,7 @@
 #include <chrono>
 #include <iostream>
 #include <memory>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -48,20 +49,24 @@ using testsuite_ptr = std::shared_ptr<testsuite>;
  */
 class testsuite
 {
+protected:
+    struct enable
+    {};
+
 public:
     testsuite(testsuite const&)     = delete;
     testsuite(testsuite&&) noexcept = delete;
-    testsuite& operator=(testsuite const&) = delete;
-    testsuite& operator=(testsuite&&) noexcept = delete;
-    virtual ~testsuite() noexcept              = default;
+    auto operator=(testsuite const&) -> testsuite& = delete;
+    auto operator=(testsuite&&) noexcept -> testsuite& = delete;
+    virtual ~testsuite() noexcept                      = default;
 
     /**
      * Create a new testsuite.
      *
      * @param name_ is the name, or description of the testsuite.
      */
-    static testsuite_ptr create(char const* name_) {
-        return testsuite_ptr(new testsuite(name_));
+    static auto create(char const* name_) -> testsuite_ptr {
+        return std::make_shared<testsuite>(enable{}, name_);
     }
 
     /**
@@ -105,7 +110,7 @@ public:
      * @param fn_   is the function performing the test.
      */
     void test(char const* name_, void_function&& fn_) {
-        m_testcases.emplace_back(name_, m_name, std::move(fn_));
+        m_testcases.emplace_back(std::forward_as_tuple(name_, m_name), std::move(fn_));
         m_state = execution_state::PENDING;
     }
 
@@ -152,51 +157,51 @@ public:
     /**
      * Get the testsuite name.
      */
-    inline char const* name() const {
+    inline auto name() const -> char const* {
         return m_name;
     }
 
     /**
      * Get the timestamp of instantiation.
      */
-    inline std::chrono::system_clock::time_point const& timestamp() const {
+    inline auto timestamp() const -> std::chrono::system_clock::time_point const& {
         return m_create_time;
     }
 
     /**
      * Get the test statistics.
      */
-    inline statistic const& statistics() const {
+    inline auto statistics() const -> statistic const& {
         return m_stats;
     }
 
     /**
      * Get the accumulated time spent on all tests.
      */
-    inline double execution_duration() const {
+    inline auto execution_duration() const -> double {
         return m_exec_dur;
     }
 
     /**
      * Get all testcases.
      */
-    inline std::vector<testcase> const& testcases() const {
+    inline auto testcases() const -> std::vector<testcase> const& {
         return m_testcases;
     }
 
-protected:
     /**
      * @param name_ is the name, or description of the testsuite.
      */
-    explicit testsuite(char const* name_)
+    explicit testsuite(enable, char const* name_)
         : m_name(name_), m_create_time(std::chrono::system_clock::now()) {}
 
+protected:
     /**
      * Hold a function optionally, that can be executed without throwing any exception.
      */
     struct silent_functor final
     {
-        silent_functor& operator()() {
+        auto operator()() -> silent_functor& {
             if (fn) {
                 try {
                     fn();

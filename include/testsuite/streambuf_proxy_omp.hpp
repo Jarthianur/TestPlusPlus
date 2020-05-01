@@ -49,8 +49,8 @@ class streambuf_proxy_omp : public std::streambuf
 public:
     streambuf_proxy_omp(streambuf_proxy_omp const&)     = delete;
     streambuf_proxy_omp(streambuf_proxy_omp&&) noexcept = delete;
-    streambuf_proxy_omp& operator=(streambuf_proxy_omp const&) = delete;
-    streambuf_proxy_omp& operator=(streambuf_proxy_omp&&) noexcept = delete;
+    auto operator=(streambuf_proxy_omp const&) -> streambuf_proxy_omp& = delete;
+    auto operator=(streambuf_proxy_omp&&) noexcept -> streambuf_proxy_omp& = delete;
 
     /**
      * Replace the underlying buffer of the stream.
@@ -58,7 +58,7 @@ public:
      *
      * @param stream_ is the stream to capture from.
      */
-    streambuf_proxy_omp(std::ostream& stream_)
+    explicit streambuf_proxy_omp(std::ostream& stream_)
         : m_orig_buf(stream_.rdbuf(this)),
           m_orig_stream(stream_),
           m_thd_buffers(static_cast<std::size_t>(omp_get_max_threads())) {}
@@ -74,7 +74,7 @@ public:
     /**
      * Get the current buffer content for the executing thread.
      */
-    std::string str() const {
+    auto str() const -> std::string {
         return SCTF_INTERN_CURRENT_THREAD_BUFFER().str();
     }
 
@@ -86,12 +86,12 @@ public:
     }
 
 private:
-    int_type overflow(int_type c_) override {
+    auto overflow(int_type c_) -> int_type override {
         return SCTF_INTERN_CURRENT_THREAD_BUFFER().sputc(
             std::stringbuf::traits_type::to_char_type(c_));
     }
 
-    std::streamsize xsputn(char const* s_, std::streamsize n_) override {
+    auto xsputn(char const* s_, std::streamsize n_) -> std::streamsize override {
         return SCTF_INTERN_CURRENT_THREAD_BUFFER().sputn(s_, n_);
     }
 

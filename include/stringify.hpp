@@ -45,7 +45,7 @@ namespace intern
  * @tparam T is the type whose name is returned.
  */
 template<typename T>
-static std::string const& name_for_type() {
+static auto name_for_type() -> std::string const& {
     static thread_local std::string name;
     if (name.length() > 0) {
         return name;
@@ -77,7 +77,7 @@ static std::string const& name_for_type() {
  *
  * @param c_ is the char to stringify.
  */
-inline std::string escaped_char(char c_) {
+inline auto escaped_char(char c_) -> std::string {
     switch (c_) {
         case '\r': return "\\r";
         case '\n': return "\\n";
@@ -85,6 +85,7 @@ inline std::string escaped_char(char c_) {
         case '\f': return "\\f";
         case '\v': return "\\v";
         case '\"': return "\\\"";
+        default: break;
     }
     return std::string(1, c_);
 }
@@ -94,7 +95,7 @@ inline std::string escaped_char(char c_) {
  *
  * @param str_ is the string to escape.
  */
-static std::string escaped_string(std::string const& str_) {
+static auto escaped_string(std::string const& str_) -> std::string {
     std::string s = str_;
     std::size_t p = 0;
     while ((p = s.find_first_of("\r\n\t\f\v\"", p)) != std::string::npos) {
@@ -114,7 +115,7 @@ static std::string escaped_string(std::string const& str_) {
 template<typename T,
          SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream) &&
                                !SCTF_INTERN_IS_FLOAT(T))>
-std::string to_string(T const& arg_) {
+auto to_string(T const& arg_) -> std::string {
     std::ostringstream oss;
     oss << arg_;
     return oss.str();
@@ -127,7 +128,7 @@ std::string to_string(T const& arg_) {
  * @param arg_ is the number to convert to string.
  */
 template<typename T, SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_FLOAT(T))>
-std::string to_string(T const& arg_) {
+auto to_string(T const& arg_) -> std::string {
     std::ostringstream oss;
     oss << std::setprecision(std::numeric_limits<T>::max_digits10) << arg_;
     return oss.str();
@@ -143,7 +144,7 @@ std::string to_string(T const& arg_) {
  */
 template<typename T,
          SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream))>
-std::string to_string(T const&) {
+auto to_string(T const&) -> std::string {
     return name_for_type<T>();
 }
 
@@ -152,7 +153,7 @@ std::string to_string(T const&) {
  *
  * @param arg_ is the string to transform.
  */
-inline std::string to_string(std::string const& arg_) {
+inline auto to_string(std::string const& arg_) -> std::string {
     return std::string("\"") + escaped_string(arg_) + "\"";
 }
 
@@ -161,7 +162,7 @@ inline std::string to_string(std::string const& arg_) {
  *
  * @param arg_ is the cstring to transform.
  */
-inline std::string to_string(char const* const& arg_) {
+inline auto to_string(char const* const& arg_) -> std::string {
     return std::string("\"") + escaped_string(arg_) + "\"";
 }
 
@@ -170,14 +171,14 @@ inline std::string to_string(char const* const& arg_) {
  *
  * @param arg_ is the character to transform.
  */
-inline std::string to_string(char const& arg_) {
+inline auto to_string(char const& arg_) -> std::string {
     return std::string("'") + escaped_char(arg_) + "'";
 }
 
 /**
  * Get a printable string representation for null pointer.
  */
-inline std::string to_string(std::nullptr_t const&) {
+inline auto to_string(std::nullptr_t const&) -> std::string {
     return "0";
 }
 
@@ -186,7 +187,7 @@ inline std::string to_string(std::nullptr_t const&) {
  *
  * @param arg_ is the bool value to convert to string.
  */
-inline std::string to_string(bool const& arg_) {
+inline auto to_string(bool const& arg_) -> std::string {
     return arg_ ? "true" : "false";
 }
 
@@ -196,7 +197,7 @@ inline std::string to_string(bool const& arg_) {
  * @param arg_ is the regex to convert to string.
  * @return the pattern of arg_.
  */
-inline std::string to_string(regex const& arg_) {
+inline auto to_string(regex const& arg_) -> std::string {
     return to_string(arg_.pattern);
 }
 }  // namespace intern

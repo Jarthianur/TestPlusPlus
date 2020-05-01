@@ -26,12 +26,14 @@
 
 SCTF_EPSILON(0.000001)
 
-using namespace sctf;
+using sctf::console_reporter;
+using sctf::markdown_reporter;
+using sctf::xml_reporter;
 
-int main(int, char**) {
-    auto rep   = console_reporter::create(std::cout, true, true);
-    auto repx  = xml_reporter::create("test.xml", true);
-    auto repmd = markdown_reporter::create("test.md", true);
+auto main(int, char**) -> int {
+    auto rep   = console_reporter::create(std::cout)->with_color()->with_captured_output();
+    auto repx  = xml_reporter::create("test.xml")->with_captured_output();
+    auto repmd = markdown_reporter::create("test.md")->with_captured_output();
 
     try {
         basic_tests();

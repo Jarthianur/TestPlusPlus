@@ -20,6 +20,7 @@
 #ifndef SCTF_REPORTER_MARKDOWN_REPORTER_HPP
 #define SCTF_REPORTER_MARKDOWN_REPORTER_HPP
 
+#include <memory>
 #include <sstream>
 
 #include "reporter/reporter.hpp"
@@ -34,9 +35,9 @@ class markdown_reporter : public intern::reporter
 public:
     markdown_reporter(markdown_reporter const&)     = delete;
     markdown_reporter(markdown_reporter&&) noexcept = delete;
-    markdown_reporter& operator=(markdown_reporter const&) = delete;
-    markdown_reporter& operator=(markdown_reporter&&) noexcept = delete;
-    ~markdown_reporter() noexcept override                     = default;
+    auto operator=(markdown_reporter const&) -> markdown_reporter& = delete;
+    auto operator=(markdown_reporter&&) noexcept -> markdown_reporter& = delete;
+    ~markdown_reporter() noexcept override                             = default;
 
     /**
      * Create a markdown reporter.
@@ -44,8 +45,8 @@ public:
      * @param stream_ is the stream where to print the report. (default: stdout)
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
-    static reporter_ptr create(std::ostream& stream_ = std::cout, bool capture_ = false) {
-        return reporter_ptr(new markdown_reporter(stream_, capture_));
+    static auto create(std::ostream& stream_ = std::cout) -> std::shared_ptr<markdown_reporter> {
+        return std::make_shared<markdown_reporter>(enable{}, stream_);
     }
 
     /**
@@ -54,16 +55,21 @@ public:
      * @param fname_ is the filename where to print the report.
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
-    static reporter_ptr create(char const* fname_, bool capture_ = false) {
-        return reporter_ptr(new markdown_reporter(fname_, capture_));
+    static auto create(char const* fname_) -> std::shared_ptr<markdown_reporter> {
+        return std::make_shared<markdown_reporter>(enable{}, fname_);
     }
 
-private:
-    markdown_reporter(std::ostream& stream_, bool capture_)
-        : reporter(stream_), m_capture(capture_) {}
+    auto with_captured_output() -> std::shared_ptr<markdown_reporter> {
+        m_capture = true;
+        return std::static_pointer_cast<markdown_reporter>(shared_from_this());
+    }
 
-    markdown_reporter(char const* fname_, bool capture_) : reporter(fname_), m_capture(capture_) {}
-    void report_testsuite(intern::testsuite_ptr const ts_) override {
+    explicit markdown_reporter(enable, std::ostream& stream_) : reporter(stream_) {}
+
+    explicit markdown_reporter(enable, char const* fname_) : reporter(fname_) {}
+
+private:
+    void report_testsuite(intern::testsuite_ptr const& ts_) override {
         *this << "## " << ts_->name() << intern::fmt::XLF
               << "|Tests|Successes|Failures|Errors|Time|" << intern::fmt::LF << "|-|-|-|-|-|"
               << intern::fmt::LF << "|" << ts_->statistics().tests() << "|"
@@ -121,7 +127,7 @@ private:
         *this << "|";
     }
 
-    bool m_capture;  ///< Flags whether to report captured output from testcases.
+    bool m_capture = false;  ///< Flags whether to report captured output from testcases.
 };
 }  // namespace sctf
 

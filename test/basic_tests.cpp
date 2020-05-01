@@ -23,8 +23,6 @@
 
 #include "test_traits.hpp"
 
-using namespace sctf;
-
 void test_traits();
 
 void basic_tests() {

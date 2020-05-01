@@ -22,6 +22,7 @@
 
 #include <cstdint>
 #include <string>
+#include <tuple>
 #include <utility>
 
 #include "assertion_failure.hpp"
@@ -39,16 +40,16 @@ class testcase
 {
 public:
     testcase(testcase const&) = delete;
-    testcase& operator=(testcase const&) = delete;
-    ~testcase() noexcept                 = default;
+    auto operator=(testcase const&) -> testcase& = delete;
+    ~testcase() noexcept                         = default;
 
     /**
      * @param name_ is the name/description for this testcase.
      * @param ctx_  is the context (testsuite), where this testcase lives.
      * @param fn_   is the function performing the actual test.
      */
-    testcase(char const* name_, char const* ctx_, void_function&& fn_)
-        : m_name(name_), m_context(ctx_), m_test_func(std::move(fn_)) {}
+    testcase(std::tuple<char const*, char const*>&& ctx_, void_function&& fn_)
+        : m_name(std::get<0>(ctx_)), m_context(std::get<1>(ctx_)), m_test_func(std::move(fn_)) {}
 
     testcase(testcase&& other_) noexcept
         : m_name(other_.m_name),
@@ -58,7 +59,7 @@ public:
           m_err_msg(std::move(other_.m_err_msg)),
           m_test_func(std::move(other_.m_test_func)) {}
 
-    testcase& operator=(testcase&& other_) noexcept {
+    auto operator=(testcase&& other_) noexcept -> testcase& {
         m_name      = other_.m_name;
         m_context   = other_.m_context;
         m_state     = other_.m_state;
@@ -103,14 +104,14 @@ public:
     /**
      * Get the result state.
      */
-    inline result state() const {
+    inline auto state() const -> result {
         return m_state;
     }
 
     /**
      * Get the duration of the test run in milliseconds.
      */
-    inline double duration() const {
+    inline auto duration() const -> double {
         return m_duration;
     }
 
@@ -118,21 +119,21 @@ public:
      * Get the error, or failure reason.
      * If the test passed, it is empty.
      */
-    inline std::string const& reason() const {
+    inline auto reason() const -> std::string const& {
         return m_err_msg;
     }
 
     /**
      * Get the name/description of this testcase.
      */
-    inline char const* name() const {
+    inline auto name() const -> char const* {
         return m_name;
     }
 
     /**
      * Get the context (testsuite), where this testcase lives.
      */
-    inline char const* context() const {
+    inline auto context() const -> char const* {
         return m_context;
     }
 
@@ -157,14 +158,14 @@ public:
     /**
      * Get the captured output from stdout.
      */
-    inline std::string const& cout() const {
+    inline auto cout() const -> std::string const& {
         return m_cout;
     }
 
     /**
      * Get the captured output from stderr.
      */
-    inline std::string const& cerr() const {
+    inline auto cerr() const -> std::string const& {
         return m_cerr;
     }
 
