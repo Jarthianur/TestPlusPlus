@@ -21,7 +21,6 @@
 #define SCTF_COMPARATOR_RANGE_HPP
 
 #include <algorithm>
-#include <tuple>
 
 #include "comparator/comparator.hpp"
 
