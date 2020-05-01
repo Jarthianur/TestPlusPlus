@@ -20,6 +20,7 @@
 #ifndef SCTF_REPORTER_XML_REPORTER_HPP
 #define SCTF_REPORTER_XML_REPORTER_HPP
 
+#include <array>
 #include <chrono>
 #include <ctime>
 
