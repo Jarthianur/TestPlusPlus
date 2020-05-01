@@ -1,5 +1,5 @@
 <map id="sctf::intern::reporter" name="sctf::intern::reporter">
-<area shape="rect" id="node2" href="$classsctf_1_1console__reporter.html" title="sctf::console_reporter" alt="" coords="5,80,168,107"/>
-<area shape="rect" id="node3" href="$classsctf_1_1markdown__reporter.html" title="sctf::markdown_reporter" alt="" coords="193,80,375,107"/>
-<area shape="rect" id="node4" href="$classsctf_1_1xml__reporter.html" title="sctf::xml_reporter" alt="" coords="400,80,539,107"/>
+<area shape="rect" id="node3" href="$classsctf_1_1console__reporter.html" title="sctf::console_reporter" alt="" coords="5,169,168,196"/>
+<area shape="rect" id="node4" href="$classsctf_1_1markdown__reporter.html" title="sctf::markdown_reporter" alt="" coords="193,169,375,196"/>
+<area shape="rect" id="node5" href="$classsctf_1_1xml__reporter.html" title="sctf::xml_reporter" alt="" coords="400,169,539,196"/>
 </map>

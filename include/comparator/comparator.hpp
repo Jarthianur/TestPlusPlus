@@ -23,6 +23,7 @@
 #define SCTF_COMPARATOR_COMPARATOR_HPP
 
 #include <memory>
+#include <tuple>
 
 #include "cpp_meta.hpp"
 #include "stringify.hpp"
@@ -50,14 +51,14 @@ struct comparison final
 
     comparison() : m_failure(std::nullopt) {}
 
-    comparison(char const* comp_str_, std::string const& val_, std::string const& expect_)
-        : m_failure("Expected " + val_ + " " + comp_str_ + " " + expect_) {}
+    comparison(char const* comp_str_, std::tuple<std::string&&, std::string&&>&& val_)
+        : m_failure("Expected " + std::get<0>(val_) + " " + comp_str_ + " " + std::get<1>(val_)) {}
 
     explicit operator bool() {
         return !m_failure;
     }
 
-    std::string const& operator*() const {
+    auto operator*() const -> std::string const& {
         return *m_failure;
     }
 
@@ -68,12 +69,17 @@ private:
 
     comparison() = default;
 
-    comparison(char const* comp_str_, std::string const& val_, std::string const& expect_)
+    comparison(char const* comp_str_, std::tuple<std::string&&, std::string&&>&& val_)
         : m_success(false) {
         std::string msg;
-        msg.reserve(15 + std::strlen(comp_str_) + val_.length() + expect_.length());
+        msg.reserve(15 + std::strlen(comp_str_) + std::get<0>(val_).length() +
+                    std::get<1>(val_).length());
         msg = "Expected ";
-        msg.append(val_).append(" ").append(comp_str_).append(" ").append(expect_);
+        msg.append(std::get<0>(val_))
+            .append(" ")
+            .append(comp_str_)
+            .append(" ")
+            .append(std::get<1>(val_));
         error() = msg;
     }
 
@@ -81,14 +87,14 @@ private:
         return m_success;
     }
 
-    std::string const& operator*() const {
+    auto operator*() const -> std::string const& {
         return error();
     }
 
 private:
     bool const m_success = true;
 
-    std::string& error() const {
+    static auto error() -> std::string& {
         static thread_local std::string err_msg;
         return err_msg;
     }
@@ -107,31 +113,31 @@ private:
  * @param CMPSTR is a cstring representing the comparison constraint, like "equals".
  * @param PRED is the comparison predicate / condition.
  */
-#define SCTF_COMPARATOR(NAME, CMPSTR, PRED)                                                   \
-    namespace sctf                                                                            \
-    {                                                                                         \
-    namespace intern                                                                          \
-    {                                                                                         \
-    class NAME                                                                                \
-    {                                                                                         \
-        static constexpr char const* m_cmp_str     = "to be " CMPSTR;                         \
-        static constexpr char const* m_neg_cmp_str = "to be not " CMPSTR;                     \
-        bool                         m_neg         = false;                                   \
-                                                                                              \
-    public:                                                                                   \
-        NAME& operator!() {                                                                   \
-            m_neg = !m_neg;                                                                   \
-            return *this;                                                                     \
-        }                                                                                     \
-        template<typename V, typename E = V>                                                  \
-        comparison operator()(V const& actual_value, E const& expected_value) const {         \
-            return (PRED) != m_neg ?                                                          \
-                       comparison() :                                                         \
-                       comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value), \
-                                  to_string(expected_value));                                 \
-        }                                                                                     \
-    };                                                                                        \
-    }                                                                                         \
+#define SCTF_COMPARATOR(NAME, CMPSTR, PRED)                                                        \
+    namespace sctf                                                                                 \
+    {                                                                                              \
+    namespace intern                                                                               \
+    {                                                                                              \
+    class NAME                                                                                     \
+    {                                                                                              \
+        static constexpr char const* m_cmp_str     = "to be " CMPSTR;                              \
+        static constexpr char const* m_neg_cmp_str = "to be not " CMPSTR;                          \
+        bool                         m_neg         = false;                                        \
+                                                                                                   \
+    public:                                                                                        \
+        auto operator!() -> NAME& {                                                                \
+            m_neg = !m_neg;                                                                        \
+            return *this;                                                                          \
+        }                                                                                          \
+        template<typename V, typename E = V>                                                       \
+        auto operator()(V const& actual_value, E const& expected_value) const -> comparison {      \
+            return (PRED) != m_neg ? comparison() :                                                \
+                                     comparison(m_neg ? m_neg_cmp_str : m_cmp_str,                 \
+                                                std::forward_as_tuple(to_string(actual_value),     \
+                                                                      to_string(expected_value))); \
+        }                                                                                          \
+    };                                                                                             \
+    }                                                                                              \
     }
 
 /**
@@ -145,7 +151,7 @@ private:
     namespace sctf                                        \
     {                                                     \
     template<typename... Args>                            \
-    static intern::COMP NAME(Args&&... args) {            \
+    static auto NAME(Args&&... args) -> intern::COMP {    \
         return intern::COMP(std::forward<Args>(args)...); \
     }                                                     \
     }

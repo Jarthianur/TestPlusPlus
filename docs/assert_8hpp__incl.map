@@ -1,11 +1,10 @@
 <map id="include/assert.hpp" name="include/assert.hpp">
-<area shape="rect" id="node2" href="$comparator_8hpp.html" title="comparator/comparator.hpp" alt="" coords="420,80,623,107"/>
-<area shape="rect" id="node20" href="$assertion__failure_8hpp_source.html" title="assertion_failure.hpp" alt="" coords="847,80,1006,107"/>
-<area shape="rect" id="node22" href="$loc_8hpp_source.html" title="loc.hpp" alt="" coords="1008,155,1077,181"/>
-<area shape="rect" id="node23" href="$duration_8hpp_source.html" title="duration.hpp" alt="" coords="1081,80,1185,107"/>
-<area shape="rect" id="node25" href="$types_8hpp.html" title="types.hpp" alt="" coords="1210,80,1297,107"/>
-<area shape="rect" id="node4" href="$cpp__meta_8hpp.html" title="cpp_meta.hpp" alt="" coords="5,229,120,256"/>
-<area shape="rect" id="node5" href="$stringify_8hpp.html" title="stringify.hpp" alt="" coords="470,155,573,181"/>
-<area shape="rect" id="node13" href="$regex_8hpp.html" title="regex.hpp" alt="" coords="718,229,805,256"/>
-<area shape="rect" id="node16" href="$traits_8hpp.html" title="traits.hpp" alt="" coords="829,229,913,256"/>
+<area shape="rect" id="node3" href="$comparator_8hpp.html" title="comparator/comparator.hpp" alt="" coords="391,80,593,107"/>
+<area shape="rect" id="node21" href="$assertion__failure_8hpp_source.html" title="assertion_failure.hpp" alt="" coords="689,80,847,107"/>
+<area shape="rect" id="node23" href="$loc_8hpp_source.html" title="loc.hpp" alt="" coords="851,155,920,181"/>
+<area shape="rect" id="node24" href="$duration_8hpp_source.html" title="duration.hpp" alt="" coords="924,80,1028,107"/>
+<area shape="rect" id="node5" href="$cpp__meta_8hpp.html" title="cpp_meta.hpp" alt="" coords="5,229,120,256"/>
+<area shape="rect" id="node6" href="$stringify_8hpp.html" title="stringify.hpp" alt="" coords="470,155,573,181"/>
+<area shape="rect" id="node14" href="$regex_8hpp.html" title="regex.hpp" alt="" coords="718,229,805,256"/>
+<area shape="rect" id="node17" href="$traits_8hpp.html" title="traits.hpp" alt="" coords="829,229,913,256"/>
 </map>

@@ -20,6 +20,8 @@
 #ifndef SCTF_REPORTER_CONSOLE_REPORTER_HPP
 #define SCTF_REPORTER_CONSOLE_REPORTER_HPP
 
+#include <memory>
+
 #include "reporter/reporter.hpp"
 
 namespace sctf
@@ -53,41 +55,56 @@ class console_reporter : public intern::reporter
 public:
     console_reporter(console_reporter const&)     = delete;
     console_reporter(console_reporter&&) noexcept = delete;
-    console_reporter& operator=(console_reporter const&) = delete;
-    console_reporter& operator=(console_reporter&&) noexcept = delete;
-    ~console_reporter() noexcept override                    = default;
+    auto operator=(console_reporter const&) -> console_reporter& = delete;
+    auto operator=(console_reporter&&) noexcept -> console_reporter& = delete;
+    ~console_reporter() noexcept override                            = default;
 
     /**
      * Create a console reporter.
      *
      * @param stream_ is the stream where to print the report. (default: stdout)
-     * @param color_ is the flag to enable colored results. (default: false)
-     * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
-    static reporter_ptr create(std::ostream& stream_ = std::cout, bool color_ = false,
-                               bool capture_ = false) {
-        return reporter_ptr(new console_reporter(stream_, color_, capture_));
+    static auto create(std::ostream& stream_ = std::cout) -> std::shared_ptr<console_reporter> {
+        return std::make_shared<console_reporter>(enable{}, stream_);
     }
 
     /**
      * Create a console reporter.
      *
      * @param fname_ is the filename where to print the report.
-     * @param color_ is the flag to enable colored results. (default: false)
-     * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
-    static reporter_ptr create(char const* fname_, bool color_ = false, bool capture_ = false) {
-        return reporter_ptr(new console_reporter(fname_, color_, capture_));
+    static auto create(char const* fname_) -> std::shared_ptr<console_reporter> {
+        return std::make_shared<console_reporter>(enable{}, fname_);
     }
 
+    /**
+     * Enable ansi colors in report.
+     *
+     * @return this reporter again.
+     */
+    auto with_color() -> std::shared_ptr<console_reporter> {
+        m_color = true;
+        return std::static_pointer_cast<console_reporter>(shared_from_this());
+    }
+
+    /**
+     * Enable reporting of captured output.
+     *
+     * @return this reporter again.
+     */
+    auto with_captured_output() -> std::shared_ptr<console_reporter> {
+        m_capture = true;
+        return std::static_pointer_cast<console_reporter>(shared_from_this());
+    }
+
+    /// Constructor for std::make_shared.
+    explicit console_reporter(enable, std::ostream& stream_) : reporter(stream_) {}
+
+    /// Constructor for std::make_shared.
+    explicit console_reporter(enable, char const* fname_) : reporter(fname_) {}
+
 private:
-    console_reporter(std::ostream& stream_, bool color_, bool capture_)
-        : reporter(stream_), m_color(color_), m_capture(capture_) {}
-
-    console_reporter(char const* fname_, bool color_, bool capture_)
-        : reporter(fname_), m_color(color_), m_capture(capture_) {}
-
-    void report_testsuite(intern::testsuite_ptr const ts_) override {
+    void report_testsuite(intern::testsuite_ptr const& ts_) override {
         *this << "Run Testsuite [" << ts_->name() << "]; time = " << ts_->execution_duration()
               << "ms" << intern::fmt::LF;
 
@@ -130,8 +147,8 @@ private:
               << (m_color ? intern::fmt::ANSI_RESET : "") << intern::fmt::LF;
     }
 
-    bool m_color;    ///< Flags whether print colored results.
-    bool m_capture;  ///< Flags whether to report captured output from testcases.
+    bool m_color   = false;  ///< Flags whether print colored results.
+    bool m_capture = false;  ///< Flags whether to report captured output from testcases.
 };
 }  // namespace sctf
 

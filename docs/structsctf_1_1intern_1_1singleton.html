@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Simple C++ Test Framework
-   &#160;<span id="projectnumber">2.0-rc3</span>
+   &#160;<span id="projectnumber">2.0-rc4</span>
    </div>
   </td>
  </tr>
@@ -75,9 +75,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a97f8548b5ffca12fd2ba02587e7c0f97"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a97f8548b5ffca12fd2ba02587e7c0f97"><td class="memTemplItemLeft" align="right" valign="top">static T &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structsctf_1_1intern_1_1singleton.html#a97f8548b5ffca12fd2ba02587e7c0f97">instance</a> (Args &amp;&amp;... args_)</td></tr>
-<tr class="separator:a97f8548b5ffca12fd2ba02587e7c0f97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89e36d00f65fe5db50c1592a7d271709"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:a89e36d00f65fe5db50c1592a7d271709"><td class="memTemplItemLeft" align="right" valign="top">static auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structsctf_1_1intern_1_1singleton.html#a89e36d00f65fe5db50c1592a7d271709">instance</a> (Args &amp;&amp;... args_) noexcept -&gt; T const &amp;</td></tr>
+<tr class="separator:a89e36d00f65fe5db50c1592a7d271709"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename T&gt;<br />
@@ -85,8 +85,8 @@ struct sctf::intern::singleton&lt; T &gt;</h3>
 
 <p>Provide a singleton pattern implementation that mitigates static initialization order fiasko. The instance exists in global scope. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a97f8548b5ffca12fd2ba02587e7c0f97"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a97f8548b5ffca12fd2ba02587e7c0f97">&#9670;&nbsp;</a></span>instance()</h2>
+<a id="a89e36d00f65fe5db50c1592a7d271709"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89e36d00f65fe5db50c1592a7d271709">&#9670;&nbsp;</a></span>instance()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -99,16 +99,16 @@ template&lt;typename... Args&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static T&amp; <a class="el" href="structsctf_1_1intern_1_1singleton.html">sctf::intern::singleton</a>&lt; T &gt;::instance </td>
+          <td class="memname">static auto <a class="el" href="structsctf_1_1intern_1_1singleton.html">sctf::intern::singleton</a>&lt; T &gt;::instance </td>
           <td>(</td>
           <td class="paramtype">Args &amp;&amp;...&#160;</td>
           <td class="paramname"><em>args_</em></td><td>)</td>
-          <td></td>
+          <td> -&gt; T const&amp; </td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

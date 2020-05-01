@@ -27,11 +27,9 @@ void basic_tests();
 class Failure : public std::exception
 {
 public:
-    Failure(char const* msg_) : std::exception(), m_msg(msg_) {}
+    explicit Failure(char const* msg_) : std::exception(), m_msg(msg_) {}
 
-    ~Failure() noexcept override = default;
-
-    char const* what() const noexcept override {
+    auto what() const noexcept -> char const* override {
         return m_msg;
     }
 

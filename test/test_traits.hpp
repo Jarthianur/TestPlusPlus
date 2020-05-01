@@ -60,25 +60,25 @@ struct iterable
 {
     struct iterator
     {
-        bool operator!=(iterator const&) const noexcept {
+        auto operator!=(iterator const&) const noexcept -> bool {
             return false;
         }
 
-        iterator& operator++() {
+        auto operator++() -> iterator& {
             return *this;
         }
 
-        bool operator*() const noexcept {
+        auto operator*() const noexcept -> bool {
             return true;
         }
     };
 
-    iterator begin() noexcept {
-        return iterator();
+    static auto begin() noexcept -> iterator {
+        return {};
     }
 
-    iterator end() noexcept {
-        return iterator();
+    static auto end() noexcept -> iterator {
+        return {};
     }
 };
 
@@ -86,17 +86,17 @@ struct not_iterable
 {
     struct iterator
     {
-        bool      operator!=(iterator const&) const noexcept = delete;
-        iterator& operator++()                               = delete;
-        bool      operator*() const noexcept                 = delete;
+        auto operator!=(iterator const&) const noexcept -> bool = delete;
+        auto operator++() -> iterator&                          = delete;
+        auto operator*() const noexcept -> bool                 = delete;
     };
 
-    iterator begin() noexcept {
-        return iterator();
+    static auto begin() noexcept -> iterator {
+        return {};
     }
 
-    iterator end() noexcept {
-        return iterator();
+    static auto end() noexcept -> iterator {
+        return {};
     }
 };
 

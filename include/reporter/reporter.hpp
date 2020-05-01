@@ -40,14 +40,14 @@ namespace intern
 /**
  * Abstract base class for specific reporter implementations.
  */
-class reporter
+class reporter : public std::enable_shared_from_this<reporter>
 {
 public:
     reporter(reporter const&)     = delete;
     reporter(reporter&&) noexcept = delete;
-    reporter& operator=(reporter const&) = delete;
-    reporter& operator=(reporter&&) noexcept = delete;
-    virtual ~reporter() noexcept             = default;
+    auto operator=(reporter const&) -> reporter& = delete;
+    auto operator=(reporter&&) noexcept -> reporter& = delete;
+    virtual ~reporter() noexcept                     = default;
 
     /**
      * Generate the report. Testsuites that are not yet completed will be run by a call to this
@@ -55,7 +55,7 @@ public:
      *
      * @return the sum of failed and erroneous tests
      */
-    std::size_t report() {
+    auto report() -> std::size_t {
         m_abs_errs     = 0;
         m_abs_fails    = 0;
         m_abs_tests    = 0;
@@ -77,6 +77,10 @@ public:
     }
 
 protected:
+    /// Helper type to prevent public constructor usage.
+    struct enable
+    {};
+
     /**
      * @param stream_ is the output stream for reports.
      */
@@ -98,7 +102,7 @@ protected:
      *
      * @param ts_ is the testsuite to generate the report for.
      */
-    virtual void report_testsuite(testsuite_ptr const ts_) {
+    virtual void report_testsuite(testsuite_ptr const& ts_) {
         std::for_each(ts_->testcases().begin(), ts_->testcases().end(),
                       [this](const testcase& tc) { report_testcase(tc); });
     }
@@ -128,7 +132,7 @@ protected:
      * @param t_ is the thing to print.
      */
     template<typename T>
-    std::ostream& operator<<(T const& t_) {
+    auto operator<<(T const& t_) -> std::ostream& {
         m_out_stream << t_;
         return m_out_stream;
     }

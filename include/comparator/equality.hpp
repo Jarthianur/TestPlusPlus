@@ -62,25 +62,26 @@ class f_equals
 public:
     f_equals() = default;
 
-    f_equals(double eps_) : m_eps(eps_) {}
+    explicit f_equals(double eps_) : m_eps(eps_) {}
 
-    f_equals& operator!() {
+    auto operator!() -> f_equals& {
         m_neg = !m_neg;
         return *this;
     }
 
     template<typename V, typename E = V>
-    comparison operator()(V const& actual_value, E const& expected_value) const {
+    auto operator()(V const& actual_value, E const& expected_value) const -> comparison {
         static_assert(
             SCTF_INTERN_IS_FLOAT(V) && SCTF_INTERN_IS_FLOAT(E),
             "The floating point comparator must not be used with other types than float, or double!");
 
-        V epsilon_ = static_cast<V>(m_eps);
+        typename std::decay<V>::type epsilon_ = static_cast<V>(m_eps);
         return (std::abs(actual_value - expected_value) <=
                 std::max(std::abs(actual_value), std::abs(expected_value)) * epsilon_) != m_neg ?
                    comparison() :
-                   comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value),
-                              to_string(expected_value));
+                   comparison(
+                       m_neg ? m_neg_cmp_str : m_cmp_str,
+                       std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
     }
 };
 }  // namespace intern

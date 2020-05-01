@@ -40,17 +40,17 @@ class testsuite_parallel : public testsuite
 public:
     testsuite_parallel(testsuite_parallel const&)     = delete;
     testsuite_parallel(testsuite_parallel&&) noexcept = delete;
-    testsuite_parallel& operator=(testsuite_parallel const&) = delete;
-    testsuite_parallel& operator=(testsuite_parallel&&) noexcept = delete;
-    ~testsuite_parallel() noexcept override                      = default;
+    auto operator=(testsuite_parallel const&) -> testsuite_parallel& = delete;
+    auto operator=(testsuite_parallel&&) noexcept -> testsuite_parallel& = delete;
+    ~testsuite_parallel() noexcept override                              = default;
 
     /**
      * Create a new testsuite.
      *
      * @param name_ is the name, or description of the testsuite.
      */
-    static testsuite_ptr create(char const* name_) {
-        return testsuite_ptr(new testsuite_parallel(name_));
+    static auto create(char const* name_) -> testsuite_ptr {
+        return std::make_shared<testsuite_parallel>(enable{}, name_);
     }
 
     /**
@@ -68,7 +68,7 @@ public:
             m_stats.m_num_of_tests = m_testcases.size();
             streambuf_proxy_omp mt_buf_cout(std::cout);
             streambuf_proxy_omp mt_buf_cerr(std::cerr);
-#pragma omp parallel
+#pragma omp parallel default(shared)
             {  // BEGIN parallel section
                 double      tmp   = 0.0;
                 std::size_t fails = 0;
@@ -105,11 +105,12 @@ public:
         }
     }
 
-private:
     /**
+     * Constructor for std::make_shared.
+     *
      * @param name_ is the name, or description of the testsuite.
      */
-    explicit testsuite_parallel(char const* name_) : testsuite(name_) {}
+    explicit testsuite_parallel(enable e_, char const* name_) : testsuite(e_, name_) {}
 };
 }  // namespace intern
 }  // namespace sctf

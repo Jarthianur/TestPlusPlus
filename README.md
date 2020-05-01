@@ -134,7 +134,7 @@ Both operators create regular expressions with *ECMAScript* syntax.
 ```cpp
 #include "sctf.hpp"
 SCTF_EPSILON(0.001)
-SCTF_DEFAULT_MAIN(xml_reporter::create())
+SCTF_DEFAULT_MAIN(xml_reporter::create()->with_captured_output())
 
 SUITE("testSomething") {
     TEST("abc") {
@@ -211,11 +211,11 @@ DESCRIBE("testMyClass") {
 
 ### Reporters
 
-| Format                      | Factory Method           | Arguments (default)                                                       |
-| --------------------------- | ------------------------ | ------------------------------------------------------------------------- |
-| Console oriented plain text | console_reporter::create  | output stream/file (stdout), ANSI colors (false), captured output (false) |
-| JUnit XML                   | xml_reporter::create      | output stream/file (stdout), captured output (false)                      |
-| Markdown                    | markdown_reporter::create | output stream/file (stdout), captured output (false)                      |
+| Format                      | Factory Method            | Arguments (default)         | Modifier Methods                 |
+| --------------------------- | ------------------------- | --------------------------- | -------------------------------- |
+| Console oriented plain text | console_reporter::create  | output stream/file (stdout) | with_captured_output, with_color |
+| JUnit XML                   | xml_reporter::create      | output stream/file (stdout) | with_captured_output             |
+| Markdown                    | markdown_reporter::create | output stream/file (stdout) | with_captured_output             |
 
 ### Comparators
 
