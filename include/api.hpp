@@ -46,8 +46,8 @@ struct singleton final
      * @return the underlying instance.
      */
     template<typename... Args>
-    static T& instance(Args&&... args_) {
-        static T inst(std::forward<Args>(args_)...);
+    static auto instance(Args&&... args_) noexcept -> T const& {
+        static T const inst(std::forward<Args>(args_)...);
         return inst;
     }
 };
@@ -108,12 +108,22 @@ struct singleton final
     namespace SCTF_INTERN_API_SUITE_NS(__LINE__) {                                     \
         class test_module                                                              \
         {                                                                              \
+            sctf::intern::testsuite_ptr m_ts_;                                         \
+                                                                                       \
+        public:                                                                        \
+            test_module(test_module const&)     = delete;                              \
+            test_module(test_module&&) noexcept = delete;                              \
+            auto operator=(test_module const&) -> test_module& = delete;               \
+            auto operator=(test_module&&) noexcept -> test_module& = delete;           \
+            virtual ~test_module() noexcept                        = default;          \
+                                                                                       \
         protected:                                                                     \
-            virtual ~test_module() noexcept = default;                                 \
-            test_module() : sctf_intern_m_ts_(sctf::intern::BASE::create(DESCR)) {     \
-                sctf::intern::runner::instance().add_testsuite(sctf_intern_m_ts_);     \
+            test_module() : m_ts_(sctf::intern::BASE::create(DESCR)) {                 \
+                sctf::intern::runner::instance().add_testsuite(m_ts_);                 \
             }                                                                          \
-            sctf::intern::testsuite_ptr sctf_intern_m_ts_;                             \
+            auto sctf_intern_ts_() const -> sctf::intern::testsuite_ptr const& {       \
+                return m_ts_;                                                          \
+            }                                                                          \
         };                                                                             \
         class SCTF_INTERN_API_SUITE_NAME(__LINE__);                                    \
         static auto const& sctf_intern_mod_ =                                          \
@@ -133,7 +143,7 @@ struct singleton final
     {                                                                                          \
     public:                                                                                    \
         explicit SCTF_INTERN_API_TEST_NAME(__LINE__)(sctf_intern_mod_type_ * mod_) {           \
-            mod_->sctf_intern_m_ts_->test(DESCR,                                               \
+            mod_->sctf_intern_ts_()->test(DESCR,                                               \
                                           [=] { mod_->SCTF_INTERN_API_TEST_FN(__LINE__)(); }); \
         }                                                                                      \
     } SCTF_INTERN_API_TEST_INST(__LINE__){this};                                               \
@@ -149,7 +159,7 @@ struct singleton final
     {                                                                             \
     public:                                                                       \
         explicit sctf_intern_##FN##_(sctf_intern_mod_type_* mod_) {               \
-            mod_->sctf_intern_m_ts_->FN([=] { mod_->sctf_intern_##FN##_fn_(); }); \
+            mod_->sctf_intern_ts_()->FN([=] { mod_->sctf_intern_##FN##_fn_(); }); \
         }                                                                         \
     } sctf_intern_##FN##_inst_{this};                                             \
     void sctf_intern_##FN##_fn_()

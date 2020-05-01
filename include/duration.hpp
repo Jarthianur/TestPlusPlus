@@ -38,7 +38,7 @@ public:
     /**
      * Get the duration since starting point in milliseconds.
      */
-    double get() {
+    auto get() -> double {
         return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - m_start)
             .count();
     }

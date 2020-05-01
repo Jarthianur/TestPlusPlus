@@ -40,16 +40,16 @@ class testsuite_parallel : public testsuite
 public:
     testsuite_parallel(testsuite_parallel const&)     = delete;
     testsuite_parallel(testsuite_parallel&&) noexcept = delete;
-    testsuite_parallel& operator=(testsuite_parallel const&) = delete;
-    testsuite_parallel& operator=(testsuite_parallel&&) noexcept = delete;
-    ~testsuite_parallel() noexcept override                      = default;
+    auto operator=(testsuite_parallel const&) -> testsuite_parallel& = delete;
+    auto operator=(testsuite_parallel&&) noexcept -> testsuite_parallel& = delete;
+    ~testsuite_parallel() noexcept override                              = default;
 
     /**
      * Create a new testsuite.
      *
      * @param name_ is the name, or description of the testsuite.
      */
-    static testsuite_ptr create(char const* name_) {
+    static auto create(char const* name_) -> testsuite_ptr {
         return testsuite_ptr(new testsuite_parallel(name_));
     }
 

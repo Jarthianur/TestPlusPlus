@@ -53,9 +53,9 @@ class console_reporter : public intern::reporter
 public:
     console_reporter(console_reporter const&)     = delete;
     console_reporter(console_reporter&&) noexcept = delete;
-    console_reporter& operator=(console_reporter const&) = delete;
-    console_reporter& operator=(console_reporter&&) noexcept = delete;
-    ~console_reporter() noexcept override                    = default;
+    auto operator=(console_reporter const&) -> console_reporter& = delete;
+    auto operator=(console_reporter&&) noexcept -> console_reporter& = delete;
+    ~console_reporter() noexcept override                            = default;
 
     /**
      * Create a console reporter.
@@ -64,8 +64,8 @@ public:
      * @param color_ is the flag to enable colored results. (default: false)
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
-    static reporter_ptr create(std::ostream& stream_ = std::cout, bool color_ = false,
-                               bool capture_ = false) {
+    static auto create(std::ostream& stream_ = std::cout, bool color_ = false,
+                       bool capture_ = false) -> reporter_ptr {
         return reporter_ptr(new console_reporter(stream_, color_, capture_));
     }
 
@@ -76,7 +76,8 @@ public:
      * @param color_ is the flag to enable colored results. (default: false)
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
-    static reporter_ptr create(char const* fname_, bool color_ = false, bool capture_ = false) {
+    static auto create(char const* fname_, bool color_ = false, bool capture_ = false)
+        -> reporter_ptr {
         return reporter_ptr(new console_reporter(fname_, color_, capture_));
     }
 
@@ -87,7 +88,7 @@ private:
     console_reporter(char const* fname_, bool color_, bool capture_)
         : reporter(fname_), m_color(color_), m_capture(capture_) {}
 
-    void report_testsuite(intern::testsuite_ptr const ts_) override {
+    void report_testsuite(intern::testsuite_ptr const& ts_) override {
         *this << "Run Testsuite [" << ts_->name() << "]; time = " << ts_->execution_duration()
               << "ms" << intern::fmt::LF;
 

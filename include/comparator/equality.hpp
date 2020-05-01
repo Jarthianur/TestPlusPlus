@@ -62,15 +62,15 @@ class f_equals
 public:
     f_equals() = default;
 
-    f_equals(double eps_) : m_eps(eps_) {}
+    explicit f_equals(double eps_) : m_eps(eps_) {}
 
-    f_equals& operator!() {
+    auto operator!() -> f_equals& {
         m_neg = !m_neg;
         return *this;
     }
 
     template<typename V, typename E = V>
-    comparison operator()(V const& actual_value, E const& expected_value) const {
+    auto operator()(V const& actual_value, E const& expected_value) const -> comparison {
         static_assert(
             SCTF_INTERN_IS_FLOAT(V) && SCTF_INTERN_IS_FLOAT(E),
             "The floating point comparator must not be used with other types than float, or double!");

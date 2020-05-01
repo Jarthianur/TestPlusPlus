@@ -51,16 +51,16 @@ class testsuite
 public:
     testsuite(testsuite const&)     = delete;
     testsuite(testsuite&&) noexcept = delete;
-    testsuite& operator=(testsuite const&) = delete;
-    testsuite& operator=(testsuite&&) noexcept = delete;
-    virtual ~testsuite() noexcept              = default;
+    auto operator=(testsuite const&) -> testsuite& = delete;
+    auto operator=(testsuite&&) noexcept -> testsuite& = delete;
+    virtual ~testsuite() noexcept                      = default;
 
     /**
      * Create a new testsuite.
      *
      * @param name_ is the name, or description of the testsuite.
      */
-    static testsuite_ptr create(char const* name_) {
+    static auto create(char const* name_) -> testsuite_ptr {
         return testsuite_ptr(new testsuite(name_));
     }
 
@@ -152,35 +152,35 @@ public:
     /**
      * Get the testsuite name.
      */
-    inline char const* name() const {
+    inline auto name() const -> char const* {
         return m_name;
     }
 
     /**
      * Get the timestamp of instantiation.
      */
-    inline std::chrono::system_clock::time_point const& timestamp() const {
+    inline auto timestamp() const -> std::chrono::system_clock::time_point const& {
         return m_create_time;
     }
 
     /**
      * Get the test statistics.
      */
-    inline statistic const& statistics() const {
+    inline auto statistics() const -> statistic const& {
         return m_stats;
     }
 
     /**
      * Get the accumulated time spent on all tests.
      */
-    inline double execution_duration() const {
+    inline auto execution_duration() const -> double {
         return m_exec_dur;
     }
 
     /**
      * Get all testcases.
      */
-    inline std::vector<testcase> const& testcases() const {
+    inline auto testcases() const -> std::vector<testcase> const& {
         return m_testcases;
     }
 
@@ -196,7 +196,7 @@ protected:
      */
     struct silent_functor final
     {
-        silent_functor& operator()() {
+        auto operator()() -> silent_functor& {
             if (fn) {
                 try {
                     fn();

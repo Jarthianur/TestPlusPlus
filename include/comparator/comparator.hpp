@@ -57,7 +57,7 @@ struct comparison final
         return !m_failure;
     }
 
-    std::string const& operator*() const {
+    auto operator*() const -> std::string const& {
         return *m_failure;
     }
 
@@ -81,14 +81,14 @@ private:
         return m_success;
     }
 
-    std::string const& operator*() const {
+    auto operator*() const -> std::string const& {
         return error();
     }
 
 private:
     bool const m_success = true;
 
-    std::string& error() const {
+    static auto error() -> std::string& {
         static thread_local std::string err_msg;
         return err_msg;
     }
@@ -119,12 +119,12 @@ private:
         bool                         m_neg         = false;                                   \
                                                                                               \
     public:                                                                                   \
-        NAME& operator!() {                                                                   \
+        auto operator!() -> NAME& {                                                           \
             m_neg = !m_neg;                                                                   \
             return *this;                                                                     \
         }                                                                                     \
         template<typename V, typename E = V>                                                  \
-        comparison operator()(V const& actual_value, E const& expected_value) const {         \
+        auto operator()(V const& actual_value, E const& expected_value) const -> comparison { \
             return (PRED) != m_neg ?                                                          \
                        comparison() :                                                         \
                        comparison(m_neg ? m_neg_cmp_str : m_cmp_str, to_string(actual_value), \
@@ -145,7 +145,7 @@ private:
     namespace sctf                                        \
     {                                                     \
     template<typename... Args>                            \
-    static intern::COMP NAME(Args&&... args) {            \
+    static auto NAME(Args&&... args) -> intern::COMP {    \
         return intern::COMP(std::forward<Args>(args)...); \
     }                                                     \
     }

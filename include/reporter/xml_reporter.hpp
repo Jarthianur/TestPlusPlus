@@ -35,9 +35,9 @@ class xml_reporter : public intern::reporter
 public:
     xml_reporter(xml_reporter const&)     = delete;
     xml_reporter(xml_reporter&&) noexcept = delete;
-    xml_reporter& operator=(xml_reporter const&) = delete;
-    xml_reporter& operator=(xml_reporter&&) noexcept = delete;
-    ~xml_reporter() noexcept override                = default;
+    auto operator=(xml_reporter const&) -> xml_reporter& = delete;
+    auto operator=(xml_reporter&&) noexcept -> xml_reporter& = delete;
+    ~xml_reporter() noexcept override                        = default;
 
     /**
      * Create a xml reporter.
@@ -45,7 +45,7 @@ public:
      * @param stream_ is the stream where to print the report. (default: stdout)
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
-    static reporter_ptr create(std::ostream& stream_ = std::cout, bool capture_ = false) {
+    static auto create(std::ostream& stream_ = std::cout, bool capture_ = false) -> reporter_ptr {
         return reporter_ptr(new xml_reporter(stream_, capture_));
     }
 
@@ -55,7 +55,7 @@ public:
      * @param fname_ is the filename where to print the report.
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
-    static reporter_ptr create(char const* fname_, bool capture_ = false) {
+    static auto create(char const* fname_, bool capture_ = false) -> reporter_ptr {
         return reporter_ptr(new xml_reporter(fname_, capture_));
     }
 
@@ -63,15 +63,15 @@ private:
     xml_reporter(std::ostream& stream_, bool capture_) : reporter(stream_), m_capture(capture_) {}
     xml_reporter(char const* fname_, bool capture_) : reporter(fname_), m_capture(capture_) {}
 
-    void report_testsuite(intern::testsuite_ptr const ts_) override {
-        std::time_t stamp = std::chrono::system_clock::to_time_t(ts_->timestamp());
-        char        buff[128];
-        std::strftime(buff, 127, "%FT%T", std::localtime(&stamp));
+    void report_testsuite(intern::testsuite_ptr const& ts_) override {
+        std::time_t           stamp = std::chrono::system_clock::to_time_t(ts_->timestamp());
+        std::array<char, 128> buff{};
+        std::strftime(buff.data(), 127, "%FT%T", std::localtime(&stamp));
         *this << intern::fmt::SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name()
               << "\" errors=\"" << ts_->statistics().errors() << "\" tests=\""
               << ts_->statistics().tests() << "\" failures=\"" << ts_->statistics().failures()
-              << "\" skipped=\"0\" time=\"" << ts_->execution_duration() << "\" timestamp=\""
-              << buff << "\">" << intern::fmt::LF;
+              << R"(" skipped="0" time=")" << ts_->execution_duration() << "\" timestamp=\""
+              << buff.data() << "\">" << intern::fmt::LF;
         reporter::report_testsuite(ts_);
         *this << intern::fmt::SPACE << "</testsuite>" << intern::fmt::LF;
     }
@@ -111,7 +111,7 @@ private:
     }
 
     void begin_report() override {
-        *this << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << intern::fmt::LF << "<testsuites>"
+        *this << R"(<?xml version="1.0" encoding="UTF-8" ?>)" << intern::fmt::LF << "<testsuites>"
               << intern::fmt::LF;
     }
 

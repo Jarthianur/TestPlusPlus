@@ -56,14 +56,14 @@ public:
     /**
      * Get the contained testsuites.
      */
-    std::vector<testsuite_ptr> const& testsuites() {
+    auto testsuites() -> std::vector<testsuite_ptr> const& {
         return m_testsuites;
     }
 
     /**
      * Get a runner instance, as singleton.
      */
-    static runner& instance() {
+    static auto instance() -> runner& {
         static runner r;
         return r;
     }

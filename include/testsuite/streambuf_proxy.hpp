@@ -36,8 +36,8 @@ class streambuf_proxy : public std::streambuf
 public:
     streambuf_proxy(streambuf_proxy const&)     = delete;
     streambuf_proxy(streambuf_proxy&&) noexcept = delete;
-    streambuf_proxy& operator=(streambuf_proxy const&) = delete;
-    streambuf_proxy& operator=(streambuf_proxy&&) noexcept = delete;
+    auto operator=(streambuf_proxy const&) -> streambuf_proxy& = delete;
+    auto operator=(streambuf_proxy&&) noexcept -> streambuf_proxy& = delete;
 
     /**
      * Replace the underlying buffer of the stream.
@@ -59,7 +59,7 @@ public:
     /**
      * Get the current buffer content.
      */
-    std::string str() const {
+    auto str() const -> std::string {
         return m_buffer.str();
     }
 
@@ -71,11 +71,11 @@ public:
     }
 
 private:
-    int_type overflow(int_type c_) override {
+    auto overflow(int_type c_) -> int_type override {
         return m_buffer.sputc(std::stringbuf::traits_type::to_char_type(c_));
     }
 
-    std::streamsize xsputn(char const* s_, std::streamsize n_) override {
+    auto xsputn(char const* s_, std::streamsize n_) -> std::streamsize override {
         return m_buffer.sputn(s_, n_);
     }
 

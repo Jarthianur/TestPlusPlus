@@ -34,9 +34,9 @@ class markdown_reporter : public intern::reporter
 public:
     markdown_reporter(markdown_reporter const&)     = delete;
     markdown_reporter(markdown_reporter&&) noexcept = delete;
-    markdown_reporter& operator=(markdown_reporter const&) = delete;
-    markdown_reporter& operator=(markdown_reporter&&) noexcept = delete;
-    ~markdown_reporter() noexcept override                     = default;
+    auto operator=(markdown_reporter const&) -> markdown_reporter& = delete;
+    auto operator=(markdown_reporter&&) noexcept -> markdown_reporter& = delete;
+    ~markdown_reporter() noexcept override                             = default;
 
     /**
      * Create a markdown reporter.
@@ -44,7 +44,7 @@ public:
      * @param stream_ is the stream where to print the report. (default: stdout)
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
-    static reporter_ptr create(std::ostream& stream_ = std::cout, bool capture_ = false) {
+    static auto create(std::ostream& stream_ = std::cout, bool capture_ = false) -> reporter_ptr {
         return reporter_ptr(new markdown_reporter(stream_, capture_));
     }
 
@@ -54,7 +54,7 @@ public:
      * @param fname_ is the filename where to print the report.
      * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
-    static reporter_ptr create(char const* fname_, bool capture_ = false) {
+    static auto create(char const* fname_, bool capture_ = false) -> reporter_ptr {
         return reporter_ptr(new markdown_reporter(fname_, capture_));
     }
 
@@ -63,7 +63,7 @@ private:
         : reporter(stream_), m_capture(capture_) {}
 
     markdown_reporter(char const* fname_, bool capture_) : reporter(fname_), m_capture(capture_) {}
-    void report_testsuite(intern::testsuite_ptr const ts_) override {
+    void report_testsuite(intern::testsuite_ptr const& ts_) override {
         *this << "## " << ts_->name() << intern::fmt::XLF
               << "|Tests|Successes|Failures|Errors|Time|" << intern::fmt::LF << "|-|-|-|-|-|"
               << intern::fmt::LF << "|" << ts_->statistics().tests() << "|"
