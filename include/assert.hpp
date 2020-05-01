@@ -201,12 +201,9 @@ namespace intern
 /**
  * Apply an assertion on two values by using the specified comparator.
  *
- * @tparam C is the type of cmp_.
- * @tparam V is the type of val_.
- * @tparam E is the type of exp_.
- * @param val_ is the actual value.
- * @param exp_ is the expected value.
- * @param cmp_ is the comparator to use.
+ * @tparam S is the statement to assert, constisting of comparator, actual value, and expected
+ * value.
+ * @param stmt_ is the comparison statement to assert.
  * @param loc_ is the line of code where the assertion took place.
  * @throw sctf::intern::assertion_failure if the assertion fails according to the comparator.
  */

@@ -44,8 +44,7 @@ public:
     ~testcase() noexcept                         = default;
 
     /**
-     * @param name_ is the name/description for this testcase.
-     * @param ctx_  is the context (testsuite), where this testcase lives.
+     * @param ctx_  is the contextual description. 0 => name, 1 => testsuites name.
      * @param fn_   is the function performing the actual test.
      */
     testcase(std::tuple<char const*, char const*>&& ctx_, void_function&& fn_)

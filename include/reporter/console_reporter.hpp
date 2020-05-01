@@ -63,8 +63,6 @@ public:
      * Create a console reporter.
      *
      * @param stream_ is the stream where to print the report. (default: stdout)
-     * @param color_ is the flag to enable colored results. (default: false)
-     * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
     static auto create(std::ostream& stream_ = std::cout) -> std::shared_ptr<console_reporter> {
         return std::make_shared<console_reporter>(enable{}, stream_);
@@ -74,25 +72,35 @@ public:
      * Create a console reporter.
      *
      * @param fname_ is the filename where to print the report.
-     * @param color_ is the flag to enable colored results. (default: false)
-     * @param capture_ is the flag to enable reporting of captured output. (default: false)
      */
     static auto create(char const* fname_) -> std::shared_ptr<console_reporter> {
         return std::make_shared<console_reporter>(enable{}, fname_);
     }
 
+    /**
+     * Enable ansi colors in report.
+     *
+     * @return this reporter again.
+     */
     auto with_color() -> std::shared_ptr<console_reporter> {
         m_color = true;
         return std::static_pointer_cast<console_reporter>(shared_from_this());
     }
 
+    /**
+     * Enable reporting of captured output.
+     *
+     * @return this reporter again.
+     */
     auto with_captured_output() -> std::shared_ptr<console_reporter> {
         m_capture = true;
         return std::static_pointer_cast<console_reporter>(shared_from_this());
     }
 
+    /// Constructor for std::make_shared.
     explicit console_reporter(enable, std::ostream& stream_) : reporter(stream_) {}
 
+    /// Constructor for std::make_shared.
     explicit console_reporter(enable, char const* fname_) : reporter(fname_) {}
 
 private:

@@ -50,6 +50,7 @@ using testsuite_ptr = std::shared_ptr<testsuite>;
 class testsuite
 {
 protected:
+    /// Helper type to prevent public constructor usage.
     struct enable
     {};
 
@@ -190,6 +191,8 @@ public:
     }
 
     /**
+     * Constructor for std::make_shared.
+     *
      * @param name_ is the name, or description of the testsuite.
      */
     explicit testsuite(enable, char const* name_)
