@@ -45,7 +45,7 @@
  * @param R is the reporters factory method invokation.
  */
 #define SCTF_DEFAULT_MAIN(R)                        \
-    int main(int /*argc*/, char** /*argv*/) {       \
+    auto main(int /*argc*/, char** /*argv*/)->int { \
         return static_cast<int>(sctf::R->report()); \
     }
 
