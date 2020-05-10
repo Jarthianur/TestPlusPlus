@@ -66,7 +66,7 @@ pipeline:
           done &> /tmp/format.diff
           if [ "$(wc -l /tmp/format.diff | cut -d' ' -f1)" -gt 0 ]; then
             cat /tmp/format.diff
-            exit 1
+            exit 0
           fi
         tags:
         - linux
