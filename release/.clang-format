@@ -47,7 +47,7 @@ ContinuationIndentWidth: 0
 Cpp11BracedListStyle: true
 DerivePointerAlignment: false
 DisableFormat: false
-FixNamespaceComments: true
+FixNamespaceComments: false
 ForEachMacros: ['FOREACH', 'BOOST_FOREACH']
 IncludeBlocks: Merge
 IncludeCategories:
