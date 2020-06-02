@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <tuple>
@@ -34,7 +35,6 @@
 #include "testsuite/streambuf_proxy.hpp"
 
 #include "testcase.hpp"
-#include "types.hpp"
 
 namespace sctf
 {
@@ -55,6 +55,8 @@ protected:
     {};
 
 public:
+    using hook_function = std::function<void()>;
+
     testsuite(testsuite const&)     = delete;
     testsuite(testsuite&&) noexcept = delete;
     auto operator=(testsuite const&) -> testsuite& = delete;
@@ -76,7 +78,7 @@ public:
     virtual void run() {
         if (m_state != execution_state::DONE) {
             m_setup_fn();
-            m_stats.m_num_of_tests = m_testcases.size();
+            m_stats.m_num_tests = m_testcases.size();
             streambuf_proxy buf_cout(std::cout);
             streambuf_proxy buf_cerr(std::cerr);
             std::for_each(m_testcases.begin(), m_testcases.end(),
@@ -85,10 +87,8 @@ public:
                                   m_pretest_fn();
                                   tc_();
                                   switch (tc_.state()) {
-                                      case testcase::result::FAILED:
-                                          ++m_stats.m_num_of_fails;
-                                          break;
-                                      case testcase::result::ERROR: ++m_stats.m_num_of_errs; break;
+                                      case testcase::result::FAILED: ++m_stats.m_num_fails; break;
+                                      case testcase::result::ERROR: ++m_stats.m_num_errs; break;
                                       default: break;
                                   }
                                   m_exec_dur += tc_.duration();
@@ -110,8 +110,8 @@ public:
      * @param name_ is the name, or description of the testcase.
      * @param fn_   is the function performing the test.
      */
-    void test(char const* name_, void_function&& fn_) {
-        m_testcases.emplace_back(std::forward_as_tuple(name_, m_name), std::move(fn_));
+    void test(char const* name_, hook_function&& fn_) {
+        m_testcases.emplace_back(test_context{name_, m_name}, std::move(fn_));
         m_state = execution_state::PENDING;
     }
 
@@ -121,7 +121,7 @@ public:
      *
      * @param fn_ is the function to set.
      */
-    void setup(void_function&& fn_) {
+    void setup(hook_function&& fn_) {
         m_setup_fn.fn = std::move(fn_);
     }
 
@@ -131,7 +131,7 @@ public:
      *
      * @param fn_ is the function to set.
      */
-    void teardown(void_function&& fn_) {
+    void teardown(hook_function&& fn_) {
         m_teardown_fn.fn = std::move(fn_);
     }
 
@@ -141,7 +141,7 @@ public:
      *
      * @param fn_ is the function to set.
      */
-    void before_each(void_function&& fn_) {
+    void before_each(hook_function&& fn_) {
         m_pretest_fn.fn = std::move(fn_);
     }
 
@@ -151,7 +151,7 @@ public:
      *
      * @param fn_ is the function to set.
      */
-    void after_each(void_function&& fn_) {
+    void after_each(hook_function&& fn_) {
         m_posttest_fn.fn = std::move(fn_);
     }
 
@@ -214,7 +214,7 @@ protected:
             return *this;
         }
 
-        void_function fn;
+        hook_function fn;
     };
 
     /**

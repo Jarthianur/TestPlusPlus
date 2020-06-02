@@ -184,9 +184,9 @@ SUITE("test_testsuite") {
         testcase const& tc1 = ts->testcases().at(0);
         testcase const& tc2 = ts->testcases().at(1);
         testcase const& tc3 = ts->testcases().at(2);
-        ASSERT(tc1.context(), EQ(), std::string("ts"));
-        ASSERT(tc2.context(), EQ(), std::string("ts"));
-        ASSERT(tc3.context(), EQ(), std::string("ts"));
+        ASSERT(tc1.suite_name(), EQ(), std::string("ts"));
+        ASSERT(tc2.suite_name(), EQ(), std::string("ts"));
+        ASSERT(tc3.suite_name(), EQ(), std::string("ts"));
         ts->run();
         ASSERT_EQ(i, 1);
     };
@@ -223,8 +223,8 @@ SUITE_PAR("test_testcase") {
         testcase tc({"t1", "ctx"}, [] {});
         testcase tc2({"t2", ""}, [] {});
         ASSERT_EQ(tc.state(), testcase::result::NONE);
-        ASSERT(tc.context(), EQ(), std::string("ctx"));
-        ASSERT(tc2.context(), EQ(), std::string(""));
+        ASSERT(tc.suite_name(), EQ(), std::string("ctx"));
+        ASSERT(tc2.suite_name(), EQ(), std::string(""));
         ASSERT(tc.name(), EQ(), std::string("t1"));
     };
     TEST("successful_execution") {

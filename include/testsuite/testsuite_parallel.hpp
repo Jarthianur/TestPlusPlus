@@ -64,8 +64,8 @@ public:
                 throw std::overflow_error("Too many testcases! Size would overflow loop variant.");
             }
             m_setup_fn();
-            auto const tc_size     = static_cast<std::int64_t>(m_testcases.size());
-            m_stats.m_num_of_tests = m_testcases.size();
+            auto const tc_size  = static_cast<std::int64_t>(m_testcases.size());
+            m_stats.m_num_tests = m_testcases.size();
             streambuf_proxy_omp mt_buf_cout(std::cout);
             streambuf_proxy_omp mt_buf_cerr(std::cerr);
 #pragma omp parallel default(shared)
@@ -95,8 +95,8 @@ public:
                 }
 #pragma omp critical
                 {  // BEGIN critical section
-                    m_stats.m_num_of_fails += fails;
-                    m_stats.m_num_of_errs += errs;
+                    m_stats.m_num_fails += fails;
+                    m_stats.m_num_errs += errs;
                     m_exec_dur = std::max(m_exec_dur, tmp);
                 }  // END critical section
             }      // END parallel section

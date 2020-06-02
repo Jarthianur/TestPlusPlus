@@ -21,18 +21,28 @@
 #define SCTF_TESTCASE_HPP
 
 #include <cstdint>
+#include <functional>
 #include <string>
-#include <tuple>
 #include <utility>
 
 #include "assertion_failure.hpp"
 #include "duration.hpp"
-#include "types.hpp"
 
 namespace sctf
 {
 namespace intern
 {
+using test_function = std::function<void()>;
+
+/**
+ * Record a test name and related testsuite.
+ */
+struct test_context final
+{
+    char const* tc_name;  ///< testcase name
+    char const* ts_name;  ///< testsuite name
+};
+
 /**
  * A wrapper, that encapsulates a single testcase, as it is used in testsuites.
  */
@@ -47,24 +57,24 @@ public:
      * @param ctx_  is the contextual description. 0 => name, 1 => testsuites name.
      * @param fn_   is the function performing the actual test.
      */
-    testcase(std::tuple<char const*, char const*>&& ctx_, void_function&& fn_)
-        : m_name(std::get<0>(ctx_)), m_context(std::get<1>(ctx_)), m_test_func(std::move(fn_)) {}
+    testcase(test_context&& ctx_, test_function&& fn_)
+        : m_name(ctx_.tc_name), m_suite_name(ctx_.ts_name), m_test_func(std::move(fn_)) {}
 
     testcase(testcase&& other_) noexcept
         : m_name(other_.m_name),
-          m_context(other_.m_context),
+          m_suite_name(other_.m_suite_name),
           m_state(other_.m_state),
           m_duration(other_.m_duration),
           m_err_msg(std::move(other_.m_err_msg)),
           m_test_func(std::move(other_.m_test_func)) {}
 
     auto operator=(testcase&& other_) noexcept -> testcase& {
-        m_name      = other_.m_name;
-        m_context   = other_.m_context;
-        m_state     = other_.m_state;
-        m_duration  = other_.m_duration;
-        m_err_msg   = std::move(other_.m_err_msg);
-        m_test_func = std::move(other_.m_test_func);
+        m_name       = other_.m_name;
+        m_suite_name = other_.m_suite_name;
+        m_state      = other_.m_state;
+        m_duration   = other_.m_duration;
+        m_err_msg    = std::move(other_.m_err_msg);
+        m_test_func  = std::move(other_.m_test_func);
         return *this;
     }
 
@@ -132,8 +142,8 @@ public:
     /**
      * Get the context (testsuite), where this testcase lives.
      */
-    inline auto context() const -> char const* {
-        return m_context;
+    inline auto suite_name() const -> char const* {
+        return m_suite_name;
     }
 
     /**
@@ -196,14 +206,14 @@ private:
         m_err_msg = msg_;
     }
 
-    char const*   m_name;     ///< Name or description of this testcase.
-    char const*   m_context;  ///< Context description (testsuite) where this testcase lives.
+    char const*   m_name;        ///< Name or description of this testcase.
+    char const*   m_suite_name;  ///< Context description (testsuite) where this testcase lives.
     result        m_state    = result::NONE;  ///< Result produced by the test function.
     double        m_duration = 0.0;  ///< Time in milliseconds, that the test function consumed.
     std::string   m_err_msg;         ///< Message describing the reason for failure, or error.
     std::string   m_cout;            ///< Captured output to stdout.
     std::string   m_cerr;            ///< Captured output to stderr.
-    void_function m_test_func;       ///< Test function that performs the actual test.
+    test_function m_test_func;       ///< Test function that performs the actual test.
 };
 }  // namespace intern
 }  // namespace sctf

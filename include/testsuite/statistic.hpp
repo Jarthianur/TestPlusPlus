@@ -36,37 +36,37 @@ public:
      * Get the total number of tests.
      */
     inline auto tests() const -> std::size_t {
-        return m_num_of_tests;
+        return m_num_tests;
     }
 
     /**
      * Get the number of successful tests.
      */
     inline auto successes() const -> std::size_t {
-        return m_num_of_tests - m_num_of_errs - m_num_of_fails;
+        return m_num_tests - m_num_errs - m_num_fails;
     }
 
     /**
      * Get the number of failed tests.
      */
     inline auto failures() const -> std::size_t {
-        return m_num_of_fails;
+        return m_num_fails;
     }
 
     /**
      * Get the number of erroneous tests.
      */
     inline auto errors() const -> std::size_t {
-        return m_num_of_errs;
+        return m_num_errs;
     }
 
 private:
     friend class testsuite;
     friend class testsuite_parallel;
 
-    std::size_t m_num_of_tests = 0;  ///< Total number of tests.
-    std::size_t m_num_of_fails = 0;  ///< Number of failed tests.
-    std::size_t m_num_of_errs  = 0;  ///< Number of erroneous tests.
+    std::size_t m_num_tests = 0;  ///< Total number of tests.
+    std::size_t m_num_fails = 0;  ///< Number of failed tests.
+    std::size_t m_num_errs  = 0;  ///< Number of erroneous tests.
 };
 }  // namespace intern
 }  // namespace sctf
