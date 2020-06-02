@@ -21,7 +21,7 @@ var searchData=
   ['sctf_5fintern_5fis_5ffloat',['SCTF_INTERN_IS_FLOAT',['../traits_8hpp.html#a0214f0cad2c34d68c0f7d9ea08b8aef5',1,'traits.hpp']]],
   ['sctf_5fintern_5fis_5ftype',['SCTF_INTERN_IS_TYPE',['../traits_8hpp.html#a5605ea93f1c9d9e1a0c147fb416adbdb',1,'traits.hpp']]],
   ['sctf_5fprovide_5fcomparator',['SCTF_PROVIDE_COMPARATOR',['../comparator_8hpp.html#aa9b9c3b28be75ede66d4c8f081bf04f7',1,'comparator.hpp']]],
-  ['setup',['setup',['../classsctf_1_1intern_1_1testsuite.html#a82750367c60c686a39effa0ccb567eb3',1,'sctf::intern::testsuite::setup()'],['../api_8hpp.html#a0f5c46ec34a9e540a1a2693262e5932f',1,'SETUP():&#160;api.hpp']]],
+  ['setup',['setup',['../classsctf_1_1intern_1_1testsuite.html#a71d0b97bc6ea85cdb5af67c941400fa2',1,'sctf::intern::testsuite::setup()'],['../api_8hpp.html#a0f5c46ec34a9e540a1a2693262e5932f',1,'SETUP():&#160;api.hpp']]],
   ['silent_5ffunctor',['silent_functor',['../structsctf_1_1intern_1_1testsuite_1_1silent__functor.html',1,'sctf::intern::testsuite']]],
   ['singleton',['singleton',['../structsctf_1_1intern_1_1singleton.html',1,'sctf::intern']]],
   ['state',['state',['../classsctf_1_1intern_1_1testcase.html#ab7a4ad4e2fd137694be6576c3ece1175',1,'sctf::intern::testcase']]],
@@ -34,5 +34,6 @@ var searchData=
   ['stringify_2ehpp',['stringify.hpp',['../stringify_8hpp.html',1,'']]],
   ['successes',['successes',['../classsctf_1_1intern_1_1statistic.html#ab640d8ec74f1e27bf85529431b8cc61f',1,'sctf::intern::statistic']]],
   ['suite',['SUITE',['../api_8hpp.html#a378225a1a4e35b235fd88c4d0f85bce6',1,'api.hpp']]],
+  ['suite_5fname',['suite_name',['../classsctf_1_1intern_1_1testcase.html#afe054f63af92843c2834c6104c8bac68',1,'sctf::intern::testcase']]],
   ['suite_5fpar',['SUITE_PAR',['../api_8hpp.html#a3644748b617c41605feb1bf61e1dcfb4',1,'api.hpp']]]
 ];
