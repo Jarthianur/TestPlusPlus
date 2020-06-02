@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['value',['value',['../classsctf_1_1intern_1_1stream__capability.html#a1104000acef0dd382075b424dbc1b434',1,'sctf::intern::stream_capability::value()'],['../classsctf_1_1intern_1_1iterator__capability.html#aa813d10755b62440ac6fc35fdbddbe94',1,'sctf::intern::iterator_capability::value()']]]
+  ['tc_5fname',['tc_name',['../structsctf_1_1intern_1_1test__context.html#a34c23853a84e6257d35e6b52adf2551b',1,'sctf::intern::test_context']]],
+  ['ts_5fname',['ts_name',['../structsctf_1_1intern_1_1test__context.html#af9304589c2c5277e4345364cf89368fa',1,'sctf::intern::test_context']]]
 ];

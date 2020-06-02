@@ -91,7 +91,7 @@ private:
 
     void report_testcase(intern::testcase const& tc_) override {
         *this << intern::fmt::XSPACE << "<testcase name=\"" << tc_.name() << "\" classname=\""
-              << tc_.context() << "\" time=\"" << tc_.duration() << "\"";
+              << tc_.suite_name() << "\" time=\"" << tc_.duration() << "\"";
         switch (tc_.state()) {
             case intern::testcase::result::ERROR:
                 *this << ">" << intern::fmt::LF << intern::fmt::XSPACE << intern::fmt::SPACE

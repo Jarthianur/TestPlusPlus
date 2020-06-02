@@ -95,7 +95,7 @@ private:
             case intern::testcase::result::PASSED: status = "PASSED"; break;
             default: break;
         }
-        *this << "|" << tc_.name() << "|" << tc_.context() << "|" << tc_.duration() << "ms|"
+        *this << "|" << tc_.name() << "|" << tc_.suite_name() << "|" << tc_.duration() << "ms|"
               << status << "|";
         if (m_capture) {
             print_system_out(tc_.cout());

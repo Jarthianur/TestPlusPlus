@@ -29,10 +29,8 @@ namespace intern
  */
 struct loc final
 {
-    /// The filename, where this location belongs to.
-    char const* file;
-    /// The line number in the file.
-    int const line;
+    char const* file;  ///< The filename, where this location belongs to.
+    int const   line;  ///< The line number in the file.
 };
 }  // namespace intern
 }  // namespace sctf

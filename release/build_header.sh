@@ -2,7 +2,6 @@
 set -eo pipefail
 
 FILES="../include/cpp_meta.hpp
-../include/types.hpp
 ../include/loc.hpp
 ../include/traits.hpp
 ../include/duration.hpp
@@ -57,7 +56,7 @@ done
 
 grep '#include' $TARGET.tmp > .includes
 perl -0pi -e 's/#include [<"].*[">]//g' $TARGET.tmp
-perl -0pi -e 's%///[<]? .*|/\*[\w\W\n]*?\*/%%g' $TARGET.tmp
+perl -0pi -e 's%//[/<]*? .*|/\*[\w\W\n]*?\*/%%g' $TARGET.tmp
 
 echo "$COPYRIGHT" > $TARGET
 echo "#ifndef SCTF_RELEASE_SCTF_HPP" >> $TARGET

@@ -112,7 +112,7 @@ private:
     }
 
     void report_testcase(intern::testcase const& tc_) override {
-        *this << intern::fmt::SPACE << "Run Testcase [" << tc_.name() << "](" << tc_.context()
+        *this << intern::fmt::SPACE << "Run Testcase [" << tc_.name() << "](" << tc_.suite_name()
               << "); time = " << tc_.duration() << "ms" << intern::fmt::LF << intern::fmt::XSPACE;
         if (m_capture) {
             *this << "stdout = \"" << tc_.cout() << "\"" << intern::fmt::LF << intern::fmt::XSPACE;
