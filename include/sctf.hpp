@@ -23,7 +23,7 @@
 #define SCTF_SCTF_HPP
 
 /// SCTF release version this source belongs to.
-#define SCFT_VERSION "2.0-rc4"
+#define SCFT_VERSION "2.0-rc7"
 
 #include "comparator/equality.hpp"
 #include "comparator/ordering.hpp"
