@@ -77,10 +77,10 @@ public:
      */
     virtual void run() {
         if (m_state != execution_state::DONE) {
-            m_setup_fn();
             m_stats.m_num_tests = m_testcases.size();
             streambuf_proxy buf_cout(std::cout);
             streambuf_proxy buf_cerr(std::cerr);
+            m_setup_fn();
             std::for_each(m_testcases.begin(), m_testcases.end(),
                           [this, &buf_cerr, &buf_cout](testcase& tc_) {
                               if (tc_.state() == testcase::result::NONE) {

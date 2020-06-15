@@ -63,11 +63,11 @@ public:
                 static_cast<std::size_t>(std::numeric_limits<std::int64_t>::max())) {
                 throw std::overflow_error("Too many testcases! Size would overflow loop variant.");
             }
-            m_setup_fn();
             auto const tc_size  = static_cast<std::int64_t>(m_testcases.size());
             m_stats.m_num_tests = m_testcases.size();
             streambuf_proxy_omp mt_buf_cout(std::cout);
             streambuf_proxy_omp mt_buf_cerr(std::cerr);
+            m_setup_fn();
 #pragma omp parallel default(shared)
             {  // BEGIN parallel section
                 double      tmp   = 0.0;
