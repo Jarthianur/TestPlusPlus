@@ -305,6 +305,10 @@ SUITE_PAR("test_traits") {
 };
 
 SUITE_PAR("test_assertions") {
+    TEST("negation") {
+        ASSERT_NOTHROW(ASSERT(1, !!EQ(), 1));
+        ASSERT_THROWS(ASSERT(1, !EQ(), 1), assertion_failure);
+    }
     TEST("assert") {  // successful
         ASSERT_NOTHROW(ASSERT(1, EQUALS(), 1));
         ASSERT_NOTHROW(ASSERT(true, EQUALS(), true));

@@ -173,10 +173,10 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a>(std::forward_as_tuple(sctf::CMP, VAL, EXP), \</div><div class="line">                                   <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="assert_8hpp_html_a66ea33d2f70b9fe0e0aae7f21e8801c2"><div class="ttname"><a href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a></div><div class="ttdeci">void assert_statement(S &amp;&amp;stmt_, loc const &amp;loc_)</div><div class="ttdef"><b>Definition:</b> assert.hpp:211</div></div>
+<b>Value:</b><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a>(std::forward_as_tuple(CMP, VAL, EXP), \</div><div class="line">                                   <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="assert_8hpp_html_a66ea33d2f70b9fe0e0aae7f21e8801c2"><div class="ttname"><a href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a></div><div class="ttdeci">void assert_statement(S &amp;&amp;stmt_, loc const &amp;loc_)</div><div class="ttdef"><b>Definition:</b> assert.hpp:211</div></div>
 <div class="ttc" id="structsctf_1_1intern_1_1loc_html"><div class="ttname"><a href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a></div><div class="ttdef"><b>Definition:</b> loc.hpp:30</div></div>
 </div><!-- fragment --><p>Generic assertion to compare two values.</p>
-<p>EXAMPLE: </p><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a3ffcd9946aaa0bb84fe9add54490a66a">ASSERT</a>(1, EQ, 1);</div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
+<p>EXAMPLE: </p><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a3ffcd9946aaa0bb84fe9add54490a66a">ASSERT</a>(1, EQ(), 1);</div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">VAL</td><td>is the actual value. </td></tr>
     <tr><td class="paramname">CMP</td><td>is the comparator to use. </td></tr>
@@ -283,10 +283,10 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a>(std::forward_as_tuple(!sctf::CMP, VAL, EXP), \</div><div class="line">                                   <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="assert_8hpp_html_a66ea33d2f70b9fe0e0aae7f21e8801c2"><div class="ttname"><a href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a></div><div class="ttdeci">void assert_statement(S &amp;&amp;stmt_, loc const &amp;loc_)</div><div class="ttdef"><b>Definition:</b> assert.hpp:211</div></div>
+<b>Value:</b><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a>(std::forward_as_tuple(!CMP, VAL, EXP), \</div><div class="line">                                   <a class="code" href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a>{__FILE__, __LINE__})</div><div class="ttc" id="assert_8hpp_html_a66ea33d2f70b9fe0e0aae7f21e8801c2"><div class="ttname"><a href="assert_8hpp.html#a66ea33d2f70b9fe0e0aae7f21e8801c2">sctf::intern::assert_statement</a></div><div class="ttdeci">void assert_statement(S &amp;&amp;stmt_, loc const &amp;loc_)</div><div class="ttdef"><b>Definition:</b> assert.hpp:211</div></div>
 <div class="ttc" id="structsctf_1_1intern_1_1loc_html"><div class="ttname"><a href="structsctf_1_1intern_1_1loc.html">sctf::intern::loc</a></div><div class="ttdef"><b>Definition:</b> loc.hpp:30</div></div>
 </div><!-- fragment --><p>Generic assertion to compare two values, where the comparison is logically negated. This is equivalent to prefixing a comparator with '!'.</p>
-<p>EXAMPLE: </p><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#aebecf37e88c1f11551b2afbab452680b">ASSERT_NOT</a>(2, EQ, 1);</div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
+<p>EXAMPLE: </p><div class="fragment"><div class="line"><a class="code" href="assert_8hpp.html#aebecf37e88c1f11551b2afbab452680b">ASSERT_NOT</a>(2, EQ(), 1);</div></div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">VAL</td><td>is the actual value. </td></tr>
     <tr><td class="paramname">CMP</td><td>is the comparator to use. </td></tr>
