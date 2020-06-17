@@ -35,15 +35,15 @@
  *
  * EXAMPLE:
  * @code
- * ASSERT(1, EQ, 1);
+ * ASSERT(1, EQ(), 1);
  * @endcode
  *
  * @param VAL is the actual value.
  * @param CMP is the comparator to use.
  * @param EXP is the expected value.
  */
-#define ASSERT(VAL, CMP, EXP)                                                  \
-    sctf::intern::assert_statement(std::forward_as_tuple(sctf::CMP, VAL, EXP), \
+#define ASSERT(VAL, CMP, EXP)                                            \
+    sctf::intern::assert_statement(std::forward_as_tuple(CMP, VAL, EXP), \
                                    sctf::intern::loc{__FILE__, __LINE__})
 
 /**
@@ -52,15 +52,15 @@
  *
  * EXAMPLE:
  * @code
- * ASSERT_NOT(2, EQ, 1);
+ * ASSERT_NOT(2, EQ(), 1);
  * @endcode
  *
  * @param VAL is the actual value.
  * @param CMP is the comparator to use.
  * @param EXP is the expected value.
  */
-#define ASSERT_NOT(VAL, CMP, EXP)                                               \
-    sctf::intern::assert_statement(std::forward_as_tuple(!sctf::CMP, VAL, EXP), \
+#define ASSERT_NOT(VAL, CMP, EXP)                                         \
+    sctf::intern::assert_statement(std::forward_as_tuple(!CMP, VAL, EXP), \
                                    sctf::intern::loc{__FILE__, __LINE__})
 
 /**

@@ -136,6 +136,8 @@ Both operators create regular expressions with *ECMAScript* syntax.
 SCTF_EPSILON(0.001)
 SCTF_DEFAULT_MAIN(xml_reporter::create()->with_captured_output())
 
+using namespace sctf;
+
 SUITE("testSomething") {
     TEST("abc") {
         ASSERT(x+1, EQ(), 11);
@@ -165,6 +167,8 @@ SUITE("testSomething") {
 
 ```cpp
 #include "sctf.hpp"
+
+using sctf::GT;
 
 int main(int argc, char** argv) {
     return sctf::markdown_reporter::create("results.md")->report();

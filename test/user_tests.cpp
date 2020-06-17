@@ -21,6 +21,9 @@
 #include "assert.hpp"
 #include "sctf.hpp"
 
+using sctf::GT;
+using sctf::LT;
+
 class MyClass
 {
     int    m_i = 0;
