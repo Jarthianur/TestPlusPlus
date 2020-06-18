@@ -29,6 +29,12 @@
 #include "sctf.hpp"
 #include "test_traits.hpp"
 
+#ifdef SCTF_SYS_UNIX
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wunused-variable"
+#    pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#endif
+
 using namespace sctf;
 using namespace intern;
 
@@ -144,7 +150,7 @@ SUITE("test_testsuite_parallel") {
 /* workaround: see https://github.com/Jarthianur/simple-cpp-test-framework/issues/25 for
    details */
 #    ifdef __clang__
-        c = 250;
+        c = 300;
 #    endif
         ASSERT_RUNTIME(ts->run(), c);
         ASSERT(ts->execution_duration(), LT(), c);
@@ -305,6 +311,27 @@ SUITE_PAR("test_traits") {
 };
 
 SUITE_PAR("test_assertions") {
+    class maybe_throwing
+    {
+    public:
+        explicit maybe_throwing(bool t_) {
+            if (t_) {
+                throw std::logic_error("maybe_throwing");
+            }
+        }
+    };
+
+    class not_copyable
+    {
+    public:
+        not_copyable()                        = default;
+        ~not_copyable()                       = default;
+        not_copyable(not_copyable const&)     = delete;
+        not_copyable(not_copyable&&) noexcept = default;
+        auto operator=(not_copyable const&) -> not_copyable& = delete;
+        auto operator=(not_copyable&&) noexcept -> not_copyable& = default;
+    };
+
     TEST("negation") {
         ASSERT_NOTHROW(ASSERT(1, !!EQ(), 1));
         ASSERT_THROWS(ASSERT(1, !EQ(), 1), assertion_failure);
@@ -395,15 +422,29 @@ SUITE_PAR("test_assertions") {
     TEST("assert_throws") {
         // successful
         ASSERT_NOTHROW(ASSERT_THROWS(throw std::logic_error(""), std::logic_error));
+        ASSERT_NOTHROW(auto a = ASSERT_THROWS(return maybe_throwing(true), std::logic_error));
+        ASSERT_NOTHROW(auto a = ASSERT_THROWS(return maybe_throwing(true), std::logic_error);
+                       ASSERT_EQ(std::string(a.what()), "maybe_throwing"));
         // failing
         ASSERT_THROWS(ASSERT_THROWS(return, std::logic_error), assertion_failure);
         ASSERT_THROWS(ASSERT_THROWS(throw std::runtime_error(""), std::logic_error),
                       assertion_failure);
         ASSERT_THROWS(ASSERT_THROWS(throw 1, std::logic_error), assertion_failure);
+        ASSERT_THROWS(auto a = ASSERT_THROWS(return maybe_throwing(false), std::logic_error),
+                      assertion_failure);
+        ASSERT_THROWS(auto a = ASSERT_THROWS(return maybe_throwing(false), std::logic_error);
+                      ASSERT_EQ(a.what(), ""), assertion_failure);
     };
     TEST("assert_nothrow") {
         // successful
         ASSERT_NOTHROW(ASSERT_NOTHROW(return ));
+        ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return 1); ASSERT_EQ(a, 1));
+        ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return maybe_throwing(false)));
+        ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return not_copyable()));
+        not_copyable nc;
+        ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return &nc));
+        ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return std::ref(nc)));
+        ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return std::move(nc)));
         // failing
         ASSERT_THROWS(ASSERT_NOTHROW(throw std::runtime_error("")), assertion_failure);
         ASSERT_THROWS(ASSERT_NOTHROW(throw 1), assertion_failure);
@@ -411,11 +452,22 @@ SUITE_PAR("test_assertions") {
     TEST("assert_runtime") {
         // successful
         ASSERT_NOTHROW(ASSERT_RUNTIME(return, 100));
+        ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return 1, 100); ASSERT_EQ(a, 1));
+        ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return maybe_throwing(false), 100));
+        ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return not_copyable(), 100));
+        not_copyable nc;
+        ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return &nc, 100));
+        ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return std::ref(nc), 100));
+        ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return std::move(nc), 100));
         // failing
         ASSERT_THROWS(
             ASSERT_RUNTIME(std::this_thread::sleep_for(std::chrono::milliseconds(100)), 10),
             assertion_failure);
-        ASSERT_THROWS(ASSERT_RUNTIME(throw 1, 100), assertion_failure);
+        ASSERT_THROWS(
+            auto a = ASSERT_RUNTIME(std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                                    return 1, 10);
+            ASSERT_EQ(a, 1), assertion_failure);
+        ASSERT_THROWS(ASSERT_RUNTIME(throw std::logic_error(""), 100), std::logic_error);
     };
 };
 
@@ -475,3 +527,7 @@ DESCRIBE("test_suite_meta_functions") {
         ASSERT_EQ(y, 1);
     };
 };
+
+#ifdef SCTF_SYS_UNIX
+#    pragma GCC diagnostic pop
+#endif
