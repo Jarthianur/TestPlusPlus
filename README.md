@@ -158,7 +158,10 @@ SUITE("testSomething") {
         ASSERT(std::string(""), IN(), std::vector<std::string>{""});
     }
     TEST("exceptions") {
-        ASSERT_THROWS(throw std::logic_error(""), std::logic_error);
+        auto e = ASSERT_THROWS(throw std::logic_error("abc"), std::logic_error);
+        ASSERT_EQ(std::string(e.what()), "abc");
+        auto r = ASSERT_NOTHROW(return 1);
+        ASSERT_EQ(r, 1);
     }
 };
 ```
@@ -247,9 +250,9 @@ DESCRIBE("testMyClass") {
 | ASSERT_NOT_NULL | VALUE               | Assert VALUE to be not *nullptr*.                                                                                                                            |
 | ASSERT_NULL     | VALUE               | Assert VALUE to be *nullptr*.                                                                                                                                |
 | ASSERT_ZERO     | VALUE               | Assert VALUE to be *0*.                                                                                                                                      |
-| ASSERT_THROWS   | STMT, TYPE          | Assert STMT to throw an exception of TYPE. Multiple statements can be split by `;`.                                                                          |
-| ASSERT_NOTHROW  | STMT                | Assert STMT not to throw any exception.  Multiple statements can be split by `;`.                                                                            |
-| ASSERT_RUNTIME  | STMT, MILLIS        | Assert STMT to run in MILLIS milliseconds at maximum. The statement is not interrupted, if the time exceeds MILLIS. Multiple statements can be split by `;`. |
+| ASSERT_THROWS   | STMT, TYPE          | Assert STMT to throw an exception of TYPE. Multiple statements can be split by `;`. Returns the instance of TYPE if caught.                                  |
+| ASSERT_NOTHROW  | STMT                | Assert STMT not to throw any exception.  Multiple statements can be split by `;`. Returns the return value of STMT, if there is any.                         |
+| ASSERT_RUNTIME  | STMT, MILLIS        | Assert STMT to run in MILLIS milliseconds at maximum. The statement is not interrupted, if the time exceeds MILLIS. Multiple statements can be split by `;`. Returns the return value of STMT, if there is any. |
 
 ## Parallelization Of Tests
 
