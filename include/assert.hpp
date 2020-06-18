@@ -29,6 +29,7 @@
 #include "assertion_failure.hpp"
 #include "duration.hpp"
 #include "loc.hpp"
+#include "traits.hpp"
 
 /**
  * Generic assertion to compare two values.
@@ -162,6 +163,7 @@
  *
  * @param FN is the expression / invokation.
  * @param TRW is the expected throwable type.
+ * @return the instance of TRW that was caught.
  */
 #define ASSERT_THROWS(FN, TRW) \
     sctf::intern::assert_throws<TRW>([&] { FN; }, #TRW, sctf::intern::loc{__FILE__, __LINE__})
@@ -175,6 +177,7 @@
  * @endcode
  *
  * @param FN is the expression / invokation.
+ * @return the return value of FN, if there is any.
  */
 #define ASSERT_NOTHROW(FN) \
     sctf::intern::assert_nothrow([&] { FN; }, sctf::intern::loc{__FILE__, __LINE__})
@@ -190,6 +193,7 @@
  *
  * @param FN is the expression / invokation.
  * @param MAX is the maximum amount of time in milliseconds.
+ * @return the return value of FN, if there is any.
  */
 #define ASSERT_RUNTIME(FN, MAX) \
     sctf::intern::assert_runtime([&] { FN; }, MAX, sctf::intern::loc{__FILE__, __LINE__})
@@ -222,14 +226,16 @@ void assert_statement(S&& stmt_, loc const& loc_) {
  * @param fn_ is the wrapper function to assert for.
  * @param tname_ is the throwable types name.
  * @param loc_ is the line of code where the assertion took place.
- * @throw sctf::intern::assertion_failure if a different, or no throwable type is thrown by fn_.
+ * @return the instance of T that was caught.
+ * @throw sctf::intern::assertion_failure if a different throwable type, or nothing is thrown by
+ * fn_.
  */
 template<typename T, typename F>
-void assert_throws(F&& fn_, char const* tname_, loc const& loc_) {
+auto assert_throws(F&& fn_, char const* tname_, loc const& loc_) -> T {
     try {
         fn_();
-    } catch (T const&) {
-        return;
+    } catch (T const& e) {
+        return e;
     } catch (std::exception const& e) {
         throw assertion_failure("Wrong exception thrown, caught " + to_string(e), loc_);
     } catch (...) {
@@ -243,9 +249,30 @@ void assert_throws(F&& fn_, char const* tname_, loc const& loc_) {
  *
  * @param fn_ is the wrapper function to assert for.
  * @param loc_ is the line of code where the assertion took place.
+ * @return the return value of fn_.
  * @throw sctf::intern::assertion_failure if a any throwable type is thrown by fn_.
  */
-template<typename F>
+template<typename F,
+         SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
+auto assert_nothrow(F&& fn_, loc const& loc_) -> decltype(fn_()) {
+    try {
+        return fn_();
+    } catch (std::exception const& e) {
+        throw assertion_failure("Expected no exception, caught " + to_string(e), loc_);
+    } catch (...) {
+        throw assertion_failure("Expected no exception", loc_);
+    }
+}
+
+/**
+ * Apply a nothrow-assertion on a function invokation.
+ *
+ * @param fn_ is the wrapper function to assert for.
+ * @param loc_ is the line of code where the assertion took place.
+ * @throw sctf::intern::assertion_failure if a any throwable type is thrown by fn_.
+ */
+template<typename F,
+         SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
 void assert_nothrow(F&& fn_, loc const& loc_) {
     try {
         fn_();
@@ -262,22 +289,37 @@ void assert_nothrow(F&& fn_, loc const& loc_) {
  * @param fn_ is the wrapper function to assert for.
  * @param max_ms_ is the maximum amount of time in milliseconds.
  * @param loc_ is the line of code where the assertion took place.
- * @throw sctf::intern::assertion_failure if fn_ does not complete within max_ms_, or any throwable
- * type is thrown by fn_.
+ * @return the return value of fn_.
+ * @throw sctf::intern::assertion_failure if fn_ does not complete within max_ms_.
  */
-template<typename F>
+template<typename F,
+         SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
+auto assert_runtime(F&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_()) {
+    duration        dur;
+    decltype(fn_()) res    = fn_();
+    double          dur_ms = dur.get();
+    if (dur_ms > max_ms_) {
+        throw assertion_failure("runtime > " + to_string(max_ms_) + "ms", loc_);
+    }
+    return res;
+}
+
+/**
+ * Apply a runtime-assertion on a function invokation.
+ *
+ * @param fn_ is the wrapper function to assert for.
+ * @param max_ms_ is the maximum amount of time in milliseconds.
+ * @param loc_ is the line of code where the assertion took place.
+ * @throw sctf::intern::assertion_failure if fn_ does not complete within max_ms_.
+ */
+template<typename F,
+         SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
 void assert_runtime(F&& fn_, double max_ms_, loc const& loc_) {
-    try {
-        duration dur;
-        fn_();
-        double dur_ms = dur.get();
-        if (dur_ms > max_ms_) {
-            throw assertion_failure("runtime > " + to_string(max_ms_) + "ms", loc_);
-        }
-    } catch (std::exception const& e) {
-        throw assertion_failure(e.what(), loc_);
-    } catch (...) {
-        throw assertion_failure("Unknown exception thrown", loc_);
+    duration dur;
+    fn_();
+    double dur_ms = dur.get();
+    if (dur_ms > max_ms_) {
+        throw assertion_failure("runtime > " + to_string(max_ms_) + "ms", loc_);
     }
 }
 }  // namespace intern
