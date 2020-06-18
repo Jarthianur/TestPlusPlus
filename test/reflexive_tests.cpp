@@ -29,6 +29,10 @@
 #include "sctf.hpp"
 #include "test_traits.hpp"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+
 using namespace sctf;
 using namespace intern;
 
@@ -521,3 +525,5 @@ DESCRIBE("test_suite_meta_functions") {
         ASSERT_EQ(y, 1);
     };
 };
+
+#pragma GCC diagnostic pop

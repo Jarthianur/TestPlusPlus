@@ -136,8 +136,10 @@ private:
     void begin_report() override {}
 
     void end_report() override {
-        if (m_abs_fails >= (m_abs_tests + 1) / 2) {
+        if (m_abs_errs > 0) {
             *this << (m_color ? intern::fmt::ANSI_YELLOW : "");
+        } else if (m_abs_fails > 0) {
+            *this << (m_color ? intern::fmt::ANSI_BLUE : "");
         } else {
             *this << (m_color ? intern::fmt::ANSI_CYAN : "");
         }

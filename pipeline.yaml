@@ -20,9 +20,9 @@ model:
     build_dir: build_{{ env.cpp_std }}
     linux:
     - target: test_seq
-      cxx_args: ""
+      cxx_args: "-Wall -Wextra -Wpedantic -Werror -Wnon-virtual-dtor -Wno-unused-function -Wno-unknown-pragmas -g -O0 -fprofile-arcs -ftest-coverage -coverage"
     - target: test_par
-      cxx_args: "-fopenmp"
+      cxx_args: "-fopenmp -Wall -Wextra -Wpedantic -Werror -Wnon-virtual-dtor -Wno-unused-function -Wno-unknown-pragmas -g -O0 -fprofile-arcs -ftest-coverage -coverage"
     osx:
     - target: test_seq
       cxx_args: ""
@@ -34,7 +34,7 @@ model:
         mkdir -p $BUILD_DIR
         cp -r test $BUILD_DIR/{{ item.target }}
         pushd $BUILD_DIR/{{ item.target }}
-        $CXX -o {{ item.target }} {{ item.cxx_args }} -Wall -Wextra -Wpedantic -Wnon-virtual-dtor -Wno-unused-function -Wno-unknown-pragmas -g -O0 -fprofile-arcs -ftest-coverage -coverage -std={{ env.cpp_std }} -I../../include $(echo -en *.cpp)
+        $CXX -o {{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../../include $(echo -en *.cpp)
         popd
       test_script: |
         pushd $BUILD_DIR/{{ item.target }}
