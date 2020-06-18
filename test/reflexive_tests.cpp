@@ -150,7 +150,7 @@ SUITE("test_testsuite_parallel") {
 /* workaround: see https://github.com/Jarthianur/simple-cpp-test-framework/issues/25 for
    details */
 #    ifdef __clang__
-        c = 250;
+        c = 300;
 #    endif
         ASSERT_RUNTIME(ts->run(), c);
         ASSERT(ts->execution_duration(), LT(), c);
