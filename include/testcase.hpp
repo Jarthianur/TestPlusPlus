@@ -221,14 +221,14 @@ private:
         m_err_msg = msg_;
     }
 
-    char const*   m_name;        ///< Name or description of this testcase.
-    char const*   m_suite_name;  ///< Context description (testsuite) where this testcase lives.
+    char const*   m_name;                     ///< Name or description of this testcase.
+    char const*   m_suite_name;               ///< Context description (testsuite) where this testcase lives.
     result        m_state    = result::NONE;  ///< Result produced by the test function.
-    double        m_duration = 0.0;  ///< Time in milliseconds, that the test function consumed.
-    std::string   m_err_msg;         ///< Message describing the reason for failure, or error.
-    std::string   m_cout;            ///< Captured output to stdout.
-    std::string   m_cerr;            ///< Captured output to stderr.
-    test_function m_test_func;       ///< Test function that performs the actual test.
+    double        m_duration = 0.0;           ///< Time in milliseconds, that the test function consumed.
+    std::string   m_err_msg;                  ///< Message describing the reason for failure, or error.
+    std::string   m_cout;                     ///< Captured output to stdout.
+    std::string   m_cerr;                     ///< Captured output to stderr.
+    test_function m_test_func;                ///< Test function that performs the actual test.
 };
 }  // namespace intern
 }  // namespace sctf

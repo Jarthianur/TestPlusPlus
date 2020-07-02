@@ -63,8 +63,7 @@ public:
     void
     run() override {
         if (m_state != execution_state::DONE) {
-            if (m_testcases.size() >
-                static_cast<std::size_t>(std::numeric_limits<std::int64_t>::max())) {
+            if (m_testcases.size() > static_cast<std::size_t>(std::numeric_limits<std::int64_t>::max())) {
                 throw std::overflow_error("Too many testcases! Size would overflow loop variant.");
             }
             auto const tc_size  = static_cast<std::int64_t>(m_testcases.size());

@@ -85,24 +85,23 @@ public:
             streambuf_proxy buf_cout(std::cout);
             streambuf_proxy buf_cerr(std::cerr);
             m_setup_fn();
-            std::for_each(m_testcases.begin(), m_testcases.end(),
-                          [this, &buf_cerr, &buf_cout](testcase& tc_) {
-                              if (tc_.state() == testcase::result::NONE) {
-                                  m_pretest_fn();
-                                  tc_();
-                                  switch (tc_.state()) {
-                                      case testcase::result::FAILED: ++m_stats.m_num_fails; break;
-                                      case testcase::result::ERROR: ++m_stats.m_num_errs; break;
-                                      default: break;
-                                  }
-                                  m_exec_dur += tc_.duration();
-                                  m_posttest_fn();
-                                  tc_.cout(buf_cout.str());
-                                  tc_.cerr(buf_cerr.str());
-                                  buf_cout.clear();
-                                  buf_cerr.clear();
-                              }
-                          });
+            std::for_each(m_testcases.begin(), m_testcases.end(), [this, &buf_cerr, &buf_cout](testcase& tc_) {
+                if (tc_.state() == testcase::result::NONE) {
+                    m_pretest_fn();
+                    tc_();
+                    switch (tc_.state()) {
+                        case testcase::result::FAILED: ++m_stats.m_num_fails; break;
+                        case testcase::result::ERROR: ++m_stats.m_num_errs; break;
+                        default: break;
+                    }
+                    m_exec_dur += tc_.duration();
+                    m_posttest_fn();
+                    tc_.cout(buf_cout.str());
+                    tc_.cerr(buf_cerr.str());
+                    buf_cout.clear();
+                    buf_cerr.clear();
+                }
+            });
             m_teardown_fn();
             m_state = execution_state::DONE;
         }
@@ -209,8 +208,7 @@ public:
      *
      * @param name_ is the name, or description of the testsuite.
      */
-    explicit testsuite(enable, char const* name_)
-        : m_name(name_), m_create_time(std::chrono::system_clock::now()) {}
+    explicit testsuite(enable, char const* name_) : m_name(name_), m_create_time(std::chrono::system_clock::now()) {}
 
 protected:
     /**
@@ -241,15 +239,13 @@ protected:
         DONE      /// All testcases have been run.
     };
 
-    char const* m_name;  ///< Name, or description of this testsuite.
-    std::chrono::system_clock::time_point const
-           m_create_time;     ///< Point in time, when this testsuite was created.
+    char const*                                 m_name;         ///< Name, or description of this testsuite.
+    std::chrono::system_clock::time_point const m_create_time;  ///< Point in time, when this testsuite was created.
     double m_exec_dur = 0.0;  ///< Time in milliseconds, the whole testsuite needed to complete.
 
-    statistic             m_stats;      ///< Stores test results.
-    std::vector<testcase> m_testcases;  ///< Stores testcases.
-    execution_state       m_state =
-    execution_state::PENDING;  ///< States, whether all testcases have been executed.
+    statistic             m_stats;                             ///< Stores test results.
+    std::vector<testcase> m_testcases;                         ///< Stores testcases.
+    execution_state       m_state = execution_state::PENDING;  ///< States, whether all testcases have been executed.
 
     silent_functor m_setup_fn;     ///< Optional function, that is executed before all testcases.
     silent_functor m_teardown_fn;  ///< Optional function, that is executed after all testcases.

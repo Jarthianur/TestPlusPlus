@@ -116,8 +116,7 @@ escaped_string(std::string const& str_) -> std::string {
  * @param arg_ is the value to convert to string.
  */
 template<typename T,
-         SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream) &&
-                               !SCTF_INTERN_IS_FLOAT(T))>
+         SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream) && !SCTF_INTERN_IS_FLOAT(T))>
 auto
 to_string(T const& arg_) -> std::string {
     std::ostringstream oss;
@@ -147,8 +146,7 @@ to_string(T const& arg_) -> std::string {
  * @param arg_ is the value to convert to string.
  * @return the typename for T, as there is no information about the value available.
  */
-template<typename T,
-         SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream))>
+template<typename T, SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream))>
 auto
 to_string(T const&) -> std::string {
     return name_for_type<T>();

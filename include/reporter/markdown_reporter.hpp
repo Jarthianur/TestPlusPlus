@@ -81,12 +81,11 @@ public:
 private:
     void
     report_testsuite(intern::testsuite_ptr const& ts_) override {
-        *this << "## " << ts_->name() << intern::fmt::XLF
-              << "|Tests|Successes|Failures|Errors|Time|" << intern::fmt::LF << "|-|-|-|-|-|"
-              << intern::fmt::LF << "|" << ts_->statistics().tests() << "|"
+        *this << "## " << ts_->name() << intern::fmt::XLF << "|Tests|Successes|Failures|Errors|Time|" << intern::fmt::LF
+              << "|-|-|-|-|-|" << intern::fmt::LF << "|" << ts_->statistics().tests() << "|"
               << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"
-              << ts_->statistics().errors() << "|" << ts_->execution_duration() << "ms|"
-              << intern::fmt::XLF << "### Tests" << intern::fmt::XLF << "|Name|Context|Time|Status|"
+              << ts_->statistics().errors() << "|" << ts_->execution_duration() << "ms|" << intern::fmt::XLF
+              << "### Tests" << intern::fmt::XLF << "|Name|Context|Time|Status|"
               << (m_capture ? "System-Out|System-Err|" : "") << intern::fmt::LF << "|-|-|-|-|"
               << (m_capture ? "-|-|" : "") << intern::fmt::LF;
 
@@ -104,8 +103,7 @@ private:
             case intern::testcase::result::PASSED: status = "PASSED"; break;
             default: break;
         }
-        *this << "|" << tc_.name() << "|" << tc_.suite_name() << "|" << tc_.duration() << "ms|"
-              << status << "|";
+        *this << "|" << tc_.name() << "|" << tc_.suite_name() << "|" << tc_.duration() << "ms|" << status << "|";
         if (m_capture) {
             print_system_out(tc_.cout());
             print_system_out(tc_.cerr());
@@ -122,10 +120,10 @@ private:
 
     void
     end_report() override {
-        *this << "## Summary" << intern::fmt::XLF << "|Tests|Successes|Failures|Errors|Time|"
-              << intern::fmt::LF << "|-|-|-|-|-|" << intern::fmt::LF << "|" << m_abs_tests << "|"
-              << (m_abs_tests - m_abs_errs - m_abs_fails) << "|" << m_abs_fails << "|" << m_abs_errs
-              << "|" << m_abs_time << "ms|" << intern::fmt::LF;
+        *this << "## Summary" << intern::fmt::XLF << "|Tests|Successes|Failures|Errors|Time|" << intern::fmt::LF
+              << "|-|-|-|-|-|" << intern::fmt::LF << "|" << m_abs_tests << "|"
+              << (m_abs_tests - m_abs_errs - m_abs_fails) << "|" << m_abs_fails << "|" << m_abs_errs << "|"
+              << m_abs_time << "ms|" << intern::fmt::LF;
     }
 
     /**

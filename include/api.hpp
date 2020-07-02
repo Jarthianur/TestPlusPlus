@@ -105,36 +105,36 @@ struct singleton final
  * @param DESCR is a cstring with the description of the testsuite.
  * @param BASE is the testsuite base type to use.
  */
-#define SCTF_INTERN_API_SUITE_WRAPPER(DESCR, BASE)                                 \
-    namespace SCTF_INTERN_API_SUITE_NS(__LINE__) {                                 \
-        class test_module                                                          \
-        {                                                                          \
-            sctf::intern::testsuite_ptr m_ts_;                                     \
-                                                                                   \
-        public:                                                                    \
-            test_module(test_module const&)     = delete;                          \
-            test_module(test_module&&) noexcept = delete;                          \
-            virtual ~test_module() noexcept     = default;                         \
-            auto                                                                   \
-            operator=(test_module const&) -> test_module& = delete;                \
-            auto                                                                   \
-            operator=(test_module&&) noexcept -> test_module& = delete;            \
-                                                                                   \
-        protected:                                                                 \
-            test_module() : m_ts_(sctf::intern::BASE::create(DESCR)) {             \
-                sctf::runner::instance().add_testsuite(m_ts_);                     \
-            }                                                                      \
-            auto                                                                   \
-            sctf_intern_ts_() const -> sctf::intern::testsuite_ptr const& {        \
-                return m_ts_;                                                      \
-            }                                                                      \
-        };                                                                         \
-        class SCTF_INTERN_API_SUITE_NAME(__LINE__);                                \
-        static auto const& sctf_intern_mod_ =                                      \
-        sctf::intern::singleton<SCTF_INTERN_API_SUITE_NAME(__LINE__)>::instance(); \
-        using sctf_intern_mod_type_ = SCTF_INTERN_API_SUITE_NAME(__LINE__);        \
-    }                                                                              \
-    class SCTF_INTERN_API_SUITE_NS(__LINE__)::SCTF_INTERN_API_SUITE_NAME(__LINE__) \
+#define SCTF_INTERN_API_SUITE_WRAPPER(DESCR, BASE)                                   \
+    namespace SCTF_INTERN_API_SUITE_NS(__LINE__) {                                   \
+        class test_module                                                            \
+        {                                                                            \
+            sctf::intern::testsuite_ptr m_ts_;                                       \
+                                                                                     \
+        public:                                                                      \
+            test_module(test_module const&)     = delete;                            \
+            test_module(test_module&&) noexcept = delete;                            \
+            virtual ~test_module() noexcept     = default;                           \
+            auto                                                                     \
+            operator=(test_module const&) -> test_module& = delete;                  \
+            auto                                                                     \
+            operator=(test_module&&) noexcept -> test_module& = delete;              \
+                                                                                     \
+        protected:                                                                   \
+            test_module() : m_ts_(sctf::intern::BASE::create(DESCR)) {               \
+                sctf::runner::instance().add_testsuite(m_ts_);                       \
+            }                                                                        \
+            auto                                                                     \
+            sctf_intern_ts_() const -> sctf::intern::testsuite_ptr const& {          \
+                return m_ts_;                                                        \
+            }                                                                        \
+        };                                                                           \
+        class SCTF_INTERN_API_SUITE_NAME(__LINE__);                                  \
+        static auto const& sctf_intern_mod_ =                                        \
+          sctf::intern::singleton<SCTF_INTERN_API_SUITE_NAME(__LINE__)>::instance(); \
+        using sctf_intern_mod_type_ = SCTF_INTERN_API_SUITE_NAME(__LINE__);          \
+    }                                                                                \
+    class SCTF_INTERN_API_SUITE_NS(__LINE__)::SCTF_INTERN_API_SUITE_NAME(__LINE__)   \
         : public SCTF_INTERN_API_SUITE_NS(__LINE__)::test_module
 
 /**
@@ -142,15 +142,14 @@ struct singleton final
  *
  * @param DESCR is a cstring with the description of the testcase.
  */
-#define SCTF_INTERN_API_TEST_WRAPPER(DESCR)                                                    \
-    class SCTF_INTERN_API_TEST_NAME(__LINE__)                                                  \
-    {                                                                                          \
-    public:                                                                                    \
-        explicit SCTF_INTERN_API_TEST_NAME(__LINE__)(sctf_intern_mod_type_ * mod_) {           \
-            mod_->sctf_intern_ts_()->test(DESCR,                                               \
-                                          [=] { mod_->SCTF_INTERN_API_TEST_FN(__LINE__)(); }); \
-        }                                                                                      \
-    } SCTF_INTERN_API_TEST_INST(__LINE__){this};                                               \
+#define SCTF_INTERN_API_TEST_WRAPPER(DESCR)                                                           \
+    class SCTF_INTERN_API_TEST_NAME(__LINE__)                                                         \
+    {                                                                                                 \
+    public:                                                                                           \
+        explicit SCTF_INTERN_API_TEST_NAME(__LINE__)(sctf_intern_mod_type_ * mod_) {                  \
+            mod_->sctf_intern_ts_()->test(DESCR, [=] { mod_->SCTF_INTERN_API_TEST_FN(__LINE__)(); }); \
+        }                                                                                             \
+    } SCTF_INTERN_API_TEST_INST(__LINE__){this};                                                      \
     void SCTF_INTERN_API_TEST_FN(__LINE__)()
 
 /**

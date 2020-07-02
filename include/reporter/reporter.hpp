@@ -131,8 +131,7 @@ protected:
         return m_out_stream;
     }
 
-    std::ofstream
-                  m_out_file;  ///< Filestream that is used, if a file is specified as output target.
+    std::ofstream m_out_file;       ///< Filestream that is used, if a file is specified as output target.
     std::ostream& m_out_stream;     ///< Outstream that handles printing the report.
     std::size_t   m_abs_tests = 0;  ///< Total number of testcases over all testsuites.
     std::size_t   m_abs_fails = 0;  ///< Total number of failed testcases over all testsuites.

@@ -112,8 +112,8 @@ public:
 private:
     void
     report_testsuite(intern::testsuite_ptr const& ts_) override {
-        *this << "Run Testsuite [" << ts_->name() << "]; time = " << ts_->execution_duration()
-              << "ms" << intern::fmt::LF;
+        *this << "Run Testsuite [" << ts_->name() << "]; time = " << ts_->execution_duration() << "ms"
+              << intern::fmt::LF;
 
         reporter::report_testsuite(ts_);
     }
@@ -151,9 +151,8 @@ private:
             *this << (m_color ? intern::fmt::ANSI_CYAN : "");
         }
         *this << "Result:: passed: " << m_abs_tests - m_abs_fails - m_abs_errs << "/" << m_abs_tests
-              << " ; failed: " << m_abs_fails << "/" << m_abs_tests << " ; errors: " << m_abs_errs
-              << "/" << m_abs_tests << " ; time = " << m_abs_time << "ms"
-              << (m_color ? intern::fmt::ANSI_RESET : "") << intern::fmt::LF;
+              << " ; failed: " << m_abs_fails << "/" << m_abs_tests << " ; errors: " << m_abs_errs << "/" << m_abs_tests
+              << " ; time = " << m_abs_time << "ms" << (m_color ? intern::fmt::ANSI_RESET : "") << intern::fmt::LF;
     }
 
     bool m_color   = false;  ///< Flags whether print colored results.

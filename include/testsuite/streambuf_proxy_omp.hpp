@@ -43,8 +43,7 @@ namespace intern
 class streambuf_proxy_omp : public std::streambuf
 {
 /// Get the buffer for the current thread.
-#define SCTF_INTERN_CURRENT_THREAD_BUFFER() \
-    (m_thd_buffers.at(static_cast<std::size_t>(omp_get_thread_num())))
+#define SCTF_INTERN_CURRENT_THREAD_BUFFER() (m_thd_buffers.at(static_cast<std::size_t>(omp_get_thread_num())))
 
 public:
     streambuf_proxy_omp(streambuf_proxy_omp const&)     = delete;
@@ -92,8 +91,7 @@ public:
 private:
     auto
     overflow(int_type c_) -> int_type override {
-        return SCTF_INTERN_CURRENT_THREAD_BUFFER().sputc(
-        std::stringbuf::traits_type::to_char_type(c_));
+        return SCTF_INTERN_CURRENT_THREAD_BUFFER().sputc(std::stringbuf::traits_type::to_char_type(c_));
     }
 
     auto

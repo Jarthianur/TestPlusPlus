@@ -47,8 +47,7 @@ public:
      *
      * @param stream_ is the stream to capture from.
      */
-    explicit streambuf_proxy(std::ostream& stream_)
-        : m_orig_buf(stream_.rdbuf(this)), m_orig_stream(stream_) {}
+    explicit streambuf_proxy(std::ostream& stream_) : m_orig_buf(stream_.rdbuf(this)), m_orig_stream(stream_) {}
 
     /**
      * Restore the original buffer of the stream.

@@ -40,8 +40,7 @@ public:
      */
     auto
     get() -> double {
-        return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - m_start)
-        .count();
+        return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - m_start).count();
     }
 
 private:

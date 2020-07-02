@@ -43,9 +43,8 @@
  * @param CMP is the comparator to use.
  * @param EXP is the expected value.
  */
-#define ASSERT(VAL, CMP, EXP)                                            \
-    sctf::intern::assert_statement(std::forward_as_tuple(CMP, VAL, EXP), \
-                                   sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT(VAL, CMP, EXP) \
+    sctf::intern::assert_statement(std::forward_as_tuple(CMP, VAL, EXP), sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Generic assertion to compare two values, where the comparison is logically negated.
@@ -60,9 +59,8 @@
  * @param CMP is the comparator to use.
  * @param EXP is the expected value.
  */
-#define ASSERT_NOT(VAL, CMP, EXP)                                         \
-    sctf::intern::assert_statement(std::forward_as_tuple(!CMP, VAL, EXP), \
-                                   sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_NOT(VAL, CMP, EXP) \
+    sctf::intern::assert_statement(std::forward_as_tuple(!CMP, VAL, EXP), sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert two values to be equal.
@@ -118,10 +116,9 @@
  *
  * @param PTR is the actual pointer.
  */
-#define ASSERT_NULL(PTR)                                                           \
-    sctf::intern::assert_statement(                                                \
-    std::forward_as_tuple(sctf::EQUALS(), static_cast<void const*>(PTR), nullptr), \
-    sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_NULL(PTR)                                                                                          \
+    sctf::intern::assert_statement(std::forward_as_tuple(sctf::EQUALS(), static_cast<void const*>(PTR), nullptr), \
+                                   sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert a pointer to be not nullptr.
@@ -133,10 +130,9 @@
  *
  * @param PTR is the actual pointer.
  */
-#define ASSERT_NOT_NULL(PTR)                                                        \
-    sctf::intern::assert_statement(                                                 \
-    std::forward_as_tuple(!sctf::EQUALS(), static_cast<void const*>(PTR), nullptr), \
-    sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_NOT_NULL(PTR)                                                                                       \
+    sctf::intern::assert_statement(std::forward_as_tuple(!sctf::EQUALS(), static_cast<void const*>(PTR), nullptr), \
+                                   sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert a value to be zero.
@@ -148,10 +144,9 @@
  *
  * @param VAL is the actual value.
  */
-#define ASSERT_ZERO(VAL)                                                       \
-    sctf::intern::assert_statement(                                            \
-    std::forward_as_tuple(sctf::EQUALS(), VAL, static_cast<decltype(VAL)>(0)), \
-    sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_ZERO(VAL)                                                                                      \
+    sctf::intern::assert_statement(std::forward_as_tuple(sctf::EQUALS(), VAL, static_cast<decltype(VAL)>(0)), \
+                                   sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert an expression to throw a specific throwable type.
@@ -179,8 +174,7 @@
  * @param FN is the expression / invokation.
  * @return the return value of FN, if there is any.
  */
-#define ASSERT_NOTHROW(FN) \
-    sctf::intern::assert_nothrow([&] { FN; }, sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_NOTHROW(FN) sctf::intern::assert_nothrow([&] { FN; }, sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert an expression to run in certain amount of time.
@@ -195,8 +189,7 @@
  * @param MAX is the maximum amount of time in milliseconds.
  * @return the return value of FN, if there is any.
  */
-#define ASSERT_RUNTIME(FN, MAX) \
-    sctf::intern::assert_runtime([&] { FN; }, MAX, sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_RUNTIME(FN, MAX) sctf::intern::assert_runtime([&] { FN; }, MAX, sctf::intern::loc{__FILE__, __LINE__})
 
 namespace sctf
 {
@@ -254,8 +247,7 @@ assert_throws(F&& fn_, char const* tname_, loc const& loc_) -> T {
  * @return the return value of fn_.
  * @throw sctf::intern::assertion_failure if a any throwable type is thrown by fn_.
  */
-template<typename F,
-         SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
+template<typename F, SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
 auto
 assert_nothrow(F&& fn_, loc const& loc_) -> decltype(fn_()) {
     try {
@@ -274,8 +266,7 @@ assert_nothrow(F&& fn_, loc const& loc_) -> decltype(fn_()) {
  * @param loc_ is the line of code where the assertion took place.
  * @throw sctf::intern::assertion_failure if a any throwable type is thrown by fn_.
  */
-template<typename F,
-         SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
+template<typename F, SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
 void
 assert_nothrow(F&& fn_, loc const& loc_) {
     try {
@@ -296,8 +287,7 @@ assert_nothrow(F&& fn_, loc const& loc_) {
  * @return the return value of fn_.
  * @throw sctf::intern::assertion_failure if fn_ does not complete within max_ms_.
  */
-template<typename F,
-         SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
+template<typename F, SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
 auto
 assert_runtime(F&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_()) {
     duration        dur;
@@ -317,8 +307,7 @@ assert_runtime(F&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_()) {
  * @param loc_ is the line of code where the assertion took place.
  * @throw sctf::intern::assertion_failure if fn_ does not complete within max_ms_.
  */
-template<typename F,
-         SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
+template<typename F, SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
 void
 assert_runtime(F&& fn_, double max_ms_, loc const& loc_) {
     duration dur;
