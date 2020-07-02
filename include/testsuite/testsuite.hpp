@@ -59,23 +59,27 @@ public:
 
     testsuite(testsuite const&)     = delete;
     testsuite(testsuite&&) noexcept = delete;
-    auto operator=(testsuite const&) -> testsuite& = delete;
-    auto operator=(testsuite&&) noexcept -> testsuite& = delete;
-    virtual ~testsuite() noexcept                      = default;
+    virtual ~testsuite() noexcept   = default;
+    auto
+    operator=(testsuite const&) -> testsuite& = delete;
+    auto
+    operator=(testsuite&&) noexcept -> testsuite& = delete;
 
     /**
      * Create a new testsuite.
      *
      * @param name_ is the name, or description of the testsuite.
      */
-    static auto create(char const* name_) -> testsuite_ptr {
+    static auto
+    create(char const* name_) -> testsuite_ptr {
         return std::make_shared<testsuite>(enable{}, name_);
     }
 
     /**
      * Run all testcases in this suite.
      */
-    virtual void run() {
+    virtual void
+    run() {
         if (m_state != execution_state::DONE) {
             m_stats.m_num_tests = m_testcases.size();
             streambuf_proxy buf_cout(std::cout);
@@ -110,7 +114,8 @@ public:
      * @param name_ is the name, or description of the testcase.
      * @param fn_   is the function performing the test.
      */
-    void test(char const* name_, hook_function&& fn_) {
+    void
+    test(char const* name_, hook_function&& fn_) {
         m_testcases.emplace_back(test_context{name_, m_name}, std::move(fn_));
         m_state = execution_state::PENDING;
     }
@@ -121,7 +126,8 @@ public:
      *
      * @param fn_ is the function to set.
      */
-    void setup(hook_function&& fn_) {
+    void
+    setup(hook_function&& fn_) {
         m_setup_fn.fn = std::move(fn_);
     }
 
@@ -131,7 +137,8 @@ public:
      *
      * @param fn_ is the function to set.
      */
-    void teardown(hook_function&& fn_) {
+    void
+    teardown(hook_function&& fn_) {
         m_teardown_fn.fn = std::move(fn_);
     }
 
@@ -141,7 +148,8 @@ public:
      *
      * @param fn_ is the function to set.
      */
-    void before_each(hook_function&& fn_) {
+    void
+    before_each(hook_function&& fn_) {
         m_pretest_fn.fn = std::move(fn_);
     }
 
@@ -151,42 +159,48 @@ public:
      *
      * @param fn_ is the function to set.
      */
-    void after_each(hook_function&& fn_) {
+    void
+    after_each(hook_function&& fn_) {
         m_posttest_fn.fn = std::move(fn_);
     }
 
     /**
      * Get the testsuite name.
      */
-    inline auto name() const -> char const* {
+    inline auto
+    name() const -> char const* {
         return m_name;
     }
 
     /**
      * Get the timestamp of instantiation.
      */
-    inline auto timestamp() const -> std::chrono::system_clock::time_point const& {
+    inline auto
+    timestamp() const -> std::chrono::system_clock::time_point const& {
         return m_create_time;
     }
 
     /**
      * Get the test statistics.
      */
-    inline auto statistics() const -> statistic const& {
+    inline auto
+    statistics() const -> statistic const& {
         return m_stats;
     }
 
     /**
      * Get the accumulated time spent on all tests.
      */
-    inline auto execution_duration() const -> double {
+    inline auto
+    execution_duration() const -> double {
         return m_exec_dur;
     }
 
     /**
      * Get all testcases.
      */
-    inline auto testcases() const -> std::vector<testcase> const& {
+    inline auto
+    testcases() const -> std::vector<testcase> const& {
         return m_testcases;
     }
 
@@ -204,7 +218,8 @@ protected:
      */
     struct silent_functor final
     {
-        auto operator()() -> silent_functor& {
+        auto
+        operator()() -> silent_functor& {
             if (fn) {
                 try {
                     fn();
@@ -234,7 +249,7 @@ protected:
     statistic             m_stats;      ///< Stores test results.
     std::vector<testcase> m_testcases;  ///< Stores testcases.
     execution_state       m_state =
-        execution_state::PENDING;  ///< States, whether all testcases have been executed.
+    execution_state::PENDING;  ///< States, whether all testcases have been executed.
 
     silent_functor m_setup_fn;     ///< Optional function, that is executed before all testcases.
     silent_functor m_teardown_fn;  ///< Optional function, that is executed after all testcases.

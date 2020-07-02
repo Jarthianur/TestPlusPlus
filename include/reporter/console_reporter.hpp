@@ -55,16 +55,19 @@ class console_reporter : public intern::reporter
 public:
     console_reporter(console_reporter const&)     = delete;
     console_reporter(console_reporter&&) noexcept = delete;
-    auto operator=(console_reporter const&) -> console_reporter& = delete;
-    auto operator=(console_reporter&&) noexcept -> console_reporter& = delete;
-    ~console_reporter() noexcept override                            = default;
+    ~console_reporter() noexcept override         = default;
+    auto
+    operator=(console_reporter const&) -> console_reporter& = delete;
+    auto
+    operator=(console_reporter&&) noexcept -> console_reporter& = delete;
 
     /**
      * Create a console reporter.
      *
      * @param stream_ is the stream where to print the report. (default: stdout)
      */
-    static auto create(std::ostream& stream_ = std::cout) -> std::shared_ptr<console_reporter> {
+    static auto
+    create(std::ostream& stream_ = std::cout) -> std::shared_ptr<console_reporter> {
         return std::make_shared<console_reporter>(enable{}, stream_);
     }
 
@@ -73,7 +76,8 @@ public:
      *
      * @param fname_ is the filename where to print the report.
      */
-    static auto create(char const* fname_) -> std::shared_ptr<console_reporter> {
+    static auto
+    create(char const* fname_) -> std::shared_ptr<console_reporter> {
         return std::make_shared<console_reporter>(enable{}, fname_);
     }
 
@@ -82,7 +86,8 @@ public:
      *
      * @return this reporter again.
      */
-    auto with_color() -> std::shared_ptr<console_reporter> {
+    auto
+    with_color() -> std::shared_ptr<console_reporter> {
         m_color = true;
         return std::static_pointer_cast<console_reporter>(shared_from_this());
     }
@@ -92,7 +97,8 @@ public:
      *
      * @return this reporter again.
      */
-    auto with_captured_output() -> std::shared_ptr<console_reporter> {
+    auto
+    with_captured_output() -> std::shared_ptr<console_reporter> {
         m_capture = true;
         return std::static_pointer_cast<console_reporter>(shared_from_this());
     }
@@ -104,14 +110,16 @@ public:
     explicit console_reporter(enable, char const* fname_) : reporter(fname_) {}
 
 private:
-    void report_testsuite(intern::testsuite_ptr const& ts_) override {
+    void
+    report_testsuite(intern::testsuite_ptr const& ts_) override {
         *this << "Run Testsuite [" << ts_->name() << "]; time = " << ts_->execution_duration()
               << "ms" << intern::fmt::LF;
 
         reporter::report_testsuite(ts_);
     }
 
-    void report_testcase(intern::testcase const& tc_) override {
+    void
+    report_testcase(intern::testcase const& tc_) override {
         *this << intern::fmt::SPACE << "Run Testcase [" << tc_.name() << "](" << tc_.suite_name()
               << "); time = " << tc_.duration() << "ms" << intern::fmt::LF << intern::fmt::XSPACE;
         if (m_capture) {
@@ -133,9 +141,8 @@ private:
         *this << (m_color ? intern::fmt::ANSI_RESET : "") << intern::fmt::LF;
     }
 
-    void begin_report() override {}
-
-    void end_report() override {
+    void
+    end_report() override {
         if (m_abs_errs > 0) {
             *this << (m_color ? intern::fmt::ANSI_YELLOW : "");
         } else if (m_abs_fails > 0) {

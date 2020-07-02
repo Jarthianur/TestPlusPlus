@@ -118,10 +118,10 @@
  *
  * @param PTR is the actual pointer.
  */
-#define ASSERT_NULL(PTR)                                                               \
-    sctf::intern::assert_statement(                                                    \
-        std::forward_as_tuple(sctf::EQUALS(), static_cast<void const*>(PTR), nullptr), \
-        sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_NULL(PTR)                                                           \
+    sctf::intern::assert_statement(                                                \
+    std::forward_as_tuple(sctf::EQUALS(), static_cast<void const*>(PTR), nullptr), \
+    sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert a pointer to be not nullptr.
@@ -133,10 +133,10 @@
  *
  * @param PTR is the actual pointer.
  */
-#define ASSERT_NOT_NULL(PTR)                                                            \
-    sctf::intern::assert_statement(                                                     \
-        std::forward_as_tuple(!sctf::EQUALS(), static_cast<void const*>(PTR), nullptr), \
-        sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_NOT_NULL(PTR)                                                        \
+    sctf::intern::assert_statement(                                                 \
+    std::forward_as_tuple(!sctf::EQUALS(), static_cast<void const*>(PTR), nullptr), \
+    sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert a value to be zero.
@@ -148,10 +148,10 @@
  *
  * @param VAL is the actual value.
  */
-#define ASSERT_ZERO(VAL)                                                           \
-    sctf::intern::assert_statement(                                                \
-        std::forward_as_tuple(sctf::EQUALS(), VAL, static_cast<decltype(VAL)>(0)), \
-        sctf::intern::loc{__FILE__, __LINE__})
+#define ASSERT_ZERO(VAL)                                                       \
+    sctf::intern::assert_statement(                                            \
+    std::forward_as_tuple(sctf::EQUALS(), VAL, static_cast<decltype(VAL)>(0)), \
+    sctf::intern::loc{__FILE__, __LINE__})
 
 /**
  * Assert an expression to throw a specific throwable type.
@@ -212,7 +212,8 @@ namespace intern
  * @throw sctf::intern::assertion_failure if the assertion fails according to the comparator.
  */
 template<typename S>
-void assert_statement(S&& stmt_, loc const& loc_) {
+void
+assert_statement(S&& stmt_, loc const& loc_) {
     comparison res = std::get<0>(stmt_)(std::get<1>(stmt_), std::get<2>(stmt_));
     if (!res) {
         throw assertion_failure(*res, loc_);
@@ -231,7 +232,8 @@ void assert_statement(S&& stmt_, loc const& loc_) {
  * fn_.
  */
 template<typename T, typename F>
-auto assert_throws(F&& fn_, char const* tname_, loc const& loc_) -> T {
+auto
+assert_throws(F&& fn_, char const* tname_, loc const& loc_) -> T {
     try {
         fn_();
     } catch (T const& e) {
@@ -254,7 +256,8 @@ auto assert_throws(F&& fn_, char const* tname_, loc const& loc_) -> T {
  */
 template<typename F,
          SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
-auto assert_nothrow(F&& fn_, loc const& loc_) -> decltype(fn_()) {
+auto
+assert_nothrow(F&& fn_, loc const& loc_) -> decltype(fn_()) {
     try {
         return fn_();
     } catch (std::exception const& e) {
@@ -273,7 +276,8 @@ auto assert_nothrow(F&& fn_, loc const& loc_) -> decltype(fn_()) {
  */
 template<typename F,
          SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
-void assert_nothrow(F&& fn_, loc const& loc_) {
+void
+assert_nothrow(F&& fn_, loc const& loc_) {
     try {
         fn_();
     } catch (std::exception const& e) {
@@ -294,7 +298,8 @@ void assert_nothrow(F&& fn_, loc const& loc_) {
  */
 template<typename F,
          SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
-auto assert_runtime(F&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_()) {
+auto
+assert_runtime(F&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_()) {
     duration        dur;
     decltype(fn_()) res    = fn_();
     double          dur_ms = dur.get();
@@ -314,7 +319,8 @@ auto assert_runtime(F&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_())
  */
 template<typename F,
          SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
-void assert_runtime(F&& fn_, double max_ms_, loc const& loc_) {
+void
+assert_runtime(F&& fn_, double max_ms_, loc const& loc_) {
     duration dur;
     fn_();
     double dur_ms = dur.get();

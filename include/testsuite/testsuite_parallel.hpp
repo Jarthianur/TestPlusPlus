@@ -40,16 +40,19 @@ class testsuite_parallel : public testsuite
 public:
     testsuite_parallel(testsuite_parallel const&)     = delete;
     testsuite_parallel(testsuite_parallel&&) noexcept = delete;
-    auto operator=(testsuite_parallel const&) -> testsuite_parallel& = delete;
-    auto operator=(testsuite_parallel&&) noexcept -> testsuite_parallel& = delete;
-    ~testsuite_parallel() noexcept override                              = default;
+    ~testsuite_parallel() noexcept override           = default;
+    auto
+    operator=(testsuite_parallel const&) -> testsuite_parallel& = delete;
+    auto
+    operator=(testsuite_parallel&&) noexcept -> testsuite_parallel& = delete;
 
     /**
      * Create a new testsuite.
      *
      * @param name_ is the name, or description of the testsuite.
      */
-    static auto create(char const* name_) -> testsuite_ptr {
+    static auto
+    create(char const* name_) -> testsuite_ptr {
         return std::make_shared<testsuite_parallel>(enable{}, name_);
     }
 
@@ -57,7 +60,8 @@ public:
      * Run all testcases in this suite.
      * @throw std::overflow_error if there are too many testcases for openmp to handle.
      */
-    void run() override {
+    void
+    run() override {
         if (m_state != execution_state::DONE) {
             if (m_testcases.size() >
                 static_cast<std::size_t>(std::numeric_limits<std::int64_t>::max())) {

@@ -23,12 +23,11 @@
 #include <algorithm>
 #include <vector>
 
+#include "reporter/reporter.hpp"
 #include "testsuite/testsuite.hpp"
 #include "testsuite/testsuite_parallel.hpp"
 
 namespace sctf
-{
-namespace intern
 {
 /**
  * Used to manage and run testsuites.
@@ -41,37 +40,38 @@ public:
      *
      * @param ts_ is the testsuite to add
      */
-    void add_testsuite(testsuite_ptr const& ts_) {
+    void
+    add_testsuite(intern::testsuite_ptr const& ts_) {
         m_testsuites.push_back(ts_);
     }
 
     /**
      * Run all contained testsuites, what inherently performs all tests.
      */
-    void run() noexcept {
+    auto
+    run(reporter_ptr rep_) noexcept -> std::size_t {
+        rep_->begin_report();
         std::for_each(m_testsuites.begin(), m_testsuites.end(),
-                      [](testsuite_ptr& ts_) { ts_->run(); });
-    }
-
-    /**
-     * Get the contained testsuites.
-     */
-    auto testsuites() -> std::vector<testsuite_ptr> const& {
-        return m_testsuites;
+                      [&rep_](intern::testsuite_ptr& ts_) {
+                          ts_->run();
+                          rep_->report_testsuite(ts_);
+                      });
+        rep_->end_report();
+        return rep_->faults();
     }
 
     /**
      * Get a runner instance, as singleton.
      */
-    static auto instance() -> runner& {
+    static auto
+    instance() -> runner& {
         static runner r;
         return r;
     }
 
 private:
-    std::vector<testsuite_ptr> m_testsuites;  ///< Testsuites contained in this runner.
+    std::vector<intern::testsuite_ptr> m_testsuites;  ///< Testsuites contained in this runner.
 };
-}  // namespace intern
 }  // namespace sctf
 
 #endif  // SCTF_RUNNER_HPP
