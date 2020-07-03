@@ -53,7 +53,7 @@ public:
         rep_->begin_report();
         std::for_each(m_testsuites.begin(), m_testsuites.end(), [&rep_](intern::testsuite_ptr& ts_) {
             ts_->run();
-            rep_->report_testsuite(ts_);
+            rep_->report(ts_);
         });
         rep_->end_report();
         return rep_->faults();

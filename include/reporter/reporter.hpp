@@ -51,20 +51,10 @@ public:
     auto
     operator=(reporter&&) noexcept -> reporter& = delete;
 
-    /**
-     * Generate a part of the report for a single testsuite.
-     * This method is used for every testsuite. It may be overridden in derived classes.
-     *
-     * @param ts_ is the testsuite to generate the report for.
-     */
-    virtual void
-    report_testsuite(testsuite_ptr const& ts_) {
-        m_abs_errs += ts_->statistics().errors();
-        m_abs_fails += ts_->statistics().failures();
-        m_abs_tests += ts_->statistics().tests();
-        m_abs_time += ts_->execution_duration();
-        std::for_each(ts_->testcases().begin(), ts_->testcases().end(),
-                      [this](testcase const& tc) { report_testcase(tc); });
+    void
+    report(testsuite_ptr const& ts_) {
+        report_testsuite(ts_);
+        m_out_stream.flush();
     }
 
     /**
@@ -97,7 +87,11 @@ protected:
     /**
      * @param stream_ is the output stream for reports.
      */
-    explicit reporter(std::ostream& stream_) : m_out_stream(stream_) {}
+    explicit reporter(std::ostream& stream_) : m_out_stream(stream_) {
+        if (!m_out_stream) {
+            throw std::runtime_error("could not open stream for report");
+        }
+    }
 
     /**
      * @param fname_ is the output filename for reports.
@@ -105,8 +99,24 @@ protected:
      */
     explicit reporter(char const* fname_) : m_out_file(fname_), m_out_stream(m_out_file) {
         if (!m_out_stream) {
-            throw std::runtime_error("Could not open file.");
+            throw std::runtime_error("could not open file for report");
         }
+    }
+
+    /**
+     * Generate a part of the report for a single testsuite.
+     * This method is used for every testsuite. It may be overridden in derived classes.
+     *
+     * @param ts_ is the testsuite to generate the report for.
+     */
+    virtual void
+    report_testsuite(testsuite_ptr const& ts_) {
+        m_abs_errs += ts_->statistics().errors();
+        m_abs_fails += ts_->statistics().failures();
+        m_abs_tests += ts_->statistics().tests();
+        m_abs_time += ts_->execution_duration();
+        std::for_each(ts_->testcases().begin(), ts_->testcases().end(),
+                      [this](testcase const& tc) { report_testcase(tc); });
     }
 
     /**
