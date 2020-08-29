@@ -38,7 +38,8 @@ struct void_type
 struct streamable
 {
     template<typename S>
-    friend auto operator<<(S& s_, streamable const&) -> S& {
+    friend auto
+    operator<<(S& s_, streamable const&) -> S& {
         return s_;
     }
 };
@@ -47,12 +48,14 @@ struct not_streamable
 {};
 
 template<typename S, typename T, SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_HAS_STREAM_CAPABILITY(T, S))>
-void throw_if_not_streamable() {
+void
+throw_if_not_streamable() {
     throw std::logic_error("Given type is not streamable");
 }
 
 template<typename S, typename T, SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_STREAM_CAPABILITY(T, S))>
-void throw_if_not_streamable() {}
+void
+throw_if_not_streamable() {}
 
 // is_iterable
 
@@ -60,11 +63,13 @@ struct iterable
 {
     struct iterator
     {
-        auto operator!=(iterator const&) const noexcept -> bool {
+        auto
+        operator!=(iterator const&) const noexcept -> bool {
             return false;
         }
 
-        auto operator++() -> iterator& {
+        auto
+        operator++() -> iterator& {
             return *this;
         }
 
@@ -73,11 +78,13 @@ struct iterable
         }
     };
 
-    static auto begin() noexcept -> iterator {
+    static auto
+    begin() noexcept -> iterator {
         return {};
     }
 
-    static auto end() noexcept -> iterator {
+    static auto
+    end() noexcept -> iterator {
         return {};
     }
 };
@@ -86,26 +93,32 @@ struct not_iterable
 {
     struct iterator
     {
-        auto operator!=(iterator const&) const noexcept -> bool = delete;
-        auto operator++() -> iterator&                          = delete;
-        auto operator*() const noexcept -> bool                 = delete;
+        auto
+        operator!=(iterator const&) const noexcept -> bool = delete;
+        auto
+             operator++() -> iterator&          = delete;
+        auto operator*() const noexcept -> bool = delete;
     };
 
-    static auto begin() noexcept -> iterator {
+    static auto
+    begin() noexcept -> iterator {
         return {};
     }
 
-    static auto end() noexcept -> iterator {
+    static auto
+    end() noexcept -> iterator {
         return {};
     }
 };
 
 template<typename T, SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_HAS_ITERATOR_CAPABILITY(T))>
-void throw_if_not_iterable() {
+void
+throw_if_not_iterable() {
     throw std::logic_error("Given type is not streamable");
 }
 
 template<typename T, SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_ITERATOR_CAPABILITY(T))>
-void throw_if_not_iterable() {}
+void
+throw_if_not_iterable() {}
 
 #endif  // TEST_TRAITS_HPP

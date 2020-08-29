@@ -233,9 +233,8 @@ assert_throws(F&& fn_, char const* tname_, loc const& loc_) -> T {
     } catch (T const& e) {
         return e;
     } catch (std::exception const& e) {
-        throw assertion_failure("Wrong exception thrown, caught " + to_string(e) + "(\"" +
-                                    escaped_string(e.what()) + "\")",
-                                loc_);
+        throw assertion_failure(
+          "Wrong exception thrown, caught " + to_string(e) + "(\"" + escaped_string(e.what()) + "\")", loc_);
     } catch (...) {
         throw assertion_failure("Wrong exception thrown", loc_);
     }
@@ -256,9 +255,8 @@ assert_nothrow(F&& fn_, loc const& loc_) -> decltype(fn_()) {
     try {
         return fn_();
     } catch (std::exception const& e) {
-        throw assertion_failure("Expected no exception, caught " + to_string(e) + "(\"" +
-                                    escaped_string(e.what()) + "\")",
-                                loc_);
+        throw assertion_failure(
+          "Expected no exception, caught " + to_string(e) + "(\"" + escaped_string(e.what()) + "\")", loc_);
     } catch (...) {
         throw assertion_failure("Expected no exception", loc_);
     }
@@ -277,9 +275,8 @@ assert_nothrow(F&& fn_, loc const& loc_) {
     try {
         fn_();
     } catch (std::exception const& e) {
-        throw assertion_failure("Expected no exception, caught " + to_string(e) + "(\"" +
-                                    escaped_string(e.what()) + "\")",
-                                loc_);
+        throw assertion_failure(
+          "Expected no exception, caught " + to_string(e) + "(\"" + escaped_string(e.what()) + "\")", loc_);
     } catch (...) {
         throw assertion_failure("Expected no exception", loc_);
     }
