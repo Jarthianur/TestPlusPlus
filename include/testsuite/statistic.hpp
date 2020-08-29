@@ -35,28 +35,32 @@ public:
     /**
      * Get the total number of tests.
      */
-    inline auto tests() const -> std::size_t {
+    inline auto
+    tests() const -> std::size_t {
         return m_num_tests;
     }
 
     /**
      * Get the number of successful tests.
      */
-    inline auto successes() const -> std::size_t {
+    inline auto
+    successes() const -> std::size_t {
         return m_num_tests - m_num_errs - m_num_fails;
     }
 
     /**
      * Get the number of failed tests.
      */
-    inline auto failures() const -> std::size_t {
+    inline auto
+    failures() const -> std::size_t {
         return m_num_fails;
     }
 
     /**
      * Get the number of erroneous tests.
      */
-    inline auto errors() const -> std::size_t {
+    inline auto
+    errors() const -> std::size_t {
         return m_num_errs;
     }
 

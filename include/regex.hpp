@@ -37,8 +37,7 @@ struct regex final
      * @param p_ is the regular expression pattern.
      * @param flags_ is a bit pattern of regex options.
      */
-    regex(char const* p_, std::regex_constants::syntax_option_type flags_)
-        : pattern(p_), re(p_, flags_) {}
+    regex(char const* p_, std::regex_constants::syntax_option_type flags_) : pattern(p_), re(p_, flags_) {}
 
     /**
      * Convert this wrapper to std::regex.

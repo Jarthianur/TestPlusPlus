@@ -37,16 +37,19 @@ class xml_reporter : public intern::reporter
 public:
     xml_reporter(xml_reporter const&)     = delete;
     xml_reporter(xml_reporter&&) noexcept = delete;
-    auto operator=(xml_reporter const&) -> xml_reporter& = delete;
-    auto operator=(xml_reporter&&) noexcept -> xml_reporter& = delete;
-    ~xml_reporter() noexcept override                        = default;
+    ~xml_reporter() noexcept override     = default;
+    auto
+    operator=(xml_reporter const&) -> xml_reporter& = delete;
+    auto
+    operator=(xml_reporter&&) noexcept -> xml_reporter& = delete;
 
     /**
      * Create a xml reporter.
      *
      * @param stream_ is the stream where to print the report. (default: stdout)
      */
-    static auto create(std::ostream& stream_ = std::cout) -> std::shared_ptr<xml_reporter> {
+    static auto
+    create(std::ostream& stream_ = std::cout) -> std::shared_ptr<xml_reporter> {
         return std::make_shared<xml_reporter>(enable{}, stream_);
     }
 
@@ -55,7 +58,8 @@ public:
      *
      * @param fname_ is the filename where to print the report.
      */
-    static auto create(char const* fname_) -> std::shared_ptr<xml_reporter> {
+    static auto
+    create(char const* fname_) -> std::shared_ptr<xml_reporter> {
         return std::make_shared<xml_reporter>(enable{}, fname_);
     }
 
@@ -64,7 +68,8 @@ public:
      *
      * @return this reporter again.
      */
-    auto with_captured_output() -> std::shared_ptr<xml_reporter> {
+    auto
+    with_captured_output() -> std::shared_ptr<xml_reporter> {
         m_capture = true;
         return std::static_pointer_cast<xml_reporter>(shared_from_this());
     }
@@ -76,35 +81,38 @@ public:
     explicit xml_reporter(enable, char const* fname_) : reporter(fname_) {}
 
 private:
-    void report_testsuite(intern::testsuite_ptr const& ts_) override {
+    void
+    report_testsuite(intern::testsuite_ptr const& ts_) override {
         std::time_t           stamp = std::chrono::system_clock::to_time_t(ts_->timestamp());
         std::array<char, 128> buff{};
         std::strftime(buff.data(), 127, "%FT%T", std::localtime(&stamp));
-        *this << intern::fmt::SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name()
-              << "\" errors=\"" << ts_->statistics().errors() << "\" tests=\""
-              << ts_->statistics().tests() << "\" failures=\"" << ts_->statistics().failures()
-              << R"(" skipped="0" time=")" << ts_->execution_duration() << "\" timestamp=\""
-              << buff.data() << "\">" << intern::fmt::LF;
+
+        *this << intern::fmt::SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name() << "\" errors=\""
+              << ts_->statistics().errors() << "\" tests=\"" << ts_->statistics().tests() << "\" failures=\""
+              << ts_->statistics().failures() << R"(" skipped="0" time=")" << ts_->execution_duration()
+              << "\" timestamp=\"" << buff.data() << "\">" << intern::fmt::LF;
+
         reporter::report_testsuite(ts_);
+
         *this << intern::fmt::SPACE << "</testsuite>" << intern::fmt::LF;
     }
 
-    void report_testcase(intern::testcase const& tc_) override {
-        *this << intern::fmt::XSPACE << "<testcase name=\"" << tc_.name() << "\" classname=\""
-              << tc_.suite_name() << "\" time=\"" << tc_.duration() << "\"";
+    void
+    report_testcase(intern::testcase const& tc_) override {
+        *this << intern::fmt::XSPACE << "<testcase name=\"" << tc_.name() << "\" classname=\"" << tc_.suite_name()
+              << "\" time=\"" << tc_.duration() << "\"";
         switch (tc_.state()) {
             case intern::testcase::result::ERROR:
-                *this << ">" << intern::fmt::LF << intern::fmt::XSPACE << intern::fmt::SPACE
-                      << "<error message=\"" << tc_.reason() << "\"></error>" << intern::fmt::LF;
+                *this << ">" << intern::fmt::LF << intern::fmt::XSPACE << intern::fmt::SPACE << "<error message=\""
+                      << tc_.reason() << "\"></error>" << intern::fmt::LF;
                 if (m_capture) {
                     print_system_out(tc_);
                 }
                 *this << intern::fmt::XSPACE << "</testcase>";
                 break;
             case intern::testcase::result::FAILED:
-                *this << ">" << intern::fmt::LF << intern::fmt::XSPACE << intern::fmt::SPACE
-                      << "<failure message=\"" << tc_.reason() << "\"></failure>"
-                      << intern::fmt::LF;
+                *this << ">" << intern::fmt::LF << intern::fmt::XSPACE << intern::fmt::SPACE << "<failure message=\""
+                      << tc_.reason() << "\"></failure>" << intern::fmt::LF;
                 if (m_capture) {
                     print_system_out(tc_);
                 }
@@ -123,12 +131,15 @@ private:
         *this << intern::fmt::LF;
     }
 
-    void begin_report() override {
-        *this << R"(<?xml version="1.0" encoding="UTF-8" ?>)" << intern::fmt::LF << "<testsuites>"
-              << intern::fmt::LF;
+    void
+    begin_report() override {
+        reporter::begin_report();
+
+        *this << R"(<?xml version="1.0" encoding="UTF-8" ?>)" << intern::fmt::LF << "<testsuites>" << intern::fmt::LF;
     }
 
-    void end_report() override {
+    void
+    end_report() override {
         *this << "</testsuites>" << intern::fmt::LF;
     }
 
@@ -137,11 +148,12 @@ private:
      *
      * @param tc_ is the testcase whose output to print.
      */
-    void print_system_out(intern::testcase const& tc_) {
-        *this << intern::fmt::XSPACE << intern::fmt::SPACE << "<system-out>" << tc_.cout()
-              << "</system-out>" << intern::fmt::LF;
-        *this << intern::fmt::XSPACE << intern::fmt::SPACE << "<system-err>" << tc_.cerr()
-              << "</system-err>" << intern::fmt::LF;
+    void
+    print_system_out(intern::testcase const& tc_) {
+        *this << intern::fmt::XSPACE << intern::fmt::SPACE << "<system-out>" << tc_.cout() << "</system-out>"
+              << intern::fmt::LF;
+        *this << intern::fmt::XSPACE << intern::fmt::SPACE << "<system-err>" << tc_.cerr() << "</system-err>"
+              << intern::fmt::LF;
     }
 
     std::size_t mutable m_id = 0;      ///< Report wide incremental ID for testsuites.

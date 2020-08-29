@@ -36,8 +36,10 @@ class streambuf_proxy : public std::streambuf
 public:
     streambuf_proxy(streambuf_proxy const&)     = delete;
     streambuf_proxy(streambuf_proxy&&) noexcept = delete;
-    auto operator=(streambuf_proxy const&) -> streambuf_proxy& = delete;
-    auto operator=(streambuf_proxy&&) noexcept -> streambuf_proxy& = delete;
+    auto
+    operator=(streambuf_proxy const&) -> streambuf_proxy& = delete;
+    auto
+    operator=(streambuf_proxy&&) noexcept -> streambuf_proxy& = delete;
 
     /**
      * Replace the underlying buffer of the stream.
@@ -45,8 +47,7 @@ public:
      *
      * @param stream_ is the stream to capture from.
      */
-    explicit streambuf_proxy(std::ostream& stream_)
-        : m_orig_buf(stream_.rdbuf(this)), m_orig_stream(stream_) {}
+    explicit streambuf_proxy(std::ostream& stream_) : m_orig_buf(stream_.rdbuf(this)), m_orig_stream(stream_) {}
 
     /**
      * Restore the original buffer of the stream.
@@ -59,23 +60,27 @@ public:
     /**
      * Get the current buffer content.
      */
-    auto str() const -> std::string {
+    auto
+    str() const -> std::string {
         return m_buffer.str();
     }
 
     /**
      * Clear the buffer.
      */
-    void clear() {
+    void
+    clear() {
         m_buffer.str("");
     }
 
 private:
-    auto overflow(int_type c_) -> int_type override {
+    auto
+    overflow(int_type c_) -> int_type override {
         return m_buffer.sputc(std::stringbuf::traits_type::to_char_type(c_));
     }
 
-    auto xsputn(char const* s_, std::streamsize n_) -> std::streamsize override {
+    auto
+    xsputn(char const* s_, std::streamsize n_) -> std::streamsize override {
         return m_buffer.sputn(s_, n_);
     }
 

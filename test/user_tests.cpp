@@ -30,17 +30,21 @@ class MyClass
     double m_d = 1.0;
 
 public:
-    void incr() {
+    void
+    incr() {
         m_i += 1;
     }
-    void mult(double m) {
+    void
+    mult(double m) {
         m_d *= m;
     }
 
-    auto i() const -> int {
+    auto
+    i() const -> int {
         return m_i;
     }
-    auto d() const -> double {
+    auto
+    d() const -> double {
         return m_d;
     }
 };

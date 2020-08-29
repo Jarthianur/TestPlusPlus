@@ -23,13 +23,16 @@
 
 #include "test_traits.hpp"
 
-void test_traits();
+void
+test_traits();
 
-void basic_tests() {
+void
+basic_tests() {
     test_traits();
 }
 
-void test_traits() {
+void
+test_traits() {
     // is_streamable
     throw_if_not_streamable<std::ostringstream, streamable>();
     try {

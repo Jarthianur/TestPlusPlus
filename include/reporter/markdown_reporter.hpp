@@ -35,16 +35,19 @@ class markdown_reporter : public intern::reporter
 public:
     markdown_reporter(markdown_reporter const&)     = delete;
     markdown_reporter(markdown_reporter&&) noexcept = delete;
-    auto operator=(markdown_reporter const&) -> markdown_reporter& = delete;
-    auto operator=(markdown_reporter&&) noexcept -> markdown_reporter& = delete;
-    ~markdown_reporter() noexcept override                             = default;
+    ~markdown_reporter() noexcept override          = default;
+    auto
+    operator=(markdown_reporter const&) -> markdown_reporter& = delete;
+    auto
+    operator=(markdown_reporter&&) noexcept -> markdown_reporter& = delete;
 
     /**
      * Create a markdown reporter.
      *
      * @param stream_ is the stream where to print the report. (default: stdout)
      */
-    static auto create(std::ostream& stream_ = std::cout) -> std::shared_ptr<markdown_reporter> {
+    static auto
+    create(std::ostream& stream_ = std::cout) -> std::shared_ptr<markdown_reporter> {
         return std::make_shared<markdown_reporter>(enable{}, stream_);
     }
 
@@ -53,7 +56,8 @@ public:
      *
      * @param fname_ is the filename where to print the report.
      */
-    static auto create(char const* fname_) -> std::shared_ptr<markdown_reporter> {
+    static auto
+    create(char const* fname_) -> std::shared_ptr<markdown_reporter> {
         return std::make_shared<markdown_reporter>(enable{}, fname_);
     }
 
@@ -62,7 +66,8 @@ public:
      *
      * @return this reporter again.
      */
-    auto with_captured_output() -> std::shared_ptr<markdown_reporter> {
+    auto
+    with_captured_output() -> std::shared_ptr<markdown_reporter> {
         m_capture = true;
         return std::static_pointer_cast<markdown_reporter>(shared_from_this());
     }
@@ -74,20 +79,23 @@ public:
     explicit markdown_reporter(enable, char const* fname_) : reporter(fname_) {}
 
 private:
-    void report_testsuite(intern::testsuite_ptr const& ts_) override {
-        *this << "## " << ts_->name() << intern::fmt::XLF
-              << "|Tests|Successes|Failures|Errors|Time|" << intern::fmt::LF << "|-|-|-|-|-|"
-              << intern::fmt::LF << "|" << ts_->statistics().tests() << "|"
+    void
+    report_testsuite(intern::testsuite_ptr const& ts_) override {
+        *this << "## " << ts_->name() << intern::fmt::XLF << "|Tests|Successes|Failures|Errors|Time|" << intern::fmt::LF
+              << "|-|-|-|-|-|" << intern::fmt::LF << "|" << ts_->statistics().tests() << "|"
               << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"
-              << ts_->statistics().errors() << "|" << ts_->execution_duration() << "ms|"
-              << intern::fmt::XLF << "### Tests" << intern::fmt::XLF << "|Name|Context|Time|Status|"
+              << ts_->statistics().errors() << "|" << ts_->execution_duration() << "ms|" << intern::fmt::XLF
+              << "### Tests" << intern::fmt::XLF << "|Name|Context|Time|Status|"
               << (m_capture ? "System-Out|System-Err|" : "") << intern::fmt::LF << "|-|-|-|-|"
               << (m_capture ? "-|-|" : "") << intern::fmt::LF;
+
         reporter::report_testsuite(ts_);
+
         *this << intern::fmt::XLF;
     }
 
-    void report_testcase(intern::testcase const& tc_) override {
+    void
+    report_testcase(intern::testcase const& tc_) override {
         char const* status = "";
         switch (tc_.state()) {
             case intern::testcase::result::ERROR: status = "ERROR"; break;
@@ -95,8 +103,7 @@ private:
             case intern::testcase::result::PASSED: status = "PASSED"; break;
             default: break;
         }
-        *this << "|" << tc_.name() << "|" << tc_.suite_name() << "|" << tc_.duration() << "ms|"
-              << status << "|";
+        *this << "|" << tc_.name() << "|" << tc_.suite_name() << "|" << tc_.duration() << "ms|" << status << "|";
         if (m_capture) {
             print_system_out(tc_.cout());
             print_system_out(tc_.cerr());
@@ -104,15 +111,19 @@ private:
         *this << intern::fmt::LF;
     }
 
-    void begin_report() override {
+    void
+    begin_report() override {
+        reporter::begin_report();
+
         *this << "# Test Report" << intern::fmt::XLF;
     }
 
-    void end_report() override {
-        *this << "## Summary" << intern::fmt::XLF << "|Tests|Successes|Failures|Errors|Time|"
-              << intern::fmt::LF << "|-|-|-|-|-|" << intern::fmt::LF << "|" << m_abs_tests << "|"
-              << (m_abs_tests - m_abs_errs - m_abs_fails) << "|" << m_abs_fails << "|" << m_abs_errs
-              << "|" << m_abs_time << "ms|" << intern::fmt::LF;
+    void
+    end_report() override {
+        *this << "## Summary" << intern::fmt::XLF << "|Tests|Successes|Failures|Errors|Time|" << intern::fmt::LF
+              << "|-|-|-|-|-|" << intern::fmt::LF << "|" << m_abs_tests << "|"
+              << (m_abs_tests - m_abs_errs - m_abs_fails) << "|" << m_abs_fails << "|" << m_abs_errs << "|"
+              << m_abs_time << "ms|" << intern::fmt::LF;
     }
 
     /**
@@ -120,7 +131,8 @@ private:
      *
      * @param out_ is the captured output.
      */
-    void print_system_out(std::string const& out_) {
+    void
+    print_system_out(std::string const& out_) {
         std::string        line;
         std::istringstream io_;
         io_.str(out_);

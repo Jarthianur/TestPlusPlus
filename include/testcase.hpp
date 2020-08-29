@@ -50,8 +50,9 @@ class testcase
 {
 public:
     testcase(testcase const&) = delete;
-    auto operator=(testcase const&) -> testcase& = delete;
-    ~testcase() noexcept                         = default;
+    ~testcase() noexcept      = default;
+    auto
+    operator=(testcase const&) -> testcase& = delete;
 
     /**
      * @param ctx_  is the contextual description. 0 => name, 1 => testsuites name.
@@ -68,7 +69,8 @@ public:
           m_err_msg(std::move(other_.m_err_msg)),
           m_test_func(std::move(other_.m_test_func)) {}
 
-    auto operator=(testcase&& other_) noexcept -> testcase& {
+    auto
+    operator=(testcase&& other_) noexcept -> testcase& {
         m_name       = other_.m_name;
         m_suite_name = other_.m_suite_name;
         m_state      = other_.m_state;
@@ -92,7 +94,8 @@ public:
     /**
      * Perform the test. Returns immediately if the test was alreday performed.
      */
-    void operator()() {
+    void
+    operator()() {
         if (m_state != result::NONE) {
             return;
         }
@@ -113,14 +116,16 @@ public:
     /**
      * Get the result state.
      */
-    inline auto state() const -> result {
+    inline auto
+    state() const -> result {
         return m_state;
     }
 
     /**
      * Get the duration of the test run in milliseconds.
      */
-    inline auto duration() const -> double {
+    inline auto
+    duration() const -> double {
         return m_duration;
     }
 
@@ -128,21 +133,24 @@ public:
      * Get the error, or failure reason.
      * If the test passed, it is empty.
      */
-    inline auto reason() const -> std::string const& {
+    inline auto
+    reason() const -> std::string const& {
         return m_err_msg;
     }
 
     /**
      * Get the name/description of this testcase.
      */
-    inline auto name() const -> char const* {
+    inline auto
+    name() const -> char const* {
         return m_name;
     }
 
     /**
      * Get the context (testsuite), where this testcase lives.
      */
-    inline auto suite_name() const -> char const* {
+    inline auto
+    suite_name() const -> char const* {
         return m_suite_name;
     }
 
@@ -151,7 +159,8 @@ public:
      *
      * @param str_ is the output.
      */
-    inline void cout(std::string const& str_) {
+    inline void
+    cout(std::string const& str_) {
         m_cout = str_;
     }
 
@@ -160,21 +169,24 @@ public:
      *
      * @param str_ is the output.
      */
-    inline void cerr(std::string const& str_) {
+    inline void
+    cerr(std::string const& str_) {
         m_cerr = str_;
     }
 
     /**
      * Get the captured output from stdout.
      */
-    inline auto cout() const -> std::string const& {
+    inline auto
+    cout() const -> std::string const& {
         return m_cout;
     }
 
     /**
      * Get the captured output from stderr.
      */
-    inline auto cerr() const -> std::string const& {
+    inline auto
+    cerr() const -> std::string const& {
         return m_cerr;
     }
 
@@ -182,7 +194,8 @@ private:
     /**
      * Mark this testcase as successfully passed.
      */
-    inline void pass() {
+    inline void
+    pass() {
         m_state = result::PASSED;
     }
 
@@ -191,7 +204,8 @@ private:
      *
      * @param msg_ is the failure reason.
      */
-    inline void fail(char const* msg_) {
+    inline void
+    fail(char const* msg_) {
         m_state   = result::FAILED;
         m_err_msg = msg_;
     }
@@ -201,19 +215,20 @@ private:
      *
      * @param msg_ is the error reason.
      */
-    inline void error(char const* msg_ = "unknown error") {
+    inline void
+    error(char const* msg_ = "unknown error") {
         m_state   = result::ERROR;
         m_err_msg = msg_;
     }
 
-    char const*   m_name;        ///< Name or description of this testcase.
-    char const*   m_suite_name;  ///< Context description (testsuite) where this testcase lives.
+    char const*   m_name;                     ///< Name or description of this testcase.
+    char const*   m_suite_name;               ///< Context description (testsuite) where this testcase lives.
     result        m_state    = result::NONE;  ///< Result produced by the test function.
-    double        m_duration = 0.0;  ///< Time in milliseconds, that the test function consumed.
-    std::string   m_err_msg;         ///< Message describing the reason for failure, or error.
-    std::string   m_cout;            ///< Captured output to stdout.
-    std::string   m_cerr;            ///< Captured output to stderr.
-    test_function m_test_func;       ///< Test function that performs the actual test.
+    double        m_duration = 0.0;           ///< Time in milliseconds, that the test function consumed.
+    std::string   m_err_msg;                  ///< Message describing the reason for failure, or error.
+    std::string   m_cout;                     ///< Captured output to stdout.
+    std::string   m_cerr;                     ///< Captured output to stderr.
+    test_function m_test_func;                ///< Test function that performs the actual test.
 };
 }  // namespace intern
 }  // namespace sctf
