@@ -267,7 +267,7 @@ SUITE_PAR("test_stringify") {
         ASSERT(to_string(false), EQ(), std::string("false"));
     };
     TEST("std_pair") {
-        ASSERT(std::string("pair<int,int>"), IN(), to_string(std::make_pair(1, 2)));
+        ASSERT(to_string(std::make_pair(1, 2)), LIKE(), "pair<int,\\s?int>"_re);
     };
     TEST("nullptr") {
         ASSERT(to_string(nullptr), EQ(), std::string("0"));
@@ -289,7 +289,7 @@ SUITE_PAR("test_stringify") {
         ASSERT(std::string("1.123"), IN(), to_string(1.123));
     };
     TEST("not_streamable") {
-        ASSERT(to_string(not_streamable()), EQ(), std::string("not_streamable"));
+        ASSERT(to_string(not_streamable()), LIKE(), "not_streamable"_re);
     };
     TEST("streamable") {
         ASSERT(to_string(1), EQ(), std::string("1"));
