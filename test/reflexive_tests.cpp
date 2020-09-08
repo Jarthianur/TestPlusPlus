@@ -19,6 +19,7 @@
 
 #include <chrono>
 #include <cstddef>
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -262,12 +263,25 @@ SUITE_PAR("test_testcase") {
 };
 
 SUITE_PAR("test_stringify") {
+    class base
+    {
+    public:
+        virtual ~base() = default;
+    };
+    class derived : public base
+    {};
+
+    AFTER_EACH() {
+        std::cout << std::flush;
+    };
+
     TEST("bool") {
         ASSERT(to_string(true), EQ(), std::string("true"));
         ASSERT(to_string(false), EQ(), std::string("false"));
     };
     TEST("std_pair") {
-        ASSERT(std::string("pair<int,int>"), IN(), to_string(std::make_pair(1, 2)));
+        ASSERT(to_string(std::make_pair(1, 2)), LIKE(), "pair<int,\\s?int>"_re);
+        std::cout << to_string(std::make_pair(1, 2));
     };
     TEST("nullptr") {
         ASSERT(to_string(nullptr), EQ(), std::string("0"));
@@ -287,12 +301,18 @@ SUITE_PAR("test_stringify") {
     TEST("floating_point") {
         ASSERT(std::string("1.123"), IN(), to_string(1.123f));
         ASSERT(std::string("1.123"), IN(), to_string(1.123));
+        std::cout << to_string(1.234);
     };
     TEST("not_streamable") {
-        ASSERT(to_string(not_streamable()), EQ(), std::string("not_streamable"));
+        ASSERT(to_string(not_streamable()), LIKE(), "not_streamable"_re);
+        std::cout << to_string(not_streamable());
     };
     TEST("streamable") {
         ASSERT(to_string(1), EQ(), std::string("1"));
+    };
+    TEST("derived") {
+        ASSERT(to_string(derived()), LIKE(), "derived"_re);
+        std::cout << to_string(derived());
     };
 };
 

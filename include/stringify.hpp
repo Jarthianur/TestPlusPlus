@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <limits>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <typeinfo>
@@ -33,6 +34,10 @@
 #include "cpp_meta.hpp"
 #include "regex.hpp"
 #include "traits.hpp"
+
+#ifdef SCTF_SYS_UNIX
+#    include <cxxabi.h>
+#endif
 
 namespace sctf
 {
@@ -46,29 +51,17 @@ namespace intern
  */
 template<typename T>
 static auto
-name_for_type() -> std::string const& {
+name_for_type(T const& arg_) -> std::string const& {
     static thread_local std::string name;
-    if (name.length() > 0) {
+    if (!name.empty()) {
         return name;
     }
 #ifdef SCTF_SYS_UNIX
-    std::string const sig(__PRETTY_FUNCTION__);
-    auto const        b = sig.rfind("T = ") + 4;
-    name                = sig.substr(b, sig.find_first_of(";]", b) - b);
-    name.erase(std::remove(name.begin(), name.end(), ' '), name.end());
+    int                     status = -1;
+    std::unique_ptr<char[]> sig(abi::__cxa_demangle(typeid(arg_).name(), nullptr, nullptr, &status));
+    name = sig.get();
 #else
-    std::string const sig(typeid(T).name());
-    auto              b = sig.find("struct ");
-    if (b != std::string::npos) {
-        name = sig.substr(b + 7);
-        return name;
-    }
-    b = sig.find("class ");
-    if (b != std::string::npos) {
-        name = sig.substr(b + 6);
-    } else {
-        name = std::move(sig);
-    }
+    name = typeid(arg_).name();
 #endif
     return name;
 }
@@ -148,8 +141,8 @@ to_string(T const& arg_) -> std::string {
  */
 template<typename T, SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream))>
 auto
-to_string(T const&) -> std::string {
-    return name_for_type<T>();
+to_string(T const& arg_) -> std::string {
+    return name_for_type<T>(arg_);
 }
 
 /**

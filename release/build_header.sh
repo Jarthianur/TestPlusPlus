@@ -14,11 +14,11 @@ FILES="../include/cpp_meta.hpp
 ../include/testsuite/statistic.hpp
 ../include/testsuite/testsuite.hpp
 ../include/testsuite/testsuite_parallel.hpp
-../include/runner.hpp
 ../include/reporter/reporter.hpp
 ../include/reporter/xml_reporter.hpp
 ../include/reporter/console_reporter.hpp
 ../include/reporter/markdown_reporter.hpp
+../include/runner.hpp
 ../include/comparator/comparator.hpp
 ../include/comparator/ordering.hpp
 ../include/comparator/equality.hpp
