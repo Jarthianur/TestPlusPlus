@@ -22,7 +22,7 @@
 
 #include <stdexcept>
 
-#include "traits.hpp"
+#include "sctf.hpp"
 
 /*
  * Helpers for traits
@@ -73,7 +73,8 @@ struct iterable
             return *this;
         }
 
-        auto operator*() const noexcept -> bool {
+        auto
+        operator*() const noexcept -> bool {
             return true;
         }
     };
@@ -96,8 +97,9 @@ struct not_iterable
         auto
         operator!=(iterator const&) const noexcept -> bool = delete;
         auto
-             operator++() -> iterator&          = delete;
-        auto operator*() const noexcept -> bool = delete;
+        operator++() -> iterator& = delete;
+        auto
+        operator*() const noexcept -> bool = delete;
     };
 
     static auto
