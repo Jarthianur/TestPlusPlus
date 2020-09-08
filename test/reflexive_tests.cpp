@@ -262,6 +262,14 @@ SUITE_PAR("test_testcase") {
 };
 
 SUITE_PAR("test_stringify") {
+    class base
+    {
+    public:
+        virtual ~base() = default;
+    };
+    class derived : public base
+    {};
+
     TEST("bool") {
         ASSERT(to_string(true), EQ(), std::string("true"));
         ASSERT(to_string(false), EQ(), std::string("false"));
@@ -293,6 +301,9 @@ SUITE_PAR("test_stringify") {
     };
     TEST("streamable") {
         ASSERT(to_string(1), EQ(), std::string("1"));
+    };
+    TEST("derived") {
+        ASSERT(to_string(derived()), LIKE(), "derived"_re);
     };
 };
 
