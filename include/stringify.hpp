@@ -51,17 +51,17 @@ namespace intern
  */
 template<typename T>
 static auto
-name_for_type() -> std::string const& {
+name_for_type(T const& arg_) -> std::string const& {
     static thread_local std::string name;
     if (!name.empty()) {
         return name;
     }
 #ifdef SCTF_SYS_UNIX
     int                     status = -1;
-    std::unique_ptr<char[]> sig(abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status));
+    std::unique_ptr<char[]> sig(abi::__cxa_demangle(typeid(arg_).name(), nullptr, nullptr, &status));
     name = sig.get();
 #else
-    name = typeid(T).name();
+    name = typeid(arg_).name();
 #endif
     return name;
 }
@@ -141,8 +141,8 @@ to_string(T const& arg_) -> std::string {
  */
 template<typename T, SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream))>
 auto
-to_string(T const&) -> std::string {
-    return name_for_type<T>();
+to_string(T const& arg_) -> std::string {
+    return name_for_type<T>(arg_);
 }
 
 /**
