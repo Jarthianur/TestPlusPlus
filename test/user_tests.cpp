@@ -17,8 +17,6 @@
     along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "api.hpp"
-#include "assert.hpp"
 #include "sctf.hpp"
 
 using sctf::GT;
