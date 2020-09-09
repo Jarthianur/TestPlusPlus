@@ -29,10 +29,12 @@
 
 namespace sctf
 {
+namespace intern
+{
 /**
  * Reporter implementation with JUnit like XML format.
  */
-class xml_reporter : public intern::reporter
+class xml_reporter : public reporter
 {
 public:
     xml_reporter(xml_reporter const&)     = delete;
@@ -82,65 +84,65 @@ public:
 
 private:
     void
-    report_testsuite(intern::testsuite_ptr const& ts_) override {
+    report_testsuite(testsuite_ptr const& ts_) override {
         std::time_t           stamp = std::chrono::system_clock::to_time_t(ts_->timestamp());
         std::array<char, 128> buff{};
         std::strftime(buff.data(), 127, "%FT%T", std::localtime(&stamp));
 
-        *this << intern::fmt::SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name() << "\" errors=\""
+        *this << fmt::SPACE << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name() << "\" errors=\""
               << ts_->statistics().errors() << "\" tests=\"" << ts_->statistics().tests() << "\" failures=\""
               << ts_->statistics().failures() << R"(" skipped="0" time=")" << ts_->execution_duration()
-              << "\" timestamp=\"" << buff.data() << "\">" << intern::fmt::LF;
+              << "\" timestamp=\"" << buff.data() << "\">" << fmt::LF;
 
         reporter::report_testsuite(ts_);
 
-        *this << intern::fmt::SPACE << "</testsuite>" << intern::fmt::LF;
+        *this << fmt::SPACE << "</testsuite>" << fmt::LF;
     }
 
     void
-    report_testcase(intern::testcase const& tc_) override {
-        *this << intern::fmt::XSPACE << "<testcase name=\"" << tc_.name() << "\" classname=\"" << tc_.suite_name()
+    report_testcase(testcase const& tc_) override {
+        *this << fmt::XSPACE << "<testcase name=\"" << tc_.name() << "\" classname=\"" << tc_.suite_name()
               << "\" time=\"" << tc_.duration() << "\"";
         switch (tc_.state()) {
-            case intern::testcase::result::ERROR:
-                *this << ">" << intern::fmt::LF << intern::fmt::XSPACE << intern::fmt::SPACE << "<error message=\""
-                      << tc_.reason() << "\"></error>" << intern::fmt::LF;
+            case testcase::result::ERROR:
+                *this << ">" << fmt::LF << fmt::XSPACE << fmt::SPACE << "<error message=\"" << tc_.reason()
+                      << "\"></error>" << fmt::LF;
                 if (m_capture) {
                     print_system_out(tc_);
                 }
-                *this << intern::fmt::XSPACE << "</testcase>";
+                *this << fmt::XSPACE << "</testcase>";
                 break;
-            case intern::testcase::result::FAILED:
-                *this << ">" << intern::fmt::LF << intern::fmt::XSPACE << intern::fmt::SPACE << "<failure message=\""
-                      << tc_.reason() << "\"></failure>" << intern::fmt::LF;
+            case testcase::result::FAILED:
+                *this << ">" << fmt::LF << fmt::XSPACE << fmt::SPACE << "<failure message=\"" << tc_.reason()
+                      << "\"></failure>" << fmt::LF;
                 if (m_capture) {
                     print_system_out(tc_);
                 }
-                *this << intern::fmt::XSPACE << "</testcase>";
+                *this << fmt::XSPACE << "</testcase>";
                 break;
             default:
                 if (m_capture) {
-                    *this << ">" << intern::fmt::LF;
+                    *this << ">" << fmt::LF;
                     print_system_out(tc_);
-                    *this << intern::fmt::XSPACE << "</testcase>";
+                    *this << fmt::XSPACE << "</testcase>";
                 } else {
                     *this << "/>";
                 }
                 break;
         }
-        *this << intern::fmt::LF;
+        *this << fmt::LF;
     }
 
     void
     begin_report() override {
         reporter::begin_report();
 
-        *this << R"(<?xml version="1.0" encoding="UTF-8" ?>)" << intern::fmt::LF << "<testsuites>" << intern::fmt::LF;
+        *this << R"(<?xml version="1.0" encoding="UTF-8" ?>)" << fmt::LF << "<testsuites>" << fmt::LF;
     }
 
     void
     end_report() override {
-        *this << "</testsuites>" << intern::fmt::LF;
+        *this << "</testsuites>" << fmt::LF;
     }
 
     /**
@@ -149,16 +151,17 @@ private:
      * @param tc_ is the testcase whose output to print.
      */
     void
-    print_system_out(intern::testcase const& tc_) {
-        *this << intern::fmt::XSPACE << intern::fmt::SPACE << "<system-out>" << tc_.cout() << "</system-out>"
-              << intern::fmt::LF;
-        *this << intern::fmt::XSPACE << intern::fmt::SPACE << "<system-err>" << tc_.cerr() << "</system-err>"
-              << intern::fmt::LF;
+    print_system_out(testcase const& tc_) {
+        *this << fmt::XSPACE << fmt::SPACE << "<system-out>" << tc_.cout() << "</system-out>" << fmt::LF;
+        *this << fmt::XSPACE << fmt::SPACE << "<system-err>" << tc_.cerr() << "</system-err>" << fmt::LF;
     }
 
     std::size_t mutable m_id = 0;      ///< Report wide incremental ID for testsuites.
     bool m_capture           = false;  ///< Flags whether to report captured output from testcases.
 };
+}  // namespace intern
+
+using xml_reporter = intern::xml_reporter;
 }  // namespace sctf
 
 #endif  // SCTF_REPORTER_XML_REPORTER_HPP

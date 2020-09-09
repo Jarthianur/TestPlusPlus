@@ -27,10 +27,12 @@
 
 namespace sctf
 {
+namespace intern
+{
 /**
  * Reporter implementation with markdown format.
  */
-class markdown_reporter : public intern::reporter
+class markdown_reporter : public reporter
 {
 public:
     markdown_reporter(markdown_reporter const&)     = delete;
@@ -80,27 +82,26 @@ public:
 
 private:
     void
-    report_testsuite(intern::testsuite_ptr const& ts_) override {
-        *this << "## " << ts_->name() << intern::fmt::XLF << "|Tests|Successes|Failures|Errors|Time|" << intern::fmt::LF
-              << "|-|-|-|-|-|" << intern::fmt::LF << "|" << ts_->statistics().tests() << "|"
-              << ts_->statistics().successes() << "|" << ts_->statistics().failures() << "|"
-              << ts_->statistics().errors() << "|" << ts_->execution_duration() << "ms|" << intern::fmt::XLF
-              << "### Tests" << intern::fmt::XLF << "|Name|Context|Time|Status|"
-              << (m_capture ? "System-Out|System-Err|" : "") << intern::fmt::LF << "|-|-|-|-|"
-              << (m_capture ? "-|-|" : "") << intern::fmt::LF;
+    report_testsuite(testsuite_ptr const& ts_) override {
+        *this << "## " << ts_->name() << fmt::XLF << "|Tests|Successes|Failures|Errors|Time|" << fmt::LF
+              << "|-|-|-|-|-|" << fmt::LF << "|" << ts_->statistics().tests() << "|" << ts_->statistics().successes()
+              << "|" << ts_->statistics().failures() << "|" << ts_->statistics().errors() << "|"
+              << ts_->execution_duration() << "ms|" << fmt::XLF << "### Tests" << fmt::XLF
+              << "|Name|Context|Time|Status|" << (m_capture ? "System-Out|System-Err|" : "") << fmt::LF << "|-|-|-|-|"
+              << (m_capture ? "-|-|" : "") << fmt::LF;
 
         reporter::report_testsuite(ts_);
 
-        *this << intern::fmt::XLF;
+        *this << fmt::XLF;
     }
 
     void
-    report_testcase(intern::testcase const& tc_) override {
+    report_testcase(testcase const& tc_) override {
         char const* status = "";
         switch (tc_.state()) {
-            case intern::testcase::result::ERROR: status = "ERROR"; break;
-            case intern::testcase::result::FAILED: status = "FAILED"; break;
-            case intern::testcase::result::PASSED: status = "PASSED"; break;
+            case testcase::result::ERROR: status = "ERROR"; break;
+            case testcase::result::FAILED: status = "FAILED"; break;
+            case testcase::result::PASSED: status = "PASSED"; break;
             default: break;
         }
         *this << "|" << tc_.name() << "|" << tc_.suite_name() << "|" << tc_.duration() << "ms|" << status << "|";
@@ -108,22 +109,21 @@ private:
             print_system_out(tc_.cout());
             print_system_out(tc_.cerr());
         }
-        *this << intern::fmt::LF;
+        *this << fmt::LF;
     }
 
     void
     begin_report() override {
         reporter::begin_report();
 
-        *this << "# Test Report" << intern::fmt::XLF;
+        *this << "# Test Report" << fmt::XLF;
     }
 
     void
     end_report() override {
-        *this << "## Summary" << intern::fmt::XLF << "|Tests|Successes|Failures|Errors|Time|" << intern::fmt::LF
-              << "|-|-|-|-|-|" << intern::fmt::LF << "|" << m_abs_tests << "|"
-              << (m_abs_tests - m_abs_errs - m_abs_fails) << "|" << m_abs_fails << "|" << m_abs_errs << "|"
-              << m_abs_time << "ms|" << intern::fmt::LF;
+        *this << "## Summary" << fmt::XLF << "|Tests|Successes|Failures|Errors|Time|" << fmt::LF << "|-|-|-|-|-|"
+              << fmt::LF << "|" << m_abs_tests << "|" << (m_abs_tests - m_abs_errs - m_abs_fails) << "|" << m_abs_fails
+              << "|" << m_abs_errs << "|" << m_abs_time << "ms|" << fmt::LF;
     }
 
     /**
@@ -146,6 +146,9 @@ private:
 
     bool m_capture = false;  ///< Flags whether to report captured output from testcases.
 };
+}  // namespace intern
+
+using markdown_reporter = intern::markdown_reporter;
 }  // namespace sctf
 
 #endif  // SCTF_REPORTER_MARKDOWN_REPORTER_HPP

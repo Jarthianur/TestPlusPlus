@@ -20,6 +20,7 @@
 #ifndef SCTF_REPORTER_CONSOLE_REPORTER_HPP
 #define SCTF_REPORTER_CONSOLE_REPORTER_HPP
 
+#include <cstdint>
 #include <memory>
 
 #include "reporter/reporter.hpp"
@@ -28,29 +29,10 @@ namespace sctf
 {
 namespace intern
 {
-namespace fmt
-{
-/// Escape sequence for red foreground color.
-static constexpr char const* const ANSI_RED = "\x1b[31m";
-/// Escape sequence for green foreground color.
-static constexpr char const* const ANSI_GREEN = "\x1b[32m";
-/// Escape sequence for yellow foreground color.
-static constexpr char const* const ANSI_YELLOW = "\x1b[33m";
-/// Escape sequence for blue foreground color.
-static constexpr char const* const ANSI_BLUE = "\x1b[34m";
-/// Escape sequence for magenta foreground color.
-static constexpr char const* const ANSI_MAGENTA = "\x1b[35m";
-/// Escape sequence for cyan foreground color.
-static constexpr char const* const ANSI_CYAN = "\x1b[36m";
-/// Escape sequence for reseting the foreground color.
-static constexpr char const* const ANSI_RESET = "\x1b[0m";
-}  // namespace fmt
-}  // namespace intern
-
 /**
  * Reporter implementation with informative console output.
  */
-class console_reporter : public intern::reporter
+class console_reporter : public reporter
 {
 public:
     console_reporter(console_reporter const&)     = delete;
@@ -111,53 +93,73 @@ public:
 
 private:
     void
-    report_testsuite(intern::testsuite_ptr const& ts_) override {
-        *this << "Run Testsuite [" << ts_->name() << "]; time = " << ts_->execution_duration() << "ms"
-              << intern::fmt::LF;
+    report_testsuite(testsuite_ptr const& ts_) override {
+        *this << "--- " << ts_->name() << " (" << ts_->execution_duration() << "ms) ---" << fmt::LF;
 
         reporter::report_testsuite(ts_);
     }
 
     void
-    report_testcase(intern::testcase const& tc_) override {
-        *this << intern::fmt::SPACE << "Run Testcase [" << tc_.name() << "](" << tc_.suite_name()
-              << "); time = " << tc_.duration() << "ms" << intern::fmt::LF << intern::fmt::XSPACE;
+    report_testcase(testcase const& tc_) override {
+        *this << fmt::SPACE << tc_.name() << " (" << tc_.duration() << "ms)" << fmt::LF << fmt::XSPACE;
         if (m_capture) {
-            *this << "stdout = \"" << tc_.cout() << "\"" << intern::fmt::LF << intern::fmt::XSPACE;
-            *this << "stderr = \"" << tc_.cerr() << "\"" << intern::fmt::LF << intern::fmt::XSPACE;
+            *this << "stdout = \"" << tc_.cout() << "\"" << fmt::LF << fmt::XSPACE;
+            *this << "stderr = \"" << tc_.cerr() << "\"" << fmt::LF << fmt::XSPACE;
         }
         switch (tc_.state()) {
-            case intern::testcase::result::ERROR:
-                *this << (m_color ? intern::fmt::ANSI_MAGENTA : "") << "ERROR! " << tc_.reason();
-                break;
-            case intern::testcase::result::FAILED:
-                *this << (m_color ? intern::fmt::ANSI_RED : "") << "FAILED! " << tc_.reason();
-                break;
-            case intern::testcase::result::PASSED:
-                *this << (m_color ? intern::fmt::ANSI_GREEN : "") << "PASSED!";
-                break;
+            case testcase::result::ERROR: *this << set_color(RED) << "ERROR! " << tc_.reason(); break;
+            case testcase::result::FAILED: *this << set_color(BLUE) << "FAILED! " << tc_.reason(); break;
+            case testcase::result::PASSED: *this << set_color(GREEN) << "PASSED!"; break;
             default: break;
         }
-        *this << (m_color ? intern::fmt::ANSI_RESET : "") << intern::fmt::LF;
+        *this << set_color() << fmt::LF;
     }
 
     void
     end_report() override {
         if (m_abs_errs > 0) {
-            *this << (m_color ? intern::fmt::ANSI_YELLOW : "");
+            *this << set_color(YELLOW);
         } else if (m_abs_fails > 0) {
-            *this << (m_color ? intern::fmt::ANSI_BLUE : "");
+            *this << set_color(BLUE);
         } else {
-            *this << (m_color ? intern::fmt::ANSI_CYAN : "");
+            *this << set_color(CYAN);
         }
-        *this << "Result:: passed: " << m_abs_tests - m_abs_fails - m_abs_errs << "/" << m_abs_tests
-              << " ; failed: " << m_abs_fails << "/" << m_abs_tests << " ; errors: " << m_abs_errs << "/" << m_abs_tests
-              << " ; time = " << m_abs_time << "ms" << (m_color ? intern::fmt::ANSI_RESET : "") << intern::fmt::LF;
+        *this << "=== Result ===" << fmt::LF << "passes: " << m_abs_tests - m_abs_fails - m_abs_errs << "/"
+              << m_abs_tests << " failures: " << m_abs_fails << "/" << m_abs_tests << " errors: " << m_abs_errs << "/"
+              << m_abs_tests << " (" << m_abs_time << "ms)" << set_color() << fmt::LF;
+    }
+
+    enum color : std::int_fast8_t
+    {
+        RED,
+        GREEN,
+        YELLOW,
+        BLUE,
+        CYAN,
+        RESET
+    };
+
+    auto
+    set_color(color c_ = RESET) const -> char const* {
+        if (!m_color) {
+            return "";
+        }
+        switch (c_) {
+            case RED: return "\x1b[31m";
+            case GREEN: return "\x1b[32m";
+            case YELLOW: return "\x1b[33m";
+            case BLUE: return "\x1b[34m";
+            case CYAN: return "\x1b[36m";
+            default: return "\x1b[0m";
+        }
     }
 
     bool m_color   = false;  ///< Flags whether print colored results.
     bool m_capture = false;  ///< Flags whether to report captured output from testcases.
 };
+}  // namespace intern
+
+using console_reporter = intern::console_reporter;
 }  // namespace sctf
 
 #endif  // SCTF_REPORTER_CONSOLE_REPORTER_HPP
