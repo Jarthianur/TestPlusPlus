@@ -23,7 +23,7 @@
 #define SCTF_SCTF_HPP
 
 /// SCTF release version this source belongs to.
-#define SCFT_VERSION "2.0-rc9"
+#define SCFT_VERSION "2.0"
 
 #include "comparator/equality.hpp"
 #include "comparator/ordering.hpp"
@@ -44,9 +44,9 @@
  *
  * @param R is the reporters factory method invokation.
  */
-#define SCTF_DEFAULT_MAIN(R)                        \
-    auto main(int /*argc*/, char** /*argv*/)->int { \
-        return static_cast<int>(sctf::R->report()); \
+#define SCTF_DEFAULT_MAIN(R)                         \
+    auto main(int /*argc*/, char* * /*argv*/)->int { \
+        return static_cast<int>(sctf::R->report());  \
     }
 
 #endif  // SCTF_SCTF_HPP
