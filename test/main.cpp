@@ -17,8 +17,6 @@
     along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#define SCTF_EXTERN_EPSILON
-
 #include <iostream>
 
 #include "basic_tests.h"
