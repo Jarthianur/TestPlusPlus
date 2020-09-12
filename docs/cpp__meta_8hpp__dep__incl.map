@@ -1,10 +1,11 @@
 <map id="include/cpp_meta.hpp" name="include/cpp_meta.hpp">
-<area shape="rect" id="node2" href="$comparator_8hpp.html" title="include/comparator\l/comparator.hpp" alt="" coords="343,155,491,196"/>
-<area shape="rect" id="node9" href="$stringify_8hpp.html" title="include/stringify.hpp" alt="" coords="398,80,551,107"/>
-<area shape="rect" id="node3" href="$assert_8hpp.html" title="include/assert.hpp" alt="" coords="5,251,147,278"/>
-<area shape="rect" id="node5" href="$equality_8hpp.html" title="include/comparator\l/equality.hpp" alt="" coords="171,244,319,285"/>
-<area shape="rect" id="node6" href="$ordering_8hpp_source.html" title="include/comparator\l/ordering.hpp" alt="" coords="343,244,491,285"/>
-<area shape="rect" id="node7" href="$range_8hpp_source.html" title="include/comparator\l/range.hpp" alt="" coords="515,244,663,285"/>
-<area shape="rect" id="node8" href="$comparator_2regex_8hpp_source.html" title="include/comparator\l/regex.hpp" alt="" coords="687,244,835,285"/>
-<area shape="rect" id="node4" href="$sctf_8hpp.html" title="include/sctf.hpp" alt="" coords="355,333,479,360"/>
+<area shape="rect" id="node1" title=" " alt="" coords="173,5,323,32"/>
+<area shape="rect" id="node2" href="$comparator_8hpp.html" title=" " alt="" coords="235,155,367,196"/>
+<area shape="rect" id="node9" href="$stringify_8hpp.html" title=" " alt="" coords="126,80,263,107"/>
+<area shape="rect" id="node3" href="$assert_8hpp.html" title=" " alt="" coords="5,251,133,278"/>
+<area shape="rect" id="node5" href="$equality_8hpp.html" title=" " alt="" coords="158,244,290,285"/>
+<area shape="rect" id="node6" href="$ordering_8hpp_source.html" title=" " alt="" coords="314,244,446,285"/>
+<area shape="rect" id="node7" href="$range_8hpp_source.html" title=" " alt="" coords="470,244,602,285"/>
+<area shape="rect" id="node8" href="$comparator_2regex_8hpp_source.html" title=" " alt="" coords="626,244,758,285"/>
+<area shape="rect" id="node4" href="$sctf_8hpp.html" title=" " alt="" coords="323,333,437,360"/>
 </map>
