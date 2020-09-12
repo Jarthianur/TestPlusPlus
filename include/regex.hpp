@@ -63,7 +63,7 @@ struct regex final
  * @return a regex built from the given pattern.
  */
 inline auto operator"" _re(char const* lit_, std::size_t) -> regex {
-    return regex(lit_, std::regex::nosubs | std::regex::ECMAScript);
+    return regex(lit_, std::regex::ECMAScript);
 }
 
 /**
@@ -79,7 +79,7 @@ inline auto operator"" _re(char const* lit_, std::size_t) -> regex {
  * @return a regex built from the given pattern.
  */
 inline auto operator"" _re_i(char const* lit_, std::size_t) -> regex {
-    return regex(lit_, std::regex::nosubs | std::regex::ECMAScript | std::regex::icase);
+    return regex(lit_, std::regex::ECMAScript | std::regex::icase);
 }
 }  // namespace sctf
 
