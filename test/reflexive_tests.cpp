@@ -19,6 +19,7 @@
 
 #include <chrono>
 #include <cstddef>
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -262,12 +263,25 @@ SUITE_PAR("test_testcase") {
 };
 
 SUITE_PAR("test_stringify") {
+    class base
+    {
+    public:
+        virtual ~base() = default;
+    };
+    class derived : public base
+    {};
+
+    AFTER_EACH() {
+        std::cout << std::flush;
+    };
+
     TEST("bool") {
         ASSERT(to_string(true), EQ(), std::string("true"));
         ASSERT(to_string(false), EQ(), std::string("false"));
     };
     TEST("std_pair") {
-        ASSERT(std::string("pair<int,int>"), IN(), to_string(std::make_pair(1, 2)));
+        ASSERT(to_string(std::make_pair(1, 2)), LIKE(), "pair<int,\\s?int>"_re);
+        std::cout << to_string(std::make_pair(1, 2));
     };
     TEST("nullptr") {
         ASSERT(to_string(nullptr), EQ(), std::string("0"));
@@ -287,12 +301,18 @@ SUITE_PAR("test_stringify") {
     TEST("floating_point") {
         ASSERT(std::string("1.123"), IN(), to_string(1.123f));
         ASSERT(std::string("1.123"), IN(), to_string(1.123));
+        std::cout << to_string(1.234);
     };
     TEST("not_streamable") {
-        ASSERT(to_string(not_streamable()), EQ(), std::string("not_streamable"));
+        ASSERT(to_string(not_streamable()), LIKE(), "not_streamable"_re);
+        std::cout << to_string(not_streamable());
     };
     TEST("streamable") {
         ASSERT(to_string(1), EQ(), std::string("1"));
+    };
+    TEST("derived") {
+        ASSERT(to_string(derived()), LIKE(), "derived"_re);
+        std::cout << to_string(derived());
     };
 };
 
@@ -300,8 +320,7 @@ SUITE_PAR("test_traits") {
     TEST("is_streamable") {
         ASSERT_NOTHROW((throw_if_not_streamable<std::ostringstream, streamable>()));
         ASSERT_THROWS((throw_if_not_streamable<std::ostringstream, void_type>()), std::logic_error);
-        ASSERT_THROWS((throw_if_not_streamable<std::ostringstream, not_streamable>()),
-                      std::logic_error);
+        ASSERT_THROWS((throw_if_not_streamable<std::ostringstream, not_streamable>()), std::logic_error);
     };
     TEST("is_iterable") {
         ASSERT_NOTHROW((throw_if_not_iterable<iterable>()));
@@ -328,8 +347,10 @@ SUITE_PAR("test_assertions") {
         ~not_copyable()                       = default;
         not_copyable(not_copyable const&)     = delete;
         not_copyable(not_copyable&&) noexcept = default;
-        auto operator=(not_copyable const&) -> not_copyable& = delete;
-        auto operator=(not_copyable&&) noexcept -> not_copyable& = default;
+        auto
+        operator=(not_copyable const&) -> not_copyable& = delete;
+        auto
+        operator=(not_copyable&&) noexcept -> not_copyable& = default;
     };
 
     TEST("negation") {
@@ -427,11 +448,9 @@ SUITE_PAR("test_assertions") {
                        ASSERT_EQ(std::string(a.what()), "maybe_throwing"));
         // failing
         ASSERT_THROWS(ASSERT_THROWS(return, std::logic_error), assertion_failure);
-        ASSERT_THROWS(ASSERT_THROWS(throw std::runtime_error(""), std::logic_error),
-                      assertion_failure);
+        ASSERT_THROWS(ASSERT_THROWS(throw std::runtime_error(""), std::logic_error), assertion_failure);
         ASSERT_THROWS(ASSERT_THROWS(throw 1, std::logic_error), assertion_failure);
-        ASSERT_THROWS(auto a = ASSERT_THROWS(return maybe_throwing(false), std::logic_error),
-                      assertion_failure);
+        ASSERT_THROWS(auto a = ASSERT_THROWS(return maybe_throwing(false), std::logic_error), assertion_failure);
         ASSERT_THROWS(auto a = ASSERT_THROWS(return maybe_throwing(false), std::logic_error);
                       ASSERT_EQ(a.what(), ""), assertion_failure);
     };
@@ -460,13 +479,11 @@ SUITE_PAR("test_assertions") {
         ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return std::ref(nc), 100));
         ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return std::move(nc), 100));
         // failing
-        ASSERT_THROWS(
-            ASSERT_RUNTIME(std::this_thread::sleep_for(std::chrono::milliseconds(100)), 10),
-            assertion_failure);
-        ASSERT_THROWS(
-            auto a = ASSERT_RUNTIME(std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                                    return 1, 10);
-            ASSERT_EQ(a, 1), assertion_failure);
+        ASSERT_THROWS(ASSERT_RUNTIME(std::this_thread::sleep_for(std::chrono::milliseconds(100)), 10),
+                      assertion_failure);
+        ASSERT_THROWS(auto a =
+                        ASSERT_RUNTIME(std::this_thread::sleep_for(std::chrono::milliseconds(100)); return 1, 10);
+                      ASSERT_EQ(a, 1), assertion_failure);
         ASSERT_THROWS(ASSERT_RUNTIME(throw std::logic_error(""), 100), std::logic_error);
     };
 };

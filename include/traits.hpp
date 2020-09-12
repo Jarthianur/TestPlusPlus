@@ -66,16 +66,14 @@
  * @param T is the type to check.
  * @param S is the stream.
  */
-#define SCTF_INTERN_HAS_STREAM_CAPABILITY(T, S) \
-    (SCTF_INTERN_IS(sctf::intern::stream_capability, S, T))
+#define SCTF_INTERN_HAS_STREAM_CAPABILITY(T, S) (SCTF_INTERN_IS(sctf::intern::stream_capability, S, T))
 
 /**
  * Check for a type to have iterator capabilities.
  *
  * @param T is the type to check.
  */
-#define SCTF_INTERN_HAS_ITERATOR_CAPABILITY(T) \
-    (SCTF_INTERN_IS(sctf::intern::iterator_capability, T))
+#define SCTF_INTERN_HAS_ITERATOR_CAPABILITY(T) (SCTF_INTERN_IS(sctf::intern::iterator_capability, T))
 
 namespace sctf
 {
@@ -92,10 +90,12 @@ template<typename S, typename T>
 class stream_capability
 {
     template<typename SS, typename TT>
-    static auto test(int) -> decltype(std::declval<SS&>() << std::declval<TT>(), std::true_type());
+    static auto
+    test(int) -> decltype(std::declval<SS&>() << std::declval<TT>(), std::true_type());
 
     template<typename, typename>
-    static auto test(...) -> std::false_type;
+    static auto
+    test(...) -> std::false_type;
 
 public:
     /// Resolves to true, if T is streamable to S.
@@ -113,13 +113,14 @@ template<typename T>
 class iterator_capability
 {
     template<typename TT>
-    static auto test(int)
-        -> decltype(std::begin(std::declval<TT&>()) != std::end(std::declval<TT&>()), void(),
-                    ++std::declval<decltype(std::begin(std::declval<TT&>()))&>(),
-                    void(*std::begin(std::declval<TT&>())), std::true_type());
+    static auto
+    test(int) -> decltype(std::begin(std::declval<TT&>()) != std::end(std::declval<TT&>()), void(),
+                          ++std::declval<decltype(std::begin(std::declval<TT&>()))&>(),
+                          void(*std::begin(std::declval<TT&>())), std::true_type());
 
     template<typename>
-    static auto test(...) -> std::false_type;
+    static auto
+    test(...) -> std::false_type;
 
 public:
     /// Resolves to true, if T is iterable.

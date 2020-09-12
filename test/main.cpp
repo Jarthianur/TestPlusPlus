@@ -17,8 +17,6 @@
     along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#define SCTF_EXTERN_EPSILON
-
 #include <iostream>
 
 #include "basic_tests.h"
@@ -30,10 +28,12 @@ using sctf::console_reporter;
 using sctf::markdown_reporter;
 using sctf::xml_reporter;
 
-auto main(int, char**) -> int {
-    auto rep   = console_reporter::create(std::cout)->with_color()->with_captured_output();
-    auto repx  = xml_reporter::create("test.xml")->with_captured_output();
-    auto repmd = markdown_reporter::create("test.md")->with_captured_output();
+auto
+main(int, char**) -> int {
+    auto rep    = console_reporter::create(std::cout)->with_color()->with_captured_output();
+    auto repx   = xml_reporter::create("test.xml")->with_captured_output();
+    auto repmd  = markdown_reporter::create("test.md")->with_captured_output();
+    auto runner = sctf::runner::instance();
 
     try {
         basic_tests();
@@ -46,5 +46,5 @@ auto main(int, char**) -> int {
     }
     std::cout << "Basic tests have succeeded!" << std::endl;
 
-    return rep->report() + repx->report() + repmd->report() > 0 ? 1 : 0;
+    return runner.run(rep) + runner.run(repx) + runner.run(repmd) > 0 ? 1 : 0;
 }

@@ -22,14 +22,16 @@
 
 #include "sctf.hpp"
 
-void basic_tests();
+void
+basic_tests();
 
 class Failure : public std::exception
 {
 public:
     explicit Failure(char const* msg_) : std::exception(), m_msg(msg_) {}
 
-    auto what() const noexcept -> char const* override {
+    auto
+    what() const noexcept -> char const* override {
         return m_msg;
     }
 

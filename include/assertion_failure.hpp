@@ -45,7 +45,8 @@ public:
     /**
      * Get the failure message.
      */
-    inline auto what() const noexcept -> char const* override {
+    inline auto
+    what() const noexcept -> char const* override {
         return m_msg.c_str();
     }
 
