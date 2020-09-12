@@ -64,7 +64,8 @@ public:
 
     explicit f_equals(double eps_) : m_eps(eps_) {}
 
-    auto operator!() -> f_equals& {
+    auto
+    operator!() -> f_equals& {
         m_neg = !m_neg;
         return *this;
     }

@@ -145,11 +145,6 @@ private:
         *this << "</testsuites>" << fmt::LF;
     }
 
-    /**
-     * Print the captured output of a testcase to the report.
-     *
-     * @param tc_ is the testcase whose output to print.
-     */
     void
     print_system_out(testcase const& tc_) {
         *this << fmt::XSPACE << fmt::SPACE << "<system-out>" << tc_.cout() << "</system-out>" << fmt::LF;

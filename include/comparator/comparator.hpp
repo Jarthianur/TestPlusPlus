@@ -58,7 +58,8 @@ struct comparison final
         return !m_failure;
     }
 
-    auto operator*() const -> std::string const& {
+    auto
+    operator*() const -> std::string const& {
         return *m_failure;
     }
 
@@ -81,7 +82,8 @@ private:
         return m_success;
     }
 
-    auto operator*() const -> std::string const& {
+    auto
+    operator*() const -> std::string const& {
         return error();
     }
 
@@ -120,7 +122,8 @@ private:
         bool                         m_neg         = false;                                                 \
                                                                                                             \
     public:                                                                                                 \
-        auto operator!() -> NAME& {                                                                         \
+        auto                                                                                                \
+        operator!() -> NAME& {                                                                              \
             m_neg = !m_neg;                                                                                 \
             return *this;                                                                                   \
         }                                                                                                   \

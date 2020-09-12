@@ -31,8 +31,6 @@
 
 #include "testsuite/testsuite.hpp"
 
-//#include "runner.hpp"
-
 namespace sctf
 {
 namespace intern
@@ -51,6 +49,11 @@ public:
     auto
     operator=(reporter&&) noexcept -> reporter& = delete;
 
+    /**
+     * Generate the report part for a single testsuite.
+     *
+     * @param ts_ is the testsuite to report.
+     */
     void
     report(testsuite_ptr const& ts_) {
         report_testsuite(ts_);
@@ -58,7 +61,8 @@ public:
     }
 
     /**
-     * Generate the report prologue. This method must be implemented in derived classes.
+     * Generate the report prologue.
+     * This method may be overridden in derived classes, but must be called first in there.
      */
     virtual void
     begin_report() {
@@ -69,11 +73,17 @@ public:
     };
 
     /**
-     * Generate the report epilogue. This method must be implemented in derived classes.
+     * Generate the report epilogue.
+     * This method must be implemented in derived classes.
      */
     virtual void
     end_report() = 0;
 
+    /**
+     * Get the number of failures and errors.
+     *
+     * @return the sum of failures and errors.
+     */
     auto
     faults() const -> std::size_t {
         return m_abs_errs + m_abs_fails;

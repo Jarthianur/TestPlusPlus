@@ -46,7 +46,11 @@ public:
     }
 
     /**
-     * Run all contained testsuites, what inherently performs all tests.
+     * Run all contained testsuites, what inherently performs all tests, and generates the report.
+     * Tests are run only once, but reported every time this method is called.
+     *
+     * @param rep_ is the reporter to use for the report.
+     * @return the sum of non successful tests.
      */
     auto
     run(reporter_ptr rep_) noexcept -> std::size_t {

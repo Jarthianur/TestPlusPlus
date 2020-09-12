@@ -40,7 +40,8 @@ class in_range
     bool                         m_neg         = false;
 
 public:
-    auto operator!() -> in_range& {
+    auto
+    operator!() -> in_range& {
         m_neg = !m_neg;
         return *this;
     }

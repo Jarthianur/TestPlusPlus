@@ -126,11 +126,6 @@ private:
               << "|" << m_abs_errs << "|" << m_abs_time << "ms|" << fmt::LF;
     }
 
-    /**
-     * Print the captured output of a testcase to the report.
-     *
-     * @param out_ is the captured output.
-     */
     void
     print_system_out(std::string const& out_) {
         std::string        line;

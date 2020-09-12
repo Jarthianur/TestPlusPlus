@@ -107,26 +107,26 @@ private:
             *this << "stderr = \"" << tc_.cerr() << "\"" << fmt::LF << fmt::XSPACE;
         }
         switch (tc_.state()) {
-            case testcase::result::ERROR: *this << set_color(RED) << "ERROR! " << tc_.reason(); break;
-            case testcase::result::FAILED: *this << set_color(BLUE) << "FAILED! " << tc_.reason(); break;
-            case testcase::result::PASSED: *this << set_color(GREEN) << "PASSED!"; break;
+            case testcase::result::ERROR: *this << colored(RED) << "ERROR! " << tc_.reason(); break;
+            case testcase::result::FAILED: *this << colored(BLUE) << "FAILED! " << tc_.reason(); break;
+            case testcase::result::PASSED: *this << colored(GREEN) << "PASSED!"; break;
             default: break;
         }
-        *this << set_color() << fmt::LF;
+        *this << colored() << fmt::LF;
     }
 
     void
     end_report() override {
         if (m_abs_errs > 0) {
-            *this << set_color(YELLOW);
+            *this << colored(YELLOW);
         } else if (m_abs_fails > 0) {
-            *this << set_color(BLUE);
+            *this << colored(BLUE);
         } else {
-            *this << set_color(CYAN);
+            *this << colored(CYAN);
         }
         *this << "=== Result ===" << fmt::LF << "passes: " << m_abs_tests - m_abs_fails - m_abs_errs << "/"
               << m_abs_tests << " failures: " << m_abs_fails << "/" << m_abs_tests << " errors: " << m_abs_errs << "/"
-              << m_abs_tests << " (" << m_abs_time << "ms)" << set_color() << fmt::LF;
+              << m_abs_tests << " (" << m_abs_time << "ms)" << colored() << fmt::LF;
     }
 
     enum color : std::int_fast8_t
@@ -140,7 +140,7 @@ private:
     };
 
     auto
-    set_color(color c_ = RESET) const -> char const* {
+    colored(color c_ = RESET) const -> char const* {
         if (!m_color) {
             return "";
         }
