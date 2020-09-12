@@ -33,8 +33,7 @@
 
 #include "testsuite/statistic.hpp"
 #include "testsuite/streambuf_proxy.hpp"
-
-#include "testcase.hpp"
+#include "testsuite/testcase.hpp"
 
 namespace sctf
 {

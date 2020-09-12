@@ -8,7 +8,7 @@ FILES="../include/cpp_meta.hpp
 ../include/regex.hpp
 ../include/stringify.hpp
 ../include/assertion_failure.hpp
-../include/testcase.hpp
+../include/testsuite/testcase.hpp
 ../include/testsuite/streambuf_proxy_omp.hpp
 ../include/testsuite/streambuf_proxy.hpp
 ../include/testsuite/statistic.hpp
