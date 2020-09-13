@@ -115,6 +115,7 @@ private:
     {                                                                                                       \
     namespace intern                                                                                        \
     {                                                                                                       \
+    template<typename>                                                                                      \
     class NAME                                                                                              \
     {                                                                                                       \
         static constexpr char const* m_cmp_str     = "to be " CMPSTR;                                       \
@@ -123,7 +124,7 @@ private:
                                                                                                             \
     public:                                                                                                 \
         auto                                                                                                \
-        operator!() -> NAME& {                                                                              \
+        operator!() -> decltype(*this)& {                                                                   \
             m_neg = !m_neg;                                                                                 \
             return *this;                                                                                   \
         }                                                                                                   \
@@ -146,14 +147,19 @@ private:
  * @param COMP is the comparator to use.
  * @param NAME is the shortwrite function name.
  */
-#define SCTF_PROVIDE_COMPARATOR(COMP, NAME)               \
-    namespace sctf                                        \
-    {                                                     \
-    template<typename... Args>                            \
-    static auto                                           \
-    NAME(Args&&... args) -> intern::COMP {                \
-        return intern::COMP(std::forward<Args>(args)...); \
-    }                                                     \
+#define SCTF_PROVIDE_COMPARATOR(COMP, NAME)                        \
+    namespace sctf                                                 \
+    {                                                              \
+    template<typename... Args>                                     \
+    static auto                                                    \
+    NAME(Args&&... args) -> intern::COMP<Args...> {                \
+        return intern::COMP<Args...>(std::forward<Args>(args)...); \
+    }                                                              \
+    template<typename... Args>                                     \
+    static auto                                                    \
+    NAME() -> intern::COMP<void> {                                 \
+        return {};                                                 \
+    }                                                              \
     }
 
 #endif  // SCTF_COMPARATOR_COMPARATOR_HPP

@@ -33,6 +33,7 @@ namespace intern
 /**
  * Comparator to check for existence of elements in ranges.
  */
+template<typename>
 class in_range
 {
     static constexpr char const* m_cmp_str     = "to be in range of";
@@ -41,7 +42,7 @@ class in_range
 
 public:
     auto
-    operator!() -> in_range& {
+    operator!() -> decltype(*this)& {
         m_neg = !m_neg;
         return *this;
     }
