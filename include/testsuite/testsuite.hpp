@@ -212,16 +212,14 @@ public:
 protected:
     /**
      * Hold a function optionally, that can be executed without throwing any exception.
+     * If the function throws, terminate is called.
      */
-    struct silent_functor final
+    struct optional_functor final
     {
         auto
-        operator()() -> silent_functor& {
+        operator()() noexcept -> optional_functor& {
             if (fn) {
-                try {
-                    fn();
-                } catch (...) {
-                }
+                fn();
             }
             return *this;
         }
@@ -246,10 +244,10 @@ protected:
     std::vector<testcase> m_testcases;                         ///< Stores testcases.
     execution_state       m_state = execution_state::PENDING;  ///< States, whether all testcases have been executed.
 
-    silent_functor m_setup_fn;     ///< Optional function, that is executed before all testcases.
-    silent_functor m_teardown_fn;  ///< Optional function, that is executed after all testcases.
-    silent_functor m_pretest_fn;   ///< Optional function, that is executed before all testcases.
-    silent_functor m_posttest_fn;  ///< Optional function, that is executed before all testcases.
+    optional_functor m_setup_fn;     ///< Optional function, that is executed before all testcases.
+    optional_functor m_teardown_fn;  ///< Optional function, that is executed after all testcases.
+    optional_functor m_pretest_fn;   ///< Optional function, that is executed before all testcases.
+    optional_functor m_posttest_fn;  ///< Optional function, that is executed before all testcases.
 };
 }  // namespace intern
 }  // namespace sctf
