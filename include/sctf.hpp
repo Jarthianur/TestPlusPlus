@@ -44,9 +44,9 @@
  *
  * @param R is the reporters factory method invokation.
  */
-#define SCTF_DEFAULT_MAIN(R)                                      \
-    auto main(int /*argc*/, char* * /*argv*/)->int {              \
-        return static_cast<int>(sctf::runner::instance().run(R)); \
+#define SCTF_DEFAULT_MAIN                                                    \
+    auto main(int argc_, char** argv_)->int {                                \
+        return static_cast<int>(sctf::runner::instance(argc_, argv_).run()); \
     }
 
 #endif  // SCTF_SCTF_HPP

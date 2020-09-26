@@ -61,7 +61,7 @@ public:
      * @param fname_ is the filename where to print the report.
      */
     static auto
-    create(char const* fname_) -> std::shared_ptr<xml_reporter> {
+    create(std::string const& fname_) -> std::shared_ptr<xml_reporter> {
         return std::make_shared<xml_reporter>(enable{}, fname_);
     }
 
@@ -80,7 +80,7 @@ public:
     explicit xml_reporter(enable, std::ostream& stream_) : reporter(stream_) {}
 
     /// Constructor for std::make_shared.
-    explicit xml_reporter(enable, char const* fname_) : reporter(fname_) {}
+    explicit xml_reporter(enable, std::string const& fname_) : reporter(fname_) {}
 
 private:
     void

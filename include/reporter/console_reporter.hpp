@@ -20,7 +20,6 @@
 #ifndef SCTF_REPORTER_CONSOLE_REPORTER_HPP
 #define SCTF_REPORTER_CONSOLE_REPORTER_HPP
 
-#include <cstdint>
 #include <memory>
 
 #include "reporter/reporter.hpp"
@@ -59,7 +58,7 @@ public:
      * @param fname_ is the filename where to print the report.
      */
     static auto
-    create(char const* fname_) -> std::shared_ptr<console_reporter> {
+    create(std::string const& fname_) -> std::shared_ptr<console_reporter> {
         return std::make_shared<console_reporter>(enable{}, fname_);
     }
 
@@ -89,7 +88,7 @@ public:
     explicit console_reporter(enable, std::ostream& stream_) : reporter(stream_) {}
 
     /// Constructor for std::make_shared.
-    explicit console_reporter(enable, char const* fname_) : reporter(fname_) {}
+    explicit console_reporter(enable, std::string const& fname_) : reporter(fname_) {}
 
 private:
     void
@@ -129,7 +128,7 @@ private:
               << m_abs_tests << " (" << m_abs_time << "ms)" << colored() << fmt::LF;
     }
 
-    enum color : std::int_fast8_t
+    enum color
     {
         RED,
         GREEN,

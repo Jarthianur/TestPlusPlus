@@ -27,6 +27,8 @@
 #include "testsuite/testsuite.hpp"
 #include "testsuite/testsuite_parallel.hpp"
 
+#include "cmdline_parser.hpp"
+
 namespace sctf
 {
 /**
@@ -35,6 +37,8 @@ namespace sctf
 class runner
 {
 public:
+    runner(int argc_, char** argv_) : m_cmdline({argc_, argv_}) {}
+
     /**
      * Add a testsuite to this runner.
      *
@@ -53,27 +57,29 @@ public:
      * @return the sum of non successful tests.
      */
     auto
-    run(reporter_ptr rep_) noexcept -> std::size_t {
-        rep_->begin_report();
-        std::for_each(m_testsuites.begin(), m_testsuites.end(), [&rep_](intern::testsuite_ptr& ts_) {
+    run() noexcept -> std::size_t {
+        auto rep = m_cmdline.reporter();
+        rep->begin_report();
+        std::for_each(m_testsuites.begin(), m_testsuites.end(), [&rep](intern::testsuite_ptr& ts_) {
             ts_->run();
-            rep_->report(ts_);
+            rep->report(ts_);
         });
-        rep_->end_report();
-        return rep_->faults();
+        rep->end_report();
+        return rep->faults();
     }
 
     /**
      * Get a runner instance, as singleton.
      */
     static auto
-    instance() -> runner& {
-        static runner r;
+    instance(int argc_, char** argv_) -> runner& {
+        static runner r(argc_, argv_);
         return r;
     }
 
 private:
     std::vector<intern::testsuite_ptr> m_testsuites;  ///< Testsuites contained in this runner.
+    intern::cmdline_parser             m_cmdline;
 };
 }  // namespace sctf
 

@@ -28,6 +28,7 @@
 #include <memory>
 #include <ostream>
 #include <stdexcept>
+#include <string>
 
 #include "testsuite/testsuite.hpp"
 
@@ -107,7 +108,7 @@ protected:
      * @param fname_ is the output filename for reports.
      * @throw std::runtime_error if the file can not be opened for writing.
      */
-    explicit reporter(char const* fname_) : m_out_file(fname_), m_out_stream(m_out_file) {
+    explicit reporter(std::string const& fname_) : m_out_file(fname_), m_out_stream(m_out_file) {
         if (!m_out_stream) {
             throw std::runtime_error("could not open file for report");
         }
