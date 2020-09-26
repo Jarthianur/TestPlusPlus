@@ -37,7 +37,7 @@ namespace sctf
 class runner
 {
 public:
-    runner(int argc_, char** argv_) : m_cmdline({argc_, argv_}) {}
+    runner(int argc_, char** argv_) : m_cmdline(intern::tokenize_args(argc_, argv_)) {}
 
     /**
      * Add a testsuite to this runner.
