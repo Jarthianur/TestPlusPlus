@@ -122,7 +122,7 @@ private:
     };
 
     template<typename T>
-    static auto
+    static inline auto
     make_option(T&& t_) -> option<T> {
         return option<T>{std::forward<T>(t_)};
     }
