@@ -27,6 +27,8 @@
 
 namespace sctf
 {
+namespace intern
+{
 /**
  * A wrapper for regular expressions, that contains the compiled regex as well as the expression
  * pattern.
@@ -49,6 +51,9 @@ struct regex final
     char const* const pattern;  ///< Regular expression pattern.
     std::regex const  re;       ///< Compiled regex.
 };
+}  // namespace intern
+
+using regex = intern::regex;
 
 /**
  * Literal operator to create a regex from cstring.
