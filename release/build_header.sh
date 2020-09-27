@@ -19,6 +19,7 @@ FILES="../include/cpp_meta.hpp
 ../include/reporter/console_reporter.hpp
 ../include/reporter/markdown_reporter.hpp
 ../include/reporter/reporter_factory.hpp
+../include/config.hpp
 ../include/cmdline_parser.hpp
 ../include/runner.hpp
 ../include/comparator/comparator.hpp

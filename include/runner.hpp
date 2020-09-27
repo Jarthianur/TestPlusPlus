@@ -61,19 +61,23 @@ public:
         cmdline_parser cmd;
         try {
             cmd.parse(argc_, argv_);
-        } catch (help_called const&) {
+        } catch (cmdline_parser::help_called) {
             return -1;
         }
+        return run(cmd.config());
+    }
+
+    auto
+    run(config const& cfg_) noexcept -> int {
+        bool const finc = cfg_.fmode != config::filter_mode::EXCLUDE;
         try {
-            auto       rep    = cmd.reporter();
-            auto const filter = cmd.filters();
-            bool const finc   = std::get<1>(filter) != cmdline_parser::filter_mode::EXCLUDE;
+            auto rep = cfg_.reporter();
             rep->begin_report();
             std::for_each(m_testsuites.begin(), m_testsuites.end(), [&](testsuite_ptr& ts_) {
-                bool const match =
-                  std::get<0>(filter).empty() ||
-                  std::any_of(std::get<0>(filter).cbegin(), std::get<0>(filter).cend(),
-                              [&](std::regex const& re_) { return std::regex_match(ts_->name(), re_); });
+                bool const match = cfg_.fpattern.empty() || std::any_of(cfg_.fpattern.cbegin(), cfg_.fpattern.cend(),
+                                                                        [&](std::regex const& re_) {
+                                                                            return std::regex_match(ts_->name(), re_);
+                                                                        });
                 if (finc == match) {
                     ts_->run();
                     rep->report(ts_);

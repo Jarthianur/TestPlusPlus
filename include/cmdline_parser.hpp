@@ -24,108 +24,129 @@
 
 #include <algorithm>
 #include <iostream>
-#include <regex>
 #include <stdexcept>
-#include <tuple>
-#include <vector>
 
-#include "reporter/reporter_factory.hpp"
+#include "config.hpp"
 
 namespace sctf
 {
 namespace intern
 {
-struct help_called
-{};
-
-inline void
-print_help(std::string const& name_) {
-    //* last flag overrides preceeding ones.
-    //  * e/i are appending, but mutually exclusive.
-    //* [--xml|--md] [-{co}] [-{e|i} "pattern"] [report-filename]
-
-    std::cout << "Usage: " << name_
-              << " [OPTIONS] [FILTERS] [filename]\n"
-                 "Default is to report to standard-out in an informative text format (using console-reporter).\n\n"
-                 "OPTIONS:\n"
-                 "  --help: Print this message and exit.\n"
-                 "  --xml : Report in JUnit-like XML format.\n"
-                 "  --md  : Report in markdown format.\n"
-                 "  -c    : Use ANSI colors in report, if supported by reporter.\n"
-                 "  -o    : Report captured output from tests, if supported by reporter.\n\n"
-                 "FILTERS:\n"
-                 "Multiple filters are possible, but includes and excludes are mutually exclusive.\n"
-                 "Patterns may contain * as wildcard.\n"
-                 "  -e <pattern> : Exclude testsuites with names matching pattern.\n"
-                 "  -i <pattern> : Include only testsuites with names matching pattern."
-              << std::endl;
-    throw help_called{};
-}
-
 class cmdline_parser
 {
 public:
+    struct help_called
+    {};
+
     void
     parse(int argc_, char** argv_) {
         auto const args = tokenize_args(argc_, argv_);
+        m_progname      = argv_[0];
         for (std::size_t i = 1; i < args.size(); ++i) {
-            auto const& arg     = args[i];
-            auto const  get_val = [&] {
+            eval_arg(args[i], [&] {
                 try {
                     return args.at(++i);
                 } catch (std::out_of_range const&) {
-                    throw std::runtime_error(arg + " requires an argument!");
+                    throw std::runtime_error(args[i - 1] + " requires an argument!");
                 }
-            };
-
-            if (arg == "--help") {
-                print_help(args.at(0));
-            } else if (arg == "--xml") {
-                m_rep_fmt = XML;
-            } else if (arg == "--md") {
-                m_rep_fmt = MD;
-            } else if (arg[0] == '-') {
-                std::for_each(arg.cbegin() + 1, arg.cend(), [&](char c_) {
-                    if (c_ == 'c') {
-                        m_rep_cfg.color = true;
-                    } else if (c_ == 'o') {
-                        m_rep_cfg.capture_out = true;
-                    } else if (c_ == 'e') {
-                        set_filter_mode(filter_mode::EXCLUDE);
-                        m_filters.push_back(to_regex(get_val()));
-                    } else if (c_ == 'i') {
-                        set_filter_mode(filter_mode::INCLUDE);
-                        m_filters.push_back(to_regex(get_val()));
-                    }
-                });
-            } else {
-                m_rep_cfg.outfile = arg;
-            }
+            });
         }
     }
 
     auto
-    reporter() const -> reporter_ptr {
-        switch (m_rep_fmt) {
-            case XML: return reporter_factory::make<xml_reporter>(m_rep_cfg);
-            case MD: return reporter_factory::make<markdown_reporter>(m_rep_cfg);
-            default /*CNS*/: return reporter_factory::make<console_reporter>(m_rep_cfg);
-        }
-    }
-
-    enum class filter_mode
-    {
-        INCLUDE,
-        EXCLUDE,
-        NONE
-    };
-
-    auto
-    filters() const -> std::tuple<std::vector<std::regex> const&, filter_mode> {
-        return {m_filters, m_filter_mode};
+    config() -> config const& {
+        return m_cfg;
     }
 
 private:
+    template<typename Fn>
+    void
+    eval_arg(std::string const& arg_, Fn&& getval_fn_) {
+        try {
+            make_option("--help")(arg_, [&] { print_help(); });
+            make_option("--xml")(arg_, [&] { m_cfg.rep_fmt = config::report_format::XML; });
+            make_option("--md")(arg_, [&] { m_cfg.rep_fmt = config::report_format::MD; });
+            combined_option{}(arg_, [&](char c_) {
+                make_option('c')(c_, [&] { m_cfg.rep_cfg.color = true; });
+                make_option('o')(c_, [&] { m_cfg.rep_cfg.capture_out = true; });
+                make_option('e')(c_, [&] {
+                    set_filter_mode(config::filter_mode::EXCLUDE);
+                    m_cfg.fpattern.push_back(to_regex(getval_fn_()));
+                });
+                make_option('i')(c_, [&] {
+                    set_filter_mode(config::filter_mode::INCLUDE);
+                    m_cfg.fpattern.push_back(to_regex(getval_fn_()));
+                });
+            });
+        } catch (matched) {
+            return;
+        }
+        m_cfg.rep_cfg.outfile = arg_;
+    }
+
+    struct matched
+    {};
+
+    template<typename T>
+    struct option
+    {
+        T m_flag;
+
+        template<typename Arg, typename Fn>
+        auto
+        operator()(Arg&& arg_, Fn&& fn_) const -> decltype(*this)& {
+            if (arg_ == m_flag) {
+                fn_();
+                throw matched{};
+            }
+            return *this;
+        }
+    };
+
+    struct combined_option
+    {
+        template<typename Fn>
+        auto
+        operator()(std::string const& arg_, Fn&& fn_) const -> decltype(*this)& {
+            if (arg_[0] == '-') {
+                std::for_each(arg_.cbegin() + 1, arg_.cend(), [&](char c_) {
+                    try {
+                        fn_(c_);
+                    } catch (matched) {
+                    }
+                });
+                throw matched{};
+            }
+            return *this;
+        }
+    };
+
+    template<typename T>
+    static auto
+    make_option(T&& t_) -> option<T> {
+        return option<T>{std::forward<T>(t_)};
+    }
+
+    void
+    print_help() {
+        std::cout << "Usage: " << m_progname
+                  << " [OPTIONS] [FILTERS] [filename]\n"
+                     "Default is to report to standard-out in an informative text format (using console-reporter).\n\n"
+                     "OPTIONS:\n"
+                     "  --help: Print this message and exit.\n"
+                     "  --xml : Report in JUnit-like XML format.\n"
+                     "  --md  : Report in markdown format.\n"
+                     "  -c    : Use ANSI colors in report, if supported by reporter.\n"
+                     "  -o    : Report captured output from tests, if supported by reporter.\n\n"
+                     "FILTERS:\n"
+                     "Multiple filters are possible, but includes and excludes are mutually exclusive.\n"
+                     "Patterns may contain * as wildcard.\n"
+                     "  -e <pattern> : Exclude testsuites with names matching pattern.\n"
+                     "  -i <pattern> : Include only testsuites with names matching pattern."
+                  << std::endl;
+        throw help_called{};
+    }
+
     static auto
     tokenize_args(int argc_, char** argv_) -> std::vector<std::string> {
         if (argc_ < 1) {
@@ -144,18 +165,11 @@ private:
         return a;
     }
 
-    enum report_format
-    {
-        XML,
-        MD,
-        CNS
-    };
-
     void
-    set_filter_mode(filter_mode m_) {
-        if (m_filter_mode == filter_mode::NONE) {
-            m_filter_mode = m_;
-        } else if (m_filter_mode != m_) {
+    set_filter_mode(config::filter_mode m_) {
+        if (m_cfg.fmode == config::filter_mode::NONE) {
+            m_cfg.fmode = m_;
+        } else if (m_cfg.fmode != m_) {
             throw std::runtime_error("Inclusion and exclusion are mutually exclusive!");
         }
     }
@@ -170,10 +184,8 @@ private:
         }
     }
 
-    report_format           m_rep_fmt = CNS;
-    reporter_config         m_rep_cfg;
-    std::vector<std::regex> m_filters;
-    filter_mode             m_filter_mode = filter_mode::NONE;
+    struct config m_cfg;
+    char const*   m_progname;
 };
 }  // namespace intern
 }  // namespace sctf
