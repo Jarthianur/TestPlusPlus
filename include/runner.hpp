@@ -27,7 +27,11 @@
 #include "testsuite/testsuite.hpp"
 #include "testsuite/testsuite_parallel.hpp"
 
+#include "cmdline_parser.hpp"
+
 namespace sctf
+{
+namespace intern
 {
 /**
  * Used to manage and run testsuites.
@@ -41,7 +45,7 @@ public:
      * @param ts_ is the testsuite to add
      */
     void
-    add_testsuite(intern::testsuite_ptr const& ts_) {
+    add_testsuite(testsuite_ptr const& ts_) {
         m_testsuites.push_back(ts_);
     }
 
@@ -53,14 +57,38 @@ public:
      * @return the sum of non successful tests.
      */
     auto
-    run(reporter_ptr rep_) noexcept -> std::size_t {
-        rep_->begin_report();
-        std::for_each(m_testsuites.begin(), m_testsuites.end(), [&rep_](intern::testsuite_ptr& ts_) {
-            ts_->run();
-            rep_->report(ts_);
-        });
-        rep_->end_report();
-        return rep_->faults();
+    run(int argc_, char** argv_) noexcept -> int {
+        cmdline_parser cmd;
+        try {
+            cmd.parse(argc_, argv_);
+        } catch (cmdline_parser::help_called) {
+            return -1;
+        }
+        return run(cmd.config());
+    }
+
+    auto
+    run(config const& cfg_) noexcept -> int {
+        bool const finc = cfg_.fmode != config::filter_mode::EXCLUDE;
+        try {
+            auto rep = cfg_.reporter();
+            rep->begin_report();
+            std::for_each(m_testsuites.begin(), m_testsuites.end(), [&](testsuite_ptr& ts_) {
+                bool const match = cfg_.fpattern.empty() || std::any_of(cfg_.fpattern.cbegin(), cfg_.fpattern.cend(),
+                                                                        [&](std::regex const& re_) {
+                                                                            return std::regex_match(ts_->name(), re_);
+                                                                        });
+                if (finc == match) {
+                    ts_->run();
+                    rep->report(ts_);
+                }
+            });
+            rep->end_report();
+            return static_cast<int>(rep->faults());  // always <= int::max
+        } catch (std::runtime_error const& e) {
+            std::cerr << "A fatal error occurred!\n  what(): " << e.what() << std::endl;
+            return -2;
+        }
     }
 
     /**
@@ -73,8 +101,11 @@ public:
     }
 
 private:
-    std::vector<intern::testsuite_ptr> m_testsuites;  ///< Testsuites contained in this runner.
+    std::vector<testsuite_ptr> m_testsuites;  ///< Testsuites contained in this runner.
 };
+}  // namespace intern
+
+using runner = intern::runner;
 }  // namespace sctf
 
 #endif  // SCTF_RUNNER_HPP

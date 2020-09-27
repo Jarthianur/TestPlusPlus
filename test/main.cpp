@@ -24,27 +24,20 @@
 
 SCTF_EPSILON(0.000001)
 
-using sctf::console_reporter;
-using sctf::markdown_reporter;
-using sctf::xml_reporter;
-
 auto
-main(int, char**) -> int {
-    auto rep    = console_reporter::create(std::cout)->with_color()->with_captured_output();
-    auto repx   = xml_reporter::create("test.xml")->with_captured_output();
-    auto repmd  = markdown_reporter::create("test.md")->with_captured_output();
-    auto runner = sctf::runner::instance();
+main(int argc_, char** argv_) -> int {
+    auto& runner = sctf::runner::instance();
 
     try {
         basic_tests();
     } catch (std::exception const& e) {
         std::cout << "Basic tests have failed! [" << e.what() << "]" << std::endl;
-        return 1;
+        return -2;
     } catch (...) {
         std::cout << "Basic tests have failed!" << std::endl;
-        return 1;
+        return -2;
     }
     std::cout << "Basic tests have succeeded!" << std::endl;
 
-    return runner.run(rep) + runner.run(repx) + runner.run(repmd) > 0 ? 1 : 0;
+    return runner.run(argc_, argv_);
 }
