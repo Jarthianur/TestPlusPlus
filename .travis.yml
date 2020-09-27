@@ -60,12 +60,12 @@ matrix:
     - BADGE=windows
     script:
     - cmd.exe //C 'build.bat'
-    - test/cpp14_seq.exe
-    - test/cpp14_par.exe
-    - test/cpp17_seq.exe
-    - test/cpp17_par.exe
-    - cat test.xml
-    - cat test.md
+    - test/cpp14_seq.exe -co
+    - test/cpp14_par.exe -co --xml
+    - test/cpp14_par.exe -co --md
+    - test/cpp17_seq.exe -co
+    - test/cpp17_par.exe -co --xml
+    - test/cpp17_par.exe -co --md
 
 notifications:
     email:

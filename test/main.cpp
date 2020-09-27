@@ -24,10 +24,6 @@
 
 SCTF_EPSILON(0.000001)
 
-using sctf::console_reporter;
-using sctf::markdown_reporter;
-using sctf::xml_reporter;
-
 auto
 main(int argc_, char** argv_) -> int {
     auto& runner = sctf::runner::instance();

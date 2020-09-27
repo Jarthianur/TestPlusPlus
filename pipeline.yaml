@@ -42,7 +42,9 @@ model:
       test_script: |
         pushd $BUILD_DIR/{{ item.target }}
         $LCOV -c -i -d . -o base.info
-        ./{{ item.target }}
+        ./{{ item.target }} -co
+        ./{{ item.target }} -co --xml test.xml
+        ./{{ item.target }} -co --md test.md
         $LCOV -c -d . -o test.info
         $LCOV -a base.info -a test.info -o {{ item.target }}.info
         cat test.xml
@@ -55,7 +57,9 @@ model:
         popd
       test_script: |
         echo "./test/{{ item.target }}"
-        ./test/{{ item.target }}
+        ./test/{{ item.target }} -co
+        ./test/{{ item.target }} -co --xml test.xml
+        ./test/{{ item.target }} -co --md test.md
         cat test.xml
         cat test.md
 
