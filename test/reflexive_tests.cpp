@@ -530,25 +530,53 @@ DESCRIBE("test_output_capture") {
 };
 
 DESCRIBE("test_suite_meta_functions") {
-    int x = -1;
-    int y = -1;
+    int  x                  = -3;
+    int  y                  = -3;
+    int  setup_called       = 0;
+    int  before_each_called = 0;
+    int  after_each_called  = 0;
+    bool teardown_called    = false;
     SETUP() {
+        ASSERT_ZERO(setup_called);
+        ASSERT_ZERO(before_each_called);
+        ASSERT_ZERO(after_each_called);
+        ASSERT_FALSE(teardown_called);
         x = 0;
         y = 0;
+        setup_called += 1;
     };
     BEFORE_EACH() {
+        ASSERT_EQ(setup_called, 1);
+        ASSERT_FALSE(teardown_called);
         y += 1;
+        before_each_called += 1;
     };
     AFTER_EACH() {
+        ASSERT_EQ(setup_called, 1);
+        ASSERT_FALSE(teardown_called);
         y -= 1;
+        after_each_called += 1;
     };
-    IT("should setup x with 0") {
+    TEARDOWN() {
+        teardown_called = true;
+        ASSERT_EQ(setup_called, 1);
+        ASSERT_EQ(before_each_called, 3);
+        ASSERT_EQ(after_each_called, before_each_called);
+    };
+    IT("should setup x,y with 0") {
+        ASSERT_EQ(before_each_called, 1);
+        ASSERT_EQ(after_each_called, 0);
         ASSERT_ZERO(x);
+        ASSERT_ZERO(y - 1);
     };
     IT("should increment y before") {
+        ASSERT_EQ(before_each_called, 2);
+        ASSERT_EQ(after_each_called, 1);
         ASSERT_EQ(y, 1);
     };
     IT("should decrement y after") {
+        ASSERT_EQ(before_each_called, 3);
+        ASSERT_EQ(after_each_called, 2);
         ASSERT_EQ(y, 1);
     };
 };
