@@ -23,15 +23,12 @@
 #define SCTF_SCTF_HPP
 
 /// SCTF release version this source belongs to.
-#define SCFT_VERSION "2.1-rc1"
+#define SCFT_VERSION "2.2-rc0"
 
 #include "comparator/equality.hpp"
 #include "comparator/ordering.hpp"
 #include "comparator/range.hpp"
 #include "comparator/regex.hpp"
-#include "reporter/console_reporter.hpp"
-#include "reporter/markdown_reporter.hpp"
-#include "reporter/xml_reporter.hpp"
 
 #include "api.hpp"
 #include "assert.hpp"
@@ -44,9 +41,9 @@
  *
  * @param R is the reporters factory method invokation.
  */
-#define SCTF_DEFAULT_MAIN                                                    \
-    auto main(int argc_, char** argv_)->int {                                \
-        return static_cast<int>(sctf::runner::instance().run(argc_, argv_)); \
+#define SCTF_DEFAULT_MAIN                                  \
+    auto main(int argc_, char** argv_)->int {              \
+        return sctf::runner::instance().run(argc_, argv_); \
     }
 
 #endif  // SCTF_SCTF_HPP

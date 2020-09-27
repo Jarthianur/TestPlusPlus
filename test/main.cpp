@@ -32,12 +32,12 @@ main(int argc_, char** argv_) -> int {
         basic_tests();
     } catch (std::exception const& e) {
         std::cout << "Basic tests have failed! [" << e.what() << "]" << std::endl;
-        return 1;
+        return -2;
     } catch (...) {
         std::cout << "Basic tests have failed!" << std::endl;
-        return 1;
+        return -2;
     }
     std::cout << "Basic tests have succeeded!" << std::endl;
 
-    return runner.run(argc_, argv_) > 0 ? 1 : 0;
+    return runner.run(argc_, argv_);
 }

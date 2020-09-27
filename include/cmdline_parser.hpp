@@ -23,6 +23,7 @@
 #define SCTF_CMDLINE_PARSER_HPP
 
 #include <algorithm>
+#include <iostream>
 #include <regex>
 #include <stdexcept>
 #include <tuple>
@@ -34,48 +35,52 @@ namespace sctf
 {
 namespace intern
 {
-static auto
-tokenize_args(int argc_, char** argv_) -> std::vector<std::string> {
-    if (argc_ < 0) {
-        throw std::underflow_error("Arg count may never be less than zero!");
-    }
-    auto                     argc = static_cast<std::size_t>(argc_);
-    std::vector<std::string> a(argc - 1);
-    for (std::size_t i = 1; i < argc; ++i) {
-        std::string arg(argv_[i]);
-        if (arg.empty()) {
-            continue;
-        }
-        a.push_back(std::move(arg));
-    }
-    return a;
+struct help_called
+{};
+
+inline void
+print_help(std::string const& name_) {
+    //* last flag overrides preceeding ones.
+    //  * e/i are appending, but mutually exclusive.
+    //* [--xml|--md] [-{co}] [-{e|i} "pattern"] [report-filename]
+
+    std::cout << "Usage: " << name_
+              << " [OPTIONS] [FILTERS] [filename]\n"
+                 "Default is to report to standard-out in an informative text format (using console-reporter).\n\n"
+                 "OPTIONS:\n"
+                 "  --help: Print this message and exit.\n"
+                 "  --xml : Report in JUnit-like XML format.\n"
+                 "  --md  : Report in markdown format.\n"
+                 "  -c    : Use ANSI colors in report, if supported by reporter.\n"
+                 "  -o    : Report captured output from tests, if supported by reporter.\n\n"
+                 "FILTERS:\n"
+                 "Multiple filters are possible, but includes and excludes are mutually exclusive.\n"
+                 "Patterns may contain * as wildcard.\n"
+                 "  -e <pattern> : Exclude testsuites with names matching pattern.\n"
+                 "  -i <pattern> : Include only testsuites with names matching pattern."
+              << std::endl;
+    throw help_called{};
 }
 
 class cmdline_parser
 {
 public:
-    explicit cmdline_parser(std::vector<std::string> const& args_) {
-        parse(args_);
-    }
-
-    /**
-     * last flag overrides preceeding ones.
-     * e/i are appending, but mutually exclusive.
-     * [--xml|--md] [-{co}] [-{e|i} "pattern"] [report-filename]
-     */
     void
-    parse(std::vector<std::string> const& args_) {
-        for (std::size_t i = 0; i < args_.size(); ++i) {
-            auto const& arg     = args_[i];
+    parse(int argc_, char** argv_) {
+        auto const args = tokenize_args(argc_, argv_);
+        for (std::size_t i = 1; i < args.size(); ++i) {
+            auto const& arg     = args[i];
             auto const  get_val = [&] {
                 try {
-                    return args_.at(++i);
+                    return args.at(++i);
                 } catch (std::out_of_range const&) {
                     throw std::runtime_error(arg + " requires an argument!");
                 }
             };
 
-            if (arg == "--xml") {
+            if (arg == "--help") {
+                print_help(args.at(0));
+            } else if (arg == "--xml") {
                 m_rep_fmt = XML;
             } else if (arg == "--md") {
                 m_rep_fmt = MD;
@@ -121,6 +126,24 @@ public:
     }
 
 private:
+    static auto
+    tokenize_args(int argc_, char** argv_) -> std::vector<std::string> {
+        if (argc_ < 1) {
+            throw std::underflow_error("Too few arguments!");
+        }
+        auto                     argc = static_cast<std::size_t>(argc_);
+        std::vector<std::string> a;
+        a.reserve(argc);
+        for (std::size_t i = 0; i < argc; ++i) {
+            std::string arg(argv_[i]);
+            if (arg.empty()) {
+                continue;
+            }
+            a.push_back(std::move(arg));
+        }
+        return a;
+    }
+
     enum report_format
     {
         XML,

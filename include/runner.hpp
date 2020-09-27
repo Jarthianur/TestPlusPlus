@@ -57,23 +57,34 @@ public:
      * @return the sum of non successful tests.
      */
     auto
-    run(int argc_, char** argv_) noexcept -> std::size_t {
-        cmdline_parser cmd(tokenize_args(argc_, argv_));
-        auto           rep    = cmd.reporter();
-        auto const     filter = cmd.filters();
-        bool const     finc   = std::get<1>(filter) != cmdline_parser::filter_mode::EXCLUDE;
-        rep->begin_report();
-        std::for_each(m_testsuites.begin(), m_testsuites.end(), [&](testsuite_ptr& ts_) {
-            bool const match = std::get<0>(filter).empty() ||
-                               std::any_of(std::get<0>(filter).cbegin(), std::get<0>(filter).cend(),
-                                           [&](std::regex const& re_) { return std::regex_match(ts_->name(), re_); });
-            if (finc == match) {
-                ts_->run();
-                rep->report(ts_);
-            }
-        });
-        rep->end_report();
-        return rep->faults();
+    run(int argc_, char** argv_) noexcept -> int {
+        cmdline_parser cmd;
+        try {
+            cmd.parse(argc_, argv_);
+        } catch (help_called const&) {
+            return -1;
+        }
+        try {
+            auto       rep    = cmd.reporter();
+            auto const filter = cmd.filters();
+            bool const finc   = std::get<1>(filter) != cmdline_parser::filter_mode::EXCLUDE;
+            rep->begin_report();
+            std::for_each(m_testsuites.begin(), m_testsuites.end(), [&](testsuite_ptr& ts_) {
+                bool const match =
+                  std::get<0>(filter).empty() ||
+                  std::any_of(std::get<0>(filter).cbegin(), std::get<0>(filter).cend(),
+                              [&](std::regex const& re_) { return std::regex_match(ts_->name(), re_); });
+                if (finc == match) {
+                    ts_->run();
+                    rep->report(ts_);
+                }
+            });
+            rep->end_report();
+            return static_cast<int>(rep->faults());  // always <= int::max
+        } catch (std::runtime_error const& e) {
+            std::cerr << "A fatal error occurred!\n  what(): " << e.what() << std::endl;
+            return -2;
+        }
     }
 
     /**
