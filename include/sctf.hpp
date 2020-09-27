@@ -46,7 +46,7 @@
  */
 #define SCTF_DEFAULT_MAIN                                                    \
     auto main(int argc_, char** argv_)->int {                                \
-        return static_cast<int>(sctf::runner::instance(argc_, argv_).run()); \
+        return static_cast<int>(sctf::runner::instance().run(argc_, argv_)); \
     }
 
 #endif  // SCTF_SCTF_HPP

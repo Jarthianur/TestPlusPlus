@@ -36,8 +36,12 @@ namespace intern
 {
 static auto
 tokenize_args(int argc_, char** argv_) -> std::vector<std::string> {
-    std::vector<std::string> a(argc_ - 1);
-    for (std::size_t i = 1; i < argc_; ++i) {
+    if (argc_ < 0) {
+        throw std::underflow_error("Arg count may never be less than zero!");
+    }
+    auto                     argc = static_cast<std::size_t>(argc_);
+    std::vector<std::string> a(argc - 1);
+    for (std::size_t i = 1; i < argc; ++i) {
         std::string arg(argv_[i]);
         if (arg.empty()) {
             continue;
@@ -135,8 +139,12 @@ private:
 
     static auto
     to_regex(std::string const& str_) -> std::regex {
-        return std::regex(std::regex_replace(str_, std::regex("*"), ".*"),
-                          std::regex_constants::nosubs | std::regex_constants::basic);
+        try {
+            return std::regex(std::regex_replace(str_, std::regex("\\*"), ".*"),
+                              std::regex_constants::nosubs | std::regex_constants::basic);
+        } catch (std::regex_error const&) {
+            throw std::runtime_error(str_ + " is not a valid pattern!");
+        }
     }
 
     report_format           m_rep_fmt = CNS;

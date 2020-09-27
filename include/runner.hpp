@@ -39,8 +39,6 @@ namespace intern
 class runner
 {
 public:
-    runner(int argc_, char** argv_) : m_cmdline(tokenize_args(argc_, argv_)) {}
-
     /**
      * Add a testsuite to this runner.
      *
@@ -59,13 +57,15 @@ public:
      * @return the sum of non successful tests.
      */
     auto
-    run() noexcept -> std::size_t {
-        auto       rep    = m_cmdline.reporter();
-        auto const filter = m_cmdline.filters();
-        bool const finc   = std::get<1>(filter) != cmdline_parser::filter_mode::EXCLUDE;
+    run(int argc_, char** argv_) noexcept -> std::size_t {
+        cmdline_parser cmd(tokenize_args(argc_, argv_));
+        auto           rep    = cmd.reporter();
+        auto const     filter = cmd.filters();
+        bool const     finc   = std::get<1>(filter) != cmdline_parser::filter_mode::EXCLUDE;
         rep->begin_report();
         std::for_each(m_testsuites.begin(), m_testsuites.end(), [&](testsuite_ptr& ts_) {
-            bool const match = std::any_of(std::get<0>(filter).cbegin(), std::get<0>(filter).cend(),
+            bool const match = std::get<0>(filter).empty() ||
+                               std::any_of(std::get<0>(filter).cbegin(), std::get<0>(filter).cend(),
                                            [&](std::regex const& re_) { return std::regex_match(ts_->name(), re_); });
             if (finc == match) {
                 ts_->run();
@@ -80,14 +80,13 @@ public:
      * Get a runner instance, as singleton.
      */
     static auto
-    instance(int argc_, char** argv_) -> runner& {
-        static runner r(argc_, argv_);
+    instance() -> runner& {
+        static runner r;
         return r;
     }
 
 private:
     std::vector<testsuite_ptr> m_testsuites;  ///< Testsuites contained in this runner.
-    cmdline_parser             m_cmdline;
 };
 }  // namespace intern
 
