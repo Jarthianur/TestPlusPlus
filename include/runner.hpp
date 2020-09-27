@@ -31,13 +31,15 @@
 
 namespace sctf
 {
+namespace intern
+{
 /**
  * Used to manage and run testsuites.
  */
 class runner
 {
 public:
-    runner(int argc_, char** argv_) : m_cmdline(intern::tokenize_args(argc_, argv_)) {}
+    runner(int argc_, char** argv_) : m_cmdline(tokenize_args(argc_, argv_)) {}
 
     /**
      * Add a testsuite to this runner.
@@ -45,7 +47,7 @@ public:
      * @param ts_ is the testsuite to add
      */
     void
-    add_testsuite(intern::testsuite_ptr const& ts_) {
+    add_testsuite(testsuite_ptr const& ts_) {
         m_testsuites.push_back(ts_);
     }
 
@@ -58,11 +60,17 @@ public:
      */
     auto
     run() noexcept -> std::size_t {
-        auto rep = m_cmdline.reporter();
+        auto       rep    = m_cmdline.reporter();
+        auto const filter = m_cmdline.filters();
+        bool const finc   = std::get<1>(filter) != cmdline_parser::filter_mode::EXCLUDE;
         rep->begin_report();
-        std::for_each(m_testsuites.begin(), m_testsuites.end(), [&rep](intern::testsuite_ptr& ts_) {
-            ts_->run();
-            rep->report(ts_);
+        std::for_each(m_testsuites.begin(), m_testsuites.end(), [&](testsuite_ptr& ts_) {
+            bool const match = std::any_of(std::get<0>(filter).cbegin(), std::get<0>(filter).cend(),
+                                           [&](std::regex const& re_) { return std::regex_match(ts_->name(), re_); });
+            if (finc == match) {
+                ts_->run();
+                rep->report(ts_);
+            }
         });
         rep->end_report();
         return rep->faults();
@@ -78,9 +86,12 @@ public:
     }
 
 private:
-    std::vector<intern::testsuite_ptr> m_testsuites;  ///< Testsuites contained in this runner.
-    intern::cmdline_parser             m_cmdline;
+    std::vector<testsuite_ptr> m_testsuites;  ///< Testsuites contained in this runner.
+    cmdline_parser             m_cmdline;
 };
+}  // namespace intern
+
+using runner = intern::runner;
 }  // namespace sctf
 
 #endif  // SCTF_RUNNER_HPP

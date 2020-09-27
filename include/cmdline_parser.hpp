@@ -54,6 +54,11 @@ public:
         parse(args_);
     }
 
+    /**
+     * last flag overrides preceeding ones.
+     * e/i are appending, but mutually exclusive.
+     * [--xml|--md] [-{co}] [-{e|i} "pattern"] [report-filename]
+     */
     void
     parse(std::vector<std::string> const& args_) {
         for (std::size_t i = 0; i < args_.size(); ++i) {
