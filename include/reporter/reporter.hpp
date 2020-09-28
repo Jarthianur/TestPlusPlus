@@ -198,7 +198,7 @@ protected:
     }
 
     auto
-    space(std::uint32_t depth_) -> char const* {
+    space(std::uint32_t depth_ = 1) -> char const* {
         if (!m_stripped) {
             for (auto i = 0U; i < depth_; ++i) {
                 *this << fmt::SPACE;
@@ -208,7 +208,7 @@ protected:
     }
 
     auto
-    new_line(std::uint32_t depth_) -> char const* {
+    newline(std::uint32_t depth_ = 1) -> char const* {
         if (!m_stripped) {
             for (auto i = 0U; i < depth_; ++i) {
                 *this << fmt::LF;
@@ -219,12 +219,12 @@ protected:
     }
 
     void
-    indent_push(std::uint32_t lvl_ = 2) {
+    push_indent(std::uint32_t lvl_ = 2) {
         m_indent_lvl += lvl_;
     }
 
     void
-    indent_pop(std::uint32_t lvl_ = 2) {
+    pop_indent(std::uint32_t lvl_ = 2) {
         m_indent_lvl -= lvl_;
     }
 
@@ -253,7 +253,7 @@ protected:
         return m_abs_time;
     }
 
-    enum color
+    enum colors
     {
         RED,
         GREEN,
@@ -264,7 +264,7 @@ protected:
     };
 
     auto
-    color(color c_ = RESET) const -> char const* {
+    color(colors c_ = RESET) const -> char const* {
         if (!m_color) {
             return "";
         }

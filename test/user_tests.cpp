@@ -67,4 +67,7 @@ DESCRIBE_PAR("TestMyClass") {
     TEST("check epsilon") {
         std::cout << sctf::epsilon << std::flush;
     };
+    TEST("some \"quoted\" name") {
+        std::cerr << "print \"quoted\"" << std::endl;
+    }
 };

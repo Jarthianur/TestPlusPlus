@@ -77,63 +77,63 @@ private:
         std::time_t           stamp = std::chrono::system_clock::to_time_t(ts_->timestamp());
         std::array<char, 128> buff{};
         std::strftime(buff.data(), 127, "%FT%T", std::localtime(&stamp));
-        indent_push();
-        *this << new_line(1) << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name() << "\" errors=\""
+        push_indent();
+        *this << newline() << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name() << "\" errors=\""
               << ts_->statistics().errors() << "\" tests=\"" << ts_->statistics().tests() << "\" failures=\""
               << ts_->statistics().failures() << R"(" skipped="0" time=")" << ts_->execution_duration()
               << "\" timestamp=\"" << buff.data() << "\">";
 
         reporter::report_testsuite(ts_);
 
-        *this << new_line(1) << "</testsuite>";
-        indent_pop();
+        *this << newline() << "</testsuite>";
+        pop_indent();
     }
 
     void
     report_testcase(testcase const& tc_) override {
-        indent_push();
-        *this << new_line(1) << "<testcase name=\"" << tc_.name() << "\" classname=\"" << tc_.suite_name()
-              << "\" time=\"" << tc_.duration() << "\"";
+        push_indent();
+        *this << newline() << "<testcase name=\"" << tc_.name() << "\" classname=\"" << tc_.suite_name() << "\" time=\""
+              << tc_.duration() << "\"";
         switch (tc_.state()) {
             case testcase::result::ERROR:
                 *this << ">";
-                indent_push();
-                *this << new_line(1) << "<error message=\"" << tc_.reason() << "\"></error>";
-                indent_pop();
+                push_indent();
+                *this << newline() << "<error message=\"" << tc_.reason() << "\"></error>";
+                pop_indent();
                 print_system_out(tc_);
-                *this << new_line(1) << "</testcase>";
+                *this << newline() << "</testcase>";
                 break;
             case testcase::result::FAILED:
                 *this << ">";
-                indent_push();
-                *this << new_line(1) << "<failure message=\"" << tc_.reason() << "\"></failure>";
-                indent_pop();
+                push_indent();
+                *this << newline() << "<failure message=\"" << tc_.reason() << "\"></failure>";
+                pop_indent();
                 print_system_out(tc_);
-                *this << new_line(1) << "</testcase>";
+                *this << newline() << "</testcase>";
                 break;
             default:
                 if (capture()) {
                     *this << ">";
                     print_system_out(tc_);
-                    *this << new_line(1) << "</testcase>";
+                    *this << newline() << "</testcase>";
                 } else {
                     *this << "/>";
                 }
                 break;
         }
-        indent_pop();
+        pop_indent();
     }
 
     void
     begin_report() override {
         reporter::begin_report();
 
-        *this << R"(<?xml version="1.0" encoding="UTF-8" ?>)" << new_line(1) << "<testsuites>";
+        *this << R"(<?xml version="1.0" encoding="UTF-8" ?>)" << newline() << "<testsuites>";
     }
 
     void
     end_report() override {
-        *this << new_line(1) << "</testsuites>" << new_line(1);
+        *this << newline() << "</testsuites>" << newline();
     }
 
     void
@@ -141,10 +141,10 @@ private:
         if (!capture()) {
             return;
         }
-        indent_push();
-        *this << new_line(1) << "<system-out>" << tc_.cout() << "</system-out>" << new_line(1) << "<system-err>"
+        push_indent();
+        *this << newline() << "<system-out>" << tc_.cout() << "</system-out>" << newline() << "<system-err>"
               << tc_.cerr() << "</system-err>";
-        indent_pop();
+        pop_indent();
     }
 
     std::size_t mutable m_id = 0;  ///< Report wide incremental ID for testsuites.
