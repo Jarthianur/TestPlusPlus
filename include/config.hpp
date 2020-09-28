@@ -25,7 +25,11 @@
 #include <regex>
 #include <vector>
 
+#include "reporter/console_reporter.hpp"
+#include "reporter/json_reporter.hpp"
+#include "reporter/markdown_reporter.hpp"
 #include "reporter/reporter_factory.hpp"
+#include "reporter/xml_reporter.hpp"
 
 namespace sctf
 {
@@ -44,6 +48,7 @@ struct config
     {
         XML,
         MD,
+        JSON,
         CNS
     };
 
@@ -52,6 +57,7 @@ struct config
         switch (rep_fmt) {
             case report_format::XML: return reporter_factory::make<xml_reporter>(rep_cfg);
             case report_format::MD: return reporter_factory::make<markdown_reporter>(rep_cfg);
+            case report_format::JSON: return reporter_factory::make<json_reporter>(rep_cfg);
             default /*CNS*/: return reporter_factory::make<console_reporter>(rep_cfg);
         }
     }
