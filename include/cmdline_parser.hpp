@@ -63,12 +63,14 @@ private:
     void
     eval_arg(std::string const& arg_, Fn&& getval_fn_) {
         try {
-            make_option("--help")(arg_, [&] { print_help(); });
-            make_option("--xml")(arg_, [&] { m_cfg.rep_fmt = config::report_format::XML; });
-            make_option("--md")(arg_, [&] { m_cfg.rep_fmt = config::report_format::MD; });
+            make_option(+"--help")(arg_, [&] { print_help(); });
+            make_option(+"--xml")(arg_, [&] { m_cfg.rep_fmt = config::report_format::XML; });
+            make_option(+"--md")(arg_, [&] { m_cfg.rep_fmt = config::report_format::MD; });
+            make_option(+"--json")(arg_, [&] { m_cfg.rep_fmt = config::report_format::JSON; });
             combined_option{}(arg_, [&](char c_) {
                 make_option('c')(c_, [&] { m_cfg.rep_cfg.color = true; });
                 make_option('o')(c_, [&] { m_cfg.rep_cfg.capture_out = true; });
+                make_option('s')(c_, [&] { m_cfg.rep_cfg.strip = true; });
                 make_option('e')(c_, [&] {
                     set_filter_mode(config::filter_mode::EXCLUDE);
                     m_cfg.fpattern.push_back(to_regex(getval_fn_()));
@@ -136,7 +138,9 @@ private:
                      "  --help: Print this message and exit.\n"
                      "  --xml : Report in JUnit-like XML format.\n"
                      "  --md  : Report in markdown format.\n"
+                     "  --json: Report in json format.\n"
                      "  -c    : Use ANSI colors in report, if supported by reporter.\n"
+                     "  -s    : Strip unnecessary whitespaces from report.\n"
                      "  -o    : Report captured output from tests, if supported by reporter.\n\n"
                      "FILTERS:\n"
                      "Multiple filters are possible, but includes and excludes are mutually exclusive.\n"

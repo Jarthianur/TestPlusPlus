@@ -80,6 +80,8 @@ escaped_char(char c_) -> std::string {
         case '\f': return "\\f";
         case '\v': return "\\v";
         case '\"': return "\\\"";
+        case '\b': return "\\b";
+        case '\\': return "\\\\";
         default: break;
     }
     return std::string(1, c_);
@@ -94,7 +96,7 @@ static auto
 escaped_string(std::string const& str_) -> std::string {
     std::string s = str_;
     std::size_t p = 0;
-    while ((p = s.find_first_of("\r\n\t\f\v\"", p)) != std::string::npos) {
+    while ((p = s.find_first_of("\r\n\t\f\v\"\b\\", p)) != std::string::npos) {
         s.replace(p, 1, escaped_char(s[p]));
         p += 2;
     }

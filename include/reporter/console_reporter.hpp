@@ -48,7 +48,7 @@ public:
      * @param stream_ is the stream where to print the report. (default: stdout)
      */
     static auto
-    create(std::ostream& stream_ = std::cout) -> std::shared_ptr<console_reporter> {
+    create(std::ostream& stream_ = std::cout) -> reporter_ptr {
         return std::make_shared<console_reporter>(enable{}, stream_);
     }
 
@@ -58,30 +58,8 @@ public:
      * @param fname_ is the filename where to print the report.
      */
     static auto
-    create(std::string const& fname_) -> std::shared_ptr<console_reporter> {
+    create(std::string const& fname_) -> reporter_ptr {
         return std::make_shared<console_reporter>(enable{}, fname_);
-    }
-
-    /**
-     * Enable ansi colors in report.
-     *
-     * @return this reporter again.
-     */
-    auto
-    with_color() -> std::shared_ptr<console_reporter> {
-        m_color = true;
-        return std::static_pointer_cast<console_reporter>(shared_from_this());
-    }
-
-    /**
-     * Enable reporting of captured output.
-     *
-     * @return this reporter again.
-     */
-    auto
-    with_captured_output() -> std::shared_ptr<console_reporter> {
-        m_capture = true;
-        return std::static_pointer_cast<console_reporter>(shared_from_this());
     }
 
     /// Constructor for std::make_shared.
@@ -96,65 +74,38 @@ private:
         *this << "--- " << ts_->name() << " (" << ts_->execution_duration() << "ms) ---" << fmt::LF;
 
         reporter::report_testsuite(ts_);
+        *this << fmt::LF;
     }
 
     void
     report_testcase(testcase const& tc_) override {
-        *this << fmt::SPACE << tc_.name() << " (" << tc_.duration() << "ms)" << fmt::LF << fmt::XSPACE;
-        if (m_capture) {
-            *this << "stdout = \"" << tc_.cout() << "\"" << fmt::LF << fmt::XSPACE;
-            *this << "stderr = \"" << tc_.cerr() << "\"" << fmt::LF << fmt::XSPACE;
+        *this << fmt::SPACE << tc_.name() << " (" << tc_.duration() << "ms)" << fmt::LF << fmt::SPACE << fmt::SPACE;
+        if (capture()) {
+            *this << "stdout = \"" << tc_.cout() << "\"" << fmt::LF << fmt::SPACE << fmt::SPACE;
+            *this << "stderr = \"" << tc_.cerr() << "\"" << fmt::LF << fmt::SPACE << fmt::SPACE;
         }
         switch (tc_.state()) {
-            case testcase::result::ERROR: *this << colored(RED) << "ERROR! " << tc_.reason(); break;
-            case testcase::result::FAILED: *this << colored(BLUE) << "FAILED! " << tc_.reason(); break;
-            case testcase::result::PASSED: *this << colored(GREEN) << "PASSED!"; break;
+            case testcase::result::ERROR: *this << color(RED) << "ERROR! " << tc_.reason(); break;
+            case testcase::result::FAILED: *this << color(BLUE) << "FAILED! " << tc_.reason(); break;
+            case testcase::result::PASSED: *this << color(GREEN) << "PASSED!"; break;
             default: break;
         }
-        *this << colored() << fmt::LF;
+        *this << color() << fmt::LF;
     }
 
     void
     end_report() override {
-        if (m_abs_errs > 0) {
-            *this << colored(YELLOW);
-        } else if (m_abs_fails > 0) {
-            *this << colored(BLUE);
+        if (abs_errs() > 0) {
+            *this << color(YELLOW);
+        } else if (abs_fails() > 0) {
+            *this << color(BLUE);
         } else {
-            *this << colored(CYAN);
+            *this << color(CYAN);
         }
-        *this << "=== Result ===" << fmt::LF << "passes: " << m_abs_tests - m_abs_fails - m_abs_errs << "/"
-              << m_abs_tests << " failures: " << m_abs_fails << "/" << m_abs_tests << " errors: " << m_abs_errs << "/"
-              << m_abs_tests << " (" << m_abs_time << "ms)" << colored() << fmt::LF;
+        *this << "=== Result ===" << fmt::LF << "passes: " << abs_tests() - faults() << "/" << abs_tests()
+              << " failures: " << abs_fails() << "/" << abs_tests() << " errors: " << abs_errs() << "/" << abs_tests()
+              << " (" << abs_time() << "ms)" << color() << fmt::LF;
     }
-
-    enum color
-    {
-        RED,
-        GREEN,
-        YELLOW,
-        BLUE,
-        CYAN,
-        RESET
-    };
-
-    auto
-    colored(color c_ = RESET) const -> char const* {
-        if (!m_color) {
-            return "";
-        }
-        switch (c_) {
-            case RED: return "\x1b[31m";
-            case GREEN: return "\x1b[32m";
-            case YELLOW: return "\x1b[33m";
-            case BLUE: return "\x1b[34m";
-            case CYAN: return "\x1b[36m";
-            default: return "\x1b[0m";
-        }
-    }
-
-    bool m_color   = false;  ///< Flags whether print colored results.
-    bool m_capture = false;  ///< Flags whether to report captured output from testcases.
 };
 }  // namespace intern
 
