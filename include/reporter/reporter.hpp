@@ -42,12 +42,14 @@ static constexpr char const* const SPACE = " ";   ///< Single space
 static constexpr char const* const LF    = "\n";  ///< Single linefeed
 namespace ansi
 {
-static constexpr char const* const RED    = "\x1b[31m";
-static constexpr char const* const GREEN  = "\x1b[32m";
-static constexpr char const* const YELLOW = "\x1b[33m";
-static constexpr char const* const BLUE   = "\x1b[34m";
-static constexpr char const* const CYAN   = "\x1b[36m";
-static constexpr char const* const RST    = "\x1b[0m";
+static constexpr char const* const RED        = "\x1b[0;91m";
+static constexpr char const* const GREEN      = "\x1b[0;92m";
+static constexpr char const* const YELLOW     = "\x1b[0;93m";
+static constexpr char const* const BLUE       = "\x1b[0;94m";
+static constexpr char const* const CYAN       = "\x1b[0;96m";
+static constexpr char const* const MAGENTA    = "\x1b[0;95m";
+static constexpr char const* const WHITE_BOLD = "\x1b[1;97m";
+static constexpr char const* const RST        = "\x1b[0m";
 }  // namespace ansi
 }  // namespace fmt
 
@@ -260,6 +262,8 @@ protected:
         YELLOW,
         BLUE,
         CYAN,
+        MAGENTA,
+        W_BOLD,
         RESET
     };
 
@@ -274,6 +278,8 @@ protected:
             case YELLOW: return fmt::ansi::YELLOW;
             case BLUE: return fmt::ansi::BLUE;
             case CYAN: return fmt::ansi::CYAN;
+            case MAGENTA: return fmt::ansi::MAGENTA;
+            case W_BOLD: return fmt::ansi::WHITE_BOLD;
             default: return fmt::ansi::RST;
         }
     }

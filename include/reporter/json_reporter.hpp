@@ -21,6 +21,7 @@
 #define SCTF_REPORTER_JSON_REPORTER_HPP
 
 #include <memory>
+#include <tuple>
 
 #include "reporter/reporter.hpp"
 
@@ -75,7 +76,7 @@ private:
     report_testsuite(testsuite_ptr const& ts_) override {
         m_first_test = true;
         conditional_prefix(m_first_suite);
-        json_property_string("name", ts_->name()) << ',' << newline();
+        json_property_string("name", ts_->name(), color(CYAN)) << ',' << newline();
         json_property_value("time", ts_->execution_duration()) << ',' << newline();
         json_property_value("count", ts_->statistics().tests()) << ',' << newline();
         json_property_value("passes", ts_->statistics().successes()) << ',' << newline();
@@ -93,24 +94,11 @@ private:
 
     void
     report_testcase(testcase const& tc_) override {
-        char const* result{nullptr};
-        colors      col{RESET};
-        switch (tc_.state()) {
-            case testcase::result::ERROR:
-                result = "error";
-                col    = RED;
-                break;
-            case testcase::result::FAILED:
-                result = "failure";
-                col    = BLUE;
-                break;
-            default: result = "success"; col = GREEN;
-        }
+        auto const dres = decode_result(tc_.state());
         conditional_prefix(m_first_test);
-        *this << color(col);
-        json_property_string("name", tc_.name()) << "," << newline();
-        json_property_string("result", result) << "," << newline();
-        json_property_string("reason", tc_.reason()) << "," << newline() << color();
+        json_property_string("name", tc_.name(), color(W_BOLD)) << "," << newline();
+        json_property_string("result", std::get<0>(dres), color(std::get<1>(dres))) << "," << newline();
+        json_property_string("reason", tc_.reason(), color(std::get<1>(dres))) << "," << newline();
         json_property_value("time", tc_.duration());
         if (capture()) {
             *this << "," << newline();
@@ -118,7 +106,7 @@ private:
             json_property_string("stderr", tc_.cerr());
         }
         pop_indent();
-        *this << newline() << '}' << color();
+        *this << newline() << '}';
         pop_indent();
     }
 
@@ -134,10 +122,10 @@ private:
     void
     end_report() override {
         *this << newline() << "]," << newline();
-        json_property_value("count", abs_tests()) << "," << newline();
-        json_property_value("passes", abs_tests() - faults()) << "," << newline();
-        json_property_value("failures", abs_fails()) << "," << newline();
-        json_property_value("errors", abs_errs()) << "," << newline();
+        json_property_value("count", abs_tests(), color(W_BOLD)) << "," << newline();
+        json_property_value("passes", abs_tests() - faults(), color(GREEN)) << "," << newline();
+        json_property_value("failures", abs_fails(), color(BLUE)) << "," << newline();
+        json_property_value("errors", abs_errs(), color(RED)) << "," << newline();
         json_property_value("time", abs_time());
         pop_indent();
         *this << newline() << "}" << newline();
@@ -145,14 +133,16 @@ private:
 
     template<typename T>
     auto
-    json_property_string(char const* name_, T&& val_) -> std::ostream& {
-        return *this << '"' << name_ << "\":" << space() << '"' << escaped_string(std::forward<T>(val_)) << '"';
+    json_property_string(char const* name_, T&& val_, char const* col_ = nullptr) -> std::ostream& {
+        return *this << '"' << name_ << "\":" << space() << (col_ ? col_ : "") << '"'
+                     << escaped_string(std::forward<T>(val_)) << '"' << (col_ ? color() : "");
     }
 
     template<typename T>
     auto
-    json_property_value(char const* name_, T&& val_) -> std::ostream& {
-        return *this << '"' << name_ << "\":" << space() << std::forward<T>(val_);
+    json_property_value(char const* name_, T&& val_, char const* col_ = nullptr) -> std::ostream& {
+        return *this << '"' << name_ << "\":" << space() << (col_ ? col_ : "") << std::forward<T>(val_)
+                     << (col_ ? color() : "");
     }
 
     void
@@ -166,6 +156,15 @@ private:
         *this << newline() << '{';
         push_indent();
         *this << newline();
+    }
+
+    static auto
+    decode_result(testcase::result res_) -> std::tuple<char const*, colors> {
+        switch (res_) {
+            case testcase::result::ERROR: return {"error", RED};
+            case testcase::result::FAILED: return {"failure", BLUE};
+            default: return {"success", GREEN};
+        }
     }
 
     bool m_first_suite = true;
