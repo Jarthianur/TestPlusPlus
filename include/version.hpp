@@ -19,28 +19,13 @@
 
 /// @file
 
-#ifndef SCTF_SCTF_HPP
-#define SCTF_SCTF_HPP
+#ifndef SCTF_VERSION_HPP
+#define SCTF_VERSION_HPP
 
-#include "comparator/equality.hpp"
-#include "comparator/ordering.hpp"
-#include "comparator/range.hpp"
-#include "comparator/regex.hpp"
+/// SCTF release version this source belongs to.
+#define SCTF_VERSION_MAJOR "2"
+#define SCTF_VERSION_MINOR "2"
+#define SCTF_VERSION_REVISION "rc0"
+#define SCTF_VERSION SCTF_VERSION_MAJOR "." SCTF_VERSION_MINOR "-" SCTF_VERSION_REVISION
 
-#include "api.hpp"
-#include "assert.hpp"
-#include "regex.hpp"
-#include "runner.hpp"
-
-/**
- * Define a default main function, which performs all tests, and produces the report with specified
- * reporter.
- *
- * @param R is the reporters factory method invokation.
- */
-#define SCTF_DEFAULT_MAIN                                  \
-    auto main(int argc_, char** argv_)->int {              \
-        return sctf::runner::instance().run(argc_, argv_); \
-    }
-
-#endif  // SCTF_SCTF_HPP
+#endif  // SCTF_VERSION_HPP

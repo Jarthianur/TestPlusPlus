@@ -27,6 +27,7 @@
 #include <stdexcept>
 
 #include "config.hpp"
+#include "version.hpp"
 
 namespace sctf
 {
@@ -131,9 +132,10 @@ private:
 
     void
     print_help() {
-        std::cout << "Usage: " << m_progname
-                  << " [OPTIONS] [FILTERS] [filename]\n"
-                     "Default is to report to standard-out in an informative text format (using console-reporter).\n\n"
+        std::cout << "Unit testing binary built with simple-cpp-test-framework (" SCTF_VERSION ").\n"
+                  << "GitHub: https://github.com/Jarthianur/simple-cpp-test-framework\n\n"
+                  << "Usage: " << m_progname << " [OPTIONS] [filename]\n"
+                  << "Default is to report to standard-out in an informative text format (using console-reporter).\n\n"
                      "OPTIONS:\n"
                      "  --help: Print this message and exit.\n"
                      "  --xml : Report in JUnit-like XML format.\n"
@@ -142,9 +144,8 @@ private:
                      "  -c    : Use ANSI colors in report, if supported by reporter.\n"
                      "  -s    : Strip unnecessary whitespaces from report.\n"
                      "  -o    : Report captured output from tests, if supported by reporter.\n\n"
-                     "FILTERS:\n"
-                     "Multiple filters are possible, but includes and excludes are mutually exclusive.\n"
-                     "Patterns may contain * as wildcard.\n"
+                     "  Multiple filters are possible, but includes and excludes are mutually exclusive.\n"
+                     "  Patterns may contain * as wildcard.\n\n"
                      "  -e <pattern> : Exclude testsuites with names matching pattern.\n"
                      "  -i <pattern> : Include only testsuites with names matching pattern."
                   << std::endl;

@@ -1,7 +1,8 @@
 #!/bin/bash
 set -eo pipefail
 
-FILES="../include/cpp_meta.hpp
+FILES="../include/version.hpp
+../include/cpp_meta.hpp
 ../include/loc.hpp
 ../include/traits.hpp
 ../include/duration.hpp
