@@ -36,6 +36,25 @@ namespace sctf
 {
 namespace intern
 {
+namespace fmt
+{
+static constexpr char const* const SPACE = " ";   ///< Single space
+static constexpr char const* const LF    = "\n";  ///< Single linefeed
+namespace ansi
+{
+static constexpr char const* const RED        = "\x1b[0;91m";
+static constexpr char const* const GREEN      = "\x1b[0;92m";
+static constexpr char const* const YELLOW     = "\x1b[0;93m";
+static constexpr char const* const BLUE       = "\x1b[0;94m";
+static constexpr char const* const CYAN       = "\x1b[0;96m";
+static constexpr char const* const MAGENTA    = "\x1b[0;95m";
+static constexpr char const* const WHITE_BOLD = "\x1b[1;97m";
+static constexpr char const* const RST        = "\x1b[0m";
+}  // namespace ansi
+}  // namespace fmt
+
+class reporter;
+using reporter_ptr = std::shared_ptr<reporter>;
 /**
  * Abstract base class for specific reporter implementations.
  */
@@ -88,6 +107,34 @@ public:
     auto
     faults() const -> std::size_t {
         return m_abs_errs + m_abs_fails;
+    }
+
+    /**
+     * Enable ansi colors in report.
+     *
+     * @return this reporter again.
+     */
+    auto
+    with_color() -> reporter_ptr {
+        m_color = true;
+        return shared_from_this();
+    }
+
+    /**
+     * Enable reporting of captured output.
+     *
+     * @return this reporter again.
+     */
+    auto
+    with_captured_output() -> reporter_ptr {
+        m_capture = true;
+        return shared_from_this();
+    }
+
+    auto
+    with_stripping() -> reporter_ptr {
+        m_stripped = true;
+        return shared_from_this();
     }
 
 protected:
@@ -152,24 +199,106 @@ protected:
         return m_out_stream;
     }
 
-    std::ofstream m_out_file;       ///< Filestream that is used, if a file is specified as output target.
-    std::ostream& m_out_stream;     ///< Outstream that handles printing the report.
-    std::size_t   m_abs_tests = 0;  ///< Total number of testcases over all testsuites.
-    std::size_t   m_abs_fails = 0;  ///< Total number of failed testcases over all testsuites.
-    std::size_t   m_abs_errs  = 0;  ///< Total number of erroneous testcases over all testsuites.
-    double        m_abs_time  = 0;  ///< Total amount of time spent on all testsuites.
-};
+    auto
+    space(std::uint32_t depth_ = 1) -> char const* {
+        if (!m_stripped) {
+            for (auto i = 0U; i < depth_; ++i) {
+                *this << fmt::SPACE;
+            }
+        }
+        return "";
+    }
 
-namespace fmt
-{
-static constexpr char const* const SPACE  = "  ";    ///< Indentation with two spaces.
-static constexpr char const* const XSPACE = "    ";  ///< Indentation with four spaces.
-static constexpr char const* const LF     = "\n";    ///< Single linefeed.
-static constexpr char const* const XLF    = "\n\n";  ///< Double linefeed.
-}  // namespace fmt
+    auto
+    newline(std::uint32_t depth_ = 1) -> char const* {
+        if (!m_stripped) {
+            for (auto i = 0U; i < depth_; ++i) {
+                *this << fmt::LF;
+            }
+        }
+        space(m_indent_lvl);
+        return "";
+    }
+
+    void
+    push_indent(std::uint32_t lvl_ = 2) {
+        m_indent_lvl += lvl_;
+    }
+
+    void
+    pop_indent(std::uint32_t lvl_ = 2) {
+        m_indent_lvl -= lvl_;
+    }
+
+    auto
+    capture() const -> bool {
+        return m_capture;
+    }
+
+    auto
+    abs_tests() const -> std::size_t {
+        return m_abs_tests;
+    }
+
+    auto
+    abs_fails() const -> std::size_t {
+        return m_abs_fails;
+    }
+
+    auto
+    abs_errs() const -> std::size_t {
+        return m_abs_errs;
+    }
+
+    auto
+    abs_time() const -> double {
+        return m_abs_time;
+    }
+
+    enum colors
+    {
+        RED,
+        GREEN,
+        YELLOW,
+        BLUE,
+        CYAN,
+        MAGENTA,
+        W_BOLD,
+        RESET
+    };
+
+    auto
+    color(colors c_ = RESET) const -> char const* {
+        if (!m_color) {
+            return "";
+        }
+        switch (c_) {
+            case RED: return fmt::ansi::RED;
+            case GREEN: return fmt::ansi::GREEN;
+            case YELLOW: return fmt::ansi::YELLOW;
+            case BLUE: return fmt::ansi::BLUE;
+            case CYAN: return fmt::ansi::CYAN;
+            case MAGENTA: return fmt::ansi::MAGENTA;
+            case W_BOLD: return fmt::ansi::WHITE_BOLD;
+            default: return fmt::ansi::RST;
+        }
+    }
+
+private:
+    std::ofstream m_out_file;    ///< Filestream that is used, if a file is specified as output target.
+    std::ostream& m_out_stream;  ///< Outstream that handles printing the report.
+    std::uint32_t m_indent_lvl = 0;
+    bool          m_color      = false;  ///< Flags whether print colored results.
+    bool          m_capture    = false;  ///< Flags whether to report captured output from testcases.
+    bool          m_stripped   = false;  ///< Flags whether to strip unnecessary whitespaces in report.
+    std::size_t   m_abs_tests  = 0;      ///< Total number of testcases over all testsuites.
+    std::size_t   m_abs_fails  = 0;      ///< Total number of failed testcases over all testsuites.
+    std::size_t   m_abs_errs   = 0;      ///< Total number of erroneous testcases over all testsuites.
+    double        m_abs_time   = 0;      ///< Total amount of time spent on all testsuites.
+};
 }  // namespace intern
 
-using reporter_ptr = std::shared_ptr<intern::reporter>;
+using reporter_ptr = intern::reporter_ptr;
 }  // namespace sctf
 
 #endif  // SCTF_REPORTER_REPORTER_HPP

@@ -49,7 +49,7 @@ public:
      * @param stream_ is the stream where to print the report. (default: stdout)
      */
     static auto
-    create(std::ostream& stream_ = std::cout) -> std::shared_ptr<markdown_reporter> {
+    create(std::ostream& stream_ = std::cout) -> reporter_ptr {
         return std::make_shared<markdown_reporter>(enable{}, stream_);
     }
 
@@ -59,19 +59,8 @@ public:
      * @param fname_ is the filename where to print the report.
      */
     static auto
-    create(std::string const& fname_) -> std::shared_ptr<markdown_reporter> {
+    create(std::string const& fname_) -> reporter_ptr {
         return std::make_shared<markdown_reporter>(enable{}, fname_);
-    }
-
-    /**
-     * Enable reporting of captured output.
-     *
-     * @return this reporter again.
-     */
-    auto
-    with_captured_output() -> std::shared_ptr<markdown_reporter> {
-        m_capture = true;
-        return std::static_pointer_cast<markdown_reporter>(shared_from_this());
     }
 
     /// Constructor for std::make_shared.
@@ -83,16 +72,16 @@ public:
 private:
     void
     report_testsuite(testsuite_ptr const& ts_) override {
-        *this << "## " << ts_->name() << fmt::XLF << "|Tests|Successes|Failures|Errors|Time|" << fmt::LF
+        *this << "## " << ts_->name() << fmt::LF << fmt::LF << "|Tests|Successes|Failures|Errors|Time|" << fmt::LF
               << "|-|-|-|-|-|" << fmt::LF << "|" << ts_->statistics().tests() << "|" << ts_->statistics().successes()
               << "|" << ts_->statistics().failures() << "|" << ts_->statistics().errors() << "|"
-              << ts_->execution_duration() << "ms|" << fmt::XLF << "### Tests" << fmt::XLF
-              << "|Name|Context|Time|Status|" << (m_capture ? "System-Out|System-Err|" : "") << fmt::LF << "|-|-|-|-|"
-              << (m_capture ? "-|-|" : "") << fmt::LF;
+              << ts_->execution_duration() << "ms|" << fmt::LF << fmt::LF << "### Tests" << fmt::LF << fmt::LF
+              << "|Name|Context|Time|Status|" << (capture() ? "System-Out|System-Err|" : "") << fmt::LF << "|-|-|-|-|"
+              << (capture() ? "-|-|" : "") << fmt::LF;
 
         reporter::report_testsuite(ts_);
 
-        *this << fmt::XLF;
+        *this << fmt::LF << fmt::LF;
     }
 
     void
@@ -105,7 +94,7 @@ private:
             default: break;
         }
         *this << "|" << tc_.name() << "|" << tc_.suite_name() << "|" << tc_.duration() << "ms|" << status << "|";
-        if (m_capture) {
+        if (capture()) {
             print_system_out(tc_.cout());
             print_system_out(tc_.cerr());
         }
@@ -116,14 +105,14 @@ private:
     begin_report() override {
         reporter::begin_report();
 
-        *this << "# Test Report" << fmt::XLF;
+        *this << "# Test Report" << fmt::LF << fmt::LF;
     }
 
     void
     end_report() override {
-        *this << "## Summary" << fmt::XLF << "|Tests|Successes|Failures|Errors|Time|" << fmt::LF << "|-|-|-|-|-|"
-              << fmt::LF << "|" << m_abs_tests << "|" << (m_abs_tests - m_abs_errs - m_abs_fails) << "|" << m_abs_fails
-              << "|" << m_abs_errs << "|" << m_abs_time << "ms|" << fmt::LF;
+        *this << "## Summary" << fmt::LF << fmt::LF << "|Tests|Successes|Failures|Errors|Time|" << fmt::LF
+              << "|-|-|-|-|-|" << fmt::LF << "|" << abs_tests() << "|" << (abs_tests() - faults()) << "|" << abs_fails()
+              << "|" << abs_errs() << "|" << abs_time() << "ms|" << fmt::LF;
     }
 
     void
@@ -138,8 +127,6 @@ private:
         }
         *this << "|";
     }
-
-    bool m_capture = false;  ///< Flags whether to report captured output from testcases.
 };
 }  // namespace intern
 
