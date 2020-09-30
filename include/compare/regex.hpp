@@ -28,16 +28,20 @@ namespace intern
 {
 namespace compare
 {
+namespace ns_match
+{
+static constexpr char const* CMP_STR     = "to be matching";
+static constexpr char const* NEG_CMP_STR = "to be not matching";
+}  // namespace ns_match
+
 /**
  * Comparator to check for regex match.
  */
 template<typename T>
 class match
 {
-    static constexpr char const* m_cmp_str     = "to be matching";
-    static constexpr char const* m_neg_cmp_str = "to be not matching";
-    bool                         m_neg         = false;
-    T&                           m_res         = nullptr;
+    bool m_neg{false};
+    T&   m_res;
 
 public:
     explicit match(T& res_) : m_res(res_) {}
@@ -53,7 +57,7 @@ public:
     operator()(V const& actual_value, E const& expected_value) const -> comparison {
         return std::regex_match(actual_value, m_res, std::regex(expected_value)) != m_neg ?
                  comparison() :
-                 comparison(m_neg ? m_neg_cmp_str : m_cmp_str,
+                 comparison(m_neg ? ns_match::NEG_CMP_STR : ns_match::CMP_STR,
                             std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
     }
 };
@@ -61,13 +65,9 @@ public:
 template<>
 class match<void>
 {
-    static constexpr char const* m_cmp_str     = "to be matching";
-    static constexpr char const* m_neg_cmp_str = "to be not matching";
-    bool                         m_neg         = false;
+    bool m_neg{false};
 
 public:
-    match() = default;
-
     auto
     operator!() -> decltype(*this)& {
         m_neg = !m_neg;
@@ -79,10 +79,16 @@ public:
     operator()(V const& actual_value, E const& expected_value) const -> comparison {
         return std::regex_match(actual_value, std::regex(expected_value)) != m_neg ?
                  comparison() :
-                 comparison(m_neg ? m_neg_cmp_str : m_cmp_str,
+                 comparison(m_neg ? ns_match::NEG_CMP_STR : ns_match::CMP_STR,
                             std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
     }
 };
+
+namespace ns_like
+{
+static constexpr char const* CMP_STR     = "to be like";
+static constexpr char const* NEG_CMP_STR = "to be not like";
+}  // namespace ns_like
 
 /**
  * Comparator to check for regex search.
@@ -90,10 +96,8 @@ public:
 template<typename T>
 class like
 {
-    static constexpr char const* m_cmp_str     = "to be like";
-    static constexpr char const* m_neg_cmp_str = "to be not like";
-    bool                         m_neg         = false;
-    T&                           m_res         = nullptr;
+    bool m_neg{false};
+    T&   m_res;
 
 public:
     explicit like(T& res_) : m_res(res_) {}
@@ -109,7 +113,7 @@ public:
     operator()(V const& actual_value, E const& expected_value) const -> comparison {
         return std::regex_search(actual_value, m_res, std::regex(expected_value)) != m_neg ?
                  comparison() :
-                 comparison(m_neg ? m_neg_cmp_str : m_cmp_str,
+                 comparison(m_neg ? ns_like::NEG_CMP_STR : ns_like::CMP_STR,
                             std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
     }
 };
@@ -117,13 +121,9 @@ public:
 template<>
 class like<void>
 {
-    static constexpr char const* m_cmp_str     = "to be like";
-    static constexpr char const* m_neg_cmp_str = "to be not like";
-    bool                         m_neg         = false;
+    bool m_neg{false};
 
 public:
-    like() = default;
-
     auto
     operator!() -> decltype(*this)& {
         m_neg = !m_neg;
@@ -135,7 +135,7 @@ public:
     operator()(V const& actual_value, E const& expected_value) const -> comparison {
         return std::regex_search(actual_value, std::regex(expected_value)) != m_neg ?
                  comparison() :
-                 comparison(m_neg ? m_neg_cmp_str : m_cmp_str,
+                 comparison(m_neg ? ns_like::NEG_CMP_STR : ns_like::CMP_STR,
                             std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
     }
 };

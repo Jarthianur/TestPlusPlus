@@ -21,7 +21,6 @@
 #include <array>
 #include <chrono>
 #include <ctime>
-#include <memory>
 
 #include "report/reporter.hpp"
 
@@ -37,14 +36,6 @@ namespace report
 class xml_reporter : public reporter
 {
 public:
-    xml_reporter(xml_reporter const&)     = delete;
-    xml_reporter(xml_reporter&&) noexcept = delete;
-    ~xml_reporter() noexcept override     = default;
-    auto
-    operator=(xml_reporter const&) -> xml_reporter& = delete;
-    auto
-    operator=(xml_reporter&&) noexcept -> xml_reporter& = delete;
-
     /**
      * Create a xml reporter.
      *
@@ -94,32 +85,20 @@ private:
         push_indent();
         *this << newline() << "<testcase name=\"" << tc_.name() << "\" classname=\"" << tc_.suite_name() << "\" time=\""
               << tc_.duration() << "\"";
-        switch (tc_.result()) {
-            case test::testcase::HAS_ERROR:
-                *this << ">";
-                push_indent();
-                *this << newline() << "<error message=\"" << tc_.reason() << "\"></error>";
-                pop_indent();
-                print_system_out(tc_);
-                *this << newline() << "</testcase>";
-                break;
-            case test::testcase::HAS_FAILED:
-                *this << ">";
-                push_indent();
-                *this << newline() << "<failure message=\"" << tc_.reason() << "\"></failure>";
-                pop_indent();
-                print_system_out(tc_);
-                *this << newline() << "</testcase>";
-                break;
-            default:
-                if (capture()) {
-                    *this << ">";
-                    print_system_out(tc_);
-                    *this << newline() << "</testcase>";
-                } else {
-                    *this << "/>";
-                }
-                break;
+        if (tc_.result() != test::testcase::HAS_PASSED) {
+            auto const unsuccess = [&] { return tc_.result() == test::testcase::HAS_ERROR ? "error" : "failure"; };
+            *this << '>';
+            push_indent();
+            *this << newline() << '<' << unsuccess() << " message=\"" << tc_.reason() << "\"></" << unsuccess() << '>';
+            pop_indent();
+            print_system_out(tc_);
+            *this << newline() << "</testcase>";
+        } else if (capture()) {
+            *this << '>';
+            print_system_out(tc_);
+            *this << newline() << "</testcase>";
+        } else {
+            *this << "/>";
         }
         pop_indent();
     }
@@ -147,7 +126,7 @@ private:
         pop_indent();
     }
 
-    std::size_t mutable m_id = 0;  ///< Report wide incremental ID for testsuites.
+    std::size_t mutable m_id{0};  ///< Report wide incremental ID for testsuites.
 };
 }  // namespace report
 }  // namespace intern

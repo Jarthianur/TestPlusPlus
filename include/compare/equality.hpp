@@ -58,10 +58,8 @@ class f_equals
     static_assert(TPP_INTERN_IS_FLOAT(T),
                   "The floating point comparator must not be used with other types than float, or double!");
 
-    static constexpr char const* m_cmp_str     = "to be equals";
-    static constexpr char const* m_neg_cmp_str = "to be not equals";
-    bool                         m_neg         = false;
-    T                            m_eps;
+    bool m_neg{false};
+    T    m_eps;
 
 public:
     explicit f_equals(T eps_) : m_eps(eps_) {}
@@ -77,7 +75,7 @@ public:
         return (std::abs(actual_value - expected_value) <=
                 std::max(std::abs(actual_value), std::abs(expected_value)) * m_eps) != m_neg ?
                  comparison() :
-                 comparison(m_neg ? m_neg_cmp_str : m_cmp_str,
+                 comparison(m_neg ? ns_equals::NEG_CMP_STR : ns_equals::CMP_STR,
                             std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
     }
 };
@@ -85,13 +83,9 @@ public:
 template<>
 class f_equals<void>
 {
-    static constexpr char const* m_cmp_str     = "to be equals";
-    static constexpr char const* m_neg_cmp_str = "to be not equals";
-    bool                         m_neg         = false;
+    bool m_neg{false};
 
 public:
-    f_equals() = default;
-
     auto
     operator!() -> decltype(*this)& {
         m_neg = !m_neg;
@@ -108,7 +102,7 @@ public:
         return (std::abs(actual_value - expected_value) <=
                 std::max(std::abs(actual_value), std::abs(expected_value)) * epsilon_) != m_neg ?
                  comparison() :
-                 comparison(m_neg ? m_neg_cmp_str : m_cmp_str,
+                 comparison(m_neg ? ns_equals::NEG_CMP_STR : ns_equals::CMP_STR,
                             std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
     }
 };

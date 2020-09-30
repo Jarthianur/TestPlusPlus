@@ -39,18 +39,18 @@ namespace report
 {
 namespace fmt
 {
-static constexpr char const* const SPACE = " ";   ///< Single space
-static constexpr char const* const LF    = "\n";  ///< Single linefeed
+static constexpr char const* SPACE = " ";   ///< Single space
+static constexpr char const* LF    = "\n";  ///< Single linefeed
 namespace ansi
 {
-static constexpr char const* const RED        = "\x1b[0;91m";
-static constexpr char const* const GREEN      = "\x1b[0;92m";
-static constexpr char const* const YELLOW     = "\x1b[0;93m";
-static constexpr char const* const BLUE       = "\x1b[0;94m";
-static constexpr char const* const CYAN       = "\x1b[0;96m";
-static constexpr char const* const MAGENTA    = "\x1b[0;95m";
-static constexpr char const* const WHITE_BOLD = "\x1b[1;97m";
-static constexpr char const* const RST        = "\x1b[0m";
+static constexpr char const* RED        = "\x1b[0;91m";
+static constexpr char const* GREEN      = "\x1b[0;92m";
+static constexpr char const* YELLOW     = "\x1b[0;93m";
+static constexpr char const* BLUE       = "\x1b[0;94m";
+static constexpr char const* CYAN       = "\x1b[0;96m";
+static constexpr char const* MAGENTA    = "\x1b[0;95m";
+static constexpr char const* WHITE_BOLD = "\x1b[1;97m";
+static constexpr char const* RST        = "\x1b[0m";
 }  // namespace ansi
 }  // namespace fmt
 
@@ -175,7 +175,7 @@ protected:
         m_abs_tests += ts_->statistics().tests();
         m_abs_time += ts_->duration();
         std::for_each(ts_->testcases().begin(), ts_->testcases().end(),
-                      [this](test::testcase const& tc) { report_testcase(tc); });
+                      [this](test::testcase const& tc_) { report_testcase(tc_); });
     }
 
     /**
@@ -203,7 +203,7 @@ protected:
     auto
     space(std::uint32_t depth_ = 1) -> char const* {
         if (!m_stripped) {
-            for (auto i = 0U; i < depth_; ++i) {
+            for (auto i{0U}; i < depth_; ++i) {
                 *this << fmt::SPACE;
             }
         }
@@ -213,7 +213,7 @@ protected:
     auto
     newline(std::uint32_t depth_ = 1) -> char const* {
         if (!m_stripped) {
-            for (auto i = 0U; i < depth_; ++i) {
+            for (auto i{0U}; i < depth_; ++i) {
                 *this << fmt::LF;
             }
         }
@@ -288,14 +288,14 @@ protected:
 private:
     std::ofstream m_out_file;    ///< Filestream that is used, if a file is specified as output target.
     std::ostream& m_out_stream;  ///< Outstream that handles printing the report.
-    std::uint32_t m_indent_lvl = 0;
-    bool          m_color      = false;  ///< Flags whether print colored results.
-    bool          m_capture    = false;  ///< Flags whether to report captured output from testcases.
-    bool          m_stripped   = false;  ///< Flags whether to strip unnecessary whitespaces in report.
-    std::size_t   m_abs_tests  = 0;      ///< Total number of testcases over all testsuites.
-    std::size_t   m_abs_fails  = 0;      ///< Total number of failed testcases over all testsuites.
-    std::size_t   m_abs_errs   = 0;      ///< Total number of erroneous testcases over all testsuites.
-    double        m_abs_time   = 0;      ///< Total amount of time spent on all testsuites.
+    std::uint32_t m_indent_lvl{0};
+    bool          m_color{false};     ///< Flags whether print colored results.
+    bool          m_capture{false};   ///< Flags whether to report captured output from testcases.
+    bool          m_stripped{false};  ///< Flags whether to strip unnecessary whitespaces in report.
+    std::size_t   m_abs_tests{0};     ///< Total number of testcases over all testsuites.
+    std::size_t   m_abs_fails{0};     ///< Total number of failed testcases over all testsuites.
+    std::size_t   m_abs_errs{0};      ///< Total number of erroneous testcases over all testsuites.
+    double        m_abs_time{0};      ///< Total amount of time spent on all testsuites.
 };
 }  // namespace report
 }  // namespace intern

@@ -18,7 +18,6 @@
 #ifndef TPP_REPORT_MARKDOWN_REPORTER_HPP
 #define TPP_REPORT_MARKDOWN_REPORTER_HPP
 
-#include <memory>
 #include <sstream>
 
 #include "report/reporter.hpp"
@@ -35,14 +34,6 @@ namespace report
 class markdown_reporter : public reporter
 {
 public:
-    markdown_reporter(markdown_reporter const&)     = delete;
-    markdown_reporter(markdown_reporter&&) noexcept = delete;
-    ~markdown_reporter() noexcept override          = default;
-    auto
-    operator=(markdown_reporter const&) -> markdown_reporter& = delete;
-    auto
-    operator=(markdown_reporter&&) noexcept -> markdown_reporter& = delete;
-
     /**
      * Create a markdown reporter.
      *
@@ -73,8 +64,8 @@ private:
     void
     report_testsuite(test::testsuite_ptr const& ts_) override {
         *this << "## " << ts_->name() << fmt::LF << fmt::LF << "|Tests|Successes|Failures|Errors|Time|" << fmt::LF
-              << "|-|-|-|-|-|" << fmt::LF << "|" << ts_->statistics().tests() << "|" << ts_->statistics().successes()
-              << "|" << ts_->statistics().failures() << "|" << ts_->statistics().errors() << "|" << ts_->duration()
+              << "|-|-|-|-|-|" << fmt::LF << '|' << ts_->statistics().tests() << '|' << ts_->statistics().successes()
+              << '|' << ts_->statistics().failures() << '|' << ts_->statistics().errors() << '|' << ts_->duration()
               << "ms|" << fmt::LF << fmt::LF << "### Tests" << fmt::LF << fmt::LF << "|Name|Context|Time|Status|"
               << (capture() ? "System-Out|System-Err|" : "") << fmt::LF << "|-|-|-|-|" << (capture() ? "-|-|" : "")
               << fmt::LF;
@@ -86,13 +77,14 @@ private:
 
     void
     report_testcase(test::testcase const& tc_) override {
-        char const* status = "";
-        switch (tc_.result()) {
-            case test::testcase::HAS_ERROR: status = "ERROR"; break;
-            case test::testcase::HAS_FAILED: status = "FAILED"; break;
-            default: status = "PASSED"; break;
-        }
-        *this << "|" << tc_.name() << "|" << tc_.suite_name() << "|" << tc_.duration() << "ms|" << status << "|";
+        auto const status = [&] {
+            switch (tc_.result()) {
+                case test::testcase::HAS_ERROR: return "ERROR";
+                case test::testcase::HAS_FAILED: return "FAILED";
+                default: return "PASSED";
+            }
+        };
+        *this << '|' << tc_.name() << '|' << tc_.suite_name() << '|' << tc_.duration() << "ms|" << status() << '|';
         if (capture()) {
             print_system_out(tc_.cout());
             print_system_out(tc_.cerr());
@@ -110,8 +102,8 @@ private:
     void
     end_report() override {
         *this << "## Summary" << fmt::LF << fmt::LF << "|Tests|Successes|Failures|Errors|Time|" << fmt::LF
-              << "|-|-|-|-|-|" << fmt::LF << "|" << abs_tests() << "|" << (abs_tests() - faults()) << "|" << abs_fails()
-              << "|" << abs_errs() << "|" << abs_time() << "ms|" << fmt::LF;
+              << "|-|-|-|-|-|" << fmt::LF << '|' << abs_tests() << '|' << (abs_tests() - faults()) << '|' << abs_fails()
+              << '|' << abs_errs() << '|' << abs_time() << "ms|" << fmt::LF;
     }
 
     void
@@ -119,12 +111,12 @@ private:
         std::string        line;
         std::istringstream io_;
         io_.str(out_);
-        bool first = true;
+        bool first{true};
         while (std::getline(io_, line)) {
-            *this << (first ? "" : "<br>") << "`" << line << "`";
+            *this << (first ? "" : "<br>") << '`' << line << '`';
             first = false;
         }
-        *this << "|";
+        *this << '|';
     }
 };
 }  // namespace report

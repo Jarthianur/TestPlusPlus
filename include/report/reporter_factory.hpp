@@ -32,9 +32,9 @@ namespace report
 {
 struct reporter_config
 {
-    bool        color       = false;
-    bool        capture_out = false;
-    bool        strip       = false;
+    bool        color{false};
+    bool        capture_out{false};
+    bool        strip{false};
     std::string outfile;
 };
 

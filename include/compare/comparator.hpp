@@ -30,10 +30,6 @@
 
 #    include <optional>
 
-#else
-
-#    include <cstring>
-
 #endif
 
 namespace tpp
@@ -45,10 +41,11 @@ namespace compare
 /**
  * Result of an actual comparison performed by any comparator.
  */
-struct comparison final
+class comparison final
 {
 #ifdef TPP_INTERN_CPP_V17
 
+public:
     comparison() : m_failure(std::nullopt) {}
 
     comparison(char const* comp_str_, std::tuple<std::string&&, std::string&&>&& val_)
@@ -68,12 +65,11 @@ private:
 
 #else
 
+public:
     comparison() = default;
 
     comparison(char const* comp_str_, std::tuple<std::string&&, std::string&&>&& val_) : m_success(false) {
-        std::string msg;
-        msg.reserve(15 + std::strlen(comp_str_) + std::get<0>(val_).length() + std::get<1>(val_).length());
-        msg = "Expected ";
+        std::string msg{"Expected "};
         msg.append(std::get<0>(val_)).append(" ").append(comp_str_).append(" ").append(std::get<1>(val_));
         error() = msg;
     }
@@ -88,7 +84,7 @@ private:
     }
 
 private:
-    bool const m_success = true;
+    bool const m_success{true};
 
     static auto
     error() -> std::string& {
@@ -118,12 +114,14 @@ private:
     {                                                                                                       \
     namespace compare                                                                                       \
     {                                                                                                       \
+    namespace ns_##NAME {                                                                                   \
+        static constexpr char const* CMP_STR     = "to be " CMPSTR;                                         \
+        static constexpr char const* NEG_CMP_STR = "to be not " CMPSTR;                                     \
+    }                                                                                                       \
     template<typename>                                                                                      \
     class NAME                                                                                              \
     {                                                                                                       \
-        static constexpr char const* m_cmp_str     = "to be " CMPSTR;                                       \
-        static constexpr char const* m_neg_cmp_str = "to be not " CMPSTR;                                   \
-        bool                         m_neg         = false;                                                 \
+        bool m_neg{false};                                                                                  \
                                                                                                             \
     public:                                                                                                 \
         auto                                                                                                \
@@ -136,7 +134,7 @@ private:
         operator()(V const& actual_value, E const& expected_value) const -> comparison {                    \
             return (PRED) != m_neg ?                                                                        \
                      comparison() :                                                                         \
-                     comparison(m_neg ? m_neg_cmp_str : m_cmp_str,                                          \
+                     comparison(m_neg ? ns_##NAME::NEG_CMP_STR : ns_##NAME::CMP_STR,                        \
                                 std::forward_as_tuple(to_string(actual_value), to_string(expected_value))); \
         }                                                                                                   \
     };                                                                                                      \

@@ -30,15 +30,18 @@ namespace intern
 {
 namespace compare
 {
+namespace ns_in_range
+{
+static constexpr char const* CMP_STR     = "to be in range of";
+static constexpr char const* NEG_CMP_STR = "to be not in range of";
+}  // namespace ns_in_range
 /**
  * Comparator to check for existence of elements in ranges.
  */
 template<typename>
 class in_range
 {
-    static constexpr char const* m_cmp_str     = "to be in range of";
-    static constexpr char const* m_neg_cmp_str = "to be not in range of";
-    bool                         m_neg         = false;
+    bool m_neg{false};
 
 public:
     auto
@@ -54,7 +57,7 @@ public:
         return (std::find(expected_value.cbegin(), expected_value.cend(), actual_value) != expected_value.cend()) !=
                    m_neg ?
                  comparison() :
-                 comparison(m_neg ? m_neg_cmp_str : m_cmp_str,
+                 comparison(m_neg ? ns_in_range::NEG_CMP_STR : ns_in_range::CMP_STR,
                             std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
     }
 
@@ -63,7 +66,7 @@ public:
     operator()(V const& actual_value, E const& expected_value) const -> comparison {
         return (expected_value.find(actual_value) != std::string::npos) != m_neg ?
                  comparison() :
-                 comparison(m_neg ? m_neg_cmp_str : m_cmp_str,
+                 comparison(m_neg ? ns_in_range::NEG_CMP_STR : ns_in_range::CMP_STR,
                             std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
     }
 };

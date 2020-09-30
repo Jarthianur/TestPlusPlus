@@ -18,7 +18,6 @@
 #ifndef TPP_REPORT_JSON_REPORTER_HPP
 #define TPP_REPORT_JSON_REPORTER_HPP
 
-#include <memory>
 #include <tuple>
 
 #include "report/reporter.hpp"
@@ -37,14 +36,6 @@ namespace report
 class json_reporter : public reporter
 {
 public:
-    json_reporter(json_reporter const&)     = delete;
-    json_reporter(json_reporter&&) noexcept = delete;
-    ~json_reporter() noexcept override      = default;
-    auto
-    operator=(json_reporter const&) -> json_reporter& = delete;
-    auto
-    operator=(json_reporter&&) noexcept -> json_reporter& = delete;
-
     /**
      * Create a json reporter.
      *
