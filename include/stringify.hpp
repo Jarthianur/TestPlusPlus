@@ -35,7 +35,7 @@
 #include "regex.hpp"
 #include "traits.hpp"
 
-#ifdef TPP_SYS_UNIX
+#ifdef TPP_INTERN_SYS_UNIX
 #    include <cxxabi.h>
 #endif
 
@@ -56,7 +56,7 @@ name_for_type(T const& arg_) -> std::string const& {
     if (!name.empty()) {
         return name;
     }
-#ifdef TPP_SYS_UNIX
+#ifdef TPP_INTERN_SYS_UNIX
     int                     status = -1;
     std::unique_ptr<char[]> sig(abi::__cxa_demangle(typeid(arg_).name(), nullptr, nullptr, &status));
     name = sig.get();
