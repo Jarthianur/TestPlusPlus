@@ -4,6 +4,11 @@ languages:
     production:
       include:
         - /include.*\.hpp
+        - /include/test.*\.hpp
+      exclude:
+        - /test.*\.[hc]pp
     test:
       include:
         - /test.*\.[hc]pp
+      exclude:
+        - /include.*\.hpp
