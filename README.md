@@ -1,11 +1,12 @@
 # Test++
 
-[![Build Status](https://travis-ci.org/Jarthianur/TestPlusPlus.svg?branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus)
 [![Linux Build Status](http://badges.herokuapp.com/travis/Jarthianur/TestPlusPlus?env=BADGE=linux&label=linux&branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus)
 [![OSX Build Status](http://badges.herokuapp.com/travis/Jarthianur/TestPlusPlus?env=BADGE=osx&label=osx&branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus)
 [![Windows Build Status](http://badges.herokuapp.com/travis/Jarthianur/TestPlusPlus?env=BADGE=windows&label=windows&branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus)
 [![codecov](https://codecov.io/gh/Jarthianur/TestPlusPlus/branch/master/graph/badge.svg)](https://codecov.io/gh/Jarthianur/TestPlusPlus)
 [![BCH compliance](https://bettercodehub.com/edge/badge/Jarthianur/TestPlusPlus?branch=master)](https://bettercodehub.com/)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2703ed11263b42d9a33f469cc0bc3eb5)](https://www.codacy.com/gh/Jarthianur/TestPlusPlus/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Jarthianur/TestPlusPlus&amp;utm_campaign=Badge_Grade)
+[![CodeFactor](https://www.codefactor.io/repository/github/jarthianur/testplusplus/badge)](https://www.codefactor.io/repository/github/jarthianur/testplusplus)
 
 **This is an easy to use, header-only testing framework for C++11/14/17 featuring a simple, yet powerfull API and the capability to parallelize tests using *OpenMP*.**
 
