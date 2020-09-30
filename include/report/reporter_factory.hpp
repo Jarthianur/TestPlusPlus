@@ -1,34 +1,36 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
 /// @file
 
-#ifndef SCTF_REPORTER_REPORTER_FACTORY_HPP
-#define SCTF_REPORTER_REPORTER_FACTORY_HPP
+#ifndef TPP_REPORT_REPORTER_FACTORY_HPP
+#define TPP_REPORT_REPORTER_FACTORY_HPP
 
-#include "reporter/reporter.hpp"
+#include "report/reporter.hpp"
 
 #include "traits.hpp"
 
-namespace sctf
+namespace tpp
 {
 namespace intern
+{
+namespace report
 {
 struct reporter_config
 {
@@ -44,8 +46,8 @@ public:
     template<typename T>
     static auto
     make(reporter_config const& cfg_) -> reporter_ptr {
-        static_assert(SCTF_INTERN_IS(std::is_base_of, reporter, T),
-                      "Cannot make an concrete reporter that is not derived from abstract reporter!");
+        static_assert(TPP_INTERN_IS(std::is_base_of, reporter, T),
+                      "Cannot make a concrete reporter that is not derived from abstract reporter!");
         auto rep = cfg_.outfile.empty() ? T::create() : T::create(cfg_.outfile);
         if (cfg_.capture_out) {
             rep->with_captured_output();
@@ -59,7 +61,8 @@ public:
         return rep;
     }
 };
+}  // namespace report
 }  // namespace intern
-}  // namespace sctf
+}  // namespace tpp
 
-#endif  // SCTF_REPORTER_REPORTER_FACTORY_HPP
+#endif  // TPP_REPORT_REPORTER_FACTORY_HPP

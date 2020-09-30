@@ -1,31 +1,31 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
 /// @file
 
-#ifndef SCTF_REGEX_HPP
-#define SCTF_REGEX_HPP
+#ifndef TPP_REGEX_HPP
+#define TPP_REGEX_HPP
 
 #include <cstddef>
 #include <regex>
 
-namespace sctf
+namespace tpp
 {
 namespace intern
 {
@@ -86,6 +86,6 @@ inline auto operator"" _re(char const* lit_, std::size_t) -> regex {
 inline auto operator"" _re_i(char const* lit_, std::size_t) -> regex {
     return regex(lit_, std::regex::ECMAScript | std::regex::icase);
 }
-}  // namespace sctf
+}  // namespace tpp
 
-#endif  // SCTF_REGEX_HPP
+#endif  // TPP_REGEX_HPP

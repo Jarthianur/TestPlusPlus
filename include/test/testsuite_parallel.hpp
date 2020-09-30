@@ -1,35 +1,37 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP
-#define SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP
+#ifndef TPP_TEST_TESTSUITE_PARALLEL_HPP
+#define TPP_TEST_TESTSUITE_PARALLEL_HPP
 
 #include <cstdint>
 #include <limits>
 #include <stdexcept>
 
-#include "testsuite/streambuf_proxy_omp.hpp"
-#include "testsuite/testsuite.hpp"
+#include "test/streambuf_proxy_omp.hpp"
+#include "test/testsuite.hpp"
 
-namespace sctf
+namespace tpp
 {
 namespace intern
+{
+namespace test
 {
 /**
  * Group testcases together in a testsuite. Testcases share this testsuite as their context.
@@ -62,7 +64,7 @@ public:
      */
     void
     run() override {
-        if (m_state != execution_state::DONE) {
+        if (m_state != DONE) {
             if (m_testcases.size() > static_cast<std::size_t>(std::numeric_limits<std::int64_t>::max())) {
                 throw std::overflow_error("Too many testcases! Size would overflow loop variant.");
             }
@@ -80,12 +82,12 @@ public:
 #pragma omp for schedule(dynamic)
                 for (std::int64_t i = 0; i < tc_size; ++i) {
                     auto& tc = m_testcases[static_cast<std::size_t>(i)];
-                    if (tc.state() == testcase::result::NONE) {
+                    if (tc.result() == testcase::IS_UNDONE) {
                         m_pretest_fn();
                         tc();
-                        switch (tc.state()) {
-                            case testcase::result::FAILED: ++fails; break;
-                            case testcase::result::ERROR: ++errs; break;
+                        switch (tc.result()) {
+                            case testcase::HAS_FAILED: ++fails; break;
+                            case testcase::HAS_ERROR: ++errs; break;
                             default: break;
                         }
                         tmp += tc.duration();
@@ -104,7 +106,7 @@ public:
                 }  // END critical section
             }      // END parallel section
             m_teardown_fn();
-            m_state = execution_state::DONE;
+            m_state = DONE;
         }
     }
 
@@ -113,9 +115,10 @@ public:
      *
      * @param name_ is the name, or description of the testsuite.
      */
-    explicit testsuite_parallel(enable e_, char const* name_) : testsuite(e_, name_) {}
+    testsuite_parallel(enable e_, char const* name_) : testsuite(e_, name_) {}
 };
+}  // namespace test
 }  // namespace intern
-}  // namespace sctf
+}  // namespace tpp
 
-#endif  // SCTF_TESTSUITE_TESTSUITE_PARALLEL_HPP
+#endif  // TPP_TEST_TESTSUITE_PARALLEL_HPP

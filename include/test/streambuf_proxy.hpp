@@ -1,32 +1,34 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SCTF_TESTSUITE_STREAMBUF_PROXY_HPP
-#define SCTF_TESTSUITE_STREAMBUF_PROXY_HPP
+#ifndef TPP_TEST_STREAMBUF_PROXY_HPP
+#define TPP_TEST_STREAMBUF_PROXY_HPP
 
 #include <ostream>
 #include <sstream>
 #include <streambuf>
 
-namespace sctf
+namespace tpp
 {
 namespace intern
+{
+namespace test
 {
 /**
  * Streambuffer proxy to capture everything sent to a stream.
@@ -88,7 +90,8 @@ private:
     std::ostream&   m_orig_stream;  ///< Target stream
     std::stringbuf  m_buffer;       ///< Buffer to store captured output.
 };
+}  // namespace test
 }  // namespace intern
-}  // namespace sctf
+}  // namespace tpp
 
-#endif  // SCTF_TESTSUITE_STREAMBUF_PROXY_HPP
+#endif  // TPP_TEST_STREAMBUF_PROXY_HPP

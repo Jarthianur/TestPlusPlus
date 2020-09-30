@@ -1,15 +1,15 @@
-# simple-cpp-test-framework
+# TestPlusPlus (Test++)
 
-[![Build Status](https://travis-ci.org/Jarthianur/simple-cpp-test-framework.svg?branch=master)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
-[![Linux Build Status](http://badges.herokuapp.com/travis/Jarthianur/simple-cpp-test-framework?env=BADGE=linux&label=linux&branch=master)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
-[![OSX Build Status](http://badges.herokuapp.com/travis/Jarthianur/simple-cpp-test-framework?env=BADGE=osx&label=osx&branch=master)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
-[![Windows Build Status](http://badges.herokuapp.com/travis/Jarthianur/simple-cpp-test-framework?env=BADGE=windows&label=windows&branch=master)](https://travis-ci.org/Jarthianur/simple-cpp-test-framework)
-[![codecov](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework/branch/master/graph/badge.svg)](https://codecov.io/gh/Jarthianur/simple-cpp-test-framework)
-[![BCH compliance](https://bettercodehub.com/edge/badge/Jarthianur/simple-cpp-test-framework?branch=master)](https://bettercodehub.com/)
+[![Build Status](https://travis-ci.org/Jarthianur/TestPlusPlus (Test++).svg?branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus (Test++))
+[![Linux Build Status](http://badges.herokuapp.com/travis/Jarthianur/TestPlusPlus (Test++)?env=BADGE=linux&label=linux&branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus (Test++))
+[![OSX Build Status](http://badges.herokuapp.com/travis/Jarthianur/TestPlusPlus (Test++)?env=BADGE=osx&label=osx&branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus (Test++))
+[![Windows Build Status](http://badges.herokuapp.com/travis/Jarthianur/TestPlusPlus (Test++)?env=BADGE=windows&label=windows&branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus (Test++))
+[![codecov](https://codecov.io/gh/Jarthianur/TestPlusPlus (Test++)/branch/master/graph/badge.svg)](https://codecov.io/gh/Jarthianur/TestPlusPlus (Test++))
+[![BCH compliance](https://bettercodehub.com/edge/badge/Jarthianur/TestPlusPlus (Test++)?branch=master)](https://bettercodehub.com/)
 
 **This is a simple header-only testing framework for C++11/14/17 featuring a simple, yet powerfull API, and the capability to parallelize tests, using *OpenMP*.**
 
-To use it, just include the all in one [header](https://github.com/Jarthianur/simple-cpp-test-framework/releases/download/2.0/sctf.hpp) into your builds.
+To use it, just include the all in one [header](https://github.com/Jarthianur/TestPlusPlus (Test++)/releases/download/2.0/tpp.hpp) into your builds.
 
 *So why actually writing a new testing framework?*
 
@@ -25,7 +25,7 @@ Please have a look at the full [feature set](#feature-set).
 
 ## Contents
 
-- [simple-cpp-test-framework](#simple-cpp-test-framework)
+- [TestPlusPlus (Test++)](#TestPlusPlus (Test++))
   - [Contents](#contents)
   - [Feature Set](#feature-set)
   - [Usage](#usage)
@@ -74,12 +74,12 @@ As a short summary of all features, have a look at this list.
 
 ## Usage
 
-Just inlude the release *sctf.hpp* header file into your build.
+Just inlude the release *tpp.hpp* header file into your build.
 Tests can then be written in source files and simply linked into your test binaries.
 If you prefer, you can of course write tests in header files and include them in your main source file.
 *Note that it is not possible to write multiple testsuites, or tests in one line, as it would break name generation.*
 To run and report all tests, just create a reporter and call its `report()` function in your `main()`, as seen in the examples.
-Alternatively invoke the `SCTF_DEFAULT_MAIN(...)` macro in one of your source files and pass it a call to any reporter factory method.
+Alternatively invoke the `TPP_DEFAULT_MAIN(...)` macro in one of your source files and pass it a call to any reporter factory method.
 In order to run tests in multiple threads you have to enable OpenMP at compilation (e.g. for gcc add `-fopenmp` flag).
 Every output to stdout, or stderr from inside tests is captured per testcase, and can be included in the report.
 
@@ -114,7 +114,7 @@ The use of a testsuite wide UUT instance might also be usefull, if it is expensi
 As floating-point equality comparison relies on a so called epsilon, we need to define such an epsilon.
 In order to not make you paying for things you don't use, there is a special comparator for floating point numbers, called F_EQUALS.
 It uses the global epsilon value by default, but allows to pass it a certain epsilon value for a single comparison.
-If you use this comparator at any point, you must define the global epsilon by invoking `SCTF_EPSILON(...)` macro once.
+If you use this comparator at any point, you must define the global epsilon by invoking `TPP_EPSILON(...)` macro once.
 You could use the machine epsilon, but this may lead into false-negative test results, as it could be too accurate.
 This epsilon is actually not the epsilon as per definition, but a precision threshold.
 For example if you use *0.001* as *epsilon*, *0.100234* and *0.100345* will be considered equals.
@@ -132,11 +132,11 @@ Both operators create regular expressions with *ECMAScript* syntax.
 #### Simple Unit Test
 
 ```cpp
-#include "sctf.hpp"
-SCTF_EPSILON(0.001)
-SCTF_DEFAULT_MAIN(xml_reporter::create()->with_captured_output())
+#include "tpp.hpp"
+TPP_EPSILON(0.001)
+TPP_DEFAULT_MAIN(xml_reporter::create()->with_captured_output())
 
-using namespace sctf;
+using namespace tpp;
 
 SUITE("testSomething") {
     TEST("abc") {
@@ -169,12 +169,12 @@ SUITE("testSomething") {
 #### Behavior Driven Test
 
 ```cpp
-#include "sctf.hpp"
+#include "tpp.hpp"
 
-using sctf::GT;
+using tpp::GT;
 
 int main(int argc, char** argv) {
-    return sctf::markdown_reporter::create("results.md")->report();
+    return tpp::markdown_reporter::create("results.md")->report();
 }
 
 class MyClass {

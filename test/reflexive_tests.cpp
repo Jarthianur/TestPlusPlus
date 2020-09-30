@@ -1,20 +1,20 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <chrono>
@@ -27,16 +27,16 @@
 #include <utility>
 #include <vector>
 
-#include "sctf.hpp"
+#include "tpp.hpp"
 #include "test_traits.hpp"
 
-#ifdef SCTF_SYS_UNIX
+#ifdef TPP_SYS_UNIX
 #    pragma GCC diagnostic push
 #    pragma GCC diagnostic ignored "-Wunused-variable"
 #    pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
-using namespace sctf;
+using namespace tpp;
 using namespace intern;
 
 SUITE_PAR("test_comparators") {
@@ -156,7 +156,7 @@ SUITE("test_testsuite_parallel") {
         ts->test("", [] { throw std::logic_error(""); });
 #ifdef _OPENMP
         int c = 200;
-/* workaround: see https://github.com/Jarthianur/simple-cpp-test-framework/issues/25 for
+/* workaround: see https://github.com/Jarthianur/TestPlusPlus (Test++)/issues/25 for
    details */
 #    ifdef __clang__
         c = 300;
@@ -581,6 +581,6 @@ DESCRIBE("test_suite_meta_functions") {
     };
 };
 
-#ifdef SCTF_SYS_UNIX
+#ifdef TPP_SYS_UNIX
 #    pragma GCC diagnostic pop
 #endif

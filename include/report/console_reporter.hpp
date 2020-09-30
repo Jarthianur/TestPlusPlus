@@ -1,32 +1,34 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SCTF_REPORTER_CONSOLE_REPORTER_HPP
-#define SCTF_REPORTER_CONSOLE_REPORTER_HPP
+#ifndef TPP_REPORT_CONSOLE_REPORTER_HPP
+#define TPP_REPORT_CONSOLE_REPORTER_HPP
 
 #include <memory>
 
-#include "reporter/reporter.hpp"
+#include "report/reporter.hpp"
 
-namespace sctf
+namespace tpp
 {
 namespace intern
+{
+namespace report
 {
 /**
  * Reporter implementation with informative console output.
@@ -63,32 +65,31 @@ public:
     }
 
     /// Constructor for std::make_shared.
-    explicit console_reporter(enable, std::ostream& stream_) : reporter(stream_) {}
+    console_reporter(enable, std::ostream& stream_) : reporter(stream_) {}
 
     /// Constructor for std::make_shared.
-    explicit console_reporter(enable, std::string const& fname_) : reporter(fname_) {}
+    console_reporter(enable, std::string const& fname_) : reporter(fname_) {}
 
 private:
     void
-    report_testsuite(testsuite_ptr const& ts_) override {
-        *this << "--- " << ts_->name() << " (" << ts_->execution_duration() << "ms) ---" << fmt::LF;
+    report_testsuite(test::testsuite_ptr const& ts_) override {
+        *this << "--- " << ts_->name() << " (" << ts_->duration() << "ms) ---" << fmt::LF;
 
         reporter::report_testsuite(ts_);
         *this << fmt::LF;
     }
 
     void
-    report_testcase(testcase const& tc_) override {
+    report_testcase(test::testcase const& tc_) override {
         *this << fmt::SPACE << tc_.name() << " (" << tc_.duration() << "ms)" << fmt::LF << fmt::SPACE << fmt::SPACE;
         if (capture()) {
             *this << "stdout = \"" << tc_.cout() << "\"" << fmt::LF << fmt::SPACE << fmt::SPACE;
             *this << "stderr = \"" << tc_.cerr() << "\"" << fmt::LF << fmt::SPACE << fmt::SPACE;
         }
-        switch (tc_.state()) {
-            case testcase::result::ERROR: *this << color(RED) << "ERROR! " << tc_.reason(); break;
-            case testcase::result::FAILED: *this << color(BLUE) << "FAILED! " << tc_.reason(); break;
-            case testcase::result::PASSED: *this << color(GREEN) << "PASSED!"; break;
-            default: break;
+        switch (tc_.result()) {
+            case test::testcase::HAS_ERROR: *this << color(RED) << "ERROR! " << tc_.reason(); break;
+            case test::testcase::HAS_FAILED: *this << color(BLUE) << "FAILED! " << tc_.reason(); break;
+            default: *this << color(GREEN) << "PASSED!"; break;
         }
         *this << color() << fmt::LF;
     }
@@ -107,9 +108,10 @@ private:
               << " (" << abs_time() << "ms)" << color() << fmt::LF;
     }
 };
+}  // namespace report
 }  // namespace intern
 
-using console_reporter = intern::console_reporter;
-}  // namespace sctf
+using console_reporter = intern::report::console_reporter;
+}  // namespace tpp
 
-#endif  // SCTF_REPORTER_CONSOLE_REPORTER_HPP
+#endif  // TPP_REPORT_CONSOLE_REPORTER_HPP

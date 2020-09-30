@@ -17,27 +17,19 @@
     along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <iostream>
+#ifndef TPP_COMPARE_ORDERING_HPP
+#define TPP_COMPARE_ORDERING_HPP
 
-#include "basic_tests.h"
-#include "tpp.hpp"
+#include "compare/comparator.hpp"
 
-TPP_EPSILON(0.000001)
+TPP_COMPARATOR(greater_than, "greater than", actual_value > expected_value)
+TPP_PROVIDE_COMPARATOR(greater_than, GREATER_THAN)
+TPP_PROVIDE_COMPARATOR(greater_than, GREATER)
+TPP_PROVIDE_COMPARATOR(greater_than, GT)
 
-auto
-main(int argc_, char** argv_) -> int {
-    auto& runner = tpp::runner::instance();
+TPP_COMPARATOR(less_than, "less than", actual_value < expected_value)
+TPP_PROVIDE_COMPARATOR(less_than, LESS_THAN)
+TPP_PROVIDE_COMPARATOR(less_than, LESS)
+TPP_PROVIDE_COMPARATOR(less_than, LT)
 
-    try {
-        basic_tests();
-    } catch (std::exception const& e) {
-        std::cout << "Basic tests have failed! [" << e.what() << "]" << std::endl;
-        return -2;
-    } catch (...) {
-        std::cout << "Basic tests have failed!" << std::endl;
-        return -2;
-    }
-    std::cout << "Basic tests have succeeded!" << std::endl;
-
-    return runner.run(argc_, argv_);
-}
+#endif  // TPP_COMPARE_ORDERING_HPP

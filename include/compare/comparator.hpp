@@ -1,26 +1,26 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
 /// @file
 
-#ifndef SCTF_COMPARATOR_COMPARATOR_HPP
-#define SCTF_COMPARATOR_COMPARATOR_HPP
+#ifndef TPP_COMPARE_COMPARATOR_HPP
+#define TPP_COMPARE_COMPARATOR_HPP
 
 #include <memory>
 #include <tuple>
@@ -28,7 +28,7 @@
 #include "cpp_meta.hpp"
 #include "stringify.hpp"
 
-#ifdef SCTF_CPP_V17
+#ifdef TPP_INTERN_CPP_V17
 
 #    include <optional>
 
@@ -38,16 +38,18 @@
 
 #endif
 
-namespace sctf
+namespace tpp
 {
 namespace intern
+{
+namespace compare
 {
 /**
  * Result of an actual comparison performed by any comparator.
  */
 struct comparison final
 {
-#ifdef SCTF_CPP_V17
+#ifdef TPP_INTERN_CPP_V17
 
     comparison() : m_failure(std::nullopt) {}
 
@@ -98,8 +100,9 @@ private:
 
 #endif
 };
+}  // namespace compare
 }  // namespace intern
-}  // namespace sctf
+}  // namespace tpp
 
 /**
  * Define a comparator.
@@ -110,10 +113,12 @@ private:
  * @param CMPSTR is a cstring representing the comparison constraint, like "equals".
  * @param PRED is the comparison predicate / condition.
  */
-#define SCTF_COMPARATOR(NAME, CMPSTR, PRED)                                                                 \
-    namespace sctf                                                                                          \
+#define TPP_COMPARATOR(NAME, CMPSTR, PRED)                                                                  \
+    namespace tpp                                                                                           \
     {                                                                                                       \
     namespace intern                                                                                        \
+    {                                                                                                       \
+    namespace compare                                                                                       \
     {                                                                                                       \
     template<typename>                                                                                      \
     class NAME                                                                                              \
@@ -138,6 +143,7 @@ private:
         }                                                                                                   \
     };                                                                                                      \
     }                                                                                                       \
+    }                                                                                                       \
     }
 
 /**
@@ -147,19 +153,19 @@ private:
  * @param COMP is the comparator to use.
  * @param NAME is the shortwrite function name.
  */
-#define SCTF_PROVIDE_COMPARATOR(COMP, NAME)                        \
-    namespace sctf                                                 \
-    {                                                              \
-    template<typename... Args>                                     \
-    static auto                                                    \
-    NAME(Args&&... args) -> intern::COMP<Args...> {                \
-        return intern::COMP<Args...>(std::forward<Args>(args)...); \
-    }                                                              \
-    template<typename... Args>                                     \
-    static auto                                                    \
-    NAME() -> intern::COMP<void> {                                 \
-        return {};                                                 \
-    }                                                              \
+#define TPP_PROVIDE_COMPARATOR(COMP, NAME)                                  \
+    namespace tpp                                                           \
+    {                                                                       \
+    template<typename... Args>                                              \
+    static auto                                                             \
+    NAME(Args&&... args) -> intern::compare::COMP<Args...> {                \
+        return intern::compare::COMP<Args...>(std::forward<Args>(args)...); \
+    }                                                                       \
+    template<typename... Args>                                              \
+    static auto                                                             \
+    NAME() -> intern::compare::COMP<void> {                                 \
+        return {};                                                          \
+    }                                                                       \
     }
 
-#endif  // SCTF_COMPARATOR_COMPARATOR_HPP
+#endif  // TPP_COMPARE_COMPARATOR_HPP

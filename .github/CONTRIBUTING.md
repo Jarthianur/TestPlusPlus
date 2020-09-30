@@ -1,4 +1,4 @@
-# Contributing to simple-cpp-test-framework
+# Contributing to TestPlusPlus (Test++)
 
 It seems, that You're likely going to contribute to this repository. **Thanks for dealing with this project and all the effort You may invest in it.**
 But to handle Your request as effective as possible, there are some guidelines we want You to follow.
