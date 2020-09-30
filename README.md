@@ -1,15 +1,15 @@
-# TestPlusPlus (Test++)
+# Test++
 
-[![Build Status](https://travis-ci.org/Jarthianur/TestPlusPlus (Test++).svg?branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus (Test++))
-[![Linux Build Status](http://badges.herokuapp.com/travis/Jarthianur/TestPlusPlus (Test++)?env=BADGE=linux&label=linux&branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus (Test++))
-[![OSX Build Status](http://badges.herokuapp.com/travis/Jarthianur/TestPlusPlus (Test++)?env=BADGE=osx&label=osx&branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus (Test++))
-[![Windows Build Status](http://badges.herokuapp.com/travis/Jarthianur/TestPlusPlus (Test++)?env=BADGE=windows&label=windows&branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus (Test++))
-[![codecov](https://codecov.io/gh/Jarthianur/TestPlusPlus (Test++)/branch/master/graph/badge.svg)](https://codecov.io/gh/Jarthianur/TestPlusPlus (Test++))
-[![BCH compliance](https://bettercodehub.com/edge/badge/Jarthianur/TestPlusPlus (Test++)?branch=master)](https://bettercodehub.com/)
+[![Build Status](https://travis-ci.org/Jarthianur/TestPlusPlus.svg?branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus)
+[![Linux Build Status](http://badges.herokuapp.com/travis/Jarthianur/TestPlusPlus?env=BADGE=linux&label=linux&branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus)
+[![OSX Build Status](http://badges.herokuapp.com/travis/Jarthianur/TestPlusPlus?env=BADGE=osx&label=osx&branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus)
+[![Windows Build Status](http://badges.herokuapp.com/travis/Jarthianur/TestPlusPlus?env=BADGE=windows&label=windows&branch=master)](https://travis-ci.org/Jarthianur/TestPlusPlus)
+[![codecov](https://codecov.io/gh/Jarthianur/TestPlusPlus/branch/master/graph/badge.svg)](https://codecov.io/gh/Jarthianur/TestPlusPlus)
+[![BCH compliance](https://bettercodehub.com/edge/badge/Jarthianur/TestPlusPlus?branch=master)](https://bettercodehub.com/)
 
-**This is a simple header-only testing framework for C++11/14/17 featuring a simple, yet powerfull API, and the capability to parallelize tests, using *OpenMP*.**
+**This is an easy to use, header-only testing framework for C++11/14/17 featuring a simple, yet powerfull API and the capability to parallelize tests using *OpenMP*.**
 
-To use it, just include the all in one [header](https://github.com/Jarthianur/TestPlusPlus (Test++)/releases/download/2.0/tpp.hpp) into your builds.
+To use it, just include the all in one [header](https://github.com/Jarthianur/TestPlusPlus/releases/latest) into your builds.
 
 *So why actually writing a new testing framework?*
 
@@ -20,12 +20,12 @@ As a side effect this project was - and is still - a great opportunity to improv
 This framework is designed around simplicity and effectiveness, for the user as well as the frameworks code itself.
 There is no excessive documentation reading required, or complicated build integration.
 Everything is hidden that distracts you from focusing on what really counts - writing qualitative tests.
-Of course this framework might not suite all *your* needs, hence feel free to provide suggestions, or request a feature you'd wish.
+Of course this framework might not suite all *your* needs, hence feel free to provide suggestions, or request a feature you'd wish to have.
 Please have a look at the full [feature set](#feature-set).
 
 ## Contents
 
-- [TestPlusPlus (Test++)](#TestPlusPlus (Test++))
+- [Test++](#test----)
   - [Contents](#contents)
   - [Feature Set](#feature-set)
   - [Usage](#usage)
