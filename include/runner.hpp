@@ -1,35 +1,35 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SCTF_RUNNER_HPP
-#define SCTF_RUNNER_HPP
+#ifndef TPP_RUNNER_HPP
+#define TPP_RUNNER_HPP
 
 #include <algorithm>
 #include <vector>
 
-#include "reporter/reporter.hpp"
-#include "testsuite/testsuite.hpp"
-#include "testsuite/testsuite_parallel.hpp"
+#include "report/reporter.hpp"
+#include "test/testsuite.hpp"
+#include "test/testsuite_parallel.hpp"
 
 #include "cmdline_parser.hpp"
 
-namespace sctf
+namespace tpp
 {
 namespace intern
 {
@@ -45,7 +45,7 @@ public:
      * @param ts_ is the testsuite to add
      */
     void
-    add_testsuite(testsuite_ptr const& ts_) {
+    add_testsuite(test::testsuite_ptr const& ts_) {
         m_testsuites.push_back(ts_);
     }
 
@@ -73,7 +73,7 @@ public:
         try {
             auto rep = cfg_.reporter();
             rep->begin_report();
-            std::for_each(m_testsuites.begin(), m_testsuites.end(), [&](testsuite_ptr& ts_) {
+            std::for_each(m_testsuites.begin(), m_testsuites.end(), [&](test::testsuite_ptr& ts_) {
                 bool const match = cfg_.fpattern.empty() || std::any_of(cfg_.fpattern.cbegin(), cfg_.fpattern.cend(),
                                                                         [&](std::regex const& re_) {
                                                                             return std::regex_match(ts_->name(), re_);
@@ -101,11 +101,11 @@ public:
     }
 
 private:
-    std::vector<testsuite_ptr> m_testsuites;  ///< Testsuites contained in this runner.
+    std::vector<test::testsuite_ptr> m_testsuites;  ///< Testsuites contained in this runner.
 };
 }  // namespace intern
 
 using runner = intern::runner;
-}  // namespace sctf
+}  // namespace tpp
 
-#endif  // SCTF_RUNNER_HPP
+#endif  // TPP_RUNNER_HPP

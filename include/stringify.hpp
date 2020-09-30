@@ -1,26 +1,26 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
 /// @file
 
-#ifndef SCTF_STRINGIFY_HPP
-#define SCTF_STRINGIFY_HPP
+#ifndef TPP_STRINGIFY_HPP
+#define TPP_STRINGIFY_HPP
 
 #include <algorithm>
 #include <iomanip>
@@ -35,11 +35,11 @@
 #include "regex.hpp"
 #include "traits.hpp"
 
-#ifdef SCTF_SYS_UNIX
+#ifdef TPP_INTERN_SYS_UNIX
 #    include <cxxabi.h>
 #endif
 
-namespace sctf
+namespace tpp
 {
 namespace intern
 {
@@ -56,7 +56,7 @@ name_for_type(T const& arg_) -> std::string const& {
     if (!name.empty()) {
         return name;
     }
-#ifdef SCTF_SYS_UNIX
+#ifdef TPP_INTERN_SYS_UNIX
     int                     status = -1;
     std::unique_ptr<char[]> sig(abi::__cxa_demangle(typeid(arg_).name(), nullptr, nullptr, &status));
     name = sig.get();
@@ -111,7 +111,7 @@ escaped_string(std::string const& str_) -> std::string {
  * @param arg_ is the value to convert to string.
  */
 template<typename T,
-         SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream) && !SCTF_INTERN_IS_FLOAT(T))>
+         TPP_INTERN_ENABLE_IF(TPP_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream) && !TPP_INTERN_IS_FLOAT(T))>
 auto
 to_string(T const& arg_) -> std::string {
     std::ostringstream oss;
@@ -125,7 +125,7 @@ to_string(T const& arg_) -> std::string {
  * @tparam T is the floating point type.
  * @param arg_ is the number to convert to string.
  */
-template<typename T, SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_FLOAT(T))>
+template<typename T, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_FLOAT(T))>
 auto
 to_string(T const& arg_) -> std::string {
     std::ostringstream oss;
@@ -141,7 +141,7 @@ to_string(T const& arg_) -> std::string {
  * @param arg_ is the value to convert to string.
  * @return the typename for T, as there is no information about the value available.
  */
-template<typename T, SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream))>
+template<typename T, TPP_INTERN_ENABLE_IF(!TPP_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream))>
 auto
 to_string(T const& arg_) -> std::string {
     return name_for_type<T>(arg_);
@@ -206,6 +206,6 @@ to_string(regex const& arg_) -> std::string {
     return to_string(arg_.pattern);
 }
 }  // namespace intern
-}  // namespace sctf
+}  // namespace tpp
 
-#endif  // SCTF_STRINGIFY_HPP
+#endif  // TPP_STRINGIFY_HPP

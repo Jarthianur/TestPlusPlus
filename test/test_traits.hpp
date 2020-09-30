@@ -1,20 +1,20 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #ifndef TEST_TRAITS_HPP
@@ -22,7 +22,7 @@
 
 #include <stdexcept>
 
-#include "sctf.hpp"
+#include "tpp.hpp"
 
 /*
  * Helpers for traits
@@ -47,13 +47,13 @@ struct streamable
 struct not_streamable
 {};
 
-template<typename S, typename T, SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_HAS_STREAM_CAPABILITY(T, S))>
+template<typename S, typename T, TPP_INTERN_ENABLE_IF(!TPP_INTERN_HAS_STREAM_CAPABILITY(T, S))>
 void
 throw_if_not_streamable() {
     throw std::logic_error("Given type is not streamable");
 }
 
-template<typename S, typename T, SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_STREAM_CAPABILITY(T, S))>
+template<typename S, typename T, TPP_INTERN_ENABLE_IF(TPP_INTERN_HAS_STREAM_CAPABILITY(T, S))>
 void
 throw_if_not_streamable() {}
 
@@ -113,13 +113,13 @@ struct not_iterable
     }
 };
 
-template<typename T, SCTF_INTERN_ENABLE_IF(!SCTF_INTERN_HAS_ITERATOR_CAPABILITY(T))>
+template<typename T, TPP_INTERN_ENABLE_IF(!TPP_INTERN_HAS_ITERATOR_CAPABILITY(T))>
 void
 throw_if_not_iterable() {
     throw std::logic_error("Given type is not streamable");
 }
 
-template<typename T, SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_ITERATOR_CAPABILITY(T))>
+template<typename T, TPP_INTERN_ENABLE_IF(TPP_INTERN_HAS_ITERATOR_CAPABILITY(T))>
 void
 throw_if_not_iterable() {}
 

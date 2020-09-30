@@ -17,27 +17,15 @@
     along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <iostream>
+/// @file
 
-#include "basic_tests.h"
-#include "tpp.hpp"
+#ifndef TPP_VERSION_HPP
+#define TPP_VERSION_HPP
 
-TPP_EPSILON(0.000001)
+/// SCTF release version this source belongs to.
+#define TPP_VERSION_MAJOR "3"
+#define TPP_VERSION_MINOR "0"
+#define TPP_VERSION_REVISION "rc0"
+#define TPP_VERSION TPP_VERSION_MAJOR "." TPP_VERSION_MINOR "-" TPP_VERSION_REVISION
 
-auto
-main(int argc_, char** argv_) -> int {
-    auto& runner = tpp::runner::instance();
-
-    try {
-        basic_tests();
-    } catch (std::exception const& e) {
-        std::cout << "Basic tests have failed! [" << e.what() << "]" << std::endl;
-        return -2;
-    } catch (...) {
-        std::cout << "Basic tests have failed!" << std::endl;
-        return -2;
-    }
-    std::cout << "Basic tests have succeeded!" << std::endl;
-
-    return runner.run(argc_, argv_);
-}
+#endif  // TPP_VERSION_HPP

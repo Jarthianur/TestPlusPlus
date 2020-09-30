@@ -1,33 +1,35 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SCTF_REPORTER_MARKDOWN_REPORTER_HPP
-#define SCTF_REPORTER_MARKDOWN_REPORTER_HPP
+#ifndef TPP_REPORT_MARKDOWN_REPORTER_HPP
+#define TPP_REPORT_MARKDOWN_REPORTER_HPP
 
 #include <memory>
 #include <sstream>
 
-#include "reporter/reporter.hpp"
+#include "report/reporter.hpp"
 
-namespace sctf
+namespace tpp
 {
 namespace intern
+{
+namespace report
 {
 /**
  * Reporter implementation with markdown format.
@@ -64,20 +66,20 @@ public:
     }
 
     /// Constructor for std::make_shared.
-    explicit markdown_reporter(enable, std::ostream& stream_) : reporter(stream_) {}
+    markdown_reporter(enable, std::ostream& stream_) : reporter(stream_) {}
 
     /// Constructor for std::make_shared.
-    explicit markdown_reporter(enable, std::string const& fname_) : reporter(fname_) {}
+    markdown_reporter(enable, std::string const& fname_) : reporter(fname_) {}
 
 private:
     void
-    report_testsuite(testsuite_ptr const& ts_) override {
+    report_testsuite(test::testsuite_ptr const& ts_) override {
         *this << "## " << ts_->name() << fmt::LF << fmt::LF << "|Tests|Successes|Failures|Errors|Time|" << fmt::LF
               << "|-|-|-|-|-|" << fmt::LF << "|" << ts_->statistics().tests() << "|" << ts_->statistics().successes()
-              << "|" << ts_->statistics().failures() << "|" << ts_->statistics().errors() << "|"
-              << ts_->execution_duration() << "ms|" << fmt::LF << fmt::LF << "### Tests" << fmt::LF << fmt::LF
-              << "|Name|Context|Time|Status|" << (capture() ? "System-Out|System-Err|" : "") << fmt::LF << "|-|-|-|-|"
-              << (capture() ? "-|-|" : "") << fmt::LF;
+              << "|" << ts_->statistics().failures() << "|" << ts_->statistics().errors() << "|" << ts_->duration()
+              << "ms|" << fmt::LF << fmt::LF << "### Tests" << fmt::LF << fmt::LF << "|Name|Context|Time|Status|"
+              << (capture() ? "System-Out|System-Err|" : "") << fmt::LF << "|-|-|-|-|" << (capture() ? "-|-|" : "")
+              << fmt::LF;
 
         reporter::report_testsuite(ts_);
 
@@ -85,13 +87,12 @@ private:
     }
 
     void
-    report_testcase(testcase const& tc_) override {
+    report_testcase(test::testcase const& tc_) override {
         char const* status = "";
-        switch (tc_.state()) {
-            case testcase::result::ERROR: status = "ERROR"; break;
-            case testcase::result::FAILED: status = "FAILED"; break;
-            case testcase::result::PASSED: status = "PASSED"; break;
-            default: break;
+        switch (tc_.result()) {
+            case test::testcase::HAS_ERROR: status = "ERROR"; break;
+            case test::testcase::HAS_FAILED: status = "FAILED"; break;
+            default: status = "PASSED"; break;
         }
         *this << "|" << tc_.name() << "|" << tc_.suite_name() << "|" << tc_.duration() << "ms|" << status << "|";
         if (capture()) {
@@ -128,9 +129,10 @@ private:
         *this << "|";
     }
 };
+}  // namespace report
 }  // namespace intern
 
-using markdown_reporter = intern::markdown_reporter;
-}  // namespace sctf
+using markdown_reporter = intern::report::markdown_reporter;
+}  // namespace tpp
 
-#endif  // SCTF_REPORTER_MARKDOWN_REPORTER_HPP
+#endif  // TPP_REPORT_MARKDOWN_REPORTER_HPP

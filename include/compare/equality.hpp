@@ -1,38 +1,38 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
 /// @file
 
-#ifndef SCTF_COMPARATOR_EQUALITY_HPP
-#define SCTF_COMPARATOR_EQUALITY_HPP
+#ifndef TPP_COMPARE_EQUALITY_HPP
+#define TPP_COMPARE_EQUALITY_HPP
 
 #include <algorithm>
 #include <cmath>
 #include <limits>
 
-#include "comparator/comparator.hpp"
+#include "compare/comparator.hpp"
 
 #include "traits.hpp"
 
-SCTF_COMPARATOR(equals, "equals", actual_value == expected_value)
-SCTF_PROVIDE_COMPARATOR(equals, EQUALS)
-SCTF_PROVIDE_COMPARATOR(equals, EQ)
+TPP_COMPARATOR(equals, "equals", actual_value == expected_value)
+TPP_PROVIDE_COMPARATOR(equals, EQUALS)
+TPP_PROVIDE_COMPARATOR(equals, EQ)
 
 /**
  * Define a global epsilon value, that will be used for every floating point equality comparison by
@@ -40,14 +40,16 @@ SCTF_PROVIDE_COMPARATOR(equals, EQ)
  *
  * @param E is the epsilon value.
  */
-#define SCTF_EPSILON(E) double sctf::epsilon = E;
+#define TPP_EPSILON(E) double tpp::epsilon = E;
 
-namespace sctf
+namespace tpp
 {
 /// Epsilon that is used as floating point threshold in equality comparisons.
 extern double epsilon;
 
 namespace intern
+{
+namespace compare
 {
 /**
  * Comparator to check for equality floating point numbers.
@@ -55,7 +57,7 @@ namespace intern
 template<typename T>
 class f_equals
 {
-    static_assert(SCTF_INTERN_IS_FLOAT(T),
+    static_assert(TPP_INTERN_IS_FLOAT(T),
                   "The floating point comparator must not be used with other types than float, or double!");
 
     static constexpr char const* m_cmp_str     = "to be equals";
@@ -101,7 +103,7 @@ public:
     template<typename V>
     auto
     operator()(V const& actual_value, V const& expected_value) const -> comparison {
-        static_assert(SCTF_INTERN_IS_FLOAT(V),
+        static_assert(TPP_INTERN_IS_FLOAT(V),
                       "The floating point comparator must not be used with other types than float, or double!");
 
         typename std::decay<V>::type epsilon_ = static_cast<V>(epsilon);
@@ -112,10 +114,11 @@ public:
                             std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
     }
 };
+}  // namespace compare
 }  // namespace intern
-}  // namespace sctf
+}  // namespace tpp
 
-SCTF_PROVIDE_COMPARATOR(f_equals, F_EQUALS)
-SCTF_PROVIDE_COMPARATOR(f_equals, FEQ)
+TPP_PROVIDE_COMPARATOR(f_equals, F_EQUALS)
+TPP_PROVIDE_COMPARATOR(f_equals, FEQ)
 
-#endif  // SCTF_COMPARATOR_EQUALITY_HPP
+#endif  // TPP_COMPARE_EQUALITY_HPP

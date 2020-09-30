@@ -1,35 +1,37 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SCTF_REPORTER_JSON_REPORTER_HPP
-#define SCTF_REPORTER_JSON_REPORTER_HPP
+#ifndef TPP_REPORT_JSON_REPORTER_HPP
+#define TPP_REPORT_JSON_REPORTER_HPP
 
 #include <memory>
 #include <tuple>
 
-#include "reporter/reporter.hpp"
+#include "report/reporter.hpp"
 
 #include "stringify.hpp"
 
-namespace sctf
+namespace tpp
 {
 namespace intern
+{
+namespace report
 {
 /**
  * Reporter implementation with informative json output.
@@ -66,18 +68,18 @@ public:
     }
 
     /// Constructor for std::make_shared.
-    explicit json_reporter(enable, std::ostream& stream_) : reporter(stream_) {}
+    json_reporter(enable, std::ostream& stream_) : reporter(stream_) {}
 
     /// Constructor for std::make_shared.
-    explicit json_reporter(enable, std::string const& fname_) : reporter(fname_) {}
+    json_reporter(enable, std::string const& fname_) : reporter(fname_) {}
 
 private:
     void
-    report_testsuite(testsuite_ptr const& ts_) override {
+    report_testsuite(test::testsuite_ptr const& ts_) override {
         m_first_test = true;
         conditional_prefix(m_first_suite);
         json_property_string("name", ts_->name(), color(CYAN)) << ',' << newline();
-        json_property_value("time", ts_->execution_duration()) << ',' << newline();
+        json_property_value("time", ts_->duration()) << ',' << newline();
         json_property_value("count", ts_->statistics().tests()) << ',' << newline();
         json_property_value("passes", ts_->statistics().successes()) << ',' << newline();
         json_property_value("failures", ts_->statistics().failures()) << ',' << newline();
@@ -93,8 +95,8 @@ private:
     }
 
     void
-    report_testcase(testcase const& tc_) override {
-        auto const dres = decode_result(tc_.state());
+    report_testcase(test::testcase const& tc_) override {
+        auto const dres = decode_result(tc_.result());
         conditional_prefix(m_first_test);
         json_property_string("name", tc_.name(), color(W_BOLD)) << "," << newline();
         json_property_string("result", std::get<0>(dres), color(std::get<1>(dres))) << "," << newline();
@@ -159,10 +161,10 @@ private:
     }
 
     static auto
-    decode_result(testcase::result res_) -> std::tuple<char const*, colors> {
+    decode_result(test::testcase::results res_) -> std::tuple<char const*, colors> {
         switch (res_) {
-            case testcase::result::ERROR: return {"error", RED};
-            case testcase::result::FAILED: return {"failure", BLUE};
+            case test::testcase::HAS_ERROR: return {"error", RED};
+            case test::testcase::HAS_FAILED: return {"failure", BLUE};
             default: return {"success", GREEN};
         }
     }
@@ -170,9 +172,10 @@ private:
     bool m_first_suite = true;
     bool m_first_test  = true;
 };
+}  // namespace report
 }  // namespace intern
 
-using json_reporter = intern::json_reporter;
-}  // namespace sctf
+using json_reporter = intern::report::json_reporter;
+}  // namespace tpp
 
-#endif  // SCTF_REPORTER_JSON_REPORTER_HPP
+#endif  // TPP_REPORT_JSON_REPORTER_HPP

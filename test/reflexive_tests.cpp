@@ -1,20 +1,20 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <chrono>
@@ -27,17 +27,20 @@
 #include <utility>
 #include <vector>
 
-#include "sctf.hpp"
 #include "test_traits.hpp"
+#include "tpp.hpp"
 
-#ifdef SCTF_SYS_UNIX
+#ifdef TPP_INTERN_SYS_UNIX
 #    pragma GCC diagnostic push
 #    pragma GCC diagnostic ignored "-Wunused-variable"
 #    pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
-using namespace sctf;
+using namespace tpp;
 using namespace intern;
+using namespace compare;
+using namespace report;
+using namespace test;
 
 SUITE_PAR("test_comparators") {
     TEST("equals") {
@@ -156,26 +159,26 @@ SUITE("test_testsuite_parallel") {
         ts->test("", [] { throw std::logic_error(""); });
 #ifdef _OPENMP
         int c = 200;
-/* workaround: see https://github.com/Jarthianur/simple-cpp-test-framework/issues/25 for
+/* workaround: see https://github.com/Jarthianur/TestPlusPlus (Test++)/issues/25 for
    details */
 #    ifdef __clang__
         c = 300;
 #    endif
         ASSERT_RUNTIME(ts->run(), c);
-        ASSERT(ts->execution_duration(), LT(), c);
+        ASSERT(ts->duration(), LT(), c);
 #else
         ts->run();
         double t = 0.0;
         for (auto const& tc : ts->testcases()) {
             t += tc.duration();
         }
-        ASSERT_EQ(ts->execution_duration(), t);
+        ASSERT_EQ(ts->duration(), t);
 #endif
         statistic const& stat = ts->statistics();
-        ASSERT_EQ(stat.tests(), 6ul);
-        ASSERT_EQ(stat.errors(), 2ul);
-        ASSERT_EQ(stat.failures(), 2ul);
-        ASSERT_EQ(stat.successes(), 2ul);
+        ASSERT_EQ(stat.tests(), 6UL);
+        ASSERT_EQ(stat.errors(), 2UL);
+        ASSERT_EQ(stat.failures(), 2UL);
+        ASSERT_EQ(stat.successes(), 2UL);
     };
 };
 
@@ -212,24 +215,24 @@ SUITE("test_testsuite") {
         ts->test("", [] { throw std::logic_error(""); });
         ts->run();
         statistic const& stat = ts->statistics();
-        ASSERT_EQ(stat.tests(), 3ul);
-        ASSERT_EQ(stat.errors(), 1ul);
-        ASSERT_EQ(stat.failures(), 1ul);
-        ASSERT_EQ(stat.successes(), 1ul);
+        ASSERT_EQ(stat.tests(), 3UL);
+        ASSERT_EQ(stat.errors(), 1UL);
+        ASSERT_EQ(stat.failures(), 1UL);
+        ASSERT_EQ(stat.successes(), 1UL);
         ts->run();
-        ASSERT_EQ(stat.tests(), 3ul);
-        ASSERT_EQ(stat.errors(), 1ul);
-        ASSERT_EQ(stat.failures(), 1ul);
-        ASSERT_EQ(stat.successes(), 1ul);
+        ASSERT_EQ(stat.tests(), 3UL);
+        ASSERT_EQ(stat.errors(), 1UL);
+        ASSERT_EQ(stat.failures(), 1UL);
+        ASSERT_EQ(stat.successes(), 1UL);
         ts->test("", [] {});
         ts->run();
-        ASSERT_EQ(stat.tests(), 4ul);
-        ASSERT_EQ(stat.successes(), 2ul);
+        ASSERT_EQ(stat.tests(), 4UL);
+        ASSERT_EQ(stat.successes(), 2UL);
         double t = 0.0;
         for (auto const& tc : ts->testcases()) {
             t += tc.duration();
         }
-        ASSERT_EQ(t, ts->execution_duration());
+        ASSERT_EQ(t, ts->duration());
     };
 };
 
@@ -237,7 +240,7 @@ SUITE_PAR("test_testcase") {
     TEST("creation") {
         testcase tc({"t1", "ctx"}, [] {});
         testcase tc2({"t2", ""}, [] {});
-        ASSERT_EQ(tc.state(), testcase::result::NONE);
+        ASSERT_EQ(tc.result(), testcase::IS_UNDONE);
         ASSERT(tc.suite_name(), EQ(), std::string("ctx"));
         ASSERT(tc2.suite_name(), EQ(), std::string(""));
         ASSERT(tc.name(), EQ(), std::string("t1"));
@@ -245,26 +248,26 @@ SUITE_PAR("test_testcase") {
     TEST("successful_execution") {
         testcase tc({"t1", "ctx"}, [] {});
         tc();
-        ASSERT_EQ(tc.state(), testcase::result::PASSED);
+        ASSERT_EQ(tc.result(), testcase::HAS_PASSED);
         ASSERT(tc.duration(), GT(), 0.0);
         ASSERT_ZERO(tc.reason().size());
     };
     TEST("failed_execution") {
         testcase tc({"t1", "ctx"}, [] { ASSERT_TRUE(false); });
         tc();
-        ASSERT_EQ(tc.state(), testcase::result::FAILED);
+        ASSERT_EQ(tc.result(), testcase::HAS_FAILED);
         ASSERT(tc.duration(), GT(), 0.0);
     };
     TEST("erroneous_execution") {
         testcase tc({"t1", "ctx"}, [] { throw std::logic_error("err"); });
         tc();
-        ASSERT_EQ(tc.state(), testcase::result::ERROR);
+        ASSERT_EQ(tc.result(), testcase::HAS_ERROR);
         ASSERT(tc.duration(), GT(), 0.0);
         ASSERT(tc.reason(), EQ(), std::string("err"));
 
         testcase tc2({"t2", "ctx"}, [] { throw 1; });
         tc2();
-        ASSERT_EQ(tc2.state(), testcase::result::ERROR);
+        ASSERT_EQ(tc2.result(), testcase::HAS_ERROR);
         ASSERT(tc2.duration(), GT(), 0.0);
         ASSERT(tc2.reason(), EQ(), std::string("unknown error"));
     };
@@ -307,7 +310,7 @@ SUITE_PAR("test_stringify") {
         ASSERT_EQ(to_string('\n'), "'\\n'");
     };
     TEST("floating_point") {
-        ASSERT(std::string("1.123"), IN(), to_string(1.123f));
+        ASSERT(std::string("1.123"), IN(), to_string(1.123F));
         ASSERT(std::string("1.123"), IN(), to_string(1.123));
         std::cout << to_string(1.234);
     };
@@ -506,7 +509,7 @@ DESCRIBE("test_output_capture") {
             });
         }
         ts->run();
-        for (unsigned long i = 0; i < ts->testcases().size(); ++i) {
+        for (auto i = 0UL; i < ts->testcases().size(); ++i) {
             auto const& tc = ts->testcases().at(i);
             ASSERT_EQ(tc.cout(), std::string("out from ") + to_string(i + 1));
             ASSERT_EQ(tc.cerr(), std::string("err from ") + to_string(i + 1));
@@ -521,7 +524,7 @@ DESCRIBE("test_output_capture") {
             });
         }
         ts->run();
-        for (unsigned long i = 0; i < ts->testcases().size(); ++i) {
+        for (auto i = 0UL; i < ts->testcases().size(); ++i) {
             auto const& tc = ts->testcases().at(i);
             ASSERT_EQ(tc.cout(), std::string("out from ") + to_string(i + 1));
             ASSERT_EQ(tc.cerr(), std::string("err from ") + to_string(i + 1));
@@ -581,6 +584,6 @@ DESCRIBE("test_suite_meta_functions") {
     };
 };
 
-#ifdef SCTF_SYS_UNIX
+#ifdef TPP_INTERN_SYS_UNIX
 #    pragma GCC diagnostic pop
 #endif

@@ -17,27 +17,30 @@
     along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <iostream>
+/// @file
 
-#include "basic_tests.h"
-#include "tpp.hpp"
+#ifndef TPP_TPP_HPP
+#define TPP_TPP_HPP
 
-TPP_EPSILON(0.000001)
+#include "compare/equality.hpp"
+#include "compare/ordering.hpp"
+#include "compare/range.hpp"
+#include "compare/regex.hpp"
+#include "test/assert.hpp"
 
-auto
-main(int argc_, char** argv_) -> int {
-    auto& runner = tpp::runner::instance();
+#include "api.hpp"
+#include "regex.hpp"
+#include "runner.hpp"
 
-    try {
-        basic_tests();
-    } catch (std::exception const& e) {
-        std::cout << "Basic tests have failed! [" << e.what() << "]" << std::endl;
-        return -2;
-    } catch (...) {
-        std::cout << "Basic tests have failed!" << std::endl;
-        return -2;
+/**
+ * Define a default main function, which performs all tests, and produces the report with specified
+ * reporter.
+ *
+ * @param R is the reporters factory method invokation.
+ */
+#define TPP_DEFAULT_MAIN                                  \
+    auto main(int argc_, char** argv_)->int {             \
+        return tpp::runner::instance().run(argc_, argv_); \
     }
-    std::cout << "Basic tests have succeeded!" << std::endl;
 
-    return runner.run(argc_, argv_);
-}
+#endif  // TPP_TPP_HPP

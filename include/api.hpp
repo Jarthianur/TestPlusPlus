@@ -1,30 +1,30 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
 /// @file
 
-#ifndef SCTF_API_HPP
-#define SCTF_API_HPP
+#ifndef TPP_API_HPP
+#define TPP_API_HPP
 
 #include <utility>
 
-namespace sctf
+namespace tpp
 {
 namespace intern
 {
@@ -53,7 +53,7 @@ struct singleton final
     }
 };
 }  // namespace intern
-}  // namespace sctf
+}  // namespace tpp
 
 /**
  * Concatenate three symbols.
@@ -62,42 +62,42 @@ struct singleton final
  * @param B is the middle symbol.
  * @param C is the right symbol.
  */
-#define SCTF_INTERN_CONCAT3(A, B, C) A##B##C
+#define TPP_INTERN_CONCAT3(A, B, C) A##B##C
 
 /**
  * Produce an identifier for a testcase name.
  *
  * @param ID is the unique identifier part.
  */
-#define SCTF_INTERN_API_TEST_NAME(ID) SCTF_INTERN_CONCAT3(sctf_intern_test_, ID, _)
+#define TPP_INTERN_API_TEST_NAME(ID) TPP_INTERN_CONCAT3(tpp_intern_test_, ID, _)
 
 /**
  * Produce an identifier for a testcase instance.
  *
  * @param ID is the unique identifier part.
  */
-#define SCTF_INTERN_API_TEST_INST(ID) SCTF_INTERN_CONCAT3(sctf_intern_test_, ID, _inst_)
+#define TPP_INTERN_API_TEST_INST(ID) TPP_INTERN_CONCAT3(tpp_intern_test_, ID, _inst_)
 
 /**
  * Produce an identifier for a testcase function.
  *
  * @param ID is the unique identifier part.
  */
-#define SCTF_INTERN_API_TEST_FN(ID) SCTF_INTERN_CONCAT3(sctf_intern_test_fn_, ID, _)
+#define TPP_INTERN_API_TEST_FN(ID) TPP_INTERN_CONCAT3(tpp_intern_test_fn_, ID, _)
 
 /**
  * Produce an identifier for a testsuite namespace.
  *
  * @param ID is the unique identifier part.
  */
-#define SCTF_INTERN_API_SUITE_NS(ID) SCTF_INTERN_CONCAT3(sctf_intern_ns_, ID, _)
+#define TPP_INTERN_API_SUITE_NS(ID) TPP_INTERN_CONCAT3(tpp_intern_ns_, ID, _)
 
 /**
  * Produce an identifier for a testsuite name.
  *
  * @param ID is the unique identifier part.
  */
-#define SCTF_INTERN_API_SUITE_NAME(ID) SCTF_INTERN_CONCAT3(sctf_intern_suite_, ID, _)
+#define TPP_INTERN_API_SUITE_NAME(ID) TPP_INTERN_CONCAT3(tpp_intern_suite_, ID, _)
 
 /**
  * Generate a unique testsuite definition.
@@ -105,66 +105,66 @@ struct singleton final
  * @param DESCR is a cstring with the description of the testsuite.
  * @param BASE is the testsuite base type to use.
  */
-#define SCTF_INTERN_API_SUITE_WRAPPER(DESCR, BASE)                                                        \
-    namespace SCTF_INTERN_API_SUITE_NS(__LINE__) {                                                        \
-        class test_module                                                                                 \
-        {                                                                                                 \
-            sctf::intern::testsuite_ptr m_ts_;                                                            \
-                                                                                                          \
-        public:                                                                                           \
-            test_module(test_module const&)     = delete;                                                 \
-            test_module(test_module&&) noexcept = delete;                                                 \
-            virtual ~test_module() noexcept     = default;                                                \
-            auto                                                                                          \
-            operator=(test_module const&) -> test_module& = delete;                                       \
-            auto                                                                                          \
-            operator=(test_module&&) noexcept -> test_module& = delete;                                   \
-                                                                                                          \
-        protected:                                                                                        \
-            test_module() : m_ts_(sctf::intern::BASE::create(DESCR)) {                                    \
-                sctf::runner::instance().add_testsuite(m_ts_);                                            \
-            }                                                                                             \
-            auto                                                                                          \
-            sctf_intern_ts_() const -> sctf::intern::testsuite_ptr const& {                               \
-                return m_ts_;                                                                             \
-            }                                                                                             \
-        };                                                                                                \
-        class SCTF_INTERN_API_SUITE_NAME(__LINE__);                                                       \
-        using sctf_intern_mod_type_         = SCTF_INTERN_API_SUITE_NAME(__LINE__);                       \
-        static auto const& sctf_intern_mod_ = sctf::intern::singleton<sctf_intern_mod_type_>::instance(); \
-    }                                                                                                     \
-    class SCTF_INTERN_API_SUITE_NS(__LINE__)::SCTF_INTERN_API_SUITE_NAME(__LINE__)                        \
-        : public SCTF_INTERN_API_SUITE_NS(__LINE__)::test_module
+#define TPP_INTERN_API_SUITE_WRAPPER(DESCR, BASE)                                                      \
+    namespace TPP_INTERN_API_SUITE_NS(__LINE__) {                                                      \
+        class test_module                                                                              \
+        {                                                                                              \
+            tpp::intern::test::testsuite_ptr m_ts_;                                                    \
+                                                                                                       \
+        public:                                                                                        \
+            test_module(test_module const&)     = delete;                                              \
+            test_module(test_module&&) noexcept = delete;                                              \
+            virtual ~test_module() noexcept     = default;                                             \
+            auto                                                                                       \
+            operator=(test_module const&) -> test_module& = delete;                                    \
+            auto                                                                                       \
+            operator=(test_module&&) noexcept -> test_module& = delete;                                \
+                                                                                                       \
+        protected:                                                                                     \
+            test_module() : m_ts_(tpp::intern::test::BASE::create(DESCR)) {                            \
+                tpp::runner::instance().add_testsuite(m_ts_);                                          \
+            }                                                                                          \
+            auto                                                                                       \
+            tpp_intern_ts_() const -> tpp::intern::test::testsuite_ptr const& {                        \
+                return m_ts_;                                                                          \
+            }                                                                                          \
+        };                                                                                             \
+        class TPP_INTERN_API_SUITE_NAME(__LINE__);                                                     \
+        using tpp_intern_mod_type_         = TPP_INTERN_API_SUITE_NAME(__LINE__);                      \
+        static auto const& tpp_intern_mod_ = tpp::intern::singleton<tpp_intern_mod_type_>::instance(); \
+    }                                                                                                  \
+    class TPP_INTERN_API_SUITE_NS(__LINE__)::TPP_INTERN_API_SUITE_NAME(__LINE__)                       \
+        : public TPP_INTERN_API_SUITE_NS(__LINE__)::test_module
 
 /**
  * Generate a unique testcase definition as part of a testsuite.
  *
  * @param DESCR is a cstring with the description of the testcase.
  */
-#define SCTF_INTERN_API_TEST_WRAPPER(DESCR)                                                           \
-    class SCTF_INTERN_API_TEST_NAME(__LINE__)                                                         \
-    {                                                                                                 \
-    public:                                                                                           \
-        explicit SCTF_INTERN_API_TEST_NAME(__LINE__)(sctf_intern_mod_type_ * mod_) {                  \
-            mod_->sctf_intern_ts_()->test(DESCR, [=] { mod_->SCTF_INTERN_API_TEST_FN(__LINE__)(); }); \
-        }                                                                                             \
-    } SCTF_INTERN_API_TEST_INST(__LINE__){this};                                                      \
-    void SCTF_INTERN_API_TEST_FN(__LINE__)()
+#define TPP_INTERN_API_TEST_WRAPPER(DESCR)                                                          \
+    class TPP_INTERN_API_TEST_NAME(__LINE__)                                                        \
+    {                                                                                               \
+    public:                                                                                         \
+        explicit TPP_INTERN_API_TEST_NAME(__LINE__)(tpp_intern_mod_type_ * mod_) {                  \
+            mod_->tpp_intern_ts_()->test(DESCR, [=] { mod_->TPP_INTERN_API_TEST_FN(__LINE__)(); }); \
+        }                                                                                           \
+    } TPP_INTERN_API_TEST_INST(__LINE__){this};                                                     \
+    void TPP_INTERN_API_TEST_FN(__LINE__)()
 
 /**
  * Generate a non-unique function definition as part of a testsuite.
  *
  * @param FN is the identifier to use as function name part.
  */
-#define SCTF_INTERN_API_FN_WRAPPER(FN)                                            \
-    class sctf_intern_##FN##_                                                     \
-    {                                                                             \
-    public:                                                                       \
-        explicit sctf_intern_##FN##_(sctf_intern_mod_type_* mod_) {               \
-            mod_->sctf_intern_ts_()->FN([=] { mod_->sctf_intern_##FN##_fn_(); }); \
-        }                                                                         \
-    } sctf_intern_##FN##_inst_{this};                                             \
-    void sctf_intern_##FN##_fn_()
+#define TPP_INTERN_API_FN_WRAPPER(FN)                                           \
+    class tpp_intern_##FN##_                                                    \
+    {                                                                           \
+    public:                                                                     \
+        explicit tpp_intern_##FN##_(tpp_intern_mod_type_* mod_) {               \
+            mod_->tpp_intern_ts_()->FN([=] { mod_->tpp_intern_##FN##_fn_(); }); \
+        }                                                                       \
+    } tpp_intern_##FN##_inst_{this};                                            \
+    void tpp_intern_##FN##_fn_()
 
 /**
  * Create a testsuite, where all testcases are run sequentially.
@@ -178,7 +178,7 @@ struct singleton final
  *
  * @param DESCR is a cstring with the description, or name of the testsuite.
  */
-#define SUITE(DESCR) SCTF_INTERN_API_SUITE_WRAPPER(DESCR, testsuite)
+#define SUITE(DESCR) TPP_INTERN_API_SUITE_WRAPPER(DESCR, testsuite)
 
 /**
  * Create a testsuite, where all testcases are run in parallel.
@@ -192,7 +192,7 @@ struct singleton final
  *
  * @param DESCR is a cstring with the description, or name of the testsuite.
  */
-#define SUITE_PAR(DESCR) SCTF_INTERN_API_SUITE_WRAPPER(DESCR, testsuite_parallel)
+#define SUITE_PAR(DESCR) TPP_INTERN_API_SUITE_WRAPPER(DESCR, testsuite_parallel)
 
 /// Synonym for SUITE.
 #define DESCRIBE(DESCR) SUITE(DESCR)
@@ -212,10 +212,10 @@ struct singleton final
  *
  * @param DESCR is a cstring with the description, or name of the testcase.
  */
-#define TEST(DESCR) SCTF_INTERN_API_TEST_WRAPPER(DESCR)
+#define TEST(DESCR) TPP_INTERN_API_TEST_WRAPPER(DESCR)
 
 /// Synonym for TEST, but DESCR is prefixed by 'It'.
-#define IT(DESCR) SCTF_INTERN_API_TEST_WRAPPER("It " DESCR)
+#define IT(DESCR) TPP_INTERN_API_TEST_WRAPPER("It " DESCR)
 
 /**
  * Create a definition for a function as part of a testsuite, that is executed once before each
@@ -228,7 +228,7 @@ struct singleton final
  * }
  * @endcode
  */
-#define BEFORE_EACH() SCTF_INTERN_API_FN_WRAPPER(before_each)
+#define BEFORE_EACH() TPP_INTERN_API_FN_WRAPPER(before_each)
 
 /**
  * Create a definition for a function as part of a testsuite, that is executed once after each
@@ -241,7 +241,7 @@ struct singleton final
  * }
  * @endcode
  */
-#define AFTER_EACH() SCTF_INTERN_API_FN_WRAPPER(after_each)
+#define AFTER_EACH() TPP_INTERN_API_FN_WRAPPER(after_each)
 
 /**
  * Create a definition for a function as part of a testsuite, that is executed once before all
@@ -254,7 +254,7 @@ struct singleton final
  * }
  * @endcode
  */
-#define SETUP() SCTF_INTERN_API_FN_WRAPPER(setup)
+#define SETUP() TPP_INTERN_API_FN_WRAPPER(setup)
 
 /**
  * Create a definition for a function as part of a testsuite, that is executed once after all
@@ -267,6 +267,6 @@ struct singleton final
  * }
  * @endcode
  */
-#define TEARDOWN() SCTF_INTERN_API_FN_WRAPPER(teardown)
+#define TEARDOWN() TPP_INTERN_API_FN_WRAPPER(teardown)
 
-#endif  // SCTF_API_HPP
+#endif  // TPP_API_HPP

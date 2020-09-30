@@ -1,7 +1,8 @@
 #!/bin/bash
 set -eo pipefail
 
-FILES="../include/cpp_meta.hpp
+FILES="../include/version.hpp
+../include/cpp_meta.hpp
 ../include/loc.hpp
 ../include/traits.hpp
 ../include/duration.hpp
@@ -30,27 +31,27 @@ FILES="../include/cpp_meta.hpp
 ../include/comparator/regex.hpp
 ../include/assert.hpp
 ../include/api.hpp
-../include/sctf.hpp"
+../include/tpp.hpp"
 
-TARGET="sctf.hpp"
+TARGET="tpp.hpp"
 
 COPYRIGHT="/*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */"
 
 echo "" > $TARGET.tmp
@@ -63,8 +64,8 @@ perl -0pi -e 's/#include [<"].*[">]//g' $TARGET.tmp
 perl -0pi -e 's%//[/<]*? .*|/\*[\w\W\n]*?\*/%%g' $TARGET.tmp
 
 echo "$COPYRIGHT" > $TARGET
-echo "#ifndef SCTF_RELEASE_SCTF_HPP" >> $TARGET
-echo "#define SCTF_RELEASE_SCTF_HPP" >> $TARGET
+echo "#ifndef TPP_RELEASE_TPP_HPP" >> $TARGET
+echo "#define TPP_RELEASE_TPP_HPP" >> $TARGET
 cat .includes >> $TARGET
 cat $TARGET.tmp >> $TARGET
 echo "" >> $TARGET

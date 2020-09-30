@@ -1,26 +1,26 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
 /// @file
 
-#ifndef SCTF_TESTSUITE_TESTSUITE_HPP
-#define SCTF_TESTSUITE_TESTSUITE_HPP
+#ifndef TPP_TEST_TESTSUITE_HPP
+#define TPP_TEST_TESTSUITE_HPP
 
 #include <algorithm>
 #include <chrono>
@@ -31,13 +31,15 @@
 #include <utility>
 #include <vector>
 
-#include "testsuite/statistic.hpp"
-#include "testsuite/streambuf_proxy.hpp"
-#include "testsuite/testcase.hpp"
+#include "test/statistic.hpp"
+#include "test/streambuf_proxy.hpp"
+#include "test/testcase.hpp"
 
-namespace sctf
+namespace tpp
 {
 namespace intern
+{
+namespace test
 {
 class testsuite;
 using testsuite_ptr = std::shared_ptr<testsuite>;
@@ -79,18 +81,18 @@ public:
      */
     virtual void
     run() {
-        if (m_state != execution_state::DONE) {
+        if (m_state != DONE) {
             m_stats.m_num_tests = m_testcases.size();
             streambuf_proxy buf_cout(std::cout);
             streambuf_proxy buf_cerr(std::cerr);
             m_setup_fn();
             std::for_each(m_testcases.begin(), m_testcases.end(), [this, &buf_cerr, &buf_cout](testcase& tc_) {
-                if (tc_.state() == testcase::result::NONE) {
+                if (tc_.result() == testcase::IS_UNDONE) {
                     m_pretest_fn();
                     tc_();
-                    switch (tc_.state()) {
-                        case testcase::result::FAILED: ++m_stats.m_num_fails; break;
-                        case testcase::result::ERROR: ++m_stats.m_num_errs; break;
+                    switch (tc_.result()) {
+                        case testcase::HAS_FAILED: ++m_stats.m_num_fails; break;
+                        case testcase::HAS_ERROR: ++m_stats.m_num_errs; break;
                         default: break;
                     }
                     m_exec_dur += tc_.duration();
@@ -102,7 +104,7 @@ public:
                 }
             });
             m_teardown_fn();
-            m_state = execution_state::DONE;
+            m_state = DONE;
         }
     }
 
@@ -115,7 +117,7 @@ public:
     void
     test(char const* name_, hook_function&& fn_) {
         m_testcases.emplace_back(test_context{name_, m_name}, std::move(fn_));
-        m_state = execution_state::PENDING;
+        m_state = PENDING;
     }
 
     /**
@@ -190,7 +192,7 @@ public:
      * Get the accumulated time spent on all tests.
      */
     inline auto
-    execution_duration() const -> double {
+    duration() const -> double {
         return m_exec_dur;
     }
 
@@ -207,7 +209,7 @@ public:
      *
      * @param name_ is the name, or description of the testsuite.
      */
-    explicit testsuite(enable, char const* name_) : m_name(name_), m_create_time(std::chrono::system_clock::now()) {}
+    testsuite(enable, char const* name_) : m_name(name_), m_create_time(std::chrono::system_clock::now()) {}
 
 protected:
     /**
@@ -230,7 +232,7 @@ protected:
     /**
      * State whether there are testcases, which not have been run.
      */
-    enum class execution_state : std::int_fast8_t
+    enum states
     {
         PENDING,  /// At least one testcase has not been run.
         DONE      /// All testcases have been run.
@@ -240,16 +242,17 @@ protected:
     std::chrono::system_clock::time_point const m_create_time;  ///< Point in time, when this testsuite was created.
     double m_exec_dur = 0.0;  ///< Time in milliseconds, the whole testsuite needed to complete.
 
-    statistic             m_stats;                             ///< Stores test results.
-    std::vector<testcase> m_testcases;                         ///< Stores testcases.
-    execution_state       m_state = execution_state::PENDING;  ///< States, whether all testcases have been executed.
+    statistic             m_stats;            ///< Stores test results.
+    std::vector<testcase> m_testcases;        ///< Stores testcases.
+    states                m_state = PENDING;  ///< States, whether all testcases have been executed.
 
     optional_functor m_setup_fn;     ///< Optional function, that is executed before all testcases.
     optional_functor m_teardown_fn;  ///< Optional function, that is executed after all testcases.
     optional_functor m_pretest_fn;   ///< Optional function, that is executed before all testcases.
     optional_functor m_posttest_fn;  ///< Optional function, that is executed before all testcases.
 };
+}  // namespace test
 }  // namespace intern
-}  // namespace sctf
+}  // namespace tpp
 
-#endif  // SCTF_TESTSUITE_TESTSUITE_HPP
+#endif  // TPP_TEST_TESTSUITE_HPP

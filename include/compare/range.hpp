@@ -1,34 +1,36 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SCTF_COMPARATOR_RANGE_HPP
-#define SCTF_COMPARATOR_RANGE_HPP
+#ifndef TPP_COMPARE_RANGE_HPP
+#define TPP_COMPARE_RANGE_HPP
 
 #include <algorithm>
 
-#include "comparator/comparator.hpp"
+#include "compare/comparator.hpp"
 
 #include "traits.hpp"
 
-namespace sctf
+namespace tpp
 {
 namespace intern
+{
+namespace compare
 {
 /**
  * Comparator to check for existence of elements in ranges.
@@ -48,7 +50,7 @@ public:
     }
 
     template<typename V, typename E = V,
-             SCTF_INTERN_ENABLE_IF(SCTF_INTERN_HAS_ITERATOR_CAPABILITY(E) && !SCTF_INTERN_IS_TYPE(E, std::string))>
+             TPP_INTERN_ENABLE_IF(TPP_INTERN_HAS_ITERATOR_CAPABILITY(E) && !TPP_INTERN_IS_TYPE(E, std::string))>
     auto
     operator()(V const& actual_value, E const& expected_value) const -> comparison {
         return (std::find(expected_value.cbegin(), expected_value.cend(), actual_value) != expected_value.cend()) !=
@@ -58,7 +60,7 @@ public:
                             std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
     }
 
-    template<typename V, typename E = V, SCTF_INTERN_ENABLE_IF(SCTF_INTERN_IS_TYPE(E, std::string))>
+    template<typename V, typename E = V, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_TYPE(E, std::string))>
     auto
     operator()(V const& actual_value, E const& expected_value) const -> comparison {
         return (expected_value.find(actual_value) != std::string::npos) != m_neg ?
@@ -67,10 +69,11 @@ public:
                             std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
     }
 };
+}  // namespace compare
 }  // namespace intern
-}  // namespace sctf
+}  // namespace tpp
 
-SCTF_PROVIDE_COMPARATOR(in_range, IN_RANGE)
-SCTF_PROVIDE_COMPARATOR(in_range, IN)
+TPP_PROVIDE_COMPARATOR(in_range, IN_RANGE)
+TPP_PROVIDE_COMPARATOR(in_range, IN)
 
-#endif  // SCTF_COMPARATOR_RANGE_HPP
+#endif  // TPP_COMPARE_RANGE_HPP

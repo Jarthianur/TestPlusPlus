@@ -1,36 +1,37 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SCTF_TESTSUITE_TESTCASE_HPP
-#define SCTF_TESTSUITE_TESTCASE_HPP
+#ifndef TPP_TEST_TESTCASE_HPP
+#define TPP_TEST_TESTCASE_HPP
 
-#include <cstdint>
 #include <functional>
 #include <string>
 #include <utility>
 
-#include "assertion_failure.hpp"
-#include "duration.hpp"
+#include "test/assertion_failure.hpp"
+#include "test/duration.hpp"
 
-namespace sctf
+namespace tpp
 {
 namespace intern
+{
+namespace test
 {
 using test_function = std::function<void()>;
 
@@ -59,36 +60,36 @@ public:
      * @param fn_   is the function performing the actual test.
      */
     testcase(test_context&& ctx_, test_function&& fn_)
-        : m_name(ctx_.tc_name), m_suite_name(ctx_.ts_name), m_test_func(std::move(fn_)) {}
+        : m_name(ctx_.tc_name), m_suite_name(ctx_.ts_name), m_test_fn(std::move(fn_)) {}
 
     testcase(testcase&& other_) noexcept
         : m_name(other_.m_name),
           m_suite_name(other_.m_suite_name),
-          m_state(other_.m_state),
+          m_result(other_.m_result),
           m_duration(other_.m_duration),
           m_err_msg(std::move(other_.m_err_msg)),
-          m_test_func(std::move(other_.m_test_func)) {}
+          m_test_fn(std::move(other_.m_test_fn)) {}
 
     auto
     operator=(testcase&& other_) noexcept -> testcase& {
         m_name       = other_.m_name;
         m_suite_name = other_.m_suite_name;
-        m_state      = other_.m_state;
+        m_result     = other_.m_result;
         m_duration   = other_.m_duration;
         m_err_msg    = std::move(other_.m_err_msg);
-        m_test_func  = std::move(other_.m_test_func);
+        m_test_fn    = std::move(other_.m_test_fn);
         return *this;
     }
 
     /**
      * The resulting state of a testcase.
      */
-    enum class result : std::int_fast8_t
+    enum results
     {
-        NONE,    ///< not yet performed
-        PASSED,  ///< test passed successfully
-        FAILED,  ///< at least one assertion failed
-        ERROR    ///< an unexpected exception was thrown
+        IS_UNDONE,   ///< not yet performed
+        HAS_PASSED,  ///< test passed successfully
+        HAS_FAILED,  ///< at least one assertion failed
+        HAS_ERROR    ///< an unexpected exception was thrown
     };
 
     /**
@@ -96,12 +97,12 @@ public:
      */
     void
     operator()() {
-        if (m_state != result::NONE) {
+        if (m_result != IS_UNDONE) {
             return;
         }
         class duration dur;
         try {
-            m_test_func();
+            m_test_fn();
             pass();
         } catch (assertion_failure const& e) {
             fail(e.what());
@@ -117,8 +118,8 @@ public:
      * Get the result state.
      */
     inline auto
-    state() const -> result {
-        return m_state;
+    result() const -> results {
+        return m_result;
     }
 
     /**
@@ -196,7 +197,7 @@ private:
      */
     inline void
     pass() {
-        m_state = result::PASSED;
+        m_result = HAS_PASSED;
     }
 
     /**
@@ -206,7 +207,7 @@ private:
      */
     inline void
     fail(char const* msg_) {
-        m_state   = result::FAILED;
+        m_result  = HAS_FAILED;
         m_err_msg = msg_;
     }
 
@@ -217,20 +218,21 @@ private:
      */
     inline void
     error(char const* msg_ = "unknown error") {
-        m_state   = result::ERROR;
+        m_result  = HAS_ERROR;
         m_err_msg = msg_;
     }
 
-    char const*   m_name;                     ///< Name or description of this testcase.
-    char const*   m_suite_name;               ///< Context description (testsuite) where this testcase lives.
-    result        m_state    = result::NONE;  ///< Result produced by the test function.
-    double        m_duration = 0.0;           ///< Time in milliseconds, that the test function consumed.
-    std::string   m_err_msg;                  ///< Message describing the reason for failure, or error.
-    std::string   m_cout;                     ///< Captured output to stdout.
-    std::string   m_cerr;                     ///< Captured output to stderr.
-    test_function m_test_func;                ///< Test function that performs the actual test.
+    char const*   m_name;                  ///< Name or description of this testcase.
+    char const*   m_suite_name;            ///< Context description (testsuite) where this testcase lives.
+    results       m_result   = IS_UNDONE;  ///< Result produced by the test function.
+    double        m_duration = 0.0;        ///< Time in milliseconds, that the test function consumed.
+    std::string   m_err_msg;               ///< Message describing the reason for failure, or error.
+    std::string   m_cout;                  ///< Captured output to stdout.
+    std::string   m_cerr;                  ///< Captured output to stderr.
+    test_function m_test_fn;               ///< Test function that performs the actual test.
 };
+}  // namespace test
 }  // namespace intern
-}  // namespace sctf
+}  // namespace tpp
 
-#endif  // SCTF_TESTSUITE_TESTCASE_HPP
+#endif  // TPP_TEST_TESTCASE_HPP

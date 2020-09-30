@@ -1,40 +1,43 @@
 /*
     Copyright (C) 2017 Jarthianur
 
-    This file is part of simple-cpp-test-framework.
+    This file is part of TestPlusPlus (Test++).
 
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    TestPlusPlus (Test++) is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    TestPlusPlus (Test++) is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with TestPlusPlus (Test++).  If not, see <https://www.gnu.org/licenses/>.
 */
 
 /// @file
 
-#ifndef SCTF_REPORTER_REPORTER_HPP
-#define SCTF_REPORTER_REPORTER_HPP
+#ifndef TPP_REPORT_REPORTER_HPP
+#define TPP_REPORT_REPORTER_HPP
 
 #include <algorithm>
 #include <cstddef>
+#include <cstdint>
 #include <fstream>
 #include <memory>
 #include <ostream>
 #include <stdexcept>
 #include <string>
 
-#include "testsuite/testsuite.hpp"
+#include "test/testsuite.hpp"
 
-namespace sctf
+namespace tpp
 {
 namespace intern
+{
+namespace report
 {
 namespace fmt
 {
@@ -75,7 +78,7 @@ public:
      * @param ts_ is the testsuite to report.
      */
     void
-    report(testsuite_ptr const& ts_) {
+    report(test::testsuite_ptr const& ts_) {
         report_testsuite(ts_);
         m_out_stream.flush();
     }
@@ -168,13 +171,13 @@ protected:
      * @param ts_ is the testsuite to generate the report for.
      */
     virtual void
-    report_testsuite(testsuite_ptr const& ts_) {
+    report_testsuite(test::testsuite_ptr const& ts_) {
         m_abs_errs += ts_->statistics().errors();
         m_abs_fails += ts_->statistics().failures();
         m_abs_tests += ts_->statistics().tests();
-        m_abs_time += ts_->execution_duration();
+        m_abs_time += ts_->duration();
         std::for_each(ts_->testcases().begin(), ts_->testcases().end(),
-                      [this](testcase const& tc) { report_testcase(tc); });
+                      [this](test::testcase const& tc) { report_testcase(tc); });
     }
 
     /**
@@ -184,7 +187,7 @@ protected:
      * @param tc_ is the testcase to generate the report for.
      */
     virtual void
-    report_testcase(testcase const& tc_) = 0;
+    report_testcase(test::testcase const& tc_) = 0;
 
     /**
      * Print anything to the specified output stream, or file.
@@ -296,9 +299,10 @@ private:
     std::size_t   m_abs_errs   = 0;      ///< Total number of erroneous testcases over all testsuites.
     double        m_abs_time   = 0;      ///< Total amount of time spent on all testsuites.
 };
+}  // namespace report
 }  // namespace intern
 
-using reporter_ptr = intern::reporter_ptr;
-}  // namespace sctf
+using reporter_ptr = intern::report::reporter_ptr;
+}  // namespace tpp
 
-#endif  // SCTF_REPORTER_REPORTER_HPP
+#endif  // TPP_REPORT_REPORTER_HPP
