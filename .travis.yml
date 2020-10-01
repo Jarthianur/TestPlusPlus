@@ -6,7 +6,7 @@ matrix:
 
   - name: "Linux (gcc)"
     os: linux
-    dist: xenial
+    dist: bionic
     sudo: required
     compiler:
     - gcc
@@ -17,13 +17,13 @@ matrix:
         packages:
         - python-pip
         - g++-8
-        - clang-format-8
+        - clang-format-10
     env:
     - BADGE=linux
     install:
     - export CXX=g++-8
     - export GCOV=gcov-8
-    - export CFMT=clang-format-8
+    - export CFMT=clang-format-10
     - wget -q https://github.com/linux-test-project/lcov/releases/download/v1.15/lcov-1.15.tar.gz
     - tar xf lcov-1.15.tar.gz
     - export LCOV="$PWD/lcov-1.15/bin/lcov --gcov-tool=/usr/bin/$GCOV"
