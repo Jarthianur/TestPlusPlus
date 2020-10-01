@@ -48,9 +48,9 @@ model:
         ./{{ item.target }} -oi '*' --xml test.xml
         ./{{ item.target }} -cosi '*' --md test.md
         ./{{ item.target }} -oi '*' --json test.json
-        ./rel_{{ item.target }} -cos > /dev/null
         $LCOV -c -d . -o test.info
         $LCOV -a base.info -a test.info -o {{ item.target }}.info
+        ./rel_{{ item.target }} -cos > /dev/null
         cat test.xml
         cat test.md
         cat test.json
