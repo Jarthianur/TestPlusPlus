@@ -30,8 +30,8 @@ namespace compare
 {
 namespace ns_match
 {
-static constexpr char const* CMP_STR     = "to be matching";
-static constexpr char const* NEG_CMP_STR = "to be not matching";
+static constexpr auto CMP_STR     = "to be matching";
+static constexpr auto NEG_CMP_STR = "to be not matching";
 }  // namespace ns_match
 
 /**
@@ -86,8 +86,8 @@ public:
 
 namespace ns_like
 {
-static constexpr char const* CMP_STR     = "to be like";
-static constexpr char const* NEG_CMP_STR = "to be not like";
+static constexpr auto CMP_STR     = "to be like";
+static constexpr auto NEG_CMP_STR = "to be not like";
 }  // namespace ns_like
 
 /**

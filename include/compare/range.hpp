@@ -32,8 +32,8 @@ namespace compare
 {
 namespace ns_in_range
 {
-static constexpr char const* CMP_STR     = "to be in range of";
-static constexpr char const* NEG_CMP_STR = "to be not in range of";
+static constexpr auto CMP_STR     = "to be in range of";
+static constexpr auto NEG_CMP_STR = "to be not in range of";
 }  // namespace ns_in_range
 /**
  * Comparator to check for existence of elements in ranges.

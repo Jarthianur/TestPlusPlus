@@ -115,8 +115,8 @@ private:
     namespace compare                                                                                       \
     {                                                                                                       \
     namespace ns_##NAME {                                                                                   \
-        static constexpr char const* CMP_STR     = "to be " CMPSTR;                                         \
-        static constexpr char const* NEG_CMP_STR = "to be not " CMPSTR;                                     \
+        static constexpr auto CMP_STR     = "to be " CMPSTR;                                                \
+        static constexpr auto NEG_CMP_STR = "to be not " CMPSTR;                                            \
     }                                                                                                       \
     template<typename>                                                                                      \
     class NAME                                                                                              \
