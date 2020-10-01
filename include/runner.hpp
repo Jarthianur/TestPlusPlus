@@ -67,6 +67,8 @@ public:
             cmd.parse(argc_, argv_);
         } catch (cmdline_parser::help_called) {
             return static_cast<std::int64_t>(retval::HELP);
+        } catch (std::runtime_error const& e) {
+            return err_exit(e.what());
         }
         return run(cmd.config());
     }
@@ -90,8 +92,7 @@ public:
             rep->end_report();
             return std::min(rep->faults(), static_cast<std::size_t>(std::numeric_limits<std::int64_t>::max()));
         } catch (std::runtime_error const& e) {
-            std::cerr << "A fatal error occurred!\n  what(): " << e.what() << std::endl;
-            return static_cast<std::int64_t>(retval::EXCEPT);
+            return err_exit(e.what());
         }
     }
 
@@ -105,6 +106,12 @@ public:
     }
 
 private:
+    static inline auto
+    err_exit(char const* msg_) -> std::int64_t {
+        std::cerr << "A fatal error occurred!\n  what(): " << msg_ << std::endl;
+        return static_cast<std::int64_t>(retval::EXCEPT);
+    }
+
     std::vector<test::testsuite_ptr> m_testsuites;  ///< Testsuites contained in this runner.
 };
 }  // namespace intern

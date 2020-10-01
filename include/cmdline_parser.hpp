@@ -42,11 +42,11 @@ public:
         auto const args{tokenize_args(argc_, argv_)};
         m_progname = argv_[0];
         for (auto i{1UL}; i < args.size(); ++i) {
-            eval_arg(args[i], [&] {
+            eval_arg(args[i], [&](std::string const& arg_) {
                 try {
                     return args.at(++i);
                 } catch (std::out_of_range const&) {
-                    throw std::runtime_error(args[i - 1] + " requires an argument!");
+                    throw std::runtime_error(arg_ + " requires an argument!");
                 }
             });
         }
@@ -109,11 +109,11 @@ private:
                 make_option('s')(c_, [&] { m_cfg.rep_cfg.strip = true; });
                 make_option('e')(c_, [&] {
                     set_filter_mode(config::filter_mode::EXCLUDE);
-                    m_cfg.fpattern.push_back(to_regex(getval_fn_()));
+                    m_cfg.fpattern.push_back(to_regex(getval_fn_(arg_)));
                 });
                 make_option('i')(c_, [&] {
                     set_filter_mode(config::filter_mode::INCLUDE);
-                    m_cfg.fpattern.push_back(to_regex(getval_fn_()));
+                    m_cfg.fpattern.push_back(to_regex(getval_fn_(arg_)));
                 });
             });
         } catch (matched) {
