@@ -37,7 +37,7 @@ namespace intern
 class runner
 {
 public:
-    enum class retval : std::int64_t
+    enum class retval : std::int32_t
     {
         HELP   = -1,
         EXCEPT = -2
@@ -61,12 +61,12 @@ public:
      * @return the sum of non successful tests.
      */
     auto
-    run(int argc_, char** argv_) noexcept -> std::int64_t {
+    run(int argc_, char** argv_) noexcept -> std::int32_t {
         cmdline_parser cmd;
         try {
             cmd.parse(argc_, argv_);
         } catch (cmdline_parser::help_called) {
-            return static_cast<std::int64_t>(retval::HELP);
+            return static_cast<std::int32_t>(retval::HELP);
         } catch (std::runtime_error const& e) {
             return err_exit(e.what());
         }
@@ -74,23 +74,23 @@ public:
     }
 
     auto
-    run(config const& cfg_) noexcept -> std::int64_t {
+    run(config const& cfg_) noexcept -> std::int32_t {
         bool const finc{cfg_.fmode != config::filter_mode::EXCLUDE};
         try {
             auto rep{cfg_.reporter()};
             rep->begin_report();
             std::for_each(m_testsuites.begin(), m_testsuites.end(), [&](test::testsuite_ptr& ts_) {
-                bool const match{cfg_.fpattern.empty() ||
-                                 std::any_of(cfg_.fpattern.cbegin(), cfg_.fpattern.cend(), [&](std::regex const& re_) {
-                                     return std::regex_match(ts_->name(), re_);
-                                 })};
+                bool const match{cfg_.fpattern.empty() || std::any_of(cfg_.fpattern.cbegin(), cfg_.fpattern.cend(),
+                                                                      [&](std::regex const& re_) -> bool {
+                                                                          return std::regex_match(ts_->name(), re_);
+                                                                      })};
                 if (finc == match) {
                     ts_->run();
                     rep->report(ts_);
                 }
             });
             rep->end_report();
-            return std::min(rep->faults(), static_cast<std::size_t>(std::numeric_limits<std::int64_t>::max()));
+            return std::min(rep->faults(), static_cast<std::size_t>(std::numeric_limits<std::int32_t>::max()));
         } catch (std::runtime_error const& e) {
             return err_exit(e.what());
         }
@@ -107,7 +107,7 @@ public:
 
 private:
     static inline auto
-    err_exit(char const* msg_) -> std::int64_t {
+    err_exit(char const* msg_) -> std::int32_t {
         std::cerr << "A fatal error occurred!\n  what(): " << msg_ << std::endl;
         return static_cast<std::int64_t>(retval::EXCEPT);
     }
