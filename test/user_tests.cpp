@@ -59,7 +59,7 @@ DESCRIBE_PAR("TestMyClass") {
         ASSERT(fixture_.i(), GT(), 0);
     };
     TEST("some test with d") {
-        ASSERT(fixture_.d(), LT(), 5.0);
+        ASSERT(fixture_.d(), LT(), 16.5);
     };
 
     TEST("check epsilon") {
