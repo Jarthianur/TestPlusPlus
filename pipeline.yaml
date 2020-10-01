@@ -37,18 +37,22 @@ model:
         mkdir -p $BUILD_DIR
         cp -r test $BUILD_DIR/{{ item.target }}
         pushd $BUILD_DIR/{{ item.target }}
-        time $CXX -o {{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../../release $(echo -en *.cpp)
+        time $CXX -o rel_{{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../../release $(echo -en *.cpp)
+        time $CXX -o {{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../../include $(echo -en *.cpp)
         popd
       test_script: |
         pushd $BUILD_DIR/{{ item.target }}
         $LCOV -c -i -d . -o base.info
-        ./{{ item.target }} -co
-        ./{{ item.target }} -co --xml test.xml
-        ./{{ item.target }} -co --md test.md
+        ./{{ item.target }} -coi '*'
+        ./{{ item.target }} -oi '*' --xml test.xml
+        ./{{ item.target }} -cosi '*' --md test.md
+        ./{{ item.target }} -oi '*' --json test.json
+        ./rel_{{ item.target }} -cos > /dev/null
         $LCOV -c -d . -o test.info
         $LCOV -a base.info -a test.info -o {{ item.target }}.info
         cat test.xml
         cat test.md
+        cat test.json
         popd
     osx:
       build_script: |
@@ -58,10 +62,9 @@ model:
       test_script: |
         echo "./test/{{ item.target }}"
         ./test/{{ item.target }} -co
-        ./test/{{ item.target }} -co --xml test.xml
-        ./test/{{ item.target }} -co --md test.md
-        cat test.xml
-        cat test.md
+        ./test/{{ item.target }} -co --xml
+        ./test/{{ item.target }} -co --md
+        ./test/{{ item.target }} -co --json
 
 pipeline:
 - stage(analysis):
@@ -122,9 +125,7 @@ pipeline:
           {% for entry in model.variables.linux %}
             echo -en ' -a {{ entry.target }}/{{ entry.target }}.info' >> .targets
           {% endfor %}
-          echo "$LCOV $(cat .targets) -o all.info"
           $LCOV $(cat .targets) -o all.info
-          echo "$LCOV -e all.info \"$(dirname $PWD)/include/*\" -o ../reports/{{ env.cpp_std }}/lcov.info"
           $LCOV -e all.info "$(dirname $PWD)/include/*" -o ../reports/{{ env.cpp_std }}/lcov.info
           popd
         tags:
