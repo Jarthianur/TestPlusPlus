@@ -79,7 +79,7 @@ private:
     report_testcase(test::testcase const& tc_) override {
         auto const status = [&] {
             switch (tc_.result()) {
-                case test::testcase::HAS_ERROR: return "ERROR";
+                case test::testcase::HAD_ERROR: return "ERROR";
                 case test::testcase::HAS_FAILED: return "FAILED";
                 default: return "PASSED";
             }

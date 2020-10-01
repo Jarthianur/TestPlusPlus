@@ -86,7 +86,7 @@ private:
         *this << newline() << "<testcase name=\"" << tc_.name() << "\" classname=\"" << tc_.suite_name() << "\" time=\""
               << tc_.duration() << "\"";
         if (tc_.result() != test::testcase::HAS_PASSED) {
-            auto const unsuccess = [&] { return tc_.result() == test::testcase::HAS_ERROR ? "error" : "failure"; };
+            auto const unsuccess = [&] { return tc_.result() == test::testcase::HAD_ERROR ? "error" : "failure"; };
             *this << '>';
             push_indent();
             *this << newline() << '<' << unsuccess() << " message=\"" << tc_.reason() << "\"></" << unsuccess() << '>';

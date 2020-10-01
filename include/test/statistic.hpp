@@ -68,9 +68,9 @@ private:
     friend class testsuite;
     friend class testsuite_parallel;
 
-    std::size_t m_num_tests = 0;  ///< Total number of tests.
-    std::size_t m_num_fails = 0;  ///< Number of failed tests.
-    std::size_t m_num_errs  = 0;  ///< Number of erroneous tests.
+    std::size_t m_num_tests{0};  ///< Total number of tests.
+    std::size_t m_num_fails{0};  ///< Number of failed tests.
+    std::size_t m_num_errs{0};   ///< Number of erroneous tests.
 };
 }  // namespace test
 }  // namespace intern

@@ -18,8 +18,6 @@
 #ifndef TPP_REPORT_CONSOLE_REPORTER_HPP
 #define TPP_REPORT_CONSOLE_REPORTER_HPP
 
-#include <memory>
-
 #include "report/reporter.hpp"
 
 namespace tpp
@@ -34,14 +32,6 @@ namespace report
 class console_reporter : public reporter
 {
 public:
-    console_reporter(console_reporter const&)     = delete;
-    console_reporter(console_reporter&&) noexcept = delete;
-    ~console_reporter() noexcept override         = default;
-    auto
-    operator=(console_reporter const&) -> console_reporter& = delete;
-    auto
-    operator=(console_reporter&&) noexcept -> console_reporter& = delete;
-
     /**
      * Create a console reporter.
      *
@@ -85,7 +75,7 @@ private:
             *this << "stderr = \"" << tc_.cerr() << "\"" << fmt::LF << fmt::SPACE << fmt::SPACE;
         }
         switch (tc_.result()) {
-            case test::testcase::HAS_ERROR: *this << color(RED) << "ERROR! " << tc_.reason(); break;
+            case test::testcase::HAD_ERROR: *this << color(RED) << "ERROR! " << tc_.reason(); break;
             case test::testcase::HAS_FAILED: *this << color(BLUE) << "FAILED! " << tc_.reason(); break;
             default: *this << color(GREEN) << "PASSED!"; break;
         }
@@ -101,8 +91,8 @@ private:
         } else {
             *this << color(CYAN);
         }
-        *this << "=== Result ===" << fmt::LF << "passes: " << abs_tests() - faults() << "/" << abs_tests()
-              << " failures: " << abs_fails() << "/" << abs_tests() << " errors: " << abs_errs() << "/" << abs_tests()
+        *this << "=== Result ===" << fmt::LF << "passes: " << abs_tests() - faults() << '/' << abs_tests()
+              << " failures: " << abs_fails() << '/' << abs_tests() << " errors: " << abs_errs() << '/' << abs_tests()
               << " (" << abs_time() << "ms)" << color() << fmt::LF;
     }
 };

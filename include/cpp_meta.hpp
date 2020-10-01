@@ -52,4 +52,16 @@
 
 #endif
 
+// Experimental feature, that allows atomic blocks.
+// Can be enabled by -fgnu-tm in gcc.
+#if __cpp_transactional_memory >= 201505
+
+#    define TPP_INTERN_SYNC synchronized
+
+#else
+
+#    define TPP_INTERN_SYNC
+
+#endif
+
 #endif  // TPP_CPP_META_HPP

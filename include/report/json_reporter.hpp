@@ -87,13 +87,13 @@ private:
     report_testcase(test::testcase const& tc_) override {
         auto const dres = decode_result(tc_.result());
         conditional_prefix(m_first_test);
-        json_property_string("name", tc_.name(), color(W_BOLD)) << "," << newline();
-        json_property_string("result", std::get<0>(dres), color(std::get<1>(dres))) << "," << newline();
-        json_property_string("reason", tc_.reason(), color(std::get<1>(dres))) << "," << newline();
+        json_property_string("name", tc_.name(), color(W_BOLD)) << ',' << newline();
+        json_property_string("result", std::get<0>(dres), color(std::get<1>(dres))) << ',' << newline();
+        json_property_string("reason", tc_.reason(), color(std::get<1>(dres))) << ',' << newline();
         json_property_value("time", tc_.duration());
         if (capture()) {
-            *this << "," << newline();
-            json_property_string("stdout", tc_.cout()) << "," << newline();
+            *this << ',' << newline();
+            json_property_string("stdout", tc_.cout()) << ',' << newline();
             json_property_string("stderr", tc_.cerr());
         }
         pop_indent();
@@ -107,19 +107,19 @@ private:
 
         *this << '{';
         push_indent();
-        *this << newline() << "\"testsuites\":" << space() << "[";
+        *this << newline() << "\"testsuites\":" << space() << '[';
     }
 
     void
     end_report() override {
         *this << newline() << "]," << newline();
-        json_property_value("count", abs_tests(), color(W_BOLD)) << "," << newline();
-        json_property_value("passes", abs_tests() - faults(), color(GREEN)) << "," << newline();
-        json_property_value("failures", abs_fails(), color(BLUE)) << "," << newline();
-        json_property_value("errors", abs_errs(), color(RED)) << "," << newline();
+        json_property_value("count", abs_tests(), color(W_BOLD)) << ',' << newline();
+        json_property_value("passes", abs_tests() - faults(), color(GREEN)) << ',' << newline();
+        json_property_value("failures", abs_fails(), color(BLUE)) << ',' << newline();
+        json_property_value("errors", abs_errs(), color(RED)) << ',' << newline();
         json_property_value("time", abs_time());
         pop_indent();
-        *this << newline() << "}" << newline();
+        *this << newline() << '}' << newline();
     }
 
     template<typename T>
@@ -152,14 +152,14 @@ private:
     static auto
     decode_result(test::testcase::results res_) -> std::tuple<char const*, colors> {
         switch (res_) {
-            case test::testcase::HAS_ERROR: return {"error", RED};
+            case test::testcase::HAD_ERROR: return {"error", RED};
             case test::testcase::HAS_FAILED: return {"failure", BLUE};
             default: return {"success", GREEN};
         }
     }
 
-    bool m_first_suite = true;
-    bool m_first_test  = true;
+    bool m_first_suite{true};
+    bool m_first_test{true};
 };
 }  // namespace report
 }  // namespace intern

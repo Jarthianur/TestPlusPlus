@@ -21,7 +21,6 @@
 #define TPP_REPORT_REPORTER_HPP
 
 #include <algorithm>
-#include <cstddef>
 #include <cstdint>
 #include <fstream>
 #include <memory>
@@ -39,18 +38,18 @@ namespace report
 {
 namespace fmt
 {
-static constexpr char const* SPACE = " ";   ///< Single space
-static constexpr char const* LF    = "\n";  ///< Single linefeed
+static constexpr auto SPACE = " ";   ///< Single space
+static constexpr auto LF    = "\n";  ///< Single linefeed
 namespace ansi
 {
-static constexpr char const* RED        = "\x1b[0;91m";
-static constexpr char const* GREEN      = "\x1b[0;92m";
-static constexpr char const* YELLOW     = "\x1b[0;93m";
-static constexpr char const* BLUE       = "\x1b[0;94m";
-static constexpr char const* CYAN       = "\x1b[0;96m";
-static constexpr char const* MAGENTA    = "\x1b[0;95m";
-static constexpr char const* WHITE_BOLD = "\x1b[1;97m";
-static constexpr char const* RST        = "\x1b[0m";
+static constexpr auto RED        = "\x1b[0;91m";
+static constexpr auto GREEN      = "\x1b[0;92m";
+static constexpr auto YELLOW     = "\x1b[0;93m";
+static constexpr auto BLUE       = "\x1b[0;94m";
+static constexpr auto CYAN       = "\x1b[0;96m";
+static constexpr auto MAGENTA    = "\x1b[0;95m";
+static constexpr auto WHITE_BOLD = "\x1b[1;97m";
+static constexpr auto RST        = "\x1b[0m";
 }  // namespace ansi
 }  // namespace fmt
 
@@ -90,7 +89,7 @@ public:
         m_abs_errs  = 0;
         m_abs_fails = 0;
         m_abs_tests = 0;
-        m_abs_time  = 0.0;
+        m_abs_time  = .0;
     };
 
     /**
@@ -105,7 +104,7 @@ public:
      *
      * @return the sum of failures and errors.
      */
-    auto
+    inline auto
     faults() const -> std::size_t {
         return m_abs_errs + m_abs_fails;
     }
@@ -221,37 +220,37 @@ protected:
         return "";
     }
 
-    void
+    inline void
     push_indent(std::uint32_t lvl_ = 2) {
         m_indent_lvl += lvl_;
     }
 
-    void
+    inline void
     pop_indent(std::uint32_t lvl_ = 2) {
         m_indent_lvl -= lvl_;
     }
 
-    auto
+    inline auto
     capture() const -> bool {
         return m_capture;
     }
 
-    auto
+    inline auto
     abs_tests() const -> std::size_t {
         return m_abs_tests;
     }
 
-    auto
+    inline auto
     abs_fails() const -> std::size_t {
         return m_abs_fails;
     }
 
-    auto
+    inline auto
     abs_errs() const -> std::size_t {
         return m_abs_errs;
     }
 
-    auto
+    inline auto
     abs_time() const -> double {
         return m_abs_time;
     }

@@ -38,8 +38,8 @@ using test_function = std::function<void()>;
  */
 struct test_context final
 {
-    char const* tc_name;  ///< testcase name
-    char const* ts_name;  ///< testsuite name
+    char const* const tc_name;  ///< testcase name
+    char const* const ts_name;  ///< testsuite name
 };
 
 /**
@@ -87,7 +87,7 @@ public:
         IS_UNDONE,   ///< not yet performed
         HAS_PASSED,  ///< test passed successfully
         HAS_FAILED,  ///< at least one assertion failed
-        HAS_ERROR    ///< an unexpected exception was thrown
+        HAD_ERROR    ///< an unexpected exception was thrown
     };
 
     /**
@@ -216,18 +216,18 @@ private:
      */
     inline void
     error(char const* msg_ = "unknown error") {
-        m_result  = HAS_ERROR;
+        m_result  = HAD_ERROR;
         m_err_msg = msg_;
     }
 
-    char const*   m_name;                  ///< Name or description of this testcase.
-    char const*   m_suite_name;            ///< Context description (testsuite) where this testcase lives.
-    results       m_result   = IS_UNDONE;  ///< Result produced by the test function.
-    double        m_duration = 0.0;        ///< Time in milliseconds, that the test function consumed.
-    std::string   m_err_msg;               ///< Message describing the reason for failure, or error.
-    std::string   m_cout;                  ///< Captured output to stdout.
-    std::string   m_cerr;                  ///< Captured output to stderr.
-    test_function m_test_fn;               ///< Test function that performs the actual test.
+    char const*   m_name;               ///< Name or description of this testcase.
+    char const*   m_suite_name;         ///< Context description (testsuite) where this testcase lives.
+    results       m_result{IS_UNDONE};  ///< Result produced by the test function.
+    double        m_duration{.0};       ///< Time in milliseconds, that the test function consumed.
+    std::string   m_err_msg;            ///< Message describing the reason for failure, or error.
+    std::string   m_cout;               ///< Captured output to stdout.
+    std::string   m_cerr;               ///< Captured output to stderr.
+    test_function m_test_fn;            ///< Test function that performs the actual test.
 };
 }  // namespace test
 }  // namespace intern

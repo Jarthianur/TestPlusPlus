@@ -55,7 +55,7 @@ name_for_type(T const& arg_) -> std::string const& {
         return name;
     }
 #ifdef TPP_INTERN_SYS_UNIX
-    int                     status = -1;
+    int                     status{-1};
     std::unique_ptr<char[]> sig(abi::__cxa_demangle(typeid(arg_).name(), nullptr, nullptr, &status));
     name = sig.get();
 #else
@@ -92,8 +92,8 @@ escaped_char(char c_) -> std::string {
  */
 static auto
 escaped_string(std::string const& str_) -> std::string {
-    std::string s = str_;
-    std::size_t p = 0;
+    std::string s{str_};
+    std::size_t p{0};
     while ((p = s.find_first_of("\r\n\t\f\v\"\b\\", p)) != std::string::npos) {
         s.replace(p, 1, escaped_char(s[p]));
         p += 2;

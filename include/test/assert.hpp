@@ -27,6 +27,7 @@
 #include "test/duration.hpp"
 #include "test/loc.hpp"
 
+#include "cpp_meta.hpp"
 #include "stringify.hpp"
 #include "traits.hpp"
 
@@ -195,6 +196,21 @@
 
 namespace tpp
 {
+template<typename T>
+class throwable
+{
+public:
+    explicit throwable(T const& t_) : m_t(t_) {}
+
+    auto
+    get() const -> T const& {
+        return m_t;
+    }
+
+private:
+    T m_t;
+};
+
 namespace intern
 {
 namespace test
@@ -211,7 +227,7 @@ namespace test
 template<typename S>
 void
 assert_statement(S&& stmt_, loc const& loc_) {
-    compare::comparison res = std::get<0>(stmt_)(std::get<1>(stmt_), std::get<2>(stmt_));
+    compare::comparison res{std::get<0>(stmt_)(std::get<1>(stmt_), std::get<2>(stmt_))};
     if (!res) {
         throw assertion_failure(*res, loc_);
     }
@@ -230,11 +246,11 @@ assert_statement(S&& stmt_, loc const& loc_) {
  */
 template<typename T, typename F>
 auto
-assert_throws(F&& fn_, char const* tname_, loc const& loc_) -> T {
+assert_throws(F&& fn_, char const* tname_, loc const& loc_) -> throwable<T> {
     try {
         fn_();
     } catch (T const& e) {
-        return e;
+        return throwable<T>{e};
     } catch (std::exception const& e) {
         throw assertion_failure(
           "Wrong exception thrown, caught " + to_string(e) + "(\"" + escaped_string(e.what()) + "\")", loc_);
@@ -297,13 +313,15 @@ assert_nothrow(F&& fn_, loc const& loc_) {
 template<typename F, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
 auto
 assert_runtime(F&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_()) {
-    duration        dur;
-    decltype(fn_()) res    = fn_();
-    double          dur_ms = dur.get();
-    if (dur_ms > max_ms_) {
-        throw assertion_failure("runtime > " + to_string(max_ms_) + "ms", loc_);
+    TPP_INTERN_SYNC {
+        duration        dur;
+        decltype(fn_()) res{fn_()};
+        double          dur_ms{dur.get()};
+        if (dur_ms > max_ms_) {
+            throw assertion_failure("runtime > " + to_string(max_ms_) + "ms", loc_);
+        }
+        return res;
     }
-    return res;
 }
 
 /**
@@ -317,9 +335,12 @@ assert_runtime(F&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_()) {
 template<typename F, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
 void
 assert_runtime(F&& fn_, double max_ms_, loc const& loc_) {
-    duration dur;
-    fn_();
-    double dur_ms = dur.get();
+    double dur_ms{.0};
+    TPP_INTERN_SYNC {
+        duration dur;
+        fn_();
+        dur_ms = dur.get();
+    }
     if (dur_ms > max_ms_) {
         throw assertion_failure("runtime > " + to_string(max_ms_) + "ms", loc_);
     }

@@ -38,14 +38,6 @@ namespace test
 class testsuite_parallel : public testsuite
 {
 public:
-    testsuite_parallel(testsuite_parallel const&)     = delete;
-    testsuite_parallel(testsuite_parallel&&) noexcept = delete;
-    ~testsuite_parallel() noexcept override           = default;
-    auto
-    operator=(testsuite_parallel const&) -> testsuite_parallel& = delete;
-    auto
-    operator=(testsuite_parallel&&) noexcept -> testsuite_parallel& = delete;
-
     /**
      * Create a new testsuite.
      *
@@ -62,30 +54,30 @@ public:
      */
     void
     run() override {
-        if (m_state != DONE) {
+        if (m_state != IS_DONE) {
             if (m_testcases.size() > static_cast<std::size_t>(std::numeric_limits<std::int64_t>::max())) {
                 throw std::overflow_error("Too many testcases! Size would overflow loop variant.");
             }
-            auto const tc_size  = static_cast<std::int64_t>(m_testcases.size());
+            auto const tc_size{static_cast<std::int64_t>(m_testcases.size())};
             m_stats.m_num_tests = m_testcases.size();
             streambuf_proxy_omp mt_buf_cout(std::cout);
             streambuf_proxy_omp mt_buf_cerr(std::cerr);
             m_setup_fn();
 #pragma omp parallel default(shared)
             {  // BEGIN parallel section
-                double      tmp   = 0.0;
-                std::size_t fails = 0;
-                std::size_t errs  = 0;
+                double      tmp{.0};
+                std::size_t fails{0};
+                std::size_t errs{0};
                 // OpenMP 2 compatible - MSVC not supporting higher version
 #pragma omp for schedule(dynamic)
                 for (std::int64_t i = 0; i < tc_size; ++i) {
-                    auto& tc = m_testcases[static_cast<std::size_t>(i)];
+                    auto& tc{m_testcases[static_cast<std::size_t>(i)]};
                     if (tc.result() == testcase::IS_UNDONE) {
                         m_pretest_fn();
                         tc();
                         switch (tc.result()) {
                             case testcase::HAS_FAILED: ++fails; break;
-                            case testcase::HAS_ERROR: ++errs; break;
+                            case testcase::HAD_ERROR: ++errs; break;
                             default: break;
                         }
                         tmp += tc.duration();
@@ -104,7 +96,7 @@ public:
                 }  // END critical section
             }      // END parallel section
             m_teardown_fn();
-            m_state = DONE;
+            m_state = IS_DONE;
         }
     }
 

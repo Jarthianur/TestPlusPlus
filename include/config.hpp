@@ -60,10 +60,10 @@ struct config
         }
     }
 
-    report_format           rep_fmt = report_format::CNS;
+    report_format           rep_fmt{report_format::CNS};
     report::reporter_config rep_cfg;
     std::vector<std::regex> fpattern;
-    filter_mode             fmode = filter_mode::NONE;
+    filter_mode             fmode{filter_mode::NONE};
 };
 }  // namespace intern
 

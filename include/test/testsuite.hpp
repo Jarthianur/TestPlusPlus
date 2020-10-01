@@ -25,7 +25,6 @@
 #include <functional>
 #include <iostream>
 #include <memory>
-#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -79,18 +78,18 @@ public:
      */
     virtual void
     run() {
-        if (m_state != DONE) {
+        if (m_state != IS_DONE) {
             m_stats.m_num_tests = m_testcases.size();
             streambuf_proxy buf_cout(std::cout);
             streambuf_proxy buf_cerr(std::cerr);
             m_setup_fn();
-            std::for_each(m_testcases.begin(), m_testcases.end(), [this, &buf_cerr, &buf_cout](testcase& tc_) {
+            std::for_each(m_testcases.begin(), m_testcases.end(), [&](testcase& tc_) {
                 if (tc_.result() == testcase::IS_UNDONE) {
                     m_pretest_fn();
                     tc_();
                     switch (tc_.result()) {
                         case testcase::HAS_FAILED: ++m_stats.m_num_fails; break;
-                        case testcase::HAS_ERROR: ++m_stats.m_num_errs; break;
+                        case testcase::HAD_ERROR: ++m_stats.m_num_errs; break;
                         default: break;
                     }
                     m_exec_dur += tc_.duration();
@@ -102,7 +101,7 @@ public:
                 }
             });
             m_teardown_fn();
-            m_state = DONE;
+            m_state = IS_DONE;
         }
     }
 
@@ -115,7 +114,7 @@ public:
     void
     test(char const* name_, hook_function&& fn_) {
         m_testcases.emplace_back(test_context{name_, m_name}, std::move(fn_));
-        m_state = PENDING;
+        m_state = IS_PENDING;
     }
 
     /**
@@ -216,12 +215,11 @@ protected:
      */
     struct optional_functor final
     {
-        auto
-        operator()() noexcept -> optional_functor& {
+        void
+        operator()() const noexcept {
             if (fn) {
                 fn();
             }
-            return *this;
         }
 
         hook_function fn;
@@ -232,17 +230,17 @@ protected:
      */
     enum states
     {
-        PENDING,  /// At least one testcase has not been run.
-        DONE      /// All testcases have been run.
+        IS_PENDING,  /// At least one testcase has not been run.
+        IS_DONE      /// All testcases have been run.
     };
 
-    char const*                                 m_name;         ///< Name, or description of this testsuite.
+    char const* const                           m_name;         ///< Name, or description of this testsuite.
     std::chrono::system_clock::time_point const m_create_time;  ///< Point in time, when this testsuite was created.
-    double m_exec_dur = 0.0;  ///< Time in milliseconds, the whole testsuite needed to complete.
+    double m_exec_dur{.0};  ///< Time in milliseconds, the whole testsuite needed to complete.
 
-    statistic             m_stats;            ///< Stores test results.
-    std::vector<testcase> m_testcases;        ///< Stores testcases.
-    states                m_state = PENDING;  ///< States, whether all testcases have been executed.
+    statistic             m_stats;              ///< Stores test results.
+    std::vector<testcase> m_testcases;          ///< Stores testcases.
+    states                m_state{IS_PENDING};  ///< States, whether all testcases have been executed.
 
     optional_functor m_setup_fn;     ///< Optional function, that is executed before all testcases.
     optional_functor m_teardown_fn;  ///< Optional function, that is executed after all testcases.

@@ -39,9 +39,9 @@ public:
 
     void
     parse(int argc_, char** argv_) {
-        auto const args = tokenize_args(argc_, argv_);
-        m_progname      = argv_[0];
-        for (std::size_t i = 1; i < args.size(); ++i) {
+        auto const args{tokenize_args(argc_, argv_)};
+        m_progname = argv_[0];
+        for (auto i{1UL}; i < args.size(); ++i) {
             eval_arg(args[i], [&] {
                 try {
                     return args.at(++i);
@@ -52,39 +52,12 @@ public:
         }
     }
 
-    auto
+    inline auto
     config() -> config const& {
         return m_cfg;
     }
 
 private:
-    template<typename Fn>
-    void
-    eval_arg(std::string const& arg_, Fn&& getval_fn_) {
-        try {
-            make_option(+"--help")(arg_, [&] { print_help(); });
-            make_option(+"--xml")(arg_, [&] { m_cfg.rep_fmt = config::report_format::XML; });
-            make_option(+"--md")(arg_, [&] { m_cfg.rep_fmt = config::report_format::MD; });
-            make_option(+"--json")(arg_, [&] { m_cfg.rep_fmt = config::report_format::JSON; });
-            combined_option{}(arg_, [&](char c_) {
-                make_option('c')(c_, [&] { m_cfg.rep_cfg.color = true; });
-                make_option('o')(c_, [&] { m_cfg.rep_cfg.capture_out = true; });
-                make_option('s')(c_, [&] { m_cfg.rep_cfg.strip = true; });
-                make_option('e')(c_, [&] {
-                    set_filter_mode(config::filter_mode::EXCLUDE);
-                    m_cfg.fpattern.push_back(to_regex(getval_fn_()));
-                });
-                make_option('i')(c_, [&] {
-                    set_filter_mode(config::filter_mode::INCLUDE);
-                    m_cfg.fpattern.push_back(to_regex(getval_fn_()));
-                });
-            });
-        } catch (matched) {
-            return;
-        }
-        m_cfg.rep_cfg.outfile = arg_;
-    }
-
     struct matched
     {};
 
@@ -122,8 +95,35 @@ private:
         }
     };
 
+    template<typename Fn>
+    void
+    eval_arg(std::string const& arg_, Fn&& getval_fn_) {
+        try {
+            make_option(+"--help")(arg_, [&] { print_help(); });
+            make_option(+"--xml")(arg_, [&] { m_cfg.rep_fmt = config::report_format::XML; });
+            make_option(+"--md")(arg_, [&] { m_cfg.rep_fmt = config::report_format::MD; });
+            make_option(+"--json")(arg_, [&] { m_cfg.rep_fmt = config::report_format::JSON; });
+            combined_option{}(arg_, [&](char c_) {
+                make_option('c')(c_, [&] { m_cfg.rep_cfg.color = true; });
+                make_option('o')(c_, [&] { m_cfg.rep_cfg.capture_out = true; });
+                make_option('s')(c_, [&] { m_cfg.rep_cfg.strip = true; });
+                make_option('e')(c_, [&] {
+                    set_filter_mode(config::filter_mode::EXCLUDE);
+                    m_cfg.fpattern.push_back(to_regex(getval_fn_()));
+                });
+                make_option('i')(c_, [&] {
+                    set_filter_mode(config::filter_mode::INCLUDE);
+                    m_cfg.fpattern.push_back(to_regex(getval_fn_()));
+                });
+            });
+        } catch (matched) {
+            return;
+        }
+        m_cfg.rep_cfg.outfile = arg_;
+    }
+
     template<typename T>
-    static inline auto
+    static auto
     make_option(T&& t_) -> option<T> {
         return option<T>{std::forward<T>(t_)};
     }
@@ -153,12 +153,12 @@ private:
     static auto
     tokenize_args(int argc_, char** argv_) -> std::vector<std::string> {
         if (argc_ < 1) {
-            throw std::underflow_error("Too few arguments!");
+            throw std::runtime_error("Too few arguments!");
         }
-        auto                     argc = static_cast<std::size_t>(argc_);
+        auto                     argc{static_cast<std::size_t>(argc_)};
         std::vector<std::string> a;
         a.reserve(argc);
-        for (std::size_t i = 0; i < argc; ++i) {
+        for (auto i{0UL}; i < argc; ++i) {
             std::string arg(argv_[i]);
             if (arg.empty()) {
                 continue;
@@ -188,7 +188,7 @@ private:
     }
 
     struct config m_cfg;
-    char const*   m_progname;
+    char const*   m_progname{nullptr};
 };
 }  // namespace intern
 }  // namespace tpp

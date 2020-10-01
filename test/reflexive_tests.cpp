@@ -259,13 +259,13 @@ SUITE_PAR("test_testcase") {
     TEST("erroneous_execution") {
         testcase tc({"t1", "ctx"}, [] { throw std::logic_error("err"); });
         tc();
-        ASSERT_EQ(tc.result(), testcase::HAS_ERROR);
+        ASSERT_EQ(tc.result(), testcase::HAD_ERROR);
         ASSERT(tc.duration(), GT(), 0.0);
         ASSERT(tc.reason(), EQ(), std::string("err"));
 
         testcase tc2({"t2", "ctx"}, [] { throw 1; });
         tc2();
-        ASSERT_EQ(tc2.result(), testcase::HAS_ERROR);
+        ASSERT_EQ(tc2.result(), testcase::HAD_ERROR);
         ASSERT(tc2.duration(), GT(), 0.0);
         ASSERT(tc2.reason(), EQ(), std::string("unknown error"));
     };
@@ -454,14 +454,14 @@ SUITE_PAR("test_assertions") {
         ASSERT_NOTHROW(ASSERT_THROWS(throw std::logic_error(""), std::logic_error));
         ASSERT_NOTHROW(auto a = ASSERT_THROWS(return maybe_throwing(true), std::logic_error));
         ASSERT_NOTHROW(auto a = ASSERT_THROWS(return maybe_throwing(true), std::logic_error);
-                       ASSERT_EQ(std::string(a.what()), "maybe_throwing"));
+                       ASSERT_EQ(std::string(a.get().what()), "maybe_throwing"));
         // failing
         ASSERT_THROWS(ASSERT_THROWS(return, std::logic_error), assertion_failure);
         ASSERT_THROWS(ASSERT_THROWS(throw std::runtime_error(""), std::logic_error), assertion_failure);
         ASSERT_THROWS(ASSERT_THROWS(throw 1, std::logic_error), assertion_failure);
         ASSERT_THROWS(auto a = ASSERT_THROWS(return maybe_throwing(false), std::logic_error), assertion_failure);
         ASSERT_THROWS(auto a = ASSERT_THROWS(return maybe_throwing(false), std::logic_error);
-                      ASSERT_EQ(a.what(), ""), assertion_failure);
+                      ASSERT_EQ(a.get().what(), ""), assertion_failure);
     };
     TEST("assert_nothrow") {
         // successful
