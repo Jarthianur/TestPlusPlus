@@ -37,11 +37,12 @@ model:
         mkdir -p $BUILD_DIR
         cp -r test $BUILD_DIR/{{ item.target }}
         pushd $BUILD_DIR/{{ item.target }}
-        time $CXX -o rel_{{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../../release $(echo -en *.cpp)
-        time $CXX -o {{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../../include $(echo -en *.cpp)
+        $CXX -o rel_{{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../../release $(echo -en *.cpp)
+        $CXX -o {{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../../include $(echo -en *.cpp)
         popd
       test_script: |
         pushd $BUILD_DIR/{{ item.target }}
+        $LCOV -d . -z
         $LCOV -c -i -d . -o base.info
         ./{{ item.target }} -coi '*'
         ./{{ item.target }} -oi '*' --xml test.xml
