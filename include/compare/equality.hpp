@@ -28,10 +28,6 @@
 
 #include "traits.hpp"
 
-TPP_COMPARATOR(equals, "equals", actual_value == expected_value)
-TPP_PROVIDE_COMPARATOR(equals, EQUALS)
-TPP_PROVIDE_COMPARATOR(equals, EQ)
-
 /**
  * Define a global epsilon value, that will be used for every floating point equality comparison by
  * default. This can be used only once per linked binary.
@@ -49,11 +45,17 @@ namespace intern
 {
 namespace compare
 {
+namespace ns_equals
+{
+static constexpr auto CMP_STR     = "to be equals";
+static constexpr auto NEG_CMP_STR = "to be not equals";
+}  // namespace ns_equals
+
 /**
  * Comparator to check for equality floating point numbers.
  */
 template<typename T>
-class f_equals
+class equals
 {
     static_assert(TPP_INTERN_IS_FLOAT(T),
                   "The floating point comparator must not be used with other types than float, or double!");
@@ -62,7 +64,7 @@ class f_equals
     T    m_eps;
 
 public:
-    explicit f_equals(T eps_) : m_eps(eps_) {}
+    explicit equals(T eps_) : m_eps(eps_) {}
 
     auto
     operator!() -> decltype(*this)& {
@@ -70,8 +72,18 @@ public:
         return *this;
     }
 
+    template<typename V, typename E = V, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_FLOAT(V) || !TPP_INTERN_IS_FLOAT(E))>
     auto
-    operator()(T actual_value, T expected_value) const -> comparison {
+    operator()(V const& actual_value, E const& expected_value) const -> comparison {
+        return (actual_value == expected_value) != m_neg ?
+                 comparison() :
+                 comparison(m_neg ? ns_equals::NEG_CMP_STR : ns_equals::CMP_STR,
+                            std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
+    }
+
+    template<typename V, typename E = V, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_FLOAT(V) && TPP_INTERN_IS_FLOAT(E))>
+    auto
+    operator()(V actual_value, E expected_value) const -> comparison {
         return (std::abs(actual_value - expected_value) <=
                 std::max(std::abs(actual_value), std::abs(expected_value)) * m_eps) != m_neg ?
                  comparison() :
@@ -81,7 +93,7 @@ public:
 };
 
 template<>
-class f_equals<void>
+class equals<void>
 {
     bool m_neg{false};
 
@@ -92,13 +104,19 @@ public:
         return *this;
     }
 
-    template<typename V>
+    template<typename V, typename E = V, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_FLOAT(V) || !TPP_INTERN_IS_FLOAT(E))>
     auto
-    operator()(V const& actual_value, V const& expected_value) const -> comparison {
-        static_assert(TPP_INTERN_IS_FLOAT(V),
-                      "The floating point comparator must not be used with other types than float, or double!");
+    operator()(V const& actual_value, E const& expected_value) const -> comparison {
+        return (actual_value == expected_value) != m_neg ?
+                 comparison() :
+                 comparison(m_neg ? ns_equals::NEG_CMP_STR : ns_equals::CMP_STR,
+                            std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
+    }
 
-        typename std::decay<V>::type epsilon_ = static_cast<V>(epsilon);
+    template<typename V, typename E = V, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_FLOAT(V) && TPP_INTERN_IS_FLOAT(E))>
+    auto
+    operator()(V const& actual_value, E const& expected_value) const -> comparison {
+        typename std::decay<E>::type epsilon_ = static_cast<E>(epsilon);
         return (std::abs(actual_value - expected_value) <=
                 std::max(std::abs(actual_value), std::abs(expected_value)) * epsilon_) != m_neg ?
                  comparison() :
@@ -110,7 +128,7 @@ public:
 }  // namespace intern
 }  // namespace tpp
 
-TPP_PROVIDE_COMPARATOR(f_equals, F_EQUALS)
-TPP_PROVIDE_COMPARATOR(f_equals, FEQ)
+TPP_PROVIDE_COMPARATOR(equals, EQUALS)
+TPP_PROVIDE_COMPARATOR(equals, EQ)
 
 #endif  // TPP_COMPARE_EQUALITY_HPP

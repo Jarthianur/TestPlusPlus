@@ -34,27 +34,40 @@
 #    pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
-using namespace tpp;
-using namespace intern;
-using namespace compare;
-using namespace report;
-using namespace test;
+using tpp::EQ;
+using tpp::EQUALS;
+using tpp::GT;
+using tpp::IN;
+using tpp::LESS;
+using tpp::LIKE;
+using tpp::LT;
+using tpp::operator""_re;
+using tpp::operator""_re_i;
+using tpp::MATCH;
+using tpp::intern::to_string;
+using tpp::intern::compare::comparison;
+using tpp::intern::test::assertion_failure;
+using tpp::intern::test::statistic;
+using tpp::intern::test::testcase;
+using tpp::intern::test::testsuite;
+using tpp::intern::test::testsuite_parallel;
+using tpp::intern::test::testsuite_ptr;
 
 SUITE_PAR("test_comparators") {
     TEST("equals") {
         ASSERT_FALSE(!EQ()(1, 1));
-        ASSERT_FALSE(!FEQ()(1.0, 1.0));
-        ASSERT_FALSE(!FEQ()(1.0f, 1.0f));
+        ASSERT_FALSE(!EQ()(1.0, 1.0));
+        ASSERT_FALSE(!EQ()(1.0F, 1.0F));
         ASSERT_TRUE(!(!EQ())(1, 1));
-        ASSERT_TRUE(!(!FEQ())(1.0, 1.0));
-        ASSERT_TRUE(!(!FEQ())(1.0f, 1.0f));
+        ASSERT_TRUE(!(!EQ())(1.0, 1.0));
+        ASSERT_TRUE(!(!EQ())(1.0F, 1.0F));
         ASSERT_TRUE(!EQ()(2, 1));
-        ASSERT_TRUE(!FEQ()(1.1, 2.0));
-        ASSERT_TRUE(!FEQ()(1.1f, 2.0f));
+        ASSERT_TRUE(!EQ()(1.1, 2.0));
+        ASSERT_TRUE(!EQ()(1.1F, 2.0F));
         ASSERT_FALSE(!(!EQ())(2, 1));
-        ASSERT_FALSE(!(!FEQ())(1.1, 2.0));
-        ASSERT_FALSE(!(!FEQ())(1.1f, 2.0f));
-        comparison c = equals<void>()(1, 2);
+        ASSERT_FALSE(!(!EQ())(1.1, 2.0));
+        ASSERT_FALSE(!(!EQ())(1.1F, 2.0F));
+        comparison c = tpp::intern::compare::equals<void>()(1, 2);
         ASSERT_TRUE(!c);
         ASSERT(*c, EQ(), std::string("Expected 1 to be equals 2"));
     };
@@ -394,12 +407,12 @@ SUITE_PAR("test_assertions") {
         ASSERT_NOTHROW(ASSERT_EQ(1, 1));
         ASSERT_NOTHROW(ASSERT_EQ(true, true));
         ASSERT_NOTHROW(ASSERT_EQ("", ""));
-        ASSERT_NOTHROW(ASSERT(1.12, FEQ(0.1), 1.15));
+        ASSERT_NOTHROW(ASSERT(1.12, EQ(0.1), 1.15));
         // failing
         ASSERT_THROWS(ASSERT_EQ(1, 2), assertion_failure);
         ASSERT_THROWS(ASSERT_EQ(false, true), assertion_failure);
         ASSERT_THROWS(ASSERT_EQ("b", "a"), assertion_failure);
-        ASSERT_THROWS(ASSERT(1.11, FEQ(0.001), 1.10), assertion_failure);
+        ASSERT_THROWS(ASSERT(1.11, EQ(0.001), 1.10), assertion_failure);
     };
     TEST("assert_true") {
         // successful
