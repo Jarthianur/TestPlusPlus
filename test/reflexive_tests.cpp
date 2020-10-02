@@ -181,7 +181,7 @@ SUITE("test_testsuite_parallel") {
         ts->run();
         double t = 0.0;
         for (auto const& tc : ts->testcases()) {
-            t += tc.duration();
+            t += tc.elapsed_time();
         }
         ASSERT_EQ(ts->statistics().elapsed_time(), t);
 #endif
