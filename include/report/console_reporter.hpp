@@ -20,6 +20,8 @@
 
 #include "report/reporter.hpp"
 
+#include "stringify.hpp"
+
 namespace tpp
 {
 namespace intern
@@ -71,13 +73,13 @@ private:
     report_testcase(test::testcase const& tc_) override {
         *this << fmt::SPACE << tc_.name() << " (" << tc_.duration() << "ms)" << fmt::LF << fmt::SPACE << fmt::SPACE;
         if (capture()) {
-            *this << "stdout = \"" << tc_.cout() << "\"" << fmt::LF << fmt::SPACE << fmt::SPACE;
-            *this << "stderr = \"" << tc_.cerr() << "\"" << fmt::LF << fmt::SPACE << fmt::SPACE;
+            *this << "stdout = \"" << escaped_string(tc_.cout()) << '"' << fmt::LF << fmt::SPACE << fmt::SPACE;
+            *this << "stderr = \"" << escaped_string(tc_.cerr()) << '"' << fmt::LF << fmt::SPACE << fmt::SPACE;
         }
         switch (tc_.result()) {
-            case test::testcase::HAD_ERROR: *this << color(RED) << "ERROR! " << tc_.reason(); break;
-            case test::testcase::HAS_FAILED: *this << color(BLUE) << "FAILED! " << tc_.reason(); break;
-            default: *this << color(GREEN) << "PASSED!"; break;
+            case test::testcase::HAD_ERROR: *this << color().RED << "ERROR! " << tc_.reason(); break;
+            case test::testcase::HAS_FAILED: *this << color().BLUE << "FAILED! " << tc_.reason(); break;
+            default: *this << color().GREEN << "PASSED!"; break;
         }
         *this << color() << fmt::LF;
     }
@@ -85,11 +87,11 @@ private:
     void
     end_report() override {
         if (abs_errs() > 0) {
-            *this << color(YELLOW);
+            *this << color().MAGENTA;
         } else if (abs_fails() > 0) {
-            *this << color(BLUE);
+            *this << color().YELLOW;
         } else {
-            *this << color(CYAN);
+            *this << color().CYAN;
         }
         *this << "=== Result ===" << fmt::LF << "passes: " << abs_tests() - faults() << '/' << abs_tests()
               << " failures: " << abs_fails() << '/' << abs_tests() << " errors: " << abs_errs() << '/' << abs_tests()

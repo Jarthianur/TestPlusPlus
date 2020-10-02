@@ -116,7 +116,14 @@ public:
      */
     auto
     with_color() -> reporter_ptr {
-        m_color = true;
+        m_colors.RED     = fmt::ansi::RED;
+        m_colors.GREEN   = fmt::ansi::GREEN;
+        m_colors.YELLOW  = fmt::ansi::YELLOW;
+        m_colors.BLUE    = fmt::ansi::BLUE;
+        m_colors.CYAN    = fmt::ansi::CYAN;
+        m_colors.MAGENTA = fmt::ansi::MAGENTA;
+        m_colors.W_BOLD  = fmt::ansi::WHITE_BOLD;
+        m_colors.RESET   = fmt::ansi::RST;
         return shared_from_this();
     }
 
@@ -141,6 +148,22 @@ protected:
     /// Helper type to prevent public constructor usage.
     struct enable
     {};
+
+    struct color_palette
+    {
+        char const* RED{""};
+        char const* GREEN{""};
+        char const* YELLOW{""};
+        char const* BLUE{""};
+        char const* CYAN{""};
+        char const* MAGENTA{""};
+        char const* W_BOLD{""};
+        char const* RESET{""};
+
+        operator char const *() const {
+            return RESET;
+        }
+    };
 
     /**
      * @param stream_ is the output stream for reports.
@@ -255,40 +278,16 @@ protected:
         return m_abs_time;
     }
 
-    enum colors
-    {
-        RED,
-        GREEN,
-        YELLOW,
-        BLUE,
-        CYAN,
-        MAGENTA,
-        W_BOLD,
-        RESET
-    };
-
     auto
-    color(colors c_ = RESET) const -> char const* {
-        if (!m_color) {
-            return "";
-        }
-        switch (c_) {
-            case RED: return fmt::ansi::RED;
-            case GREEN: return fmt::ansi::GREEN;
-            case YELLOW: return fmt::ansi::YELLOW;
-            case BLUE: return fmt::ansi::BLUE;
-            case CYAN: return fmt::ansi::CYAN;
-            case MAGENTA: return fmt::ansi::MAGENTA;
-            case W_BOLD: return fmt::ansi::WHITE_BOLD;
-            default: return fmt::ansi::RST;
-        }
+    color() const -> color_palette const& {
+        return m_colors;
     }
 
 private:
     std::ofstream m_out_file;    ///< Filestream that is used, if a file is specified as output target.
     std::ostream& m_out_stream;  ///< Outstream that handles printing the report.
     std::uint32_t m_indent_lvl{0};
-    bool          m_color{false};     ///< Flags whether print colored results.
+    color_palette m_colors{};         ///< Flags whether print colored results.
     bool          m_capture{false};   ///< Flags whether to report captured output from testcases.
     bool          m_stripped{false};  ///< Flags whether to strip unnecessary whitespaces in report.
     std::size_t   m_abs_tests{0};     ///< Total number of testcases over all testsuites.

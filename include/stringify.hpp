@@ -110,7 +110,7 @@ escaped_string(std::string const& str_) -> std::string {
  */
 template<typename T,
          TPP_INTERN_ENABLE_IF(TPP_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream) && !TPP_INTERN_IS_FLOAT(T))>
-auto
+inline auto
 to_string(T const& arg_) -> std::string {
     std::ostringstream oss;
     oss << arg_;
@@ -124,7 +124,7 @@ to_string(T const& arg_) -> std::string {
  * @param arg_ is the number to convert to string.
  */
 template<typename T, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_FLOAT(T))>
-auto
+inline auto
 to_string(T const& arg_) -> std::string {
     std::ostringstream oss;
     oss << std::setprecision(std::numeric_limits<T>::max_digits10) << arg_;
@@ -140,7 +140,7 @@ to_string(T const& arg_) -> std::string {
  * @return the typename for T, as there is no information about the value available.
  */
 template<typename T, TPP_INTERN_ENABLE_IF(!TPP_INTERN_HAS_STREAM_CAPABILITY(T, std::ostringstream))>
-auto
+inline auto
 to_string(T const& arg_) -> std::string {
     return name_for_type<T>(arg_);
 }

@@ -18,6 +18,7 @@
 #ifndef TPP_REPORT_MARKDOWN_REPORTER_HPP
 #define TPP_REPORT_MARKDOWN_REPORTER_HPP
 
+#include <regex>
 #include <sstream>
 
 #include "report/reporter.hpp"
@@ -113,7 +114,7 @@ private:
         io_.str(out_);
         bool first{true};
         while (std::getline(io_, line)) {
-            *this << (first ? "" : "<br>") << '`' << line << '`';
+            *this << (first ? "" : "<br>") << '`' << std::regex_replace(line, std::regex("`"), "``") << '`';
             first = false;
         }
         *this << '|';

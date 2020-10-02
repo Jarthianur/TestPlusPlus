@@ -67,7 +67,7 @@ private:
     report_testsuite(test::testsuite_ptr const& ts_) override {
         m_first_test = true;
         conditional_prefix(m_first_suite);
-        json_property_string("name", ts_->name(), color(CYAN)) << ',' << newline();
+        json_property_string("name", ts_->name(), color().CYAN) << ',' << newline();
         json_property_value("time", ts_->duration()) << ',' << newline();
         json_property_value("count", ts_->statistics().tests()) << ',' << newline();
         json_property_value("passes", ts_->statistics().successes()) << ',' << newline();
@@ -87,9 +87,9 @@ private:
     report_testcase(test::testcase const& tc_) override {
         auto const dres = decode_result(tc_.result());
         conditional_prefix(m_first_test);
-        json_property_string("name", tc_.name(), color(W_BOLD)) << ',' << newline();
-        json_property_string("result", std::get<0>(dres), color(std::get<1>(dres))) << ',' << newline();
-        json_property_string("reason", tc_.reason(), color(std::get<1>(dres))) << ',' << newline();
+        json_property_string("name", tc_.name(), color().W_BOLD) << ',' << newline();
+        json_property_string("result", std::get<0>(dres), std::get<1>(dres)) << ',' << newline();
+        json_property_string("reason", tc_.reason(), std::get<1>(dres)) << ',' << newline();
         json_property_value("time", tc_.duration());
         if (capture()) {
             *this << ',' << newline();
@@ -113,10 +113,10 @@ private:
     void
     end_report() override {
         *this << newline() << "]," << newline();
-        json_property_value("count", abs_tests(), color(W_BOLD)) << ',' << newline();
-        json_property_value("passes", abs_tests() - faults(), color(GREEN)) << ',' << newline();
-        json_property_value("failures", abs_fails(), color(BLUE)) << ',' << newline();
-        json_property_value("errors", abs_errs(), color(RED)) << ',' << newline();
+        json_property_value("count", abs_tests(), color().W_BOLD) << ',' << newline();
+        json_property_value("passes", abs_tests() - faults(), color().GREEN) << ',' << newline();
+        json_property_value("failures", abs_fails(), color().BLUE) << ',' << newline();
+        json_property_value("errors", abs_errs(), color().RED) << ',' << newline();
         json_property_value("time", abs_time());
         pop_indent();
         *this << newline() << '}' << newline();
@@ -149,12 +149,12 @@ private:
         *this << newline();
     }
 
-    static auto
-    decode_result(test::testcase::results res_) -> std::tuple<char const*, colors> {
+    inline auto
+    decode_result(test::testcase::results res_) -> std::tuple<char const*, char const*> {
         switch (res_) {
-            case test::testcase::HAD_ERROR: return {"error", RED};
-            case test::testcase::HAS_FAILED: return {"failure", BLUE};
-            default: return {"success", GREEN};
+            case test::testcase::HAD_ERROR: return {"error", color().RED};
+            case test::testcase::HAS_FAILED: return {"failure", color().BLUE};
+            default: return {"success", color().GREEN};
         }
     }
 

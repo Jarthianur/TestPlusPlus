@@ -36,13 +36,13 @@ namespace intern
  */
 class runner
 {
-public:
     enum class retval : std::int32_t
     {
         HELP   = -1,
         EXCEPT = -2
     };
 
+public:
     /**
      * Add a testsuite to this runner.
      *
@@ -75,7 +75,7 @@ public:
 
     auto
     run(config const& cfg_) noexcept -> std::int32_t {
-        bool const finc{cfg_.fmode != config::filter_mode::EXCLUDE};
+        bool const fm_inc{cfg_.fmode != config::filter_mode::EXCLUDE};
         try {
             auto rep{cfg_.reporter()};
             rep->begin_report();
@@ -84,7 +84,7 @@ public:
                                                                       [&](std::regex const& re_) -> bool {
                                                                           return std::regex_match(ts_->name(), re_);
                                                                       })};
-                if (finc == match) {
+                if (fm_inc == match) {
                     ts_->run();
                     rep->report(ts_);
                 }
@@ -110,7 +110,7 @@ private:
     static inline auto
     err_exit(char const* msg_) -> std::int32_t {
         std::cerr << "A fatal error occurred!\n  what(): " << msg_ << std::endl;
-        return static_cast<std::int64_t>(retval::EXCEPT);
+        return static_cast<std::int32_t>(retval::EXCEPT);
     }
 
     std::vector<test::testsuite_ptr> m_testsuites;  ///< Testsuites contained in this runner.
