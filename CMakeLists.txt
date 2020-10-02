@@ -17,9 +17,15 @@ target_include_directories(test_seq PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(test_seq PUBLIC gcov)
 
 add_executable(test_par ${sources})
+target_compile_options(test_par PUBLIC -fopenmp)
 target_include_directories(test_par PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(test_par PUBLIC gcov gomp)
 
+add_executable(rel_test_seq ${sources})
+target_include_directories(rel_test_seq PUBLIC ${PROJECT_SOURCE_DIR}/release)
+target_link_libraries(rel_test_seq PUBLIC gcov)
+
 add_executable(rel_test_par ${sources})
+target_compile_options(rel_test_par PUBLIC -fopenmp)
 target_include_directories(rel_test_par PUBLIC ${PROJECT_SOURCE_DIR}/release)
 target_link_libraries(rel_test_par PUBLIC gcov gomp)
