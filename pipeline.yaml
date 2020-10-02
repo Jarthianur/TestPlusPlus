@@ -1,17 +1,17 @@
 matrix:
   - name: C++11
     env:
-      cpp_std: c++11
+      cpp_std: 11
     tags:
       - c++11
   - name: C++14
     env:
-      cpp_std: c++14
+      cpp_std: 14
     tags:
       - c++14
   - name: C++17
     env:
-      cpp_std: c++17
+      cpp_std: 17
     tags:
       - c++17
 
@@ -20,9 +20,7 @@ model:
     build_dir: build_{{ env.cpp_std }}
     linux:
       - target: test_seq
-        cxx_args: "-Wall -Wextra -Wpedantic -Werror -Wnon-virtual-dtor -Wno-unused-function -Wno-unknown-pragmas -g -O0 -fprofile-arcs -ftest-coverage -coverage"
       - target: test_par
-        cxx_args: "-fopenmp -Wall -Wextra -Wpedantic -Werror -Wnon-virtual-dtor -Wno-unused-function -Wno-unknown-pragmas -g -O0 -fprofile-arcs -ftest-coverage -coverage"
     osx:
       - target: test_seq
         cxx_args: "-Wno-unknown-warning-option"
@@ -35,13 +33,12 @@ model:
         ./build_header.sh
         popd
         mkdir -p $BUILD_DIR
-        cp -r test $BUILD_DIR/{{ item.target }}
-        pushd $BUILD_DIR/{{ item.target }}
-        $CXX -o rel_{{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../../release $(echo -en *.cpp)
-        $CXX -o {{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../../include $(echo -en *.cpp)
+        pushd $BUILD_DIR
+        cmake -DCMAKE_CXX_STANDARD={{ env.cpp_std }} ..
+        make -j2 {{ item.target }} rel_{{ item.target }}
         popd
       test_script: |
-        pushd $BUILD_DIR/{{ item.target }}
+        pushd $BUILD_DIR
         $LCOV -d . -z
         $LCOV -c -i -d . -o base.info
         ./{{ item.target }} -coi '*'
@@ -58,7 +55,7 @@ model:
     osx:
       build_script: |
         pushd test
-        clang++ -o {{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../include $(echo -en *.cpp)
+        clang++ -o {{ item.target }} {{ item.cxx_args }} -std=c++{{ env.cpp_std }} -I../include $(echo -en *.cpp)
         popd
       test_script: |
         echo "./test/{{ item.target }}"
@@ -124,7 +121,7 @@ pipeline:
                 pushd {{ model.variables.build_dir|render(env=env) }}
                 echo -en "" > .targets
                 {% for entry in model.variables.linux %}
-                  echo -en ' -a {{ entry.target }}/{{ entry.target }}.info' >> .targets
+                  echo -en ' -a {{ entry.target }}.info' >> .targets
                 {% endfor %}
                 $LCOV $(cat .targets) -o all.info
                 $LCOV -e all.info "$(dirname $PWD)/include/*" -o ../reports/{{ env.cpp_std }}/lcov.info
