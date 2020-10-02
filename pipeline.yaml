@@ -1,17 +1,17 @@
 matrix:
   - name: C++11
     env:
-      cpp_std: 11
+      cpp_std: "11"
     tags:
       - c++11
   - name: C++14
     env:
-      cpp_std: 14
+      cpp_std: "14"
     tags:
       - c++14
   - name: C++17
     env:
-      cpp_std: 17
+      cpp_std: "17"
     tags:
       - c++17
 
