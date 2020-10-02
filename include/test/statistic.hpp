@@ -64,6 +64,11 @@ public:
         return m_num_errs;
     }
 
+    inline auto
+    elapsed_time() const -> double {
+        return m_elapsed_t;
+    }
+
 private:
     friend class testsuite;
     friend class testsuite_parallel;
@@ -71,6 +76,7 @@ private:
     std::size_t m_num_tests{0};  ///< Total number of tests.
     std::size_t m_num_fails{0};  ///< Number of failed tests.
     std::size_t m_num_errs{0};   ///< Number of erroneous tests.
+    double      m_elapsed_t{.0};
 };
 }  // namespace test
 }  // namespace intern

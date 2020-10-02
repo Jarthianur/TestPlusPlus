@@ -71,8 +71,8 @@ private:
         push_indent();
         *this << newline() << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name() << "\" errors=\""
               << ts_->statistics().errors() << "\" tests=\"" << ts_->statistics().tests() << "\" failures=\""
-              << ts_->statistics().failures() << R"(" skipped="0" time=")" << ts_->duration() << "\" timestamp=\""
-              << buff.data() << "\">";
+              << ts_->statistics().failures() << R"(" skipped="0" time=")" << ts_->statistics().elapsed_time()
+              << "\" timestamp=\"" << buff.data() << "\">";
 
         reporter::report_testsuite(ts_);
 
@@ -84,7 +84,7 @@ private:
     report_testcase(test::testcase const& tc_) override {
         push_indent();
         *this << newline() << "<testcase name=\"" << tc_.name() << "\" classname=\"" << tc_.suite_name() << "\" time=\""
-              << tc_.duration() << "\"";
+              << tc_.elapsed_time() << "\"";
         if (tc_.result() != test::testcase::HAS_PASSED) {
             auto const unsuccess = [&] { return tc_.result() == test::testcase::HAD_ERROR ? "error" : "failure"; };
             *this << '>';

@@ -244,9 +244,9 @@ assert_statement(S&& stmt_, loc const& loc_) {
  * @throw tpp::intern::assertion_failure if a different throwable type, or nothing is thrown by
  * fn_.
  */
-template<typename T, typename F>
+template<typename T, typename Fn>
 auto
-assert_throws(F&& fn_, char const* tname_, loc const& loc_) -> throwable<T> {
+assert_throws(Fn&& fn_, char const* tname_, loc const& loc_) -> throwable<T> {
     try {
         fn_();
     } catch (T const& e) {
@@ -268,9 +268,9 @@ assert_throws(F&& fn_, char const* tname_, loc const& loc_) -> throwable<T> {
  * @return the return value of fn_.
  * @throw tpp::intern::assertion_failure if a any throwable type is thrown by fn_.
  */
-template<typename F, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
+template<typename Fn, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_TYPE(decltype(std::declval<Fn>()()), void))>
 auto
-assert_nothrow(F&& fn_, loc const& loc_) -> decltype(fn_()) {
+assert_nothrow(Fn&& fn_, loc const& loc_) -> decltype(fn_()) {
     try {
         return fn_();
     } catch (std::exception const& e) {
@@ -288,9 +288,9 @@ assert_nothrow(F&& fn_, loc const& loc_) -> decltype(fn_()) {
  * @param loc_ is the line of code where the assertion took place.
  * @throw tpp::intern::assertion_failure if a any throwable type is thrown by fn_.
  */
-template<typename F, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
+template<typename Fn, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_TYPE(decltype(std::declval<Fn>()()), void))>
 void
-assert_nothrow(F&& fn_, loc const& loc_) {
+assert_nothrow(Fn&& fn_, loc const& loc_) {
     try {
         fn_();
     } catch (std::exception const& e) {
@@ -310,9 +310,9 @@ assert_nothrow(F&& fn_, loc const& loc_) {
  * @return the return value of fn_.
  * @throw tpp::intern::assertion_failure if fn_ does not complete within max_ms_.
  */
-template<typename F, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
+template<typename Fn, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_TYPE(decltype(std::declval<Fn>()()), void))>
 auto
-assert_runtime(F&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_()) {
+assert_runtime(Fn&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_()) {
     TPP_INTERN_SYNC {
         duration        dur;
         decltype(fn_()) res{fn_()};
@@ -332,9 +332,9 @@ assert_runtime(F&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_()) {
  * @param loc_ is the line of code where the assertion took place.
  * @throw tpp::intern::assertion_failure if fn_ does not complete within max_ms_.
  */
-template<typename F, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_TYPE(decltype(std::declval<F>()()), void))>
+template<typename Fn, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_TYPE(decltype(std::declval<Fn>()()), void))>
 void
-assert_runtime(F&& fn_, double max_ms_, loc const& loc_) {
+assert_runtime(Fn&& fn_, double max_ms_, loc const& loc_) {
     double dur_ms{.0};
     TPP_INTERN_SYNC {
         duration dur;

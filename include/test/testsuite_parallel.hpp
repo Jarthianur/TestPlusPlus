@@ -22,7 +22,6 @@
 #include <limits>
 #include <stdexcept>
 
-#include "test/streambuf_proxy_omp.hpp"
 #include "test/testsuite.hpp"
 
 namespace tpp
@@ -60,8 +59,7 @@ public:
             }
             auto const tc_size{static_cast<std::int64_t>(m_testcases.size())};
             m_stats.m_num_tests = m_testcases.size();
-            streambuf_proxy_omp mt_buf_cout(std::cout);
-            streambuf_proxy_omp mt_buf_cerr(std::cerr);
+            streambuf_proxies<streambuf_proxy_omp> bufs;
             m_setup_fn();
 #pragma omp parallel default(shared)
             {  // BEGIN parallel section
@@ -80,19 +78,17 @@ public:
                             case testcase::HAD_ERROR: ++errs; break;
                             default: break;
                         }
-                        tmp += tc.duration();
+                        tmp += tc.elapsed_time();
                         m_posttest_fn();
-                        tc.cout(mt_buf_cout.str());
-                        tc.cerr(mt_buf_cerr.str());
-                        mt_buf_cout.clear();
-                        mt_buf_cerr.clear();
+                        tc.cout(bufs.cout.str());
+                        tc.cerr(bufs.cerr.str());
                     }
                 }
 #pragma omp critical
                 {  // BEGIN critical section
                     m_stats.m_num_fails += fails;
                     m_stats.m_num_errs += errs;
-                    m_exec_dur = std::max(m_exec_dur, tmp);
+                    m_stats.m_elapsed_t = std::max(m_stats.m_elapsed_t, tmp);
                 }  // END critical section
             }      // END parallel section
             m_teardown_fn();

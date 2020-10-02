@@ -75,15 +75,15 @@ public:
 
     auto
     run(config const& cfg_) noexcept -> std::int32_t {
-        bool const fm_inc{cfg_.fmode != config::filter_mode::EXCLUDE};
+        bool const fm_inc{cfg_.f_mode != config::filter_mode::EXCLUDE};
         try {
             auto rep{cfg_.reporter()};
             rep->begin_report();
             std::for_each(m_testsuites.begin(), m_testsuites.end(), [&](test::testsuite_ptr& ts_) {
-                bool const match{cfg_.fpattern.empty() || std::any_of(cfg_.fpattern.cbegin(), cfg_.fpattern.cend(),
-                                                                      [&](std::regex const& re_) -> bool {
-                                                                          return std::regex_match(ts_->name(), re_);
-                                                                      })};
+                bool const match{
+                  cfg_.f_patterns.empty() ||
+                  std::any_of(cfg_.f_patterns.cbegin(), cfg_.f_patterns.cend(),
+                              [&](std::regex const& re_) -> bool { return std::regex_match(ts_->name(), re_); })};
                 if (fm_inc == match) {
                     ts_->run();
                     rep->report(ts_);

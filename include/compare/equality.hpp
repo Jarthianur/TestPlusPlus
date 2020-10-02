@@ -15,8 +15,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-/// @file
-
 #ifndef TPP_COMPARE_EQUALITY_HPP
 #define TPP_COMPARE_EQUALITY_HPP
 
@@ -69,15 +67,6 @@ public:
     operator!() -> decltype(*this)& {
         m_neg = !m_neg;
         return *this;
-    }
-
-    template<typename V, typename E = V, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_FLOAT(V) || !TPP_INTERN_IS_FLOAT(E))>
-    auto
-    operator()(V const& actual_value, E const& expected_value) const -> comparison {
-        return (actual_value == expected_value) != m_neg ?
-                 comparison() :
-                 comparison(m_neg ? ns_equals::NEG_CMP_STR : ns_equals::CMP_STR,
-                            std::forward_as_tuple(to_string(actual_value), to_string(expected_value)));
     }
 
     template<typename V, typename E = V, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_FLOAT(V) && TPP_INTERN_IS_FLOAT(E))>

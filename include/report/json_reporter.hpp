@@ -68,7 +68,7 @@ private:
         m_first_test = true;
         conditional_prefix(m_first_suite);
         json_property_string("name", ts_->name(), color().CYAN) << ',' << newline();
-        json_property_value("time", ts_->duration()) << ',' << newline();
+        json_property_value("time", ts_->statistics().elapsed_time()) << ',' << newline();
         json_property_value("count", ts_->statistics().tests()) << ',' << newline();
         json_property_value("passes", ts_->statistics().successes()) << ',' << newline();
         json_property_value("failures", ts_->statistics().failures()) << ',' << newline();
@@ -90,7 +90,7 @@ private:
         json_property_string("name", tc_.name(), color().W_BOLD) << ',' << newline();
         json_property_string("result", std::get<0>(dres), std::get<1>(dres)) << ',' << newline();
         json_property_string("reason", tc_.reason(), std::get<1>(dres)) << ',' << newline();
-        json_property_value("time", tc_.duration());
+        json_property_value("time", tc_.elapsed_time());
         if (capture()) {
             *this << ',' << newline();
             json_property_string("stdout", tc_.cout()) << ',' << newline();

@@ -15,8 +15,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-/// @file
-
 #ifndef TPP_CMDLINE_PARSER_HPP
 #define TPP_CMDLINE_PARSER_HPP
 
@@ -42,7 +40,7 @@ public:
         auto const args{tokenize_args(argc_, argv_)};
         m_progname = argv_[0];
         for (auto i{1UL}; i < args.size(); ++i) {
-            eval_arg(args[i], [&](std::string const& arg_) {
+            eval_arg(args[i], [&](std::string const& arg_) -> std::string const& {
                 try {
                     return args.at(++i);
                 } catch (std::out_of_range const&) {
@@ -100,26 +98,26 @@ private:
     eval_arg(std::string const& arg_, Fn&& getval_fn_) {
         try {
             make_option(+"--help")(arg_, [&] { print_help(); });
-            make_option(+"--xml")(arg_, [&] { m_cfg.rep_fmt = config::report_format::XML; });
-            make_option(+"--md")(arg_, [&] { m_cfg.rep_fmt = config::report_format::MD; });
-            make_option(+"--json")(arg_, [&] { m_cfg.rep_fmt = config::report_format::JSON; });
+            make_option(+"--xml")(arg_, [&] { m_cfg.report_fmt = config::report_format::XML; });
+            make_option(+"--md")(arg_, [&] { m_cfg.report_fmt = config::report_format::MD; });
+            make_option(+"--json")(arg_, [&] { m_cfg.report_fmt = config::report_format::JSON; });
             combined_option{}(arg_, [&](char c_) {
-                make_option('c')(c_, [&] { m_cfg.rep_cfg.color = true; });
-                make_option('o')(c_, [&] { m_cfg.rep_cfg.capture_out = true; });
-                make_option('s')(c_, [&] { m_cfg.rep_cfg.strip = true; });
+                make_option('c')(c_, [&] { m_cfg.report_cfg.color = true; });
+                make_option('o')(c_, [&] { m_cfg.report_cfg.capture_out = true; });
+                make_option('s')(c_, [&] { m_cfg.report_cfg.strip = true; });
                 make_option('e')(c_, [&] {
                     set_filter_mode(config::filter_mode::EXCLUDE);
-                    m_cfg.fpattern.push_back(to_regex(getval_fn_(arg_)));
+                    m_cfg.f_patterns.push_back(to_regex(getval_fn_(arg_)));
                 });
                 make_option('i')(c_, [&] {
                     set_filter_mode(config::filter_mode::INCLUDE);
-                    m_cfg.fpattern.push_back(to_regex(getval_fn_(arg_)));
+                    m_cfg.f_patterns.push_back(to_regex(getval_fn_(arg_)));
                 });
             });
         } catch (matched) {
             return;
         }
-        m_cfg.rep_cfg.outfile = arg_;
+        m_cfg.report_cfg.outfile = arg_;
     }
 
     template<typename T>
@@ -160,19 +158,18 @@ private:
         a.reserve(argc);
         for (auto i{0UL}; i < argc; ++i) {
             std::string arg(argv_[i]);
-            if (arg.empty()) {
-                continue;
+            if (!arg.empty()) {
+                a.push_back(std::move(arg));
             }
-            a.push_back(std::move(arg));
         }
         return a;
     }
 
     void
     set_filter_mode(config::filter_mode m_) {
-        if (m_cfg.fmode == config::filter_mode::NONE) {
-            m_cfg.fmode = m_;
-        } else if (m_cfg.fmode != m_) {
+        if (m_cfg.f_mode == config::filter_mode::NONE) {
+            m_cfg.f_mode = m_;
+        } else if (m_cfg.f_mode != m_) {
             throw std::runtime_error("Inclusion and exclusion are mutually exclusive!");
         }
     }

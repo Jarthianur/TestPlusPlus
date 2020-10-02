@@ -16,7 +16,6 @@ FILES="../include/version.hpp
 ../include/test/assertion_failure.hpp
 ../include/test/testcase.hpp
 ../include/test/streambuf_proxy.hpp
-../include/test/streambuf_proxy_omp.hpp
 ../include/test/statistic.hpp
 ../include/test/testsuite.hpp
 ../include/test/testsuite_parallel.hpp

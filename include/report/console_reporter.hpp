@@ -63,7 +63,7 @@ public:
 private:
     void
     report_testsuite(test::testsuite_ptr const& ts_) override {
-        *this << "--- " << ts_->name() << " (" << ts_->duration() << "ms) ---" << fmt::LF;
+        *this << "--- " << ts_->name() << " (" << ts_->statistics().elapsed_time() << "ms) ---" << fmt::LF;
 
         reporter::report_testsuite(ts_);
         *this << fmt::LF;
@@ -71,7 +71,7 @@ private:
 
     void
     report_testcase(test::testcase const& tc_) override {
-        *this << fmt::SPACE << tc_.name() << " (" << tc_.duration() << "ms)" << fmt::LF << fmt::SPACE << fmt::SPACE;
+        *this << fmt::SPACE << tc_.name() << " (" << tc_.elapsed_time() << "ms)" << fmt::LF << fmt::SPACE << fmt::SPACE;
         if (capture()) {
             *this << "stdout = \"" << escaped_string(tc_.cout()) << '"' << fmt::LF << fmt::SPACE << fmt::SPACE;
             *this << "stderr = \"" << escaped_string(tc_.cerr()) << '"' << fmt::LF << fmt::SPACE << fmt::SPACE;

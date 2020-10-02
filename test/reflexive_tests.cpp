@@ -176,14 +176,14 @@ SUITE("test_testsuite_parallel") {
         c = 300;
 #    endif
         ASSERT_RUNTIME(ts->run(), c);
-        ASSERT(ts->duration(), LT(), c);
+        ASSERT(ts->statistics().elapsed_time(), LT(), c);
 #else
         ts->run();
         double t = 0.0;
         for (auto const& tc : ts->testcases()) {
             t += tc.duration();
         }
-        ASSERT_EQ(ts->duration(), t);
+        ASSERT_EQ(ts->statistics().elapsed_time(), t);
 #endif
         statistic const& stat = ts->statistics();
         ASSERT_EQ(stat.tests(), 6UL);
@@ -241,9 +241,9 @@ SUITE("test_testsuite") {
         ASSERT_EQ(stat.successes(), 2UL);
         double t = 0.0;
         for (auto const& tc : ts->testcases()) {
-            t += tc.duration();
+            t += tc.elapsed_time();
         }
-        ASSERT_EQ(t, ts->duration());
+        ASSERT_EQ(t, ts->statistics().elapsed_time());
     };
 };
 
@@ -260,26 +260,26 @@ SUITE_PAR("test_testcase") {
         testcase tc({"t1", "ctx"}, [] {});
         tc();
         ASSERT_EQ(tc.result(), testcase::HAS_PASSED);
-        ASSERT(tc.duration(), GT(), 0.0);
+        ASSERT(tc.elapsed_time(), GT(), 0.0);
         ASSERT_ZERO(tc.reason().size());
     };
     TEST("failed_execution") {
         testcase tc({"t1", "ctx"}, [] { ASSERT_TRUE(false); });
         tc();
         ASSERT_EQ(tc.result(), testcase::HAS_FAILED);
-        ASSERT(tc.duration(), GT(), 0.0);
+        ASSERT(tc.elapsed_time(), GT(), 0.0);
     };
     TEST("erroneous_execution") {
         testcase tc({"t1", "ctx"}, [] { throw std::logic_error("err"); });
         tc();
         ASSERT_EQ(tc.result(), testcase::HAD_ERROR);
-        ASSERT(tc.duration(), GT(), 0.0);
+        ASSERT(tc.elapsed_time(), GT(), 0.0);
         ASSERT(tc.reason(), EQ(), std::string("err"));
 
         testcase tc2({"t2", "ctx"}, [] { throw 1; });
         tc2();
         ASSERT_EQ(tc2.result(), testcase::HAD_ERROR);
-        ASSERT(tc2.duration(), GT(), 0.0);
+        ASSERT(tc2.elapsed_time(), GT(), 0.0);
         ASSERT(tc2.reason(), EQ(), std::string("unknown error"));
     };
 };

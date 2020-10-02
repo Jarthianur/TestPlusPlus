@@ -15,8 +15,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-/// @file
-
 #ifndef TPP_CONFIG_HPP
 #define TPP_CONFIG_HPP
 
@@ -52,18 +50,18 @@ struct config
 
     auto
     reporter() const -> reporter_ptr {
-        switch (rep_fmt) {
-            case report_format::XML: return report::reporter_factory::make<xml_reporter>(rep_cfg);
-            case report_format::MD: return report::reporter_factory::make<markdown_reporter>(rep_cfg);
-            case report_format::JSON: return report::reporter_factory::make<json_reporter>(rep_cfg);
-            default /*CNS*/: return report::reporter_factory::make<console_reporter>(rep_cfg);
+        switch (report_fmt) {
+            case report_format::XML: return report::reporter_factory::make<xml_reporter>(report_cfg);
+            case report_format::MD: return report::reporter_factory::make<markdown_reporter>(report_cfg);
+            case report_format::JSON: return report::reporter_factory::make<json_reporter>(report_cfg);
+            default /*CNS*/: return report::reporter_factory::make<console_reporter>(report_cfg);
         }
     }
 
-    report_format           rep_fmt{report_format::CNS};
-    report::reporter_config rep_cfg;
-    std::vector<std::regex> fpattern;
-    filter_mode             fmode{filter_mode::NONE};
+    report_format           report_fmt{report_format::CNS};
+    report::reporter_config report_cfg;
+    std::vector<std::regex> f_patterns;
+    filter_mode             f_mode{filter_mode::NONE};
 };
 }  // namespace intern
 

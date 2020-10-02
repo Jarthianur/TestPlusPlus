@@ -15,8 +15,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-/// @file
-
 #ifndef TPP_REPORT_REPORTER_FACTORY_HPP
 #define TPP_REPORT_REPORTER_FACTORY_HPP
 

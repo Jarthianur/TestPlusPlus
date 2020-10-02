@@ -15,8 +15,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-/// @file
-
 #ifndef TPP_REPORT_REPORTER_HPP
 #define TPP_REPORT_REPORTER_HPP
 
@@ -195,7 +193,7 @@ protected:
         m_abs_errs += ts_->statistics().errors();
         m_abs_fails += ts_->statistics().failures();
         m_abs_tests += ts_->statistics().tests();
-        m_abs_time += ts_->duration();
+        m_abs_time += ts_->statistics().elapsed_time();
         std::for_each(ts_->testcases().begin(), ts_->testcases().end(),
                       [this](test::testcase const& tc_) { report_testcase(tc_); });
     }
@@ -222,7 +220,7 @@ protected:
         return m_out_stream;
     }
 
-    auto
+    inline auto
     space(std::uint32_t depth_ = 1) -> char const* {
         if (!m_stripped) {
             for (auto i{0U}; i < depth_; ++i) {
@@ -232,7 +230,7 @@ protected:
         return "";
     }
 
-    auto
+    inline auto
     newline(std::uint32_t depth_ = 1) -> char const* {
         if (!m_stripped) {
             for (auto i{0U}; i < depth_; ++i) {

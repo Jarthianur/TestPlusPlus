@@ -15,8 +15,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-/// @file
-
 #ifndef TPP_TEST_TESTSUITE_HPP
 #define TPP_TEST_TESTSUITE_HPP
 
@@ -38,6 +36,13 @@ namespace intern
 {
 namespace test
 {
+template<typename T>
+struct streambuf_proxies
+{
+    T cout{std::cout};
+    T cerr{std::cerr};
+};
+
 class testsuite;
 using testsuite_ptr = std::shared_ptr<testsuite>;
 
@@ -80,8 +85,7 @@ public:
     run() {
         if (m_state != IS_DONE) {
             m_stats.m_num_tests = m_testcases.size();
-            streambuf_proxy buf_cout(std::cout);
-            streambuf_proxy buf_cerr(std::cerr);
+            streambuf_proxies<streambuf_proxy_single> bufs;
             m_setup_fn();
             std::for_each(m_testcases.begin(), m_testcases.end(), [&](testcase& tc_) {
                 if (tc_.result() == testcase::IS_UNDONE) {
@@ -92,12 +96,10 @@ public:
                         case testcase::HAD_ERROR: ++m_stats.m_num_errs; break;
                         default: break;
                     }
-                    m_exec_dur += tc_.duration();
+                    m_stats.m_elapsed_t += tc_.elapsed_time();
                     m_posttest_fn();
-                    tc_.cout(buf_cout.str());
-                    tc_.cerr(buf_cerr.str());
-                    buf_cout.clear();
-                    buf_cerr.clear();
+                    tc_.cout(bufs.cout.str());
+                    tc_.cerr(bufs.cerr.str());
                 }
             });
             m_teardown_fn();
@@ -186,14 +188,6 @@ public:
     }
 
     /**
-     * Get the accumulated time spent on all tests.
-     */
-    inline auto
-    duration() const -> double {
-        return m_exec_dur;
-    }
-
-    /**
      * Get all testcases.
      */
     inline auto
@@ -236,7 +230,6 @@ protected:
 
     char const* const                           m_name;         ///< Name, or description of this testsuite.
     std::chrono::system_clock::time_point const m_create_time;  ///< Point in time, when this testsuite was created.
-    double m_exec_dur{.0};  ///< Time in milliseconds, the whole testsuite needed to complete.
 
     statistic             m_stats;              ///< Stores test results.
     std::vector<testcase> m_testcases;          ///< Stores testcases.

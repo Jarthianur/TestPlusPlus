@@ -64,7 +64,7 @@ public:
         : m_name(other_.m_name),
           m_suite_name(other_.m_suite_name),
           m_result(other_.m_result),
-          m_duration(other_.m_duration),
+          m_elapsed_t(other_.m_elapsed_t),
           m_err_msg(std::move(other_.m_err_msg)),
           m_test_fn(std::move(other_.m_test_fn)) {}
 
@@ -73,7 +73,7 @@ public:
         m_name       = other_.m_name;
         m_suite_name = other_.m_suite_name;
         m_result     = other_.m_result;
-        m_duration   = other_.m_duration;
+        m_elapsed_t  = other_.m_elapsed_t;
         m_err_msg    = std::move(other_.m_err_msg);
         m_test_fn    = std::move(other_.m_test_fn);
         return *this;
@@ -109,7 +109,7 @@ public:
         } catch (...) {
             error();
         }
-        m_duration = dur.get();
+        m_elapsed_t = dur.get();
     }
 
     /**
@@ -124,8 +124,8 @@ public:
      * Get the duration of the test run in milliseconds.
      */
     inline auto
-    duration() const -> double {
-        return m_duration;
+    elapsed_time() const -> double {
+        return m_elapsed_t;
     }
 
     /**
@@ -223,7 +223,7 @@ private:
     char const*   m_name;               ///< Name or description of this testcase.
     char const*   m_suite_name;         ///< Context description (testsuite) where this testcase lives.
     results       m_result{IS_UNDONE};  ///< Result produced by the test function.
-    double        m_duration{.0};       ///< Time in milliseconds, that the test function consumed.
+    double        m_elapsed_t{.0};      ///< Time in milliseconds, that the test function consumed.
     std::string   m_err_msg;            ///< Message describing the reason for failure, or error.
     std::string   m_cout;               ///< Captured output to stdout.
     std::string   m_cerr;               ///< Captured output to stderr.
