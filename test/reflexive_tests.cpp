@@ -46,6 +46,7 @@ using tpp::intern::test::testsuite_ptr;
 
 SUITE_PAR("test_assert") {
     TEST("equals") {
+        // successful assertion
         ASSERT_NOTHROW(ASSERT_EQ('a', 'a'));
         ASSERT_NOTHROW(ASSERT_EQ(true, true));
         ASSERT_NOTHROW(ASSERT_EQ("a", "a"));
@@ -55,7 +56,21 @@ SUITE_PAR("test_assert") {
         ASSERT_NOTHROW(ASSERT_EQ(1, 1));
         ASSERT_NOTHROW(ASSERT_EQ(1., 1.));
         ASSERT_NOTHROW(ASSERT_EQ(1.F, 1.F));
-
+        ASSERT_NOTHROW(ASSERT(1, EQ, 1));
+        ASSERT_NOTHROW(ASSERT(1, EQUALS, 1));
+        // successful negated assertion
+        ASSERT_NOTHROW(ASSERT_NOT_EQ('a', 'b'));
+        ASSERT_NOTHROW(ASSERT_NOT_EQ(true, false));
+        ASSERT_NOTHROW(ASSERT_NOT_EQ("a", "b"));
+        ASSERT_NOTHROW(ASSERT_NOT_EQ(std::string("a"), std::string("b")));
+        ASSERT_NOTHROW(ASSERT_NOT_EQ(std::string("a"), "b"));
+        ASSERT_NOTHROW(ASSERT_NOT_EQ((std::vector<int>{1, 3}), (std::vector<int>{1, 2})));
+        ASSERT_NOTHROW(ASSERT_NOT_EQ(1, 2));
+        ASSERT_NOTHROW(ASSERT_NOT_EQ(1., 2.));
+        ASSERT_NOTHROW(ASSERT_NOT_EQ(1.F, 2.F));
+        ASSERT_NOTHROW(ASSERT_NOT(1, EQ, 2));
+        ASSERT_NOTHROW(ASSERT_NOT(1, EQUALS, 2));
+        // failed assertion
         ASSERT_THROWS(ASSERT_EQ('a', 'b'), assertion_failure);
         ASSERT_THROWS(ASSERT_EQ(true, false), assertion_failure);
         ASSERT_THROWS(ASSERT_EQ("a", "b"), assertion_failure);
@@ -65,98 +80,363 @@ SUITE_PAR("test_assert") {
         ASSERT_THROWS(ASSERT_EQ(1, 2), assertion_failure);
         ASSERT_THROWS(ASSERT_EQ(1., 2.), assertion_failure);
         ASSERT_THROWS(ASSERT_EQ(1.F, 2.F), assertion_failure);
+        ASSERT_THROWS(ASSERT(1, EQ, 2), assertion_failure);
+        ASSERT_THROWS(ASSERT(1, EQUALS, 2), assertion_failure);
+        // failed negated assertion
+        ASSERT_THROWS(ASSERT_NOT_EQ('a', 'a'), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_EQ(true, true), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_EQ("a", "a"), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_EQ(std::string("a"), std::string("a")), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_EQ(std::string("a"), "a"), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_EQ((std::vector<int>{1, 2}), (std::vector<int>{1, 2})), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_EQ(1, 1), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_EQ(1., 1.), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_EQ(1.F, 1.F), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT(1, EQ, 1), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT(1, EQUALS, 1), assertion_failure);
 
-        auto f = ASSERT_THROWS(ASSERT_EQ(1, 2), assertion_failure).cause();
+        auto f = ASSERT_THROWS(ASSERT_EQ(1, 2), assertion_failure);
         ASSERT_LIKE(f.what(), "Expected 1 to be equals 2"_re);
     };
-    /*TEST("greater_than") {
-        ASSERT_FALSE(!GT()(2, 1));
-        ASSERT_FALSE(!GT()(2.1, 1.9));
-        ASSERT_TRUE(!(!GT())(2, 1));
-        ASSERT_TRUE(!(!GT())(2.1, 1.9));
-        ASSERT_TRUE(!GT()(1, 2));
-        ASSERT_TRUE(!GT()(2.1, 3.9));
-        ASSERT_FALSE(!(!GT())(1, 2));
-        ASSERT_FALSE(!(!GT())(2.1, 3.9));
-        comparison c = GT()(1, 2);
-        ASSERT_TRUE(!c);
-        ASSERT(*c, EQ(), std::string("Expected 1 to be greater than 2"));
+    TEST("equals float") {
+        // successful assertion
+        ASSERT_NOTHROW(ASSERT_EQ(1., 1.));
+        ASSERT_NOTHROW(ASSERT_EQ(1.0011, 1.0012, .001));
+        ASSERT_NOTHROW(ASSERT_EQ(1.F, 1.F));
+        ASSERT_NOTHROW(ASSERT(1., EQ, 1.));
+        ASSERT_NOTHROW(ASSERT(1.001, EQ, 1.001, .001));
+        ASSERT_NOTHROW(ASSERT(1., EQUALS, 1.));
+        // failed assertion
+        ASSERT_THROWS(ASSERT_EQ(1., 2.), assertion_failure);
+        ASSERT_THROWS(ASSERT_EQ(1.0011, 2.0012, .0001), assertion_failure);
+        ASSERT_THROWS(ASSERT_EQ(1.F, 2.F), assertion_failure);
+        ASSERT_THROWS(ASSERT(1., EQ, 2.), assertion_failure);
+        ASSERT_THROWS(ASSERT(1.0011, EQ, 2.0012, .0001), assertion_failure);
+        ASSERT_THROWS(ASSERT(1., EQUALS, 2.), assertion_failure);
+
+        auto f = ASSERT_THROWS(ASSERT_EQ(1.1, 2.1), assertion_failure);
+        ASSERT_LIKE(f.what(), "Expected 1.1\\d* to be equals 2.1\\d*"_re);
     };
-    TEST("in_range") {
-        ASSERT_FALSE(!(IN()(1, std::vector<int>{1})));
-        ASSERT_FALSE(!(IN()("a", std::string("a"))));
-        ASSERT_TRUE(!((!IN())(1, std::vector<int>{1})));
-        ASSERT_TRUE(!((!IN())("a", std::string("a"))));
-        ASSERT_TRUE(!(IN()(2, std::vector<int>{1})));
-        ASSERT_TRUE(!(IN()("b", std::string("a"))));
-        ASSERT_FALSE(!((!IN())(2, std::vector<int>{1})));
-        ASSERT_FALSE(!((!IN())("b", std::string("a"))));
+    TEST("greater") {
+        // successful assertion
+        ASSERT_NOTHROW(ASSERT_GT(2, 1));
+        ASSERT_NOTHROW(ASSERT_GT('b', 'a'));
+        ASSERT_NOTHROW(ASSERT_GT(2., 1.));
+        ASSERT_NOTHROW(ASSERT(2, GT, 1));
+        // successful negated assertion
+        ASSERT_NOTHROW(ASSERT_NOT_GT(1, 2));
+        ASSERT_NOTHROW(ASSERT_NOT_GT('a', 'b'));
+        ASSERT_NOTHROW(ASSERT_NOT_GT(1., 2.));
+        ASSERT_NOTHROW(ASSERT_NOT(2, GT, 2));
+        // failed assertion
+        ASSERT_THROWS(ASSERT_GT(1, 2), assertion_failure);
+        ASSERT_THROWS(ASSERT_GT('a', 'b'), assertion_failure);
+        ASSERT_THROWS(ASSERT_GT(1., 2.), assertion_failure);
+        ASSERT_THROWS(ASSERT(2, GT, 2), assertion_failure);
+        // failed negated assertion
+        ASSERT_THROWS(ASSERT_NOT_GT(2, 1), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_GT('b', 'a'), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_GT(2., 1.), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT(2, GT, 1), assertion_failure);
+
+        auto f = ASSERT_THROWS(ASSERT(2, GT, 2), assertion_failure);
+        ASSERT_LIKE(f.what(), "Expected 2 to be greater than 2"_re);
     };
-    TEST("less_than") {
-        ASSERT_FALSE(!LT()(1, 2));
-        ASSERT_FALSE(!LT()(1.9, 2.1));
-        ASSERT_TRUE(!(!LT())(1, 2));
-        ASSERT_TRUE(!(!LT())(1.9, 2.1));
-        ASSERT_TRUE(!LT()(2, 1));
-        ASSERT_TRUE(!LT()(3.9, 2.1));
-        ASSERT_FALSE(!(!LT())(2, 1));
-        ASSERT_FALSE(!(!LT())(3.9, 2.1));
-        comparison c = LT()(2, 1);
-        ASSERT_TRUE(!c);
-        ASSERT(*c, EQ(), std::string("Expected 2 to be less than 1"));
+    TEST("less") {
+        // successful assertion
+        ASSERT_NOTHROW(ASSERT_LT(1, 2));
+        ASSERT_NOTHROW(ASSERT_LT('a', 'b'));
+        ASSERT_NOTHROW(ASSERT_LT(1., 2.));
+        ASSERT_NOTHROW(ASSERT(1, LT, 2));
+        // successful negated assertion
+        ASSERT_NOTHROW(ASSERT_NOT_LT(2, 1));
+        ASSERT_NOTHROW(ASSERT_NOT_LT('b', 'a'));
+        ASSERT_NOTHROW(ASSERT_NOT_LT(2., 1.));
+        ASSERT_NOTHROW(ASSERT_NOT(2, LT, 2));
+        // failed assertion
+        ASSERT_THROWS(ASSERT_LT(2, 1), assertion_failure);
+        ASSERT_THROWS(ASSERT_LT('b', 'a'), assertion_failure);
+        ASSERT_THROWS(ASSERT_LT(2., 1.), assertion_failure);
+        ASSERT_THROWS(ASSERT(2, LT, 2), assertion_failure);
+        // failed negated assertion
+        ASSERT_THROWS(ASSERT_NOT_LT(1, 2), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_LT('a', 'b'), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_LT(1., 2.), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT(1, LT, 2), assertion_failure);
+
+        auto f = ASSERT_THROWS(ASSERT(2, LT, 2), assertion_failure);
+        ASSERT_LIKE(f.what(), "Expected 2 to be less than 2"_re);
+    };
+    TEST("in") {
+        // successful assertion
+        ASSERT_NOTHROW(ASSERT_IN(1, std::vector<int>{1}));
+        ASSERT_NOTHROW(ASSERT_IN('a', std::vector<int>{'a'}));
+        ASSERT_NOTHROW(ASSERT_IN("a", std::string("a")));
+        ASSERT_NOTHROW(ASSERT_IN('a', std::string("a")));
+        ASSERT_NOTHROW(ASSERT(1, IN, std::vector<int>{1}));
+        // successful negated assertion
+        ASSERT_NOTHROW(ASSERT_NOT_IN(2, std::vector<int>{1}));
+        ASSERT_NOTHROW(ASSERT_NOT_IN('b', std::vector<int>{'a'}));
+        ASSERT_NOTHROW(ASSERT_NOT_IN("b", std::string("a")));
+        ASSERT_NOTHROW(ASSERT_NOT_IN('b', std::string("a")));
+        ASSERT_NOTHROW(ASSERT_NOT(2, IN, std::vector<int>{1}));
+        // failed assertion
+        ASSERT_THROWS(ASSERT_IN(2, std::vector<int>{1}), assertion_failure);
+        ASSERT_THROWS(ASSERT_IN('b', std::vector<int>{'a'}), assertion_failure);
+        ASSERT_THROWS(ASSERT_IN("b", std::string("a")), assertion_failure);
+        ASSERT_THROWS(ASSERT_IN('b', std::string("a")), assertion_failure);
+        ASSERT_THROWS(ASSERT(2, IN, std::vector<int>{1}), assertion_failure);
+        // failed negated assertion
+        ASSERT_THROWS(ASSERT_NOT_IN(1, std::vector<int>{1}), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_IN('a', std::vector<int>{'a'}), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_IN("a", std::string("a")), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_IN('a', std::string("a")), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT(1, IN, std::vector<int>{1}), assertion_failure);
+
+        auto f = ASSERT_THROWS(ASSERT(2, IN, std::vector<int>{1}), assertion_failure);
+        ASSERT_LIKE(f.what(), "Expected 2 to be in .*vector"_re);
     };
     TEST("match") {
-        ASSERT_FALSE(!MATCH()("hello world", ".*"_re));
-        ASSERT_FALSE(!MATCH()("hello world", "HELLO WORLD"_re_i));
-        ASSERT_FALSE(!MATCH()("hello world", ".*"));
-        ASSERT_FALSE(!MATCH()("hello world 11", "\\S{5}\\s.*?\\d+"_re));
-        ASSERT_FALSE(!MATCH()(std::string("hello world"), ".*"_re));
-        ASSERT_TRUE(!(!MATCH())("hello world", ".*"_re));
-        ASSERT_TRUE(!(!MATCH())("hello world", "HELLO WORLD"_re_i));
-        ASSERT_TRUE(!(!MATCH())("hello world", ".*"));
-        ASSERT_TRUE(!(!MATCH())("hello world 11", "\\S{5}\\s.*?\\d+"_re));
-        ASSERT_TRUE(!(!MATCH())(std::string("hello world"), ".*"_re));
-        ASSERT_TRUE(!MATCH()("hello world", "\\s*"_re));
-        ASSERT_TRUE(!MATCH()("hello world", "AAA"_re_i));
-        ASSERT_TRUE(!MATCH()("hello world", "fff"));
-        ASSERT_TRUE(!MATCH()("hello world 11", "\\S{7}\\s.*?\\d"_re));
-        ASSERT_TRUE(!MATCH()(std::string("hello world"), "[+-]\\d+"_re));
-        ASSERT_FALSE(!(!MATCH())("hello world", "\\s*"_re));
-        ASSERT_FALSE(!(!MATCH())("hello world", "AAA"_re_i));
-        ASSERT_FALSE(!(!MATCH())("hello world", "fff"));
-        ASSERT_FALSE(!(!MATCH())("hello world 11", "\\S{7}\\s.*?\\d"_re));
-        ASSERT_FALSE(!(!MATCH())(std::string("hello world"), "[+-]\\d+"_re));
-        std::cmatch res;
-        ASSERT_FALSE(!MATCH(res)("hello world 11", "(\\S{5})\\s(.*?)(\\d+)"_re));
-        ASSERT_EQ(res.str(1), "hello");
-        ASSERT_EQ(res.str(2), "world ");
-        ASSERT_EQ(res.str(3), "11");
+        // successful assertion
+        ASSERT_NOTHROW(ASSERT_MATCH("hello world", ".*"_re));
+        ASSERT_NOTHROW(ASSERT_MATCH("hello world", "HELLO WORLD"_re_i));
+        ASSERT_NOTHROW(ASSERT_MATCH("hello world", ".*"));
+        ASSERT_NOTHROW(ASSERT_MATCH("hello world 11", "\\S{5}\\s.*?\\d+"_re));
+        ASSERT_NOTHROW(ASSERT_MATCH(std::string("hello world"), ".*"_re));
+        ASSERT_NOTHROW(ASSERT("hello world", MATCH, ".*"_re));
+        // successful negated assertion
+        ASSERT_NOTHROW(ASSERT_NOT_MATCH("hello world", "\\s*"_re));
+        ASSERT_NOTHROW(ASSERT_NOT_MATCH("hello world", "AAA"_re_i));
+        ASSERT_NOTHROW(ASSERT_NOT_MATCH("hello world", "fff"));
+        ASSERT_NOTHROW(ASSERT_NOT_MATCH("hello world 11", "\\S{7}\\s.*?\\d"_re));
+        ASSERT_NOTHROW(ASSERT_NOT_MATCH(std::string("hello world"), "[+-]\\d+"_re));
+        ASSERT_NOTHROW(ASSERT_NOT("hello world", MATCH, "\\s*"_re));
+        // failed assertion
+        ASSERT_THROWS(ASSERT_MATCH("hello world", "\\s*"_re), assertion_failure);
+        ASSERT_THROWS(ASSERT_MATCH("hello world", "AAA"_re_i), assertion_failure);
+        ASSERT_THROWS(ASSERT_MATCH("hello world", "fff"), assertion_failure);
+        ASSERT_THROWS(ASSERT_MATCH("hello world 11", "\\S{7}\\s.*?\\d"_re), assertion_failure);
+        ASSERT_THROWS(ASSERT_MATCH(std::string("hello world"), "[+-]\\d+"_re), assertion_failure);
+        ASSERT_THROWS(ASSERT("hello world", MATCH, "\\s*"_re), assertion_failure);
+        // failed negated assertion
+        ASSERT_THROWS(ASSERT_NOT_MATCH("hello world", ".*"_re), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_MATCH("hello world", "HELLO WORLD"_re_i), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_MATCH("hello world", ".*"), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_MATCH("hello world 11", "\\S{5}\\s.*?\\d+"_re), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_MATCH(std::string("hello world"), ".*"_re), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT("hello world", MATCH, ".*"_re), assertion_failure);
+
+        std::cmatch cm;
+        std::smatch sm;
+        std::string s{"hello world 11"};
+        ASSERT_NOTHROW(ASSERT("hello world 11", MATCH, "(\\S{5})\\s(.*?)(\\d+)"_re, cm));
+        ASSERT_EQ(cm.str(1), "hello");
+        ASSERT_EQ(cm.str(2), "world ");
+        ASSERT_EQ(cm.str(3), "11");
+        ASSERT_NOTHROW(ASSERT_MATCH(s, "(\\S{5})\\s(.*?)(\\d+)"_re, sm));
+        ASSERT_EQ(sm.str(1), "hello");
+        ASSERT_EQ(sm.str(2), "world ");
+        ASSERT_EQ(sm.str(3), "11");
+
+        auto f = ASSERT_THROWS(ASSERT_MATCH("hello world", "\\s*"_re), assertion_failure);
+        ASSERT_LIKE(f.what(), "Expected .* to match .*"_re);
     };
     TEST("like") {
-        ASSERT_FALSE(!LIKE()("hello world", "hell"_re));
-        ASSERT_FALSE(!LIKE()("hello world", "HELL"_re_i));
-        ASSERT_FALSE(!LIKE()("hello world", ".*?"));
-        ASSERT_FALSE(!LIKE()("hello world 11", "\\S{5}"_re));
-        ASSERT_FALSE(!LIKE()(std::string("hello world"), "hell"_re));
-        ASSERT_TRUE(!(!LIKE())("hello world", "hell"_re));
-        ASSERT_TRUE(!(!LIKE())("hello world", "HELL"_re_i));
-        ASSERT_TRUE(!(!LIKE())("hello world", ".*?"));
-        ASSERT_TRUE(!(!LIKE())("hello world 11", "\\S{5}"_re));
-        ASSERT_TRUE(!(!LIKE())(std::string("hello world"), "hell"_re));
-        ASSERT_TRUE(!LIKE()("hello world", "blub"_re));
-        ASSERT_TRUE(!LIKE()("hello world", "AAA"_re_i));
-        ASSERT_TRUE(!LIKE()("hello world 11", "\\S{7}"_re));
-        ASSERT_TRUE(!LIKE()(std::string("hello world"), "[+-]\\d+"_re));
-        ASSERT_FALSE(!(!LIKE())("hello world", "blub"_re));
-        ASSERT_FALSE(!(!LIKE())("hello world", "AAA"_re_i));
-        ASSERT_FALSE(!(!LIKE())("hello world 11", "\\S{7}"_re));
-        ASSERT_FALSE(!(!LIKE())(std::string("hello world"), "[+-]\\d+"_re));
-        std::cmatch res;
-        ASSERT_FALSE(!LIKE(res)("hello world 11", ".*?(\\d+)"_re));
-        ASSERT_EQ(res.str(1), "11");
-    };*/
+        // successful assertion
+        ASSERT_NOTHROW(ASSERT_LIKE("hello world", "hell"_re));
+        ASSERT_NOTHROW(ASSERT_LIKE("hello world", "HELL"_re_i));
+        ASSERT_NOTHROW(ASSERT_LIKE("hello world", ".*?"));
+        ASSERT_NOTHROW(ASSERT_LIKE("hello world 11", "\\S{5}"_re));
+        ASSERT_NOTHROW(ASSERT_LIKE(std::string("hello world"), "hell"_re));
+        ASSERT_NOTHROW(ASSERT("hello world", LIKE, "hell"_re));
+        // successful negated assertion
+        ASSERT_NOTHROW(ASSERT_NOT_LIKE("hello world", "blub"_re));
+        ASSERT_NOTHROW(ASSERT_NOT_LIKE("hello world", "AAA"_re_i));
+        ASSERT_NOTHROW(ASSERT_NOT_LIKE("hello world", "AAA"));
+        ASSERT_NOTHROW(ASSERT_NOT_LIKE("hello world 11", "\\S{7}"_re));
+        ASSERT_NOTHROW(ASSERT_NOT_LIKE(std::string("hello world"), "[+-]\\d+"_re));
+        ASSERT_NOTHROW(ASSERT_NOT("hello world", LIKE, "blub"_re));
+        // failed assertion
+        ASSERT_THROWS(ASSERT_LIKE("hello world", "blub"_re), assertion_failure);
+        ASSERT_THROWS(ASSERT_LIKE("hello world", "AAA"_re_i), assertion_failure);
+        ASSERT_THROWS(ASSERT_LIKE("hello world", "AAA"), assertion_failure);
+        ASSERT_THROWS(ASSERT_LIKE("hello world 11", "\\S{7}"_re), assertion_failure);
+        ASSERT_THROWS(ASSERT_LIKE(std::string("hello world"), "[+-]\\d+"_re), assertion_failure);
+        ASSERT_THROWS(ASSERT("hello world", LIKE, "blub"_re), assertion_failure);
+        // failed negated assertion
+        ASSERT_THROWS(ASSERT_NOT_LIKE("hello world", "hell"_re), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_LIKE("hello world", "HELL"_re_i), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_LIKE("hello world", ".*?"), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_LIKE("hello world 11", "\\S{5}"_re), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT_LIKE(std::string("hello world"), "hell"_re), assertion_failure);
+        ASSERT_THROWS(ASSERT_NOT("hello world", LIKE, "hell"_re), assertion_failure);
+
+        std::cmatch cm;
+        std::smatch sm;
+        std::string s{"hello world 11"};
+        ASSERT_NOTHROW(ASSERT("hello world 11", LIKE, ".*?(\\d+)"_re, cm));
+        ASSERT_EQ(cm.str(1), "11");
+        ASSERT_NOTHROW(ASSERT_LIKE(s, ".*?(\\d+)"_re, sm));
+        ASSERT_EQ(sm.str(1), "11");
+
+        auto f = ASSERT_THROWS(ASSERT_LIKE("hello world", "\\s{4}"_re), assertion_failure);
+        ASSERT_LIKE(f.what(), "Expected .* to be like .*"_re);
+    };
 };
     /*
+    SUITE_PAR("test_assertions") {
+        class maybe_throwing
+        {
+        public:
+            explicit maybe_throwing(bool t_) {
+                if (t_) {
+                    throw std::logic_error("maybe_throwing");
+                }
+            }
+        };
+
+        class not_copyable
+        {
+        public:
+            not_copyable()                        = default;
+            ~not_copyable()                       = default;
+            not_copyable(not_copyable const&)     = delete;
+            not_copyable(not_copyable&&) noexcept = default;
+            auto
+            operator=(not_copyable const&) -> not_copyable& = delete;
+            auto
+            operator=(not_copyable&&) noexcept -> not_copyable& = default;
+        };
+
+        TEST("negation") {
+            // successful
+            ASSERT_NOTHROW(ASSERT(1, !EQUALS(), 2));
+            ASSERT_NOTHROW(ASSERT(true, !EQUALS(), false));
+            ASSERT_NOTHROW(ASSERT(1.5, !LESS(), 0.3));
+            ASSERT_NOTHROW(ASSERT(1, !!EQ(), 1));
+            // failing
+            ASSERT_THROWS(ASSERT(1, !EQ(), 1), assertion_failure);
+            ASSERT_THROWS(ASSERT(2, !EQUALS(), 2), assertion_failure);
+            ASSERT_THROWS(ASSERT(false, !EQUALS(), false), assertion_failure);
+            ASSERT_THROWS(ASSERT(1002.4, !LESS(), 1002.5), assertion_failure);
+            ASSERT_THROWS(ASSERT("hello", !EQ(), "hello"), assertion_failure);
+        }
+        TEST("assert") {  // successful
+            ASSERT_NOTHROW(ASSERT(1, EQUALS(), 1));
+            ASSERT_NOTHROW(ASSERT(true, EQUALS(), true));
+            ASSERT_NOTHROW(ASSERT(1.5, LESS(), 100.3));
+            ASSERT_NOTHROW(ASSERT(2, IN(), (std::vector<int>{1, 3, 2})));
+            // failing
+            ASSERT_THROWS(ASSERT(2, EQUALS(), 1), assertion_failure);
+            ASSERT_THROWS(ASSERT(false, EQUALS(), true), assertion_failure);
+            ASSERT_THROWS(ASSERT(1002.5, LESS(), 100.3), assertion_failure);
+            ASSERT_THROWS(ASSERT("hello", EQ(), "world"), assertion_failure);
+            ASSERT_THROWS(ASSERT(2, IN(), (std::vector<int>{1, 3})), assertion_failure);
+        };
+        TEST("assert_equals") {
+            // successful
+            ASSERT_NOTHROW(ASSERT_EQ(1, 1));
+            ASSERT_NOTHROW(ASSERT_EQ(true, true));
+            ASSERT_NOTHROW(ASSERT_EQ("", ""));
+            ASSERT_NOTHROW(ASSERT(1.12, EQ(0.1), 1.15));
+            // failing
+            ASSERT_THROWS(ASSERT_EQ(1, 2), assertion_failure);
+            ASSERT_THROWS(ASSERT_EQ(false, true), assertion_failure);
+            ASSERT_THROWS(ASSERT_EQ("b", "a"), assertion_failure);
+            ASSERT_THROWS(ASSERT(1.11, EQ(0.001), 1.10), assertion_failure);
+        };
+        TEST("assert_true") {
+            // successful
+            ASSERT_NOTHROW(ASSERT_TRUE(true));
+            ASSERT_NOTHROW(ASSERT_TRUE(1 == 1));
+            // failing
+            ASSERT_THROWS(ASSERT_TRUE(false), assertion_failure);
+            ASSERT_THROWS(ASSERT_TRUE(1 == 2), assertion_failure);
+        };
+        TEST("assert_false") {
+            // successful
+            ASSERT_NOTHROW(ASSERT_FALSE(false));
+            ASSERT_NOTHROW(ASSERT_FALSE(1 == 2));
+            // failing
+            ASSERT_THROWS(ASSERT_FALSE(true), assertion_failure);
+            ASSERT_THROWS(ASSERT_FALSE(1 == 1), assertion_failure);
+        };
+        TEST("assert_not_null") {
+            // successful
+            int         i = 1;
+            double      d = 1.0;
+            char const* s = "";
+            ASSERT_NOTHROW(ASSERT_NOT_NULL(&i));
+            ASSERT_NOTHROW(ASSERT_NOT_NULL(&d));
+            ASSERT_NOTHROW(ASSERT_NOT_NULL(&s));
+            // failing
+            int* n = nullptr;
+            ASSERT_THROWS(ASSERT_NOT_NULL(n), assertion_failure);
+            n = NULL;
+            ASSERT_THROWS(ASSERT_NOT_NULL(n), assertion_failure);
+        };
+        TEST("assert_null") {
+            // successful
+            int* n = nullptr;
+            ASSERT_NOTHROW(ASSERT_NULL(n));
+            n = NULL;
+            ASSERT_NOTHROW(ASSERT_NULL(n));
+            // failing
+            int         i = 1;
+            double      d = 1.0;
+            char const* s = "";
+            ASSERT_THROWS(ASSERT_NULL(&i), assertion_failure);
+            ASSERT_THROWS(ASSERT_NULL(&d), assertion_failure);
+            ASSERT_THROWS(ASSERT_NULL(&s), assertion_failure);
+        };
+        TEST("assert_throws") {
+            // successful
+            ASSERT_NOTHROW(ASSERT_THROWS(throw std::logic_error(""), std::logic_error));
+            ASSERT_NOTHROW(auto a = ASSERT_THROWS(return maybe_throwing(true), std::logic_error));
+            ASSERT_NOTHROW(auto a = ASSERT_THROWS(return maybe_throwing(true), std::logic_error);
+                           ASSERT_EQ(std::string(a.cause().what()), "maybe_throwing"));
+            // failing
+            ASSERT_THROWS(ASSERT_THROWS(return, std::logic_error), assertion_failure);
+            ASSERT_THROWS(ASSERT_THROWS(throw std::runtime_error(""), std::logic_error), assertion_failure);
+            ASSERT_THROWS(ASSERT_THROWS(throw 1, std::logic_error), assertion_failure);
+            ASSERT_THROWS(auto a = ASSERT_THROWS(return maybe_throwing(false), std::logic_error), assertion_failure);
+            ASSERT_THROWS(auto a = ASSERT_THROWS(return maybe_throwing(false), std::logic_error);
+                          ASSERT_EQ(a.cause().what(), ""), assertion_failure);
+        };
+        TEST("assert_nothrow") {
+            // successful
+            ASSERT_NOTHROW(ASSERT_NOTHROW(return ));
+            ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return 1); ASSERT_EQ(a, 1));
+            ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return maybe_throwing(false)));
+            ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return not_copyable()));
+            not_copyable nc;
+            ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return &nc));
+            ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return std::ref(nc)));
+            ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return std::move(nc)));
+            // failing
+            ASSERT_THROWS(ASSERT_NOTHROW(throw std::runtime_error("")), assertion_failure);
+            ASSERT_THROWS(ASSERT_NOTHROW(throw 1), assertion_failure);
+        };
+        TEST("assert_runtime") {
+            // successful
+            ASSERT_NOTHROW(ASSERT_RUNTIME(return, 100));
+            ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return 1, 100); ASSERT_EQ(a, 1));
+            ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return maybe_throwing(false), 100));
+            ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return not_copyable(), 100));
+            not_copyable nc;
+            ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return &nc, 100));
+            ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return std::ref(nc), 100));
+            ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return std::move(nc), 100));
+            // failing
+            ASSERT_THROWS(ASSERT_RUNTIME(std::this_thread::sleep_for(std::chrono::milliseconds(100)), 10),
+                          assertion_failure);
+            ASSERT_THROWS(auto a =
+                            ASSERT_RUNTIME(std::this_thread::sleep_for(std::chrono::milliseconds(100)); return 1, 10);
+                          ASSERT_EQ(a, 1), assertion_failure);
+            ASSERT_THROWS(ASSERT_RUNTIME(throw std::logic_error(""), 100), std::logic_error);
+        };
+    };
+
     SUITE("test_testsuite_parallel") {
         TEST("parallel_run") {
             testsuite_ptr ts = testsuite_parallel::create("ts");
@@ -345,159 +625,6 @@ SUITE_PAR("test_assert") {
             ASSERT_NOTHROW((throw_if_not_iterable<iterable>()));
             ASSERT_THROWS((throw_if_not_iterable<void_type>()), std::logic_error);
             ASSERT_THROWS((throw_if_not_iterable<not_iterable>()), std::logic_error);
-        };
-    };
-
-    SUITE_PAR("test_assertions") {
-        class maybe_throwing
-        {
-        public:
-            explicit maybe_throwing(bool t_) {
-                if (t_) {
-                    throw std::logic_error("maybe_throwing");
-                }
-            }
-        };
-
-        class not_copyable
-        {
-        public:
-            not_copyable()                        = default;
-            ~not_copyable()                       = default;
-            not_copyable(not_copyable const&)     = delete;
-            not_copyable(not_copyable&&) noexcept = default;
-            auto
-            operator=(not_copyable const&) -> not_copyable& = delete;
-            auto
-            operator=(not_copyable&&) noexcept -> not_copyable& = default;
-        };
-
-        TEST("negation") {
-            // successful
-            ASSERT_NOTHROW(ASSERT(1, !EQUALS(), 2));
-            ASSERT_NOTHROW(ASSERT(true, !EQUALS(), false));
-            ASSERT_NOTHROW(ASSERT(1.5, !LESS(), 0.3));
-            ASSERT_NOTHROW(ASSERT(1, !!EQ(), 1));
-            // failing
-            ASSERT_THROWS(ASSERT(1, !EQ(), 1), assertion_failure);
-            ASSERT_THROWS(ASSERT(2, !EQUALS(), 2), assertion_failure);
-            ASSERT_THROWS(ASSERT(false, !EQUALS(), false), assertion_failure);
-            ASSERT_THROWS(ASSERT(1002.4, !LESS(), 1002.5), assertion_failure);
-            ASSERT_THROWS(ASSERT("hello", !EQ(), "hello"), assertion_failure);
-        }
-        TEST("assert") {  // successful
-            ASSERT_NOTHROW(ASSERT(1, EQUALS(), 1));
-            ASSERT_NOTHROW(ASSERT(true, EQUALS(), true));
-            ASSERT_NOTHROW(ASSERT(1.5, LESS(), 100.3));
-            ASSERT_NOTHROW(ASSERT(2, IN(), (std::vector<int>{1, 3, 2})));
-            // failing
-            ASSERT_THROWS(ASSERT(2, EQUALS(), 1), assertion_failure);
-            ASSERT_THROWS(ASSERT(false, EQUALS(), true), assertion_failure);
-            ASSERT_THROWS(ASSERT(1002.5, LESS(), 100.3), assertion_failure);
-            ASSERT_THROWS(ASSERT("hello", EQ(), "world"), assertion_failure);
-            ASSERT_THROWS(ASSERT(2, IN(), (std::vector<int>{1, 3})), assertion_failure);
-        };
-        TEST("assert_equals") {
-            // successful
-            ASSERT_NOTHROW(ASSERT_EQ(1, 1));
-            ASSERT_NOTHROW(ASSERT_EQ(true, true));
-            ASSERT_NOTHROW(ASSERT_EQ("", ""));
-            ASSERT_NOTHROW(ASSERT(1.12, EQ(0.1), 1.15));
-            // failing
-            ASSERT_THROWS(ASSERT_EQ(1, 2), assertion_failure);
-            ASSERT_THROWS(ASSERT_EQ(false, true), assertion_failure);
-            ASSERT_THROWS(ASSERT_EQ("b", "a"), assertion_failure);
-            ASSERT_THROWS(ASSERT(1.11, EQ(0.001), 1.10), assertion_failure);
-        };
-        TEST("assert_true") {
-            // successful
-            ASSERT_NOTHROW(ASSERT_TRUE(true));
-            ASSERT_NOTHROW(ASSERT_TRUE(1 == 1));
-            // failing
-            ASSERT_THROWS(ASSERT_TRUE(false), assertion_failure);
-            ASSERT_THROWS(ASSERT_TRUE(1 == 2), assertion_failure);
-        };
-        TEST("assert_false") {
-            // successful
-            ASSERT_NOTHROW(ASSERT_FALSE(false));
-            ASSERT_NOTHROW(ASSERT_FALSE(1 == 2));
-            // failing
-            ASSERT_THROWS(ASSERT_FALSE(true), assertion_failure);
-            ASSERT_THROWS(ASSERT_FALSE(1 == 1), assertion_failure);
-        };
-        TEST("assert_not_null") {
-            // successful
-            int         i = 1;
-            double      d = 1.0;
-            char const* s = "";
-            ASSERT_NOTHROW(ASSERT_NOT_NULL(&i));
-            ASSERT_NOTHROW(ASSERT_NOT_NULL(&d));
-            ASSERT_NOTHROW(ASSERT_NOT_NULL(&s));
-            // failing
-            int* n = nullptr;
-            ASSERT_THROWS(ASSERT_NOT_NULL(n), assertion_failure);
-            n = NULL;
-            ASSERT_THROWS(ASSERT_NOT_NULL(n), assertion_failure);
-        };
-        TEST("assert_null") {
-            // successful
-            int* n = nullptr;
-            ASSERT_NOTHROW(ASSERT_NULL(n));
-            n = NULL;
-            ASSERT_NOTHROW(ASSERT_NULL(n));
-            // failing
-            int         i = 1;
-            double      d = 1.0;
-            char const* s = "";
-            ASSERT_THROWS(ASSERT_NULL(&i), assertion_failure);
-            ASSERT_THROWS(ASSERT_NULL(&d), assertion_failure);
-            ASSERT_THROWS(ASSERT_NULL(&s), assertion_failure);
-        };
-        TEST("assert_throws") {
-            // successful
-            ASSERT_NOTHROW(ASSERT_THROWS(throw std::logic_error(""), std::logic_error));
-            ASSERT_NOTHROW(auto a = ASSERT_THROWS(return maybe_throwing(true), std::logic_error));
-            ASSERT_NOTHROW(auto a = ASSERT_THROWS(return maybe_throwing(true), std::logic_error);
-                           ASSERT_EQ(std::string(a.cause().what()), "maybe_throwing"));
-            // failing
-            ASSERT_THROWS(ASSERT_THROWS(return, std::logic_error), assertion_failure);
-            ASSERT_THROWS(ASSERT_THROWS(throw std::runtime_error(""), std::logic_error), assertion_failure);
-            ASSERT_THROWS(ASSERT_THROWS(throw 1, std::logic_error), assertion_failure);
-            ASSERT_THROWS(auto a = ASSERT_THROWS(return maybe_throwing(false), std::logic_error), assertion_failure);
-            ASSERT_THROWS(auto a = ASSERT_THROWS(return maybe_throwing(false), std::logic_error);
-                          ASSERT_EQ(a.cause().what(), ""), assertion_failure);
-        };
-        TEST("assert_nothrow") {
-            // successful
-            ASSERT_NOTHROW(ASSERT_NOTHROW(return ));
-            ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return 1); ASSERT_EQ(a, 1));
-            ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return maybe_throwing(false)));
-            ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return not_copyable()));
-            not_copyable nc;
-            ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return &nc));
-            ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return std::ref(nc)));
-            ASSERT_NOTHROW(auto a = ASSERT_NOTHROW(return std::move(nc)));
-            // failing
-            ASSERT_THROWS(ASSERT_NOTHROW(throw std::runtime_error("")), assertion_failure);
-            ASSERT_THROWS(ASSERT_NOTHROW(throw 1), assertion_failure);
-        };
-        TEST("assert_runtime") {
-            // successful
-            ASSERT_NOTHROW(ASSERT_RUNTIME(return, 100));
-            ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return 1, 100); ASSERT_EQ(a, 1));
-            ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return maybe_throwing(false), 100));
-            ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return not_copyable(), 100));
-            not_copyable nc;
-            ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return &nc, 100));
-            ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return std::ref(nc), 100));
-            ASSERT_NOTHROW(auto a = ASSERT_RUNTIME(return std::move(nc), 100));
-            // failing
-            ASSERT_THROWS(ASSERT_RUNTIME(std::this_thread::sleep_for(std::chrono::milliseconds(100)), 10),
-                          assertion_failure);
-            ASSERT_THROWS(auto a =
-                            ASSERT_RUNTIME(std::this_thread::sleep_for(std::chrono::milliseconds(100)); return 1, 10);
-                          ASSERT_EQ(a, 1), assertion_failure);
-            ASSERT_THROWS(ASSERT_RUNTIME(throw std::logic_error(""), 100), std::logic_error);
         };
     };
 

@@ -32,8 +32,8 @@ namespace assert
 {
 namespace ns_in
 {
-static constexpr auto CMP_STR     = "to be in range of";
-static constexpr auto NEG_CMP_STR = "to be not in range of";
+static constexpr auto CMP_STR     = "to be in";
+static constexpr auto NEG_CMP_STR = "to be not in";
 }  // namespace ns_in
 
 struct assert_in
@@ -56,8 +56,7 @@ struct assert_in
     }
 };
 
-using IN       = assert_in;
-using IN_RANGE = assert_in;
+using IN = assert_in;
 }  // namespace assert
 }  // namespace intern
 }  // namespace tpp

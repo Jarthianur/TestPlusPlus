@@ -53,7 +53,7 @@ namespace assert
 {
 template<typename A, typename... Args>
 static inline auto
-make_assertion(Args... args) -> A {
+make_assertion(Args&&... args) -> A {
     return A{std::forward<Args>(args)...};
 }
 
@@ -304,7 +304,7 @@ assert_runtime(Fn&& fn_, double max_ms_, loc const& loc_) {
  * @return the instance of TRW that was caught.
  */
 #define ASSERT_THROWS(FN, TRW) \
-    tpp::intern::assert::assert_throws<TRW>([&] { FN; }, #TRW, tpp::intern::assert::loc{__FILE__, __LINE__})
+    tpp::intern::assert::assert_throws<TRW>([&] { FN; }, #TRW, tpp::intern::assert::loc{__FILE__, __LINE__}).cause()
 
 /**
  * Assert an expression to not throw anything.
