@@ -48,23 +48,6 @@
                                         tpp::intern::test::loc{__FILE__, __LINE__})
 
 /**
- * Generic assertion to compare two values, where the comparison is logically negated.
- * This is equivalent to prefixing a comparator with '!'.
- *
- * EXAMPLE:
- * @code
- * ASSERT_NOT(2, EQ(), 1);
- * @endcode
- *
- * @param VAL is the actual value.
- * @param CMP is the comparator to use.
- * @param EXP is the expected value.
- */
-#define ASSERT_NOT(VAL, CMP, EXP)                                              \
-    tpp::intern::test::assert_statement(std::forward_as_tuple(!CMP, VAL, EXP), \
-                                        tpp::intern::test::loc{__FILE__, __LINE__})
-
-/**
  * Assert two values to be equal.
  * This is equivalent to using ASSERT with EQUALS comparator.
  *
@@ -119,6 +102,7 @@
  * @param PTR is the actual pointer.
  */
 #define ASSERT_NULL(PTR)                                                                                              \
+    static_assert(TPP_INTERN_IS(std::is_pointer, decltype(PTR)), "ASSERT_NULL may only used with pointer types!");    \
     tpp::intern::test::assert_statement(std::forward_as_tuple(tpp::EQUALS(), static_cast<void const*>(PTR), nullptr), \
                                         tpp::intern::test::loc{__FILE__, __LINE__})
 
@@ -133,21 +117,8 @@
  * @param PTR is the actual pointer.
  */
 #define ASSERT_NOT_NULL(PTR)                                                                                           \
+    static_assert(TPP_INTERN_IS(std::is_pointer, decltype(PTR)), "ASSERT_NOT_NULL may only used with pointer types!"); \
     tpp::intern::test::assert_statement(std::forward_as_tuple(!tpp::EQUALS(), static_cast<void const*>(PTR), nullptr), \
-                                        tpp::intern::test::loc{__FILE__, __LINE__})
-
-/**
- * Assert a value to be zero.
- *
- * EXAMPLE:
- * @code
- * ASSERT_ZERO(0);
- * @endcode
- *
- * @param VAL is the actual value.
- */
-#define ASSERT_ZERO(VAL)                                                                                          \
-    tpp::intern::test::assert_statement(std::forward_as_tuple(tpp::EQUALS(), VAL, static_cast<decltype(VAL)>(0)), \
                                         tpp::intern::test::loc{__FILE__, __LINE__})
 
 /**
@@ -203,7 +174,7 @@ public:
     explicit throwable(T const& t_) : m_t(t_) {}
 
     auto
-    get() const -> T const& {
+    cause() const -> T const& {
         return m_t;
     }
 
@@ -268,7 +239,7 @@ assert_throws(Fn&& fn_, char const* tname_, loc const& loc_) -> throwable<T> {
  * @return the return value of fn_.
  * @throw tpp::intern::assertion_failure if a any throwable type is thrown by fn_.
  */
-template<typename Fn, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_TYPE(decltype(std::declval<Fn>()()), void))>
+template<typename Fn, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_VOID(decltype(std::declval<Fn>()())))>
 auto
 assert_nothrow(Fn&& fn_, loc const& loc_) -> decltype(fn_()) {
     try {
@@ -288,7 +259,7 @@ assert_nothrow(Fn&& fn_, loc const& loc_) -> decltype(fn_()) {
  * @param loc_ is the line of code where the assertion took place.
  * @throw tpp::intern::assertion_failure if a any throwable type is thrown by fn_.
  */
-template<typename Fn, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_TYPE(decltype(std::declval<Fn>()()), void))>
+template<typename Fn, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_VOID(decltype(std::declval<Fn>()())))>
 void
 assert_nothrow(Fn&& fn_, loc const& loc_) {
     try {
@@ -310,7 +281,7 @@ assert_nothrow(Fn&& fn_, loc const& loc_) {
  * @return the return value of fn_.
  * @throw tpp::intern::assertion_failure if fn_ does not complete within max_ms_.
  */
-template<typename Fn, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_TYPE(decltype(std::declval<Fn>()()), void))>
+template<typename Fn, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_VOID(decltype(std::declval<Fn>()())))>
 auto
 assert_runtime(Fn&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_()) {
     TPP_INTERN_SYNC {
@@ -332,7 +303,7 @@ assert_runtime(Fn&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_()) {
  * @param loc_ is the line of code where the assertion took place.
  * @throw tpp::intern::assertion_failure if fn_ does not complete within max_ms_.
  */
-template<typename Fn, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_TYPE(decltype(std::declval<Fn>()()), void))>
+template<typename Fn, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_VOID(decltype(std::declval<Fn>()())))>
 void
 assert_runtime(Fn&& fn_, double max_ms_, loc const& loc_) {
     double dur_ms{.0};

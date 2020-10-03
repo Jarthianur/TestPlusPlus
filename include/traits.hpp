@@ -59,6 +59,13 @@
 #define TPP_INTERN_IS_FLOAT(T) (TPP_INTERN_IS(std::is_floating_point, T))
 
 /**
+ * Check for a type to be void.
+ *
+ * @param T is the type to check.
+ */
+#define TPP_INTERN_IS_VOID(T) (TPP_INTERN_IS(std::is_void, T))
+
+/**
  * Check for a type to have streaming capabilities for a given stream.
  *
  * @param T is the type to check.

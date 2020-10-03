@@ -55,9 +55,18 @@ using tpp::intern::test::testsuite_ptr;
 
 SUITE_PAR("test_comparators") {
     TEST("equals") {
+        // test for equals correctly returning true
+        ASSERT_TRUE(EQ()('a', 'a'));
+        ASSERT_FALSE(!EQ()('a', 'a'));
+        ASSERT_FALSE(!EQ()(true, true));
+        ASSERT_FALSE(!EQ()("a", "a"));
+        ASSERT_FALSE(!EQ()(std::string("a"), "a"));
+        ASSERT_FALSE(!EQ()(std::string("a"), std::string("a")));
+        ASSERT_FALSE(!EQ()(std::vector<int>{1, 2}, std::vector<int>{1, 2}));
         ASSERT_FALSE(!EQ()(1, 1));
         ASSERT_FALSE(!EQ()(1.0, 1.0));
         ASSERT_FALSE(!EQ()(1.0F, 1.0F));
+
         ASSERT_TRUE(!(!EQ())(1, 1));
         ASSERT_TRUE(!(!EQ())(1.0, 1.0));
         ASSERT_TRUE(!(!EQ())(1.0F, 1.0F));
@@ -261,7 +270,7 @@ SUITE_PAR("test_testcase") {
         tc();
         ASSERT_EQ(tc.result(), testcase::HAS_PASSED);
         ASSERT(tc.elapsed_time(), GT(), 0.0);
-        ASSERT_ZERO(tc.reason().size());
+        ASSERT_EQ(tc.reason().size(), 0);
     };
     TEST("failed_execution") {
         testcase tc({"t1", "ctx"}, [] { ASSERT_TRUE(false); });
@@ -376,8 +385,17 @@ SUITE_PAR("test_assertions") {
     };
 
     TEST("negation") {
+        // successful
+        ASSERT_NOTHROW(ASSERT(1, !EQUALS(), 2));
+        ASSERT_NOTHROW(ASSERT(true, !EQUALS(), false));
+        ASSERT_NOTHROW(ASSERT(1.5, !LESS(), 0.3));
         ASSERT_NOTHROW(ASSERT(1, !!EQ(), 1));
+        // failing
         ASSERT_THROWS(ASSERT(1, !EQ(), 1), assertion_failure);
+        ASSERT_THROWS(ASSERT(2, !EQUALS(), 2), assertion_failure);
+        ASSERT_THROWS(ASSERT(false, !EQUALS(), false), assertion_failure);
+        ASSERT_THROWS(ASSERT(1002.4, !LESS(), 1002.5), assertion_failure);
+        ASSERT_THROWS(ASSERT("hello", !EQ(), "hello"), assertion_failure);
     }
     TEST("assert") {  // successful
         ASSERT_NOTHROW(ASSERT(1, EQUALS(), 1));
@@ -390,17 +408,6 @@ SUITE_PAR("test_assertions") {
         ASSERT_THROWS(ASSERT(1002.5, LESS(), 100.3), assertion_failure);
         ASSERT_THROWS(ASSERT("hello", EQ(), "world"), assertion_failure);
         ASSERT_THROWS(ASSERT(2, IN(), (std::vector<int>{1, 3})), assertion_failure);
-    };
-    TEST("assert_not") {
-        // successful
-        ASSERT_NOTHROW(ASSERT_NOT(1, EQUALS(), 2));
-        ASSERT_NOTHROW(ASSERT_NOT(true, EQUALS(), false));
-        ASSERT_NOTHROW(ASSERT_NOT(1.5, LESS(), 0.3));
-        // failing
-        ASSERT_THROWS(ASSERT_NOT(2, EQUALS(), 2), assertion_failure);
-        ASSERT_THROWS(ASSERT_NOT(false, EQUALS(), false), assertion_failure);
-        ASSERT_THROWS(ASSERT_NOT(1002.4, LESS(), 1002.5), assertion_failure);
-        ASSERT_THROWS(ASSERT_NOT("hello", EQ(), "hello"), assertion_failure);
     };
     TEST("assert_equals") {
         // successful
@@ -439,13 +446,17 @@ SUITE_PAR("test_assertions") {
         ASSERT_NOTHROW(ASSERT_NOT_NULL(&d));
         ASSERT_NOTHROW(ASSERT_NOT_NULL(&s));
         // failing
-        ASSERT_THROWS(ASSERT_NOT_NULL(nullptr), assertion_failure);
-        ASSERT_THROWS(ASSERT_NOT_NULL(NULL), assertion_failure);
+        int* n = nullptr;
+        ASSERT_THROWS(ASSERT_NOT_NULL(n), assertion_failure);
+        n = NULL;
+        ASSERT_THROWS(ASSERT_NOT_NULL(n), assertion_failure);
     };
     TEST("assert_null") {
         // successful
-        ASSERT_NOTHROW(ASSERT_NULL(nullptr));
-        ASSERT_NOTHROW(ASSERT_NULL(NULL));
+        int* n = nullptr;
+        ASSERT_NOTHROW(ASSERT_NULL(n));
+        n = NULL;
+        ASSERT_NOTHROW(ASSERT_NULL(n));
         // failing
         int         i = 1;
         double      d = 1.0;
@@ -454,27 +465,19 @@ SUITE_PAR("test_assertions") {
         ASSERT_THROWS(ASSERT_NULL(&d), assertion_failure);
         ASSERT_THROWS(ASSERT_NULL(&s), assertion_failure);
     };
-    TEST("assert_zero") {
-        // successful
-        ASSERT_NOTHROW(ASSERT_ZERO(0));
-        ASSERT_NOTHROW(ASSERT_ZERO(0.0));
-        // failing
-        ASSERT_THROWS(ASSERT_ZERO(1), assertion_failure);
-        ASSERT_THROWS(ASSERT_ZERO(0.1), assertion_failure);
-    };
     TEST("assert_throws") {
         // successful
         ASSERT_NOTHROW(ASSERT_THROWS(throw std::logic_error(""), std::logic_error));
         ASSERT_NOTHROW(auto a = ASSERT_THROWS(return maybe_throwing(true), std::logic_error));
         ASSERT_NOTHROW(auto a = ASSERT_THROWS(return maybe_throwing(true), std::logic_error);
-                       ASSERT_EQ(std::string(a.get().what()), "maybe_throwing"));
+                       ASSERT_EQ(std::string(a.cause().what()), "maybe_throwing"));
         // failing
         ASSERT_THROWS(ASSERT_THROWS(return, std::logic_error), assertion_failure);
         ASSERT_THROWS(ASSERT_THROWS(throw std::runtime_error(""), std::logic_error), assertion_failure);
         ASSERT_THROWS(ASSERT_THROWS(throw 1, std::logic_error), assertion_failure);
         ASSERT_THROWS(auto a = ASSERT_THROWS(return maybe_throwing(false), std::logic_error), assertion_failure);
         ASSERT_THROWS(auto a = ASSERT_THROWS(return maybe_throwing(false), std::logic_error);
-                      ASSERT_EQ(a.get().what(), ""), assertion_failure);
+                      ASSERT_EQ(a.cause().what(), ""), assertion_failure);
     };
     TEST("assert_nothrow") {
         // successful
@@ -551,9 +554,9 @@ DESCRIBE("test_suite_meta_functions") {
     int  after_each_called  = 0;
     bool teardown_called    = false;
     SETUP() {
-        ASSERT_ZERO(setup_called);
-        ASSERT_ZERO(before_each_called);
-        ASSERT_ZERO(after_each_called);
+        ASSERT_EQ(setup_called, 0);
+        ASSERT_EQ(before_each_called, 0);
+        ASSERT_EQ(after_each_called, 0);
         ASSERT_FALSE(teardown_called);
         x = 0;
         y = 0;
@@ -580,8 +583,8 @@ DESCRIBE("test_suite_meta_functions") {
     IT("should setup x,y with 0") {
         ASSERT_EQ(before_each_called, 1);
         ASSERT_EQ(after_each_called, 0);
-        ASSERT_ZERO(x);
-        ASSERT_ZERO(y - 1);
+        ASSERT_EQ(x, 0);
+        ASSERT_EQ(y - 1, 0);
     };
     IT("should increment y before") {
         ASSERT_EQ(before_each_called, 2);

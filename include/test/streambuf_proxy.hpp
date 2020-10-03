@@ -161,6 +161,8 @@ private:
     }
 
     std::vector<std::stringbuf> m_thd_buffers;  ///< Buffer to store captured output.
+
+#undef TPP_INTERN_CURRENT_THREAD_BUFFER
 };
 }  // namespace test
 }  // namespace intern
@@ -170,6 +172,5 @@ private:
 #    undef omp_get_max_threads
 #    undef omp_get_thread_num
 #endif
-#undef TPP_INTERN_CURRENT_THREAD_BUFFER
 
 #endif  // TPP_TEST_STREAMBUF_PROXY_HPP
