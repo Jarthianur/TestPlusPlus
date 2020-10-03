@@ -15,19 +15,36 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef TPP_COMPARE_ORDERING_HPP
-#define TPP_COMPARE_ORDERING_HPP
+#ifndef TPP_DURATION_HPP
+#define TPP_DURATION_HPP
 
-#include "compare/comparator.hpp"
+#include <chrono>
 
-TPP_COMPARATOR(greater_than, "greater than", actual_value > expected_value)
-TPP_PROVIDE_COMPARATOR(greater_than, GREATER_THAN)
-TPP_PROVIDE_COMPARATOR(greater_than, GREATER)
-TPP_PROVIDE_COMPARATOR(greater_than, GT)
+namespace tpp
+{
+namespace intern
+{
+/**
+ * Used to measure durations in milliseconds.
+ * The starting timepoint is fixed upon construction.
+ */
+class duration final
+{
+public:
+    duration() : m_start(std::chrono::steady_clock::now()) {}
 
-TPP_COMPARATOR(less_than, "less than", actual_value < expected_value)
-TPP_PROVIDE_COMPARATOR(less_than, LESS_THAN)
-TPP_PROVIDE_COMPARATOR(less_than, LESS)
-TPP_PROVIDE_COMPARATOR(less_than, LT)
+    /**
+     * Get the duration since starting point in milliseconds.
+     */
+    auto
+    get() -> double {
+        return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - m_start).count();
+    }
 
-#endif  // TPP_COMPARE_ORDERING_HPP
+private:
+    std::chrono::steady_clock::time_point const m_start;  ///< Starting timepoint.
+};
+}  // namespace intern
+}  // namespace tpp
+
+#endif  // TPP_DURATION_HPP

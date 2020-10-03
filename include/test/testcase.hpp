@@ -22,8 +22,9 @@
 #include <string>
 #include <utility>
 
-#include "test/assertion_failure.hpp"
-#include "test/duration.hpp"
+#include "assert/assertion_failure.hpp"
+
+#include "duration.hpp"
 
 namespace tpp
 {
@@ -102,7 +103,7 @@ public:
         try {
             m_test_fn();
             pass();
-        } catch (assertion_failure const& e) {
+        } catch (assert::assertion_failure const& e) {
             fail(e.what());
         } catch (std::exception const& e) {
             error(e.what());

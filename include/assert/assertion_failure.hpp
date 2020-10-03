@@ -15,19 +15,19 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef TPP_TEST_ASSERTION_FAILURE_HPP
-#define TPP_TEST_ASSERTION_FAILURE_HPP
+#ifndef TPP_ASSERT_ASSERTION_FAILURE_HPP
+#define TPP_ASSERT_ASSERTION_FAILURE_HPP
 
 #include <exception>
 #include <string>
 
-#include "test/loc.hpp"
+#include "assert/loc.hpp"
 
 namespace tpp
 {
 namespace intern
 {
-namespace test
+namespace assert
 {
 /**
  * Used to be thrown when an assertion fails.
@@ -53,8 +53,8 @@ public:
 private:
     std::string const m_msg;  ///< Message describing the failure cause.
 };
-}  // namespace test
+}  // namespace assert
 }  // namespace intern
 }  // namespace tpp
 
-#endif  // TPP_TEST_ASSERTION_FAILURE_HPP
+#endif  // TPP_ASSERT_ASSERTION_FAILURE_HPP

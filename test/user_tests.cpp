@@ -16,7 +16,7 @@
 */
 
 #include "tpp.hpp"
-
+/*
 using tpp::GT;
 using tpp::LT;
 
@@ -69,3 +69,4 @@ DESCRIBE_PAR("TestMyClass") {
         std::cerr << "print \"quoted\"" << std::endl;
     }
 };
+*/
