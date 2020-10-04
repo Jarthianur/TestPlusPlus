@@ -153,7 +153,9 @@ assert_runtime(Fn&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_()) {
         decltype(fn_()) res{fn_()};
         double          dur_ms{dur.get()};
         if (dur_ms > max_ms_) {
-            throw assertion_failure("runtime > " + to_string(max_ms_) + "ms", loc_);
+            throw assertion_failure("Expected the runtime to be less " + to_string(max_ms_) + "ms, but was " +
+                                      to_string(dur_ms) + "ms",
+                                    loc_);
         }
         return res;
     }
@@ -177,7 +179,8 @@ assert_runtime(Fn&& fn_, double max_ms_, loc const& loc_) {
         dur_ms = dur.get();
     }
     if (dur_ms > max_ms_) {
-        throw assertion_failure("runtime > " + to_string(max_ms_) + "ms", loc_);
+        throw assertion_failure(
+          "Expected the runtime to be less " + to_string(max_ms_) + "ms, but was " + to_string(dur_ms) + "ms", loc_);
     }
 }
 }  // namespace assert

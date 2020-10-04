@@ -31,8 +31,10 @@ namespace intern
 {
 namespace assert
 {
-using GT = assert_greater;
-using LT = assert_less;
+using GT      = assert_greater;
+using GREATER = assert_greater;
+using LT      = assert_less;
+using LESS    = assert_less;
 }  // namespace assert
 }  // namespace intern
 }  // namespace tpp
