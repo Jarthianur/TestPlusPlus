@@ -17,4 +17,3 @@
 !*.sh
 !requirements.txt
 !CMakeLists.txt
-!compile_commands.json
