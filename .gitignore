@@ -17,3 +17,4 @@
 !*.sh
 !requirements.txt
 !CMakeLists.txt
+!CHANGELOG.md
