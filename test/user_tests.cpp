@@ -17,9 +17,6 @@
 
 #include "tpp.hpp"
 
-using tpp::GT;
-using tpp::LT;
-
 class MyClass
 {
     int    m_i = 0;
@@ -56,10 +53,10 @@ DESCRIBE_PAR("TestMyClass") {
     };
 
     TEST("some test with i") {
-        ASSERT(fixture_.i(), GT(), 0);
+        ASSERT(fixture_.i(), GT, 0);
     };
     TEST("some test with d") {
-        ASSERT(fixture_.d(), LT(), 16.5);
+        ASSERT(fixture_.d(), LT, 16.5);
     };
 
     TEST("check epsilon") {

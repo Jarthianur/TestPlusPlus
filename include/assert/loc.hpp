@@ -15,14 +15,14 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef TPP_TEST_LOC_HPP
-#define TPP_TEST_LOC_HPP
+#ifndef TPP_ASSERT_LOC_HPP
+#define TPP_ASSERT_LOC_HPP
 
 namespace tpp
 {
 namespace intern
 {
-namespace test
+namespace assert
 {
 /**
  * A line of code, specified by its line number and filename.
@@ -32,8 +32,8 @@ struct loc final
     char const* file;  ///< The filename, where this location belongs to.
     int const   line;  ///< The line number in the file.
 };
-}  // namespace test
+}  // namespace assert
 }  // namespace intern
 }  // namespace tpp
 
-#endif  // TPP_TEST_LOC_HPP
+#endif  // TPP_ASSERT_LOC_HPP

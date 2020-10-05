@@ -20,11 +20,11 @@
 #ifndef TPP_TPP_HPP
 #define TPP_TPP_HPP
 
-#include "compare/equality.hpp"
-#include "compare/ordering.hpp"
-#include "compare/range.hpp"
-#include "compare/regex.hpp"
-#include "test/assert.hpp"
+#include "assert/assert.hpp"
+#include "assert/equality.hpp"
+#include "assert/ordering.hpp"
+#include "assert/range.hpp"
+#include "assert/regex.hpp"
 
 #include "api.hpp"
 #include "regex.hpp"
