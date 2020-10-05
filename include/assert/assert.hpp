@@ -80,8 +80,8 @@ fail_assertion(std::tuple<std::string&&, char const*, std::string&&>&& asrt_, lo
  * fn_.
  */
 template<typename T, typename Fn>
-auto
-assert_throws(Fn&& fn_, char const* tname_, loc const& loc_) -> throwable<T> {
+static auto
+assert_throws(Fn&& fn_, char const* tname_, loc&& loc_) -> throwable<T> {
     try {
         fn_();
     } catch (T const& e) {
@@ -104,8 +104,8 @@ assert_throws(Fn&& fn_, char const* tname_, loc const& loc_) -> throwable<T> {
  * @throw tpp::intern::assertion_failure if a any throwable type is thrown by fn_.
  */
 template<typename Fn, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_VOID(decltype(std::declval<Fn>()())))>
-auto
-assert_nothrow(Fn&& fn_, loc const& loc_) -> decltype(fn_()) {
+static auto
+assert_nothrow(Fn&& fn_, loc&& loc_) -> decltype(fn_()) {
     try {
         return fn_();
     } catch (std::exception const& e) {
@@ -124,8 +124,8 @@ assert_nothrow(Fn&& fn_, loc const& loc_) -> decltype(fn_()) {
  * @throw tpp::intern::assertion_failure if a any throwable type is thrown by fn_.
  */
 template<typename Fn, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_VOID(decltype(std::declval<Fn>()())))>
-void
-assert_nothrow(Fn&& fn_, loc const& loc_) {
+static void
+assert_nothrow(Fn&& fn_, loc&& loc_) {
     try {
         fn_();
     } catch (std::exception const& e) {
@@ -146,8 +146,8 @@ assert_nothrow(Fn&& fn_, loc const& loc_) {
  * @throw tpp::intern::assertion_failure if fn_ does not complete within max_ms_.
  */
 template<typename Fn, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_VOID(decltype(std::declval<Fn>()())))>
-auto
-assert_runtime(Fn&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_()) {
+static auto
+assert_runtime(Fn&& fn_, double max_ms_, loc&& loc_) -> decltype(fn_()) {
     TPP_INTERN_SYNC {
         duration        dur;
         decltype(fn_()) res{fn_()};
@@ -170,8 +170,8 @@ assert_runtime(Fn&& fn_, double max_ms_, loc const& loc_) -> decltype(fn_()) {
  * @throw tpp::intern::assertion_failure if fn_ does not complete within max_ms_.
  */
 template<typename Fn, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_VOID(decltype(std::declval<Fn>()())))>
-void
-assert_runtime(Fn&& fn_, double max_ms_, loc const& loc_) {
+static void
+assert_runtime(Fn&& fn_, double max_ms_, loc&& loc_) {
     double dur_ms{.0};
     TPP_INTERN_SYNC {
         duration dur;
@@ -210,7 +210,7 @@ assert_runtime(Fn&& fn_, double max_ms_, loc const& loc_) {
     struct NAME                                                                                                       \
     {                                                                                                                 \
         template<typename V, typename E = V>                                                                          \
-        NAME(V&& v_, E&& e_, bool neg_, loc const& loc_) {                                                            \
+        NAME(V&& v_, E&& e_, bool neg_, loc&& loc_) {                                                                 \
             if ((PRED) == neg_) {                                                                                     \
                 fail_assertion(std::forward_as_tuple(                                                                 \
                                  to_string(v_), (neg_ ? ns_##NAME::NEG_CMP_STR : ns_##NAME::CMP_STR), to_string(e_)), \

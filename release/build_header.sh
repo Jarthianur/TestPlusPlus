@@ -4,6 +4,7 @@ set -eo pipefail
 FILES="../include/version.hpp
 ../include/cpp_meta.hpp
 ../include/traits.hpp
+../include/duration.hpp
 ../include/regex.hpp
 ../include/stringify.hpp
 ../include/assert/loc.hpp
@@ -13,7 +14,6 @@ FILES="../include/version.hpp
 ../include/assert/equality.hpp
 ../include/assert/range.hpp
 ../include/assert/regex.hpp
-../include/duration.hpp
 ../include/test/testcase.hpp
 ../include/test/streambuf_proxy.hpp
 ../include/test/statistic.hpp

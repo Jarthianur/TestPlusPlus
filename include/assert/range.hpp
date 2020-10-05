@@ -40,7 +40,7 @@ struct assert_in
 {
     template<typename V, typename E = V,
              TPP_INTERN_ENABLE_IF(TPP_INTERN_HAS_ITERATOR_CAPABILITY(E) && !TPP_INTERN_IS_TYPE(E, std::string))>
-    assert_in(V&& v_, E&& e_, bool neg_, loc const& loc_) {
+    assert_in(V&& v_, E&& e_, bool neg_, loc&& loc_) {
         if ((std::find(e_.cbegin(), e_.cend(), v_) != e_.cend()) == neg_) {
             fail_assertion(
               std::forward_as_tuple(to_string(v_), (neg_ ? ns_in::NEG_CMP_STR : ns_in::CMP_STR), to_string(e_)), loc_);
@@ -48,7 +48,7 @@ struct assert_in
     }
 
     template<typename V, typename E = V, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_TYPE(E, std::string))>
-    assert_in(V&& v_, E&& e_, bool neg_, loc const& loc_) {
+    assert_in(V&& v_, E&& e_, bool neg_, loc&& loc_) {
         if ((e_.find(v_) != std::string::npos) == neg_) {
             fail_assertion(
               std::forward_as_tuple(to_string(v_), (neg_ ? ns_in::NEG_CMP_STR : ns_in::CMP_STR), to_string(e_)), loc_);

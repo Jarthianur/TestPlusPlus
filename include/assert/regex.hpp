@@ -44,7 +44,7 @@ static constexpr auto NEG_CMP_STR = "to be not like";
 struct assert_match
 {
     template<typename R, typename V, typename E = V>
-    assert_match(V&& v_, E&& e_, R& r_, bool neg_, loc const& loc_) {
+    assert_match(V&& v_, E&& e_, R& r_, bool neg_, loc&& loc_) {
         if (std::regex_match(v_, r_, std::regex(e_)) == neg_) {
             fail_assertion(
               std::forward_as_tuple(to_string(v_), (neg_ ? ns_match::NEG_CMP_STR : ns_match::CMP_STR), to_string(e_)),
@@ -53,7 +53,7 @@ struct assert_match
     }
 
     template<typename V, typename E = V>
-    assert_match(V&& v_, E&& e_, bool neg_, loc const& loc_) {
+    assert_match(V&& v_, E&& e_, bool neg_, loc&& loc_) {
         if (std::regex_match(v_, std::regex(e_)) == neg_) {
             fail_assertion(
               std::forward_as_tuple(to_string(v_), (neg_ ? ns_match::NEG_CMP_STR : ns_match::CMP_STR), to_string(e_)),
@@ -65,7 +65,7 @@ struct assert_match
 struct assert_like
 {
     template<typename R, typename V, typename E = V>
-    assert_like(V&& v_, E&& e_, R& r_, bool neg_, loc const& loc_) {
+    assert_like(V&& v_, E&& e_, R& r_, bool neg_, loc&& loc_) {
         if (std::regex_search(v_, r_, std::regex(e_)) == neg_) {
             fail_assertion(
               std::forward_as_tuple(to_string(v_), (neg_ ? ns_like::NEG_CMP_STR : ns_like::CMP_STR), to_string(e_)),
@@ -74,7 +74,7 @@ struct assert_like
     }
 
     template<typename V, typename E = V>
-    assert_like(V&& v_, E&& e_, bool neg_, loc const& loc_) {
+    assert_like(V&& v_, E&& e_, bool neg_, loc&& loc_) {
         if (std::regex_search(v_, std::regex(e_)) == neg_) {
             fail_assertion(
               std::forward_as_tuple(to_string(v_), (neg_ ? ns_like::NEG_CMP_STR : ns_like::CMP_STR), to_string(e_)),

@@ -54,7 +54,7 @@ static constexpr auto NEG_CMP_STR = "to be not equals";
 struct assert_equals
 {
     template<typename V, typename E = V, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_FLOAT(V) || !TPP_INTERN_IS_FLOAT(E))>
-    assert_equals(V&& v_, E&& e_, bool neg_, loc const& loc_) {
+    assert_equals(V&& v_, E&& e_, bool neg_, loc&& loc_) {
         if ((v_ == e_) == neg_) {
             fail_assertion(
               std::forward_as_tuple(to_string(v_), (neg_ ? ns_equals::NEG_CMP_STR : ns_equals::CMP_STR), to_string(e_)),
@@ -64,7 +64,7 @@ struct assert_equals
 
     template<typename F, typename V, typename E = V,
              TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_FLOAT(V) && TPP_INTERN_IS_FLOAT(E))>
-    assert_equals(V&& v_, E&& e_, F&& eps_, bool neg_, loc const& loc_) {
+    assert_equals(V&& v_, E&& e_, F&& eps_, bool neg_, loc&& loc_) {
         static_assert(TPP_INTERN_IS_FLOAT(F),
                       "An epsilon used in floating point comparison must be itself a floating point!");
 
@@ -76,7 +76,7 @@ struct assert_equals
     }
 
     template<typename V, typename E = V, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_FLOAT(V) && TPP_INTERN_IS_FLOAT(E))>
-    assert_equals(V&& v_, E&& e_, bool neg_, loc const& loc_) {
+    assert_equals(V&& v_, E&& e_, bool neg_, loc&& loc_) {
         typename std::decay<E>::type eps_ = static_cast<E>(epsilon);
         if ((std::abs(v_ - e_) <= std::max(std::abs(v_), std::abs(e_)) * eps_) == neg_) {
             fail_assertion(
