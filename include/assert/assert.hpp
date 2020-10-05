@@ -276,10 +276,11 @@ assert_runtime(Fn&& fn_, double max_ms_, loc const& loc_) {
  *
  * @param PTR is the actual pointer.
  */
-#define ASSERT_NULL(PTR)                                       \
-    std::cout << tpp::intern::name_for_type(PTR) << std::endl; \
+#define ASSERT_NULL(PTR)                                                                      \
+    static_assert(TPP_INTERN_IS(std::is_pointer, std::remove_reference<decltype(PTR)>::type), \
+                  "ASSERT_NULL may only be used with pointer types!");                        \
     ASSERT_EQ(static_cast<void const*>(PTR), nullptr)
-   // static_assert(TPP_INTERN_IS(std::is_pointer, decltype(PTR)), "ASSERT_NULL may only used with pointer types!");
+
 /**
  * Assert a pointer to be not nullptr.
  *
@@ -290,11 +291,10 @@ assert_runtime(Fn&& fn_, double max_ms_, loc const& loc_) {
  *
  * @param PTR is the actual pointer.
  */
-#define ASSERT_NOT_NULL(PTR)                                   \
-    std::cout << tpp::intern::name_for_type(PTR) << std::endl; \
+#define ASSERT_NOT_NULL(PTR)                                                                  \
+    static_assert(TPP_INTERN_IS(std::is_pointer, std::remove_reference<decltype(PTR)>::type), \
+                  "ASSERT_NOT_NULL may only be used with pointer types!");                    \
     ASSERT_NOT_EQ(static_cast<void const*>(PTR), nullptr)
-
-// static_assert(TPP_INTERN_IS(std::is_pointer, decltype(PTR)), "ASSERT_NOT_NULL may only used with pointer types!");
 
 /**
  * Assert an expression to throw a specific throwable type.
