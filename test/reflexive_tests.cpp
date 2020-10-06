@@ -429,7 +429,8 @@ SUITE("test_testsuite_parallel") {
         ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
         ts->test("", [] { ASSERT_TRUE(false); });
         ts->test("", [] { throw std::logic_error(""); });
-        ASSERT_RUNTIME(ts->run(), 300);
+        std::cout << "max threads: " << omp_get_max_threads() << std::flush;
+        ASSERT_RUNTIME(ts->run(), 400);
         if (omp_get_max_threads() == 1) {
             ASSERT(ts->statistics().elapsed_time(), GT, 200);
             double t = 0.0;
