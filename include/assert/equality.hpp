@@ -85,12 +85,11 @@ struct assert_equals
         }
     }
 };
-
-using EQ     = assert_equals;
-using EQUALS = assert_equals;
 }  // namespace assert
 }  // namespace intern
 }  // namespace tpp
+
+TPP_PROVIDE_ASSERTION(assert_equals, EQ)
 
 /**
  * Assert two values to be equal.

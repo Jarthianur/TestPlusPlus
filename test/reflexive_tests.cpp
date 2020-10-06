@@ -28,6 +28,12 @@
 #include "test_traits.hpp"
 #include "tpp.hpp"
 
+#ifdef _OPENMP
+#    include <omp.h>
+#else
+#    define omp_get_max_threads() 1
+#endif
+
 #ifdef TPP_INTERN_SYS_UNIX
 #    pragma GCC diagnostic push
 #    pragma GCC diagnostic ignored "-Wunused-variable"
@@ -57,7 +63,6 @@ SUITE_PAR("test_assert") {
         ASSERT_NOTHROW(ASSERT_EQ(1., 1.));
         ASSERT_NOTHROW(ASSERT_EQ(1.F, 1.F));
         ASSERT_NOTHROW(ASSERT(1, EQ, 1));
-        ASSERT_NOTHROW(ASSERT(1, EQUALS, 1));
         // successful negated assertion
         ASSERT_NOTHROW(ASSERT_NOT_EQ('a', 'b'));
         ASSERT_NOTHROW(ASSERT_NOT_EQ(true, false));
@@ -69,7 +74,6 @@ SUITE_PAR("test_assert") {
         ASSERT_NOTHROW(ASSERT_NOT_EQ(1., 2.));
         ASSERT_NOTHROW(ASSERT_NOT_EQ(1.F, 2.F));
         ASSERT_NOTHROW(ASSERT_NOT(1, EQ, 2));
-        ASSERT_NOTHROW(ASSERT_NOT(1, EQUALS, 2));
         // failed assertion
         ASSERT_THROWS(ASSERT_EQ('a', 'b'), assertion_failure);
         ASSERT_THROWS(ASSERT_EQ(true, false), assertion_failure);
@@ -81,7 +85,6 @@ SUITE_PAR("test_assert") {
         ASSERT_THROWS(ASSERT_EQ(1., 2.), assertion_failure);
         ASSERT_THROWS(ASSERT_EQ(1.F, 2.F), assertion_failure);
         ASSERT_THROWS(ASSERT(1, EQ, 2), assertion_failure);
-        ASSERT_THROWS(ASSERT(1, EQUALS, 2), assertion_failure);
         // failed negated assertion
         ASSERT_THROWS(ASSERT_NOT_EQ('a', 'a'), assertion_failure);
         ASSERT_THROWS(ASSERT_NOT_EQ(true, true), assertion_failure);
@@ -93,7 +96,6 @@ SUITE_PAR("test_assert") {
         ASSERT_THROWS(ASSERT_NOT_EQ(1., 1.), assertion_failure);
         ASSERT_THROWS(ASSERT_NOT_EQ(1.F, 1.F), assertion_failure);
         ASSERT_THROWS(ASSERT_NOT(1, EQ, 1), assertion_failure);
-        ASSERT_THROWS(ASSERT_NOT(1, EQUALS, 1), assertion_failure);
 
         auto f = ASSERT_THROWS(ASSERT_EQ(1, 2), assertion_failure);
         ASSERT_LIKE(f.what(), "Expected 1 to be equals 2"_re);
@@ -105,14 +107,12 @@ SUITE_PAR("test_assert") {
         ASSERT_NOTHROW(ASSERT_EQ(1.F, 1.F));
         ASSERT_NOTHROW(ASSERT(1., EQ, 1.));
         ASSERT_NOTHROW(ASSERT(1.001, EQ, 1.001, .001));
-        ASSERT_NOTHROW(ASSERT(1., EQUALS, 1.));
         // failed assertion
         ASSERT_THROWS(ASSERT_EQ(1., 2.), assertion_failure);
         ASSERT_THROWS(ASSERT_EQ(1.0011, 2.0012, .0001), assertion_failure);
         ASSERT_THROWS(ASSERT_EQ(1.F, 2.F), assertion_failure);
         ASSERT_THROWS(ASSERT(1., EQ, 2.), assertion_failure);
         ASSERT_THROWS(ASSERT(1.0011, EQ, 2.0012, .0001), assertion_failure);
-        ASSERT_THROWS(ASSERT(1., EQUALS, 2.), assertion_failure);
 
         auto f = ASSERT_THROWS(ASSERT_EQ(1.1, 2.1), assertion_failure);
         ASSERT_LIKE(f.what(), "Expected 1.1\\d* to be equals 2.1\\d*"_re);
@@ -426,31 +426,24 @@ SUITE("test_testsuite_parallel") {
     TEST("parallel_run") {
         testsuite_ptr ts = testsuite_parallel::create("ts");
         ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
-        ts->test("", [] { ASSERT_TRUE(false); });
-        ts->test("", [] { throw std::logic_error(""); });
         ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
         ts->test("", [] { ASSERT_TRUE(false); });
         ts->test("", [] { throw std::logic_error(""); });
-#ifdef _OPENMP
-        int c = 200;
-// workaround: see https://github.com/Jarthianur/TestPlusPlus/issues/25
-#    ifdef __clang__
-        c = 300;
-#    endif
-        ASSERT_RUNTIME(ts->run(), c);
-        ASSERT(ts->statistics().elapsed_time(), LT, c);
-#else
-        ts->run();
-        double t = 0.0;
-        for (auto const& tc : ts->testcases()) {
-            t += tc.elapsed_time();
+        ASSERT_RUNTIME(ts->run(), 300);
+        if (omp_get_max_threads() == 1) {
+            ASSERT(ts->statistics().elapsed_time(), GT, 200);
+            double t = 0.0;
+            for (auto const& tc : ts->testcases()) {
+                t += tc.elapsed_time();
+            }
+            ASSERT_GT(ts->statistics().elapsed_time(), t);
+        } else {
+            ASSERT(ts->statistics().elapsed_time(), LT, 200);
         }
-        ASSERT_EQ(ts->statistics().elapsed_time(), t);
-#endif
         statistic const& stat = ts->statistics();
-        ASSERT_EQ(stat.tests(), 6UL);
-        ASSERT_EQ(stat.errors(), 2UL);
-        ASSERT_EQ(stat.failures(), 2UL);
+        ASSERT_EQ(stat.tests(), 4UL);
+        ASSERT_EQ(stat.errors(), 1UL);
+        ASSERT_EQ(stat.failures(), 1UL);
         ASSERT_EQ(stat.successes(), 2UL);
     };
 };
@@ -505,7 +498,7 @@ SUITE("test_testsuite") {
         for (auto const& tc : ts->testcases()) {
             t += tc.elapsed_time();
         }
-        ASSERT_EQ(t, ts->statistics().elapsed_time());
+        ASSERT_LT(t, ts->statistics().elapsed_time());
     };
 };
 

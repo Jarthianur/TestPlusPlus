@@ -54,6 +54,7 @@ public:
     void
     run() override {
         if (m_state != IS_DONE) {
+            duration d;
             if (m_testcases.size() > static_cast<std::size_t>(std::numeric_limits<std::int64_t>::max())) {
                 throw std::overflow_error("Too many testcases! Size would overflow loop variant.");
             }
@@ -63,7 +64,6 @@ public:
             m_setup_fn();
 #pragma omp parallel default(shared)
             {  // BEGIN parallel section
-                double      tmp{.0};
                 std::size_t fails{0};
                 std::size_t errs{0};
                 // OpenMP 2 compatible - MSVC not supporting higher version
@@ -78,7 +78,6 @@ public:
                             case testcase::HAD_ERROR: ++errs; break;
                             default: break;
                         }
-                        tmp += tc.elapsed_time();
                         m_posttest_fn();
                         tc.cout(bufs.cout.str());
                         tc.cerr(bufs.cerr.str());
@@ -88,11 +87,11 @@ public:
                 {  // BEGIN critical section
                     m_stats.m_num_fails += fails;
                     m_stats.m_num_errs += errs;
-                    m_stats.m_elapsed_t = std::max(m_stats.m_elapsed_t, tmp);
                 }  // END critical section
             }      // END parallel section
             m_teardown_fn();
             m_state = IS_DONE;
+            m_stats.m_elapsed_t += d.get();
         }
     }
 

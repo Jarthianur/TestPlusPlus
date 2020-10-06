@@ -82,12 +82,12 @@ struct assert_like
         }
     }
 };
-
-using MATCH = assert_match;
-using LIKE  = assert_like;
 }  // namespace assert
 }  // namespace intern
 }  // namespace tpp
+
+TPP_PROVIDE_ASSERTION(assert_match, MATCH)
+TPP_PROVIDE_ASSERTION(assert_like, LIKE)
 
 #define ASSERT_MATCH(...)                                                   \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_match>( \

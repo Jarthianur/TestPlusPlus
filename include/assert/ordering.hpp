@@ -24,20 +24,8 @@
 
 TPP_DEFINE_ASSERTION(assert_greater, "greater than", v_ > e_)
 TPP_DEFINE_ASSERTION(assert_less, "less than", v_ < e_)
-
-namespace tpp
-{
-namespace intern
-{
-namespace assert
-{
-using GT      = assert_greater;
-using GREATER = assert_greater;
-using LT      = assert_less;
-using LESS    = assert_less;
-}  // namespace assert
-}  // namespace intern
-}  // namespace tpp
+TPP_PROVIDE_ASSERTION(assert_greater, GT)
+TPP_PROVIDE_ASSERTION(assert_less, LT)
 
 #define ASSERT_GT(...)                                                        \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_greater>( \

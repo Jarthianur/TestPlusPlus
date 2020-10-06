@@ -222,6 +222,15 @@ assert_runtime(Fn&& fn_, double max_ms_, loc&& loc_) {
     }                                                                                                                 \
     }
 
+#define TPP_PROVIDE_ASSERTION(A, S)   \
+    namespace tpp                     \
+    {                                 \
+    namespace assert                  \
+    {                                 \
+    using S = tpp::intern::assert::A; \
+    }                                 \
+    }
+
 /**
  * Generic assertion to compare two values.
  *
@@ -234,13 +243,13 @@ assert_runtime(Fn&& fn_, double max_ms_, loc&& loc_) {
  * @param CMP is the comparator to use.
  * @param EXP is the expected value.
  */
-#define ASSERT(V, A, ...)                                                              \
-    tpp::intern::assert::make_assertion<tpp::intern::assert::A>(V, __VA_ARGS__, false, \
-                                                                tpp::intern::assert::loc{__FILE__, __LINE__})
+#define ASSERT(V, A, ...)                                                      \
+    tpp::intern::assert::make_assertion<tpp::assert::A>(V, __VA_ARGS__, false, \
+                                                        tpp::intern::assert::loc{__FILE__, __LINE__})
 
-#define ASSERT_NOT(V, A, ...)                                                         \
-    tpp::intern::assert::make_assertion<tpp::intern::assert::A>(V, __VA_ARGS__, true, \
-                                                                tpp::intern::assert::loc{__FILE__, __LINE__})
+#define ASSERT_NOT(V, A, ...)                                                 \
+    tpp::intern::assert::make_assertion<tpp::assert::A>(V, __VA_ARGS__, true, \
+                                                        tpp::intern::assert::loc{__FILE__, __LINE__})
 
 /**
  * Assert a value to be true.

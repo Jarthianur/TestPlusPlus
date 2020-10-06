@@ -55,11 +55,11 @@ struct assert_in
         }
     }
 };
-
-using IN = assert_in;
 }  // namespace assert
 }  // namespace intern
 }  // namespace tpp
+
+TPP_PROVIDE_ASSERTION(assert_in, IN)
 
 #define ASSERT_IN(...)                                                                      \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_in>(__VA_ARGS__, false, \

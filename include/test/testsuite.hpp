@@ -84,6 +84,7 @@ public:
     virtual void
     run() {
         if (m_state != IS_DONE) {
+            duration d;
             m_stats.m_num_tests = m_testcases.size();
             streambuf_proxies<streambuf_proxy_single> bufs;
             m_setup_fn();
@@ -96,7 +97,6 @@ public:
                         case testcase::HAD_ERROR: ++m_stats.m_num_errs; break;
                         default: break;
                     }
-                    m_stats.m_elapsed_t += tc_.elapsed_time();
                     m_posttest_fn();
                     tc_.cout(bufs.cout.str());
                     tc_.cerr(bufs.cerr.str());
@@ -104,6 +104,7 @@ public:
             });
             m_teardown_fn();
             m_state = IS_DONE;
+            m_stats.m_elapsed_t += d.get();
         }
     }
 
