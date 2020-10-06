@@ -425,21 +425,21 @@ SUITE_PAR("test_assert_functional") {
 SUITE("test_testsuite_parallel") {
     TEST("parallel_run") {
         testsuite_ptr ts = testsuite_parallel::create("ts");
-        ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
-        ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); });
+        ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(1000)); });
+        ts->test("", [] { std::this_thread::sleep_for(std::chrono::milliseconds(1000)); });
         ts->test("", [] { ASSERT_TRUE(false); });
         ts->test("", [] { throw std::logic_error(""); });
         std::cout << "max threads: " << omp_get_max_threads() << std::flush;
-        ASSERT_RUNTIME(ts->run(), 400);
+        ASSERT_RUNTIME(ts->run(), 2500);
         if (omp_get_max_threads() == 1) {
-            ASSERT(ts->statistics().elapsed_time(), GT, 200);
+            ASSERT(ts->statistics().elapsed_time(), GT, 2000);
             double t = 0.0;
             for (auto const& tc : ts->testcases()) {
                 t += tc.elapsed_time();
             }
             ASSERT_GT(ts->statistics().elapsed_time(), t);
         } else {
-            ASSERT(ts->statistics().elapsed_time(), LT, 200);
+            ASSERT(ts->statistics().elapsed_time(), LT, 2000);
         }
         statistic const& stat = ts->statistics();
         ASSERT_EQ(stat.tests(), 4UL);
