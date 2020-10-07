@@ -68,12 +68,12 @@ private:
               << "|-|-|-|-|-|" << fmt::LF << '|' << ts_->statistics().tests() << '|' << ts_->statistics().successes()
               << '|' << ts_->statistics().failures() << '|' << ts_->statistics().errors() << '|'
               << ts_->statistics().elapsed_time() << "ms|" << fmt::LF << fmt::LF << "### Tests" << fmt::LF << fmt::LF
-              << "|Name|Context|Time|Status|" << (capture() ? "System-Out|System-Err|" : "") << fmt::LF << "|-|-|-|-|"
+              << "|Name|Time|Status|" << (capture() ? "System-Out|System-Err|" : "") << fmt::LF << "|-|-|-|"
               << (capture() ? "-|-|" : "") << fmt::LF;
 
         reporter::report_testsuite(ts_);
 
-        *this << fmt::LF << fmt::LF;
+        *this << fmt::LF;
     }
 
     void
@@ -85,7 +85,7 @@ private:
                 default: return "PASSED";
             }
         };
-        *this << '|' << tc_.name() << '|' << tc_.suite_name() << '|' << tc_.elapsed_time() << "ms|" << status() << '|';
+        *this << '|' << tc_.name() << '|' << tc_.elapsed_time() << "ms|" << status() << '|';
         if (capture()) {
             print_system_out(tc_.cout());
             print_system_out(tc_.cerr());

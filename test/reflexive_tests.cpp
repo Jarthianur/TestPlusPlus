@@ -979,6 +979,78 @@ SUITE("test_reporters") {
                             "\\s"_re);
         }
     };
+
+    TEST("markdown_reporter") {
+        auto uut = reporter_factory::make<markdown_reporter>(t_cfg);
+        uut->begin_report();
+        uut->report(t_ts);
+        uut->end_report();
+        std::smatch m;
+        std::string line;
+        auto const  test_re{R"(\|(.*?)\|\d+\.\d+ms\|(.*?)\|(.*?)\|(.*?)\|)"_re};
+
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_EQ(line, "# Test Report");
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        // testsuite
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_EQ(line, "## testsuite");
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_EQ(line, "|Tests|Successes|Failures|Errors|Time|");
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_EQ(line, "|-|-|-|-|-|");
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, "\\|(\\d+)\\|(\\d+)\\|(\\d+)\\|(\\d+)\\|\\d+\\.\\d+ms\\|"_re, m);
+        ASSERT_EQ(m.str(1), "3");
+        ASSERT_EQ(m.str(2), "1");
+        ASSERT_EQ(m.str(3), "1");
+        ASSERT_EQ(m.str(4), "1");
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_EQ(line, "### Tests");
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_EQ(line, "|Name|Time|Status|System-Out|System-Err|");
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_EQ(line, "|-|-|-|-|-|");
+        // test1
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, test_re, m);
+        ASSERT_EQ(m.str(1), "test1");
+        ASSERT_EQ(m.str(2), "PASSED");
+        ASSERT_EQ(m.str(3), "");
+        ASSERT_EQ(m.str(4), "");
+        // test2
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, test_re, m);
+        ASSERT_EQ(m.str(1), "test2");
+        ASSERT_EQ(m.str(2), "FAILED");
+        ASSERT_EQ(m.str(3), "`hello`");
+        ASSERT_EQ(m.str(4), "");
+        // test3
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, test_re, m);
+        ASSERT_EQ(m.str(1), "test3");
+        ASSERT_EQ(m.str(2), "ERROR");
+        ASSERT_EQ(m.str(3), "");
+        ASSERT_EQ(m.str(4), "");
+        // result
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_EQ(line, "## Summary");
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_EQ(line, "|Tests|Successes|Failures|Errors|Time|");
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_EQ(line, "|-|-|-|-|-|");
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, "\\|(\\d+)\\|(\\d+)\\|(\\d+)\\|(\\d+)\\|\\d+\\.\\d+ms\\|"_re, m);
+        ASSERT_EQ(m.str(1), "3");
+        ASSERT_EQ(m.str(2), "1");
+        ASSERT_EQ(m.str(3), "1");
+        ASSERT_EQ(m.str(4), "1");
+    };
 };
 
 SUITE("test_cmdline_parser"){};
