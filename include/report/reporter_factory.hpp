@@ -30,10 +30,11 @@ namespace report
 {
 struct reporter_config
 {
-    bool        color{false};
-    bool        capture_out{false};
-    bool        strip{false};
-    std::string outfile;
+    bool          color{false};
+    bool          capture_out{false};
+    bool          strip{false};
+    std::string   outfile;
+    std::ostream* ostream{nullptr};
 };
 
 class reporter_factory
@@ -44,7 +45,9 @@ public:
     make(reporter_config const& cfg_) -> reporter_ptr {
         static_assert(TPP_INTERN_IS(std::is_base_of, reporter, T),
                       "Cannot make a concrete reporter that is not derived from abstract reporter!");
-        auto rep = cfg_.outfile.empty() ? T::create() : T::create(cfg_.outfile);
+
+        auto rep =
+          cfg_.outfile.empty() ? (cfg_.ostream ? T::create(*cfg_.ostream) : T::create()) : T::create(cfg_.outfile);
         if (cfg_.capture_out) {
             rep->with_captured_output();
         }

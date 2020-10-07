@@ -42,8 +42,15 @@
 
 using tpp::operator""_re;
 using tpp::operator""_re_i;
+using tpp::reporter_ptr;
 using tpp::intern::to_string;
 using tpp::intern::assert::assertion_failure;
+using tpp::intern::report::console_reporter;
+using tpp::intern::report::json_reporter;
+using tpp::intern::report::markdown_reporter;
+using tpp::intern::report::reporter_config;
+using tpp::intern::report::reporter_factory;
+using tpp::intern::report::xml_reporter;
 using tpp::intern::test::statistic;
 using tpp::intern::test::testcase;
 using tpp::intern::test::testsuite;
@@ -197,6 +204,8 @@ SUITE_PAR("test_assert") {
         ASSERT_LIKE(f.what(), "Expected 2 to be in .*vector"_re);
     };
     TEST("match") {
+        std::cmatch cm;
+        std::smatch sm;
         // successful assertion
         ASSERT_NOTHROW(ASSERT_MATCH("hello world", ".*"_re));
         ASSERT_NOTHROW(ASSERT_MATCH("hello world", "HELLO WORLD"_re_i));
@@ -214,7 +223,7 @@ SUITE_PAR("test_assert") {
         // failed assertion
         ASSERT_THROWS(ASSERT_MATCH("hello world", "\\s*"_re), assertion_failure);
         ASSERT_THROWS(ASSERT_MATCH("hello world", "AAA"_re_i), assertion_failure);
-        ASSERT_THROWS(ASSERT_MATCH("hello world", "fff"), assertion_failure);
+        ASSERT_THROWS(ASSERT_MATCH("hello world", "fff", cm), assertion_failure);
         ASSERT_THROWS(ASSERT_MATCH("hello world 11", "\\S{7}\\s.*?\\d"_re), assertion_failure);
         ASSERT_THROWS(ASSERT_MATCH(std::string("hello world"), "[+-]\\d+"_re), assertion_failure);
         ASSERT_THROWS(ASSERT("hello world", MATCH, "\\s*"_re), assertion_failure);
@@ -226,8 +235,6 @@ SUITE_PAR("test_assert") {
         ASSERT_THROWS(ASSERT_NOT_MATCH(std::string("hello world"), ".*"_re), assertion_failure);
         ASSERT_THROWS(ASSERT_NOT("hello world", MATCH, ".*"_re), assertion_failure);
 
-        std::cmatch cm;
-        std::smatch sm;
         std::string s{"hello world 11"};
         ASSERT_NOTHROW(ASSERT("hello world 11", MATCH, "(\\S{5})\\s(.*?)(\\d+)"_re, cm));
         ASSERT_EQ(cm.str(1), "hello");
@@ -242,6 +249,8 @@ SUITE_PAR("test_assert") {
         ASSERT_LIKE(f.what(), "Expected .* to match .*"_re);
     };
     TEST("like") {
+        std::cmatch cm;
+        std::smatch sm;
         // successful assertion
         ASSERT_NOTHROW(ASSERT_LIKE("hello world", "hell"_re));
         ASSERT_NOTHROW(ASSERT_LIKE("hello world", "HELL"_re_i));
@@ -259,7 +268,7 @@ SUITE_PAR("test_assert") {
         // failed assertion
         ASSERT_THROWS(ASSERT_LIKE("hello world", "blub"_re), assertion_failure);
         ASSERT_THROWS(ASSERT_LIKE("hello world", "AAA"_re_i), assertion_failure);
-        ASSERT_THROWS(ASSERT_LIKE("hello world", "AAA"), assertion_failure);
+        ASSERT_THROWS(ASSERT_LIKE("hello world", "AAA", cm), assertion_failure);
         ASSERT_THROWS(ASSERT_LIKE("hello world 11", "\\S{7}"_re), assertion_failure);
         ASSERT_THROWS(ASSERT_LIKE(std::string("hello world"), "[+-]\\d+"_re), assertion_failure);
         ASSERT_THROWS(ASSERT("hello world", LIKE, "blub"_re), assertion_failure);
@@ -271,8 +280,6 @@ SUITE_PAR("test_assert") {
         ASSERT_THROWS(ASSERT_NOT_LIKE(std::string("hello world"), "hell"_re), assertion_failure);
         ASSERT_THROWS(ASSERT_NOT("hello world", LIKE, "hell"_re), assertion_failure);
 
-        std::cmatch cm;
-        std::smatch sm;
         std::string s{"hello world 11"};
         ASSERT_NOTHROW(ASSERT("hello world 11", LIKE, ".*?(\\d+)"_re, cm));
         ASSERT_EQ(cm.str(1), "11");
@@ -691,6 +698,290 @@ DESCRIBE("test_suite_meta_functions") {
         ASSERT_EQ(y, 1);
     };
 };
+
+SUITE("test_reporters") {
+    testsuite_ptr     t_ts;
+    reporter_config   t_cfg;
+    std::stringstream t_ss;
+
+    SETUP() {
+        t_ts = testsuite::create("testsuite");
+        t_ts->test("test1", [] { ASSERT_TRUE(true); });
+        t_ts->test("test2", [] {
+            std::cout << "hello" << std::flush;
+            ASSERT_TRUE(false);
+        });
+        t_ts->test("test3", [] { throw std::logic_error("error"); });
+        t_ts->run();
+        t_cfg.ostream = &t_ss;
+    }
+
+    BEFORE_EACH() {
+        t_cfg.strip       = false;
+        t_cfg.capture_out = true;
+    }
+
+    AFTER_EACH() {
+        t_ss.str("");
+        t_ss.clear();
+    }
+
+    TEST("console_reporter") {
+        auto uut = reporter_factory::make<console_reporter>(t_cfg);
+        uut->begin_report();
+        uut->report(t_ts);
+        uut->end_report();
+        std::smatch m;
+        std::string line;
+        auto const  suite_re{R"(--- (.*?) \(\d\.\d+ms\) ---)"_re};
+        auto const  case_re{R"( (.*?) \(\d\.\d+ms\))"_re};
+        auto const  out_re{"  std(out|err) = \"(.*?)\""_re};
+        auto const  res_re{"  (.*?)"_re};
+        // testsuite
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, suite_re, m);
+        ASSERT_EQ(m.str(1), "testsuite");
+        // test1
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, case_re, m);
+        ASSERT_EQ(m.str(1), "test1");
+
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, out_re, m);
+        ASSERT_EQ(m.str(1), "out");
+        ASSERT_EQ(m.str(2), "");
+
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, out_re, m);
+        ASSERT_EQ(m.str(1), "err");
+        ASSERT_EQ(m.str(2), "");
+
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, res_re, m);
+        ASSERT_EQ(m.str(1), "PASSED!");
+        // test2
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, case_re, m);
+        ASSERT_EQ(m.str(1), "test2");
+
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, out_re, m);
+        ASSERT_EQ(m.str(1), "out");
+        ASSERT_EQ(m.str(2), "hello");
+
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, out_re, m);
+        ASSERT_EQ(m.str(1), "err");
+        ASSERT_EQ(m.str(2), "");
+
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, res_re, m);
+        ASSERT_LIKE(m.str(1), "FAILED! Expected false to be equals true at.*");
+        // test3
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, case_re, m);
+        ASSERT_EQ(m.str(1), "test3");
+
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, out_re, m);
+        ASSERT_EQ(m.str(1), "out");
+        ASSERT_EQ(m.str(2), "");
+
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, out_re, m);
+        ASSERT_EQ(m.str(1), "err");
+        ASSERT_EQ(m.str(2), "");
+
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, res_re, m);
+        ASSERT_EQ(m.str(1), "ERROR! error");
+        // result
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, "=== Result ==="_re);
+        ASSERT_TRUE(bool(std::getline(t_ss, line)));
+        ASSERT_MATCH(line, R"(passes: (\d+/\d+) failures: (\d+/\d+) errors: (\d+/\d+) \(\d\.\d+ms\))"_re, m);
+        ASSERT_EQ(m.str(1), "1/3");
+        ASSERT_EQ(m.str(2), "1/3");
+        ASSERT_EQ(m.str(3), "1/3");
+    };
+    TEST("json_reporter") {
+        std::smatch m;
+        std::string line;
+        auto const  prop_re{"\\s*?\"(.*?)\": (.*?),?"_re};
+
+        {  // unstripped
+            auto uut = reporter_factory::make<json_reporter>(t_cfg);
+            uut->begin_report();
+            uut->report(t_ts);
+            uut->end_report();
+
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "{");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "  \"testsuites\": [");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "    {");
+            // testsuite
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "name");
+            ASSERT_EQ(m.str(2), "\"testsuite\"");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "time");
+            ASSERT_MATCH(m.str(2), "\\d+\\.\\d+"_re);
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "count");
+            ASSERT_EQ(m.str(2), "3");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "passes");
+            ASSERT_EQ(m.str(2), "1");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "failures");
+            ASSERT_EQ(m.str(2), "1");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "errors");
+            ASSERT_EQ(m.str(2), "1");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "      \"tests\": [");
+            // test1
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "        {");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "name");
+            ASSERT_EQ(m.str(2), "\"test1\"");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "result");
+            ASSERT_EQ(m.str(2), "\"success\"");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "reason");
+            ASSERT_EQ(m.str(2), "\"\"");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "time");
+            ASSERT_MATCH(m.str(2), "\\d+\\.\\d+"_re);
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "stdout");
+            ASSERT_EQ(m.str(2), "\"\"");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "stderr");
+            ASSERT_EQ(m.str(2), "\"\"");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "        },");
+            // test2
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "        {");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "name");
+            ASSERT_EQ(m.str(2), "\"test2\"");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "result");
+            ASSERT_EQ(m.str(2), "\"failure\"");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "reason");
+            ASSERT_MATCH(m.str(2), "\"Expected false to be equals true at.*\""_re);
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "time");
+            ASSERT_MATCH(m.str(2), "\\d+\\.\\d+"_re);
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "stdout");
+            ASSERT_EQ(m.str(2), "\"hello\"");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "stderr");
+            ASSERT_EQ(m.str(2), "\"\"");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "        },");
+            // test3
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "        {");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "name");
+            ASSERT_EQ(m.str(2), "\"test3\"");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "result");
+            ASSERT_EQ(m.str(2), "\"error\"");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "reason");
+            ASSERT_EQ(m.str(2), "\"error\"");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "time");
+            ASSERT_MATCH(m.str(2), "\\d+\\.\\d+"_re);
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "stdout");
+            ASSERT_EQ(m.str(2), "\"\"");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "stderr");
+            ASSERT_EQ(m.str(2), "\"\"");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "        }");
+            // result
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "      ]");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "    }");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "  ],");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "count");
+            ASSERT_EQ(m.str(2), "3");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "passes");
+            ASSERT_EQ(m.str(2), "1");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "failures");
+            ASSERT_EQ(m.str(2), "1");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "errors");
+            ASSERT_EQ(m.str(2), "1");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, prop_re, m);
+            ASSERT_EQ(m.str(1), "time");
+            ASSERT_MATCH(m.str(2), "\\d+\\.\\d+"_re);
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "}");
+        }
+        {  // stripped
+            t_ss.str("");
+            t_ss.clear();
+            t_cfg.capture_out = false;
+            t_cfg.strip       = true;
+            auto uut          = reporter_factory::make<json_reporter>(t_cfg);
+            uut->begin_report();
+            uut->report(t_ts);
+            uut->end_report();
+            ASSERT_NOT_LIKE((std::regex_replace(t_ss.str(), std::regex("\"reason\":\".*?\""), "\"reason\":\"\"")),
+                            "\\s"_re);
+        }
+    };
+};
+
+SUITE("test_cmdline_parser"){};
 
 #ifdef TPP_INTERN_SYS_UNIX
 #    pragma GCC diagnostic pop
