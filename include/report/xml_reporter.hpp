@@ -69,34 +69,40 @@ private:
         std::array<char, 128> buff{};
         std::strftime(buff.data(), 127, "%FT%T", std::localtime(&stamp));
         push_indent();
-        *this << newline() << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name() << "\" errors=\""
+        newline();
+        *this << "<testsuite id=\"" << m_id++ << "\" name=\"" << ts_->name() << "\" errors=\""
               << ts_->statistics().errors() << "\" tests=\"" << ts_->statistics().tests() << "\" failures=\""
               << ts_->statistics().failures() << R"(" skipped="0" time=")" << ts_->statistics().elapsed_time()
               << "\" timestamp=\"" << buff.data() << "\">";
 
         reporter::report_testsuite(ts_);
 
-        *this << newline() << "</testsuite>";
+        newline();
+        *this << "</testsuite>";
         pop_indent();
     }
 
     void
     report_testcase(test::testcase const& tc_) override {
         push_indent();
-        *this << newline() << "<testcase name=\"" << tc_.name() << "\" classname=\"" << tc_.suite_name() << "\" time=\""
+        newline();
+        *this << "<testcase name=\"" << tc_.name() << "\" classname=\"" << tc_.suite_name() << "\" time=\""
               << tc_.elapsed_time() << "\"";
         if (tc_.result() != test::testcase::HAS_PASSED) {
             auto const unsuccess = [&] { return tc_.result() == test::testcase::HAD_ERROR ? "error" : "failure"; };
             *this << '>';
             push_indent();
-            *this << newline() << '<' << unsuccess() << " message=\"" << tc_.reason() << "\"></" << unsuccess() << '>';
+            newline();
+            *this << '<' << unsuccess() << " message=\"" << tc_.reason() << "\"></" << unsuccess() << '>';
             pop_indent();
             print_system_out(tc_);
-            *this << newline() << "</testcase>";
+            newline();
+            *this << "</testcase>";
         } else if (capture()) {
             *this << '>';
             print_system_out(tc_);
-            *this << newline() << "</testcase>";
+            newline();
+            *this << "</testcase>";
         } else {
             *this << "/>";
         }
@@ -107,12 +113,16 @@ private:
     begin_report() override {
         reporter::begin_report();
 
-        *this << R"(<?xml version="1.0" encoding="UTF-8" ?>)" << newline() << "<testsuites>";
+        *this << R"(<?xml version="1.0" encoding="UTF-8" ?>)";
+        newline();
+        *this << "<testsuites>";
     }
 
     void
     end_report() override {
-        *this << newline() << "</testsuites>" << newline();
+        newline();
+        *this << "</testsuites>";
+        newline();
     }
 
     void
@@ -121,8 +131,10 @@ private:
             return;
         }
         push_indent();
-        *this << newline() << "<system-out>" << tc_.cout() << "</system-out>" << newline() << "<system-err>"
-              << tc_.cerr() << "</system-err>";
+        newline();
+        *this << "<system-out>" << tc_.cout() << "</system-out>";
+        newline();
+        *this << "<system-err>" << tc_.cerr() << "</system-err>";
         pop_indent();
     }
 

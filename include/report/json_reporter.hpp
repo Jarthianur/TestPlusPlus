@@ -66,38 +66,42 @@ private:
     void
     report_testsuite(test::testsuite_ptr const& ts_) override {
         m_first_test = true;
-        conditional_prefix(m_first_suite);
-        json_property_string("name", ts_->name(), color().CYAN) << ',' << newline();
-        json_property_value("time", ts_->statistics().elapsed_time()) << ',' << newline();
-        json_property_value("count", ts_->statistics().tests()) << ',' << newline();
-        json_property_value("passes", ts_->statistics().successes()) << ',' << newline();
-        json_property_value("failures", ts_->statistics().failures()) << ',' << newline();
-        json_property_value("errors", ts_->statistics().errors()) << ',' << newline();
-        *this << "\"tests\":" << space() << '[';
+        conditional_prefix(&m_first_suite);
+        json_property_string("name", ts_->name(), true, color().CYAN);
+        json_property_value("time", ts_->statistics().elapsed_time(), true);
+        json_property_value("count", ts_->statistics().tests(), true);
+        json_property_value("passes", ts_->statistics().successes(), true);
+        json_property_value("failures", ts_->statistics().failures(), true);
+        json_property_value("errors", ts_->statistics().errors(), true);
+        *this << "\"tests\":";
+        space();
+        *this << '[';
 
         reporter::report_testsuite(ts_);
 
-        *this << newline() << ']';
+        newline();
+        *this << ']';
         pop_indent();
-        *this << newline() << '}';
+        newline();
+        *this << '}';
         pop_indent();
     }
 
     void
     report_testcase(test::testcase const& tc_) override {
         auto const dres = decode_result(tc_.result());
-        conditional_prefix(m_first_test);
-        json_property_string("name", tc_.name(), color().W_BOLD) << ',' << newline();
-        json_property_string("result", std::get<0>(dres), std::get<1>(dres)) << ',' << newline();
-        json_property_string("reason", tc_.reason(), std::get<1>(dres)) << ',' << newline();
-        json_property_value("time", tc_.elapsed_time());
+        conditional_prefix(&m_first_test);
+        json_property_string("name", tc_.name(), true, color().W_BOLD);
+        json_property_string("result", std::get<0>(dres), true, std::get<1>(dres));
+        json_property_string("reason", tc_.reason(), true, std::get<1>(dres));
+        json_property_value("time", tc_.elapsed_time(), capture());
         if (capture()) {
-            *this << ',' << newline();
-            json_property_string("stdout", tc_.cout()) << ',' << newline();
-            json_property_string("stderr", tc_.cerr());
+            json_property_string("stdout", tc_.cout(), true);
+            json_property_string("stderr", tc_.cerr(), false);
         }
         pop_indent();
-        *this << newline() << '}';
+        newline();
+        *this << '}';
         pop_indent();
     }
 
@@ -107,46 +111,64 @@ private:
 
         *this << '{';
         push_indent();
-        *this << newline() << "\"testsuites\":" << space() << '[';
+        newline();
+        *this << "\"testsuites\":";
+        space();
+        *this << '[';
     }
 
     void
     end_report() override {
-        *this << newline() << "]," << newline();
-        json_property_value("count", abs_tests(), color().W_BOLD) << ',' << newline();
-        json_property_value("passes", abs_tests() - faults(), color().GREEN) << ',' << newline();
-        json_property_value("failures", abs_fails(), color().BLUE) << ',' << newline();
-        json_property_value("errors", abs_errs(), color().RED) << ',' << newline();
-        json_property_value("time", abs_time());
+        newline();
+        *this << "],";
+        newline();
+        json_property_value("count", abs_tests(), true, color().W_BOLD);
+        json_property_value("passes", abs_tests() - faults(), true, color().GREEN);
+        json_property_value("failures", abs_fails(), true, color().BLUE);
+        json_property_value("errors", abs_errs(), true, color().RED);
+        json_property_value("time", abs_time(), false);
         pop_indent();
-        *this << newline() << '}' << newline();
+        newline();
+        *this << '}';
+        newline();
     }
 
     template<typename T>
-    auto
-    json_property_string(char const* name_, T&& val_, char const* col_ = nullptr) -> std::ostream& {
-        return *this << '"' << name_ << "\":" << space() << (col_ ? col_ : "") << '"'
-                     << escaped_string(std::forward<T>(val_)) << '"' << (col_ ? color() : "");
+    void
+    json_property_string(char const* name_, T&& val_, bool has_next_, char const* col_ = nullptr) {
+        *this << '"' << name_ << "\":";
+        space();
+        *this << (col_ ? col_ : "") << '"' << escaped_string(std::forward<T>(val_)) << '"' << (col_ ? color() : "");
+        if (has_next_) {
+            *this << ',';
+            newline();
+        }
     }
 
     template<typename T>
-    auto
-    json_property_value(char const* name_, T&& val_, char const* col_ = nullptr) -> std::ostream& {
-        return *this << '"' << name_ << "\":" << space() << (col_ ? col_ : "") << std::forward<T>(val_)
-                     << (col_ ? color() : "");
+    void
+    json_property_value(char const* name_, T&& val_, bool has_next_, char const* col_ = nullptr) {
+        *this << '"' << name_ << "\":";
+        space();
+        *this << (col_ ? col_ : "") << std::forward<T>(val_) << (col_ ? color() : "");
+        if (has_next_) {
+            *this << ',';
+            newline();
+        }
     }
 
     void
-    conditional_prefix(bool& cond_) {
+    conditional_prefix(bool* cond_) {
         push_indent();
-        if (!cond_) {
+        if (!*cond_) {
             *this << ',';
         } else {
-            cond_ = false;
+            *cond_ = false;
         }
-        *this << newline() << '{';
+        newline();
+        *this << '{';
         push_indent();
-        *this << newline();
+        newline();
     }
 
     inline auto

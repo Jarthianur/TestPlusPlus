@@ -41,10 +41,9 @@ model:
         pushd $BUILD_DIR
         $LCOV -d . -z
         $LCOV -c -i -d . -o base.info
-        ./{{ item.target }} -coi '*'
+        ./{{ item.target }} -co
         ./{{ item.target }} -oi '*' --xml test.xml
-        ./{{ item.target }} -cosi '*' --md test.md
-        ./{{ item.target }} -oi '*' --json test.json
+        ./{{ item.target }} -ose 'xxx' --json test.json
         $LCOV -c -d . -o test.info
         $LCOV -a base.info -a test.info -o {{ item.target }}.info
         ./rel_{{ item.target }} -cos > /dev/null
@@ -61,8 +60,7 @@ model:
         echo "./test/{{ item.target }}"
         ./test/{{ item.target }} -co
         ./test/{{ item.target }} -co --xml
-        ./test/{{ item.target }} -co --md
-        ./test/{{ item.target }} -co --json
+        ./test/{{ item.target }} -cos --json
 
 pipeline:
   - stage(analysis):

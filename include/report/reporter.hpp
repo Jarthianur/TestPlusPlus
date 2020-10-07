@@ -25,6 +25,7 @@
 #include <ostream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 #include "test/testsuite.hpp"
 
@@ -36,8 +37,8 @@ namespace report
 {
 namespace fmt
 {
-static constexpr auto SPACE = " ";   ///< Single space
-static constexpr auto LF    = "\n";  ///< Single linefeed
+static constexpr auto SPACE = ' ';   ///< Single space
+static constexpr auto LF    = '\n';  ///< Single linefeed
 namespace ansi
 {
 static constexpr auto RED        = "\x1b[0;91m";
@@ -215,30 +216,30 @@ protected:
      */
     template<typename T>
     auto
-    operator<<(T const& t_) -> std::ostream& {
-        m_out_stream << t_;
+    operator<<(T&& t_) const -> std::ostream& {
+        m_out_stream << std::forward<T>(t_);
         return m_out_stream;
     }
 
-    inline auto
-    space(std::uint32_t depth_ = 1) -> char const* {
+    /// Has side-effects, so care about evaluation order!
+    inline void
+    space(std::uint32_t depth_ = 1) const {
         if (!m_stripped) {
             for (auto i{0U}; i < depth_; ++i) {
                 *this << fmt::SPACE;
             }
         }
-        return "";
     }
 
-    inline auto
-    newline(std::uint32_t depth_ = 1) -> char const* {
+    /// Has side-effects, so care about evaluation order!
+    inline void
+    newline(std::uint32_t depth_ = 1) const {
         if (!m_stripped) {
             for (auto i{0U}; i < depth_; ++i) {
                 *this << fmt::LF;
             }
         }
         space(m_indent_lvl);
-        return "";
     }
 
     inline void
