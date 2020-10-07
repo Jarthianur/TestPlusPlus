@@ -979,7 +979,6 @@ SUITE("test_reporters") {
                             "\\s"_re);
         }
     };
-
     TEST("markdown_reporter") {
         auto uut = reporter_factory::make<markdown_reporter>(t_cfg);
         uut->begin_report();
@@ -1050,6 +1049,109 @@ SUITE("test_reporters") {
         ASSERT_EQ(m.str(2), "1");
         ASSERT_EQ(m.str(3), "1");
         ASSERT_EQ(m.str(4), "1");
+    };
+    TEST("xml_reporter") {
+        std::smatch m;
+        std::string line;
+        auto const  test_re{R"lit(    <testcase name="(.*?)" classname="(.*?)" time="\d+\.\d+">)lit"_re};
+        auto const  out_re{"      <system-(out|err)>(.*?)</system-(out|err)>"_re};
+        auto const  fail_re{"      <(failure|error) message=\"(.*?)\"></(failure|error)>"_re};
+
+        {  // unstripped
+            auto uut = reporter_factory::make<xml_reporter>(t_cfg);
+            uut->begin_report();
+            uut->report(t_ts);
+            uut->end_report();
+
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "<testsuites>");
+            // testsuite
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(
+              line,
+              "  <testsuite id=\"0\" name=\"(.*?)\" errors=\"(\\d+)\" tests=\"(\\d+)\" failures=\"(\\d+)\" skipped=\"0\" time=\"\\d+\\.\\d+\" timestamp=\".*?\">"_re,
+              m);
+            ASSERT_EQ(m.str(1), "testsuite");
+            ASSERT_EQ(m.str(2), "1");
+            ASSERT_EQ(m.str(3), "3");
+            ASSERT_EQ(m.str(4), "1");
+            // test1
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, test_re, m);
+            ASSERT_EQ(m.str(1), "test1");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, out_re, m);
+            ASSERT_EQ(m.str(1), "out");
+            ASSERT_EQ(m.str(2), "");
+            ASSERT_EQ(m.str(3), "out");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, out_re, m);
+            ASSERT_EQ(m.str(1), "err");
+            ASSERT_EQ(m.str(2), "");
+            ASSERT_EQ(m.str(3), "err");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "    </testcase>");
+            // test2
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, test_re, m);
+            ASSERT_EQ(m.str(1), "test2");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, fail_re, m);
+            ASSERT_EQ(m.str(1), "failure");
+            ASSERT_LIKE(m.str(2), "Expected false to be equals true at.*"_re);
+            ASSERT_EQ(m.str(3), "failure");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, out_re, m);
+            ASSERT_EQ(m.str(1), "out");
+            ASSERT_EQ(m.str(2), "hello");
+            ASSERT_EQ(m.str(3), "out");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, out_re, m);
+            ASSERT_EQ(m.str(1), "err");
+            ASSERT_EQ(m.str(2), "");
+            ASSERT_EQ(m.str(3), "err");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "    </testcase>");
+            // test3
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, test_re, m);
+            ASSERT_EQ(m.str(1), "test3");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, fail_re, m);
+            ASSERT_EQ(m.str(1), "error");
+            ASSERT_LIKE(m.str(2), "error"_re);
+            ASSERT_EQ(m.str(3), "error");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, out_re, m);
+            ASSERT_EQ(m.str(1), "out");
+            ASSERT_EQ(m.str(2), "");
+            ASSERT_EQ(m.str(3), "out");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_MATCH(line, out_re, m);
+            ASSERT_EQ(m.str(1), "err");
+            ASSERT_EQ(m.str(2), "");
+            ASSERT_EQ(m.str(3), "err");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "    </testcase>");
+            // result
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "  </testsuite>");
+            ASSERT_TRUE(bool(std::getline(t_ss, line)));
+            ASSERT_EQ(line, "</testsuites>");
+        }
+        {  // stripped
+            t_ss.str("");
+            t_ss.clear();
+            t_cfg.capture_out = false;
+            t_cfg.strip       = true;
+            auto uut          = reporter_factory::make<xml_reporter>(t_cfg);
+            uut->begin_report();
+            uut->report(t_ts);
+            uut->end_report();
+            ASSERT_NOT_LIKE(t_ss.str(), "\\n"_re);
+        }
     };
 };
 
