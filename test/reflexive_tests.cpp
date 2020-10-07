@@ -1157,6 +1157,8 @@ SUITE("test_reporters") {
 
 SUITE("test_cmdline_parser"){};
 
+SUITE("test_runner"){};
+
 #ifdef TPP_INTERN_SYS_UNIX
 #    pragma GCC diagnostic pop
 #endif

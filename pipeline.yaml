@@ -48,7 +48,6 @@ model:
         $LCOV -a base.info -a test.info -o {{ item.target }}.info
         ./rel_{{ item.target }} -cos > /dev/null
         cat test.xml
-        cat test.md
         cat test.json
         popd
     osx:
