@@ -37,7 +37,7 @@
  * @param R is the reporters factory method invokation.
  */
 #define TPP_DEFAULT_MAIN                                  \
-    auto main(int argc_, char** argv_)->int {             \
+    auto main(int argc_, char const** argv_)->int {       \
         return tpp::runner::instance().run(argc_, argv_); \
     }
 

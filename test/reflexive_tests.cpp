@@ -42,7 +42,9 @@
 
 using tpp::operator""_re;
 using tpp::operator""_re_i;
+using tpp::config;
 using tpp::reporter_ptr;
+using tpp::intern::cmdline_parser;
 using tpp::intern::to_string;
 using tpp::intern::assert::assertion_failure;
 using tpp::intern::report::console_reporter;
@@ -1155,7 +1157,212 @@ SUITE("test_reporters") {
     };
 };
 
-SUITE("test_cmdline_parser"){};
+SUITE_PAR("test_cmdline_parser") {
+    TEST("help called") {
+        cmdline_parser             uut;
+        std::array<char const*, 2> argv{"test", "--help"};
+        ASSERT_THROWS(uut.parse(argv.size(), argv.data()), cmdline_parser::help_called);
+    };
+    TEST("empty args") {
+        cmdline_parser             uut;
+        std::array<char const*, 0> argv{};
+        ASSERT_THROWS(uut.parse(argv.size(), argv.data()), std::runtime_error);
+    };
+    TEST("default config") {
+        cmdline_parser             uut;
+        std::array<char const*, 1> argv{"test"};
+        ASSERT_NOTHROW(uut.parse(argv.size(), argv.data()));
+        auto c = uut.config();
+        ASSERT_EQ(c.f_mode, config::filter_mode::NONE);
+        ASSERT_TRUE(c.f_patterns.empty());
+        ASSERT_EQ(c.report_fmt, config::report_format::CNS);
+        ASSERT_FALSE(c.report_cfg.capture_out);
+        ASSERT_FALSE(c.report_cfg.color);
+        ASSERT_FALSE(c.report_cfg.strip);
+        ASSERT_NULL(c.report_cfg.ostream);
+        ASSERT_TRUE(c.report_cfg.outfile.empty());
+    };
+    TEST("report formats") {
+        cmdline_parser             uut;
+        std::array<char const*, 2> argv1{"test", "--xml"};
+        std::array<char const*, 2> argv2{"test", "--json"};
+        std::array<char const*, 2> argv3{"test", "--md"};
+        std::array<char const*, 3> argv4{"test", "--xml", "--json"};
+        uut.parse(argv1.size(), argv1.data());
+        auto c = uut.config();
+        ASSERT_EQ(c.report_fmt, config::report_format::XML);
+        uut.parse(argv2.size(), argv2.data());
+        c = uut.config();
+        ASSERT_EQ(c.report_fmt, config::report_format::JSON);
+        uut.parse(argv3.size(), argv3.data());
+        c = uut.config();
+        ASSERT_EQ(c.report_fmt, config::report_format::MD);
+        uut.parse(argv4.size(), argv4.data());
+        c = uut.config();
+        ASSERT_EQ(c.report_fmt, config::report_format::JSON);
+    };
+    TEST("multiple options") {
+        cmdline_parser             uut;
+        std::array<char const*, 4> argv{"test", "-c", "-o", "-s"};
+        uut.parse(argv.size(), argv.data());
+        auto c = uut.config();
+        ASSERT_EQ(c.f_mode, config::filter_mode::NONE);
+        ASSERT_TRUE(c.f_patterns.empty());
+        ASSERT_EQ(c.report_fmt, config::report_format::CNS);
+        ASSERT_TRUE(c.report_cfg.capture_out);
+        ASSERT_TRUE(c.report_cfg.color);
+        ASSERT_TRUE(c.report_cfg.strip);
+        ASSERT_NULL(c.report_cfg.ostream);
+        ASSERT_TRUE(c.report_cfg.outfile.empty());
+    };
+    TEST("multiple options at once") {
+        cmdline_parser             uut;
+        std::array<char const*, 2> argv{"test", "-cos"};
+        uut.parse(argv.size(), argv.data());
+        auto c = uut.config();
+        ASSERT_EQ(c.f_mode, config::filter_mode::NONE);
+        ASSERT_TRUE(c.f_patterns.empty());
+        ASSERT_EQ(c.report_fmt, config::report_format::CNS);
+        ASSERT_TRUE(c.report_cfg.capture_out);
+        ASSERT_TRUE(c.report_cfg.color);
+        ASSERT_TRUE(c.report_cfg.strip);
+        ASSERT_NULL(c.report_cfg.ostream);
+        ASSERT_TRUE(c.report_cfg.outfile.empty());
+    };
+    TEST("specify outfile") {
+        cmdline_parser             uut;
+        std::array<char const*, 2> argv{"test", "out.test"};
+        uut.parse(argv.size(), argv.data());
+        auto c = uut.config();
+        ASSERT_EQ(c.f_mode, config::filter_mode::NONE);
+        ASSERT_TRUE(c.f_patterns.empty());
+        ASSERT_EQ(c.report_fmt, config::report_format::CNS);
+        ASSERT_FALSE(c.report_cfg.capture_out);
+        ASSERT_FALSE(c.report_cfg.color);
+        ASSERT_FALSE(c.report_cfg.strip);
+        ASSERT_NULL(c.report_cfg.ostream);
+        ASSERT_EQ(c.report_cfg.outfile, "out.test");
+    };
+    TEST("missing include pattern") {
+        cmdline_parser             uut;
+        std::array<char const*, 2> argv{"test", "-i"};
+        ASSERT_THROWS(uut.parse(argv.size(), argv.data()), std::runtime_error);
+    };
+    TEST("single include pattern") {
+        cmdline_parser             uut;
+        std::array<char const*, 3> argv{"test", "-i", "*"};
+        uut.parse(argv.size(), argv.data());
+        auto c = uut.config();
+        ASSERT_EQ(c.f_mode, config::filter_mode::INCLUDE);
+        ASSERT_EQ(c.f_patterns.size(), 1UL);
+        ASSERT_EQ(c.report_fmt, config::report_format::CNS);
+        ASSERT_FALSE(c.report_cfg.capture_out);
+        ASSERT_FALSE(c.report_cfg.color);
+        ASSERT_FALSE(c.report_cfg.strip);
+        ASSERT_NULL(c.report_cfg.ostream);
+        ASSERT_TRUE(c.report_cfg.outfile.empty());
+    };
+    TEST("multiple include pattern") {
+        cmdline_parser uut;
+        std::cout << std::endl;
+        std::array<char const*, 5> argv{"test", "-i", "*", "-i", "*"};
+        uut.parse(argv.size(), argv.data());
+        auto c = uut.config();
+        ASSERT_EQ(c.f_mode, config::filter_mode::INCLUDE);
+        ASSERT_EQ(c.f_patterns.size(), 2UL);
+        ASSERT_EQ(c.report_fmt, config::report_format::CNS);
+        ASSERT_FALSE(c.report_cfg.capture_out);
+        ASSERT_FALSE(c.report_cfg.color);
+        ASSERT_FALSE(c.report_cfg.strip);
+        ASSERT_NULL(c.report_cfg.ostream);
+        ASSERT_TRUE(c.report_cfg.outfile.empty());
+    };
+    TEST("multiple include pattern at once") {
+        cmdline_parser             uut;
+        std::array<char const*, 4> argv{"test", "-ii", "*", "*"};
+        uut.parse(argv.size(), argv.data());
+        auto c = uut.config();
+        ASSERT_EQ(c.f_mode, config::filter_mode::INCLUDE);
+        ASSERT_EQ(c.f_patterns.size(), 2UL);
+        ASSERT_EQ(c.report_fmt, config::report_format::CNS);
+        ASSERT_FALSE(c.report_cfg.capture_out);
+        ASSERT_FALSE(c.report_cfg.color);
+        ASSERT_FALSE(c.report_cfg.strip);
+        ASSERT_NULL(c.report_cfg.ostream);
+        ASSERT_TRUE(c.report_cfg.outfile.empty());
+    };
+    TEST("missing exclude pattern") {
+        cmdline_parser             uut;
+        std::array<char const*, 2> argv{"test", "-e"};
+        ASSERT_THROWS(uut.parse(argv.size(), argv.data()), std::runtime_error);
+    };
+    TEST("single exclude pattern") {
+        cmdline_parser             uut;
+        std::array<char const*, 3> argv{"test", "-e", "*"};
+        uut.parse(argv.size(), argv.data());
+        auto c = uut.config();
+        ASSERT_EQ(c.f_mode, config::filter_mode::EXCLUDE);
+        ASSERT_EQ(c.f_patterns.size(), 1UL);
+        ASSERT_EQ(c.report_fmt, config::report_format::CNS);
+        ASSERT_FALSE(c.report_cfg.capture_out);
+        ASSERT_FALSE(c.report_cfg.color);
+        ASSERT_FALSE(c.report_cfg.strip);
+        ASSERT_NULL(c.report_cfg.ostream);
+        ASSERT_TRUE(c.report_cfg.outfile.empty());
+    };
+    TEST("multiple exclude pattern") {
+        cmdline_parser             uut;
+        std::array<char const*, 5> argv{"test", "-e", "*", "-e", "*"};
+        uut.parse(argv.size(), argv.data());
+        auto c = uut.config();
+        ASSERT_EQ(c.f_mode, config::filter_mode::EXCLUDE);
+        ASSERT_EQ(c.f_patterns.size(), 2UL);
+        ASSERT_EQ(c.report_fmt, config::report_format::CNS);
+        ASSERT_FALSE(c.report_cfg.capture_out);
+        ASSERT_FALSE(c.report_cfg.color);
+        ASSERT_FALSE(c.report_cfg.strip);
+        ASSERT_NULL(c.report_cfg.ostream);
+        ASSERT_TRUE(c.report_cfg.outfile.empty());
+    };
+    TEST("multiple exclude pattern at once") {
+        cmdline_parser             uut;
+        std::array<char const*, 4> argv{"test", "-ee", "*", "*"};
+        uut.parse(argv.size(), argv.data());
+        auto c = uut.config();
+        ASSERT_EQ(c.f_mode, config::filter_mode::EXCLUDE);
+        ASSERT_EQ(c.f_patterns.size(), 2UL);
+        ASSERT_EQ(c.report_fmt, config::report_format::CNS);
+        ASSERT_FALSE(c.report_cfg.capture_out);
+        ASSERT_FALSE(c.report_cfg.color);
+        ASSERT_FALSE(c.report_cfg.strip);
+        ASSERT_NULL(c.report_cfg.ostream);
+        ASSERT_TRUE(c.report_cfg.outfile.empty());
+    };
+    TEST("combined include and exclude") {
+        cmdline_parser             uut;
+        std::array<char const*, 5> argv{"test", "-i", "*", "-e", "*"};
+        ASSERT_THROWS(uut.parse(argv.size(), argv.data()), std::runtime_error);
+    };
+    TEST("full custom args") {
+        cmdline_parser             uut;
+        std::array<char const*, 6> argv{"test", "-co", "out.test", "-si", "*", "--xml"};
+        uut.parse(argv.size(), argv.data());
+        auto c = uut.config();
+        ASSERT_EQ(c.f_mode, config::filter_mode::INCLUDE);
+        ASSERT_EQ(c.f_patterns.size(), 1UL);
+        ASSERT_EQ(c.report_fmt, config::report_format::XML);
+        ASSERT_TRUE(c.report_cfg.capture_out);
+        ASSERT_TRUE(c.report_cfg.color);
+        ASSERT_TRUE(c.report_cfg.strip);
+        ASSERT_NULL(c.report_cfg.ostream);
+        ASSERT_EQ(c.report_cfg.outfile, "out.test");
+    };
+    TEST("invalid pattern") {
+        cmdline_parser             uut;
+        std::array<char const*, 3> argv{"test", "-i", "[;+"};
+        ASSERT_THROWS(uut.parse(argv.size(), argv.data()), std::runtime_error);
+    };
+};
 
 SUITE("test_runner"){};
 

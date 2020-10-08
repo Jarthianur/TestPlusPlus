@@ -36,7 +36,7 @@ public:
     {};
 
     void
-    parse(int argc_, char** argv_) {
+    parse(int argc_, char const** argv_) {
         auto const args{tokenize_args(argc_, argv_)};
         m_progname = argv_[0];
         for (auto i{1UL}; i < args.size(); ++i) {
@@ -51,7 +51,7 @@ public:
     }
 
     inline auto
-    config() -> config const& {
+    config() const -> config const& {
         return m_cfg;
     }
 
@@ -149,7 +149,7 @@ private:
     }
 
     static auto
-    tokenize_args(int argc_, char** argv_) -> std::vector<std::string> {
+    tokenize_args(int argc_, char const** argv_) -> std::vector<std::string> {
         if (argc_ < 1) {
             throw std::runtime_error("Too few arguments!");
         }

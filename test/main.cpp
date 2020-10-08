@@ -23,7 +23,7 @@
 TPP_EPSILON(0.000001)
 
 auto
-main(int argc_, char** argv_) -> int {
+main(int argc_, char const** argv_) -> int {
     auto& runner = tpp::runner::instance();
 
     try {

@@ -61,7 +61,7 @@ public:
      * @return the sum of non successful tests.
      */
     auto
-    run(int argc_, char** argv_) noexcept -> std::int32_t {
+    run(int argc_, char const** argv_) noexcept -> std::int32_t {
         cmdline_parser cmd;
         try {
             cmd.parse(argc_, argv_);
