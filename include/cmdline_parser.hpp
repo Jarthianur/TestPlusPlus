@@ -19,6 +19,7 @@
 #define TPP_CMDLINE_PARSER_HPP
 
 #include <algorithm>
+#include <cstddef>
 #include <iostream>
 #include <stdexcept>
 
@@ -36,7 +37,7 @@ public:
     {};
 
     void
-    parse(int argc_, char const** argv_) {
+    parse(std::size_t argc_, char const** argv_) {
         auto const args{tokenize_args(argc_, argv_)};
         m_progname = argv_[0];
         for (auto i{1UL}; i < args.size(); ++i) {
@@ -149,14 +150,13 @@ private:
     }
 
     static auto
-    tokenize_args(int argc_, char const** argv_) -> std::vector<std::string> {
-        if (argc_ < 1) {
+    tokenize_args(std::size_t argc_, char const** argv_) -> std::vector<std::string> {
+        if (argc_ == 0) {
             throw std::runtime_error("Too few arguments!");
         }
-        auto                     argc{static_cast<std::size_t>(argc_)};
         std::vector<std::string> a;
-        a.reserve(argc);
-        for (auto i{0UL}; i < argc; ++i) {
+        a.reserve(argc_);
+        for (auto i{0UL}; i < argc_; ++i) {
             std::string arg(argv_[i]);
             if (!arg.empty()) {
                 a.push_back(std::move(arg));

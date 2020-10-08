@@ -36,7 +36,7 @@ namespace intern
  */
 class runner
 {
-    enum class retval : std::int32_t
+    enum class retval : int
     {
         HELP   = -1,
         EXCEPT = -2
@@ -61,12 +61,15 @@ public:
      * @return the sum of non successful tests.
      */
     auto
-    run(int argc_, char const** argv_) noexcept -> std::int32_t {
+    run(int argc_, char const** argv_) noexcept -> int {
         cmdline_parser cmd;
         try {
-            cmd.parse(argc_, argv_);
+            if (argc_ < 0) {
+                throw std::runtime_error("argument count cannot be less than zero!");
+            }
+            cmd.parse(static_cast<std::size_t>(argc_), argv_);
         } catch (cmdline_parser::help_called) {
-            return static_cast<std::int32_t>(retval::HELP);
+            return to_int(retval::HELP);
         } catch (std::runtime_error const& e) {
             return err_exit(e.what());
         }
@@ -74,7 +77,7 @@ public:
     }
 
     auto
-    run(config const& cfg_) noexcept -> std::int32_t {
+    run(config const& cfg_) noexcept -> int {
         bool const fm_inc{cfg_.f_mode != config::filter_mode::EXCLUDE};
         try {
             auto rep{cfg_.reporter()};
@@ -90,8 +93,7 @@ public:
                 }
             });
             rep->end_report();
-            return static_cast<std::int32_t>(
-              std::min(rep->faults(), static_cast<std::size_t>(std::numeric_limits<std::int32_t>::max())));
+            return static_cast<int>(std::min(rep->faults(), static_cast<std::size_t>(std::numeric_limits<int>::max())));
         } catch (std::runtime_error const& e) {
             return err_exit(e.what());
         }
@@ -108,9 +110,14 @@ public:
 
 private:
     static inline auto
-    err_exit(char const* msg_) -> std::int32_t {
+    to_int(retval v_) -> int {
+        return static_cast<int>(v_);
+    }
+
+    static inline auto
+    err_exit(char const* msg_) -> int {
         std::cerr << "A fatal error occurred!\n  what(): " << msg_ << std::endl;
-        return static_cast<std::int32_t>(retval::EXCEPT);
+        return to_int(retval::EXCEPT);
     }
 
     std::vector<test::testsuite_ptr> m_testsuites;  ///< Testsuites contained in this runner.
