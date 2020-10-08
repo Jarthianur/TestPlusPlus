@@ -44,6 +44,7 @@ using tpp::operator""_re;
 using tpp::operator""_re_i;
 using tpp::config;
 using tpp::reporter_ptr;
+using tpp::runner;
 using tpp::intern::cmdline_parser;
 using tpp::intern::to_string;
 using tpp::intern::assert::assertion_failure;
@@ -1364,7 +1365,72 @@ SUITE_PAR("test_cmdline_parser") {
     };
 };
 
-SUITE("test_runner"){};
+SUITE("test_runner") {
+    class nullbuf : public std::streambuf
+    {
+    private:
+        auto
+        overflow(int_type c_) -> int_type override {
+            return c_;
+        }
+
+        auto
+        xsputn(char const*, std::streamsize n_) -> std::streamsize override {
+            return n_;
+        }
+    } t_nullbuf;
+    std::ostream  t_null{&t_nullbuf};
+    testsuite_ptr t_ts1;
+    testsuite_ptr t_ts2;
+
+    BEFORE_EACH() {
+        t_ts1 = testsuite::create("testsuite1");
+        t_ts2 = testsuite::create("testsuite2");
+        t_ts1->test("test", [] { ASSERT_TRUE(true); });
+        t_ts2->test("test", [] { ASSERT_TRUE(true); });
+    };
+
+    TEST("all tests without filter") {
+        config c;
+        c.report_cfg.ostream = &t_null;
+        runner r;
+        r.add_testsuite(t_ts1);
+        r.add_testsuite(t_ts2);
+        r.run(c);
+        ASSERT_GT(t_ts1->statistics().elapsed_time(), .0);
+        ASSERT_EQ(t_ts1->statistics().tests(), 1UL);
+        ASSERT_GT(t_ts2->statistics().elapsed_time(), .0);
+        ASSERT_EQ(t_ts2->statistics().tests(), 1UL);
+    };
+    TEST("tests with include filter") {
+        config c;
+        c.report_cfg.ostream = &t_null;
+        c.f_mode             = config::filter_mode::INCLUDE;
+        c.f_patterns.emplace_back(std::regex(".*?1"));
+        runner r;
+        r.add_testsuite(t_ts1);
+        r.add_testsuite(t_ts2);
+        r.run(c);
+        ASSERT_GT(t_ts1->statistics().elapsed_time(), .0);
+        ASSERT_EQ(t_ts1->statistics().tests(), 1UL);
+        ASSERT_EQ(t_ts2->statistics().elapsed_time(), .0);
+        ASSERT_EQ(t_ts2->statistics().tests(), 0UL);
+    };
+    TEST("tests with exclude filter") {
+        config c;
+        c.report_cfg.ostream = &t_null;
+        c.f_mode             = config::filter_mode::EXCLUDE;
+        c.f_patterns.emplace_back(std::regex(".*?2"));
+        runner r;
+        r.add_testsuite(t_ts1);
+        r.add_testsuite(t_ts2);
+        r.run(c);
+        ASSERT_GT(t_ts1->statistics().elapsed_time(), .0);
+        ASSERT_EQ(t_ts1->statistics().tests(), 1UL);
+        ASSERT_EQ(t_ts2->statistics().elapsed_time(), .0);
+        ASSERT_EQ(t_ts2->statistics().tests(), 0UL);
+    };
+};
 
 #ifdef TPP_INTERN_SYS_UNIX
 #    pragma GCC diagnostic pop
