@@ -68,12 +68,13 @@ private:
               << "|-|-|-|-|-|" << fmt::LF << '|' << ts_->statistics().tests() << '|' << ts_->statistics().successes()
               << '|' << ts_->statistics().failures() << '|' << ts_->statistics().errors() << '|'
               << ts_->statistics().elapsed_time() << "ms|" << fmt::LF << fmt::LF << "### Tests" << fmt::LF << fmt::LF
-              << "|Name|Time|Status|" << (capture() ? "System-Out|System-Err|" : "") << fmt::LF << "|-|-|-|"
-              << (capture() ? "-|-|" : "") << fmt::LF;
+              << "|Name|Time|Status|" << fmt::LF << "|-|-|-|" << fmt::LF;
 
         reporter::report_testsuite(ts_);
 
         *this << fmt::LF;
+        std::for_each(ts_->testcases().cbegin(), ts_->testcases().cend(),
+                      [this](test::testcase const& tc_) { testcase_details(tc_); });
     }
 
     void
@@ -85,12 +86,7 @@ private:
                 default: return "PASSED";
             }
         };
-        *this << '|' << tc_.name() << '|' << tc_.elapsed_time() << "ms|" << status() << '|';
-        if (capture()) {
-            print_system_out(tc_.cout());
-            print_system_out(tc_.cerr());
-        }
-        *this << fmt::LF;
+        *this << '|' << tc_.name() << '|' << tc_.elapsed_time() << "ms|" << status() << '|' << fmt::LF;
     }
 
     void
@@ -108,16 +104,23 @@ private:
     }
 
     void
-    print_system_out(std::string const& out_) {
-        std::string        line;
-        std::istringstream io_;
-        io_.str(out_);
-        bool first{true};
-        while (std::getline(io_, line)) {
-            *this << (first ? "" : "<br>") << '`' << std::regex_replace(line, std::regex("`"), "``") << '`';
-            first = false;
+    testcase_details(test::testcase const& tc_) {
+        *this << "#### " << tc_.name() << fmt::LF << fmt::LF;
+        if (tc_.result() != test::testcase::HAS_PASSED) {
+            *this << "##### Reason" << fmt::LF << fmt::LF << tc_.reason() << fmt::LF << fmt::LF;
         }
-        *this << '|';
+        if (capture()) {
+            print_system_out("Out", tc_.cout());
+            print_system_out("Err", tc_.cerr());
+        }
+    }
+
+    void
+    print_system_out(char const* chan_, std::string const& out_) {
+        *this << "##### System-" << chan_ << fmt::LF << fmt::LF;
+        if (!out_.empty()) {
+            *this << "```" << fmt::LF << out_ << fmt::LF << "```" << fmt::LF << fmt::LF;
+        }
     }
 };
 }  // namespace report
