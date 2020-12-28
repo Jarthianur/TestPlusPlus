@@ -187,15 +187,6 @@ assert_runtime(Fn&& fn_, double max_ms_, loc&& loc_) {
 }  // namespace intern
 }  // namespace tpp
 
-/**
- * Define a comparator.
- * In PRED the two elements are named 'actual_value' and 'expected_value'.
- * The comparison is considered successful if PRED returns true, while false results in failure.
- *
- * @param NAME is the name of the comparator.
- * @param CMPSTR is a cstring representing the comparison constraint, like "equals".
- * @param PRED is the comparison predicate / condition.
- */
 #define TPP_DEFINE_ASSERTION(NAME, CMPSTR, PRED)                                                                      \
     namespace tpp                                                                                                     \
     {                                                                                                                 \
@@ -238,10 +229,6 @@ assert_runtime(Fn&& fn_, double max_ms_, loc&& loc_) {
  * @code
  * ASSERT(1, EQ(), 1);
  * @endcode
- *
- * @param VAL is the actual value.
- * @param CMP is the comparator to use.
- * @param EXP is the expected value.
  */
 #define ASSERT(V, A, ...)                                                      \
     tpp::intern::assert::make_assertion<tpp::assert::A>(V, __VA_ARGS__, false, \

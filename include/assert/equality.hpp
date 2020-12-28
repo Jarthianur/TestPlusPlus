@@ -99,9 +99,6 @@ TPP_PROVIDE_ASSERTION(assert_equals, EQ)
  * @code
  * ASSERT_EQ(1, 1);
  * @endcode
- *
- * @param VAL is the actual value.
- * @param EXP is the expected value.
  */
 #define ASSERT_EQ(...)                                                       \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_equals>( \
