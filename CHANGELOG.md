@@ -19,6 +19,7 @@ Extended the versioning scheme by revisions.
 - changed comparators to assertions
   - includes minor API changes for comparisons
   - major internal changes
+- changed markdown report format
 
 ## 2
 
