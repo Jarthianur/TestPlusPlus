@@ -18,7 +18,6 @@
 #ifndef TPP_REPORT_MARKDOWN_REPORTER_HPP
 #define TPP_REPORT_MARKDOWN_REPORTER_HPP
 
-#include <regex>
 #include <sstream>
 
 #include "report/reporter.hpp"
@@ -105,8 +104,11 @@ private:
 
     void
     testcase_details(test::testcase const& tc_) {
-        *this << "#### " << tc_.name() << fmt::LF << fmt::LF;
-        if (tc_.result() != test::testcase::HAS_PASSED) {
+        bool const isFailed = tc_.result() != test::testcase::HAS_PASSED;
+        if (isFailed || capture()) {
+            *this << "#### " << tc_.name() << fmt::LF << fmt::LF;
+        }
+        if (isFailed) {
             *this << "##### Reason" << fmt::LF << fmt::LF << tc_.reason() << fmt::LF << fmt::LF;
         }
         if (capture()) {
