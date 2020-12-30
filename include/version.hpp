@@ -22,7 +22,7 @@
 
 #define TPP_VERSION_MAJOR "3"
 #define TPP_VERSION_MINOR "0"
-#define TPP_VERSION_REVISION "rc0"
+#define TPP_VERSION_REVISION "rc1"
 /// SCTF release version this source belongs to.
 #define TPP_VERSION TPP_VERSION_MAJOR "." TPP_VERSION_MINOR "-" TPP_VERSION_REVISION
 
