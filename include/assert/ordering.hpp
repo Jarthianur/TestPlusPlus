@@ -27,18 +27,62 @@ TPP_DEFINE_ASSERTION(assert_less, "less than", v_ < e_)
 TPP_PROVIDE_ASSERTION(assert_greater, GT)
 TPP_PROVIDE_ASSERTION(assert_less, LT)
 
+/**
+ * Assert a value to be greater than another value.
+ * This is equivalent to using ASSERT with GT.
+ *
+ * @param ... is the value in question, followed by the value to compare against.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_GT(2, 1);
+ * @endcode
+ */
 #define ASSERT_GT(...)                                                        \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_greater>( \
       __VA_ARGS__, false, tpp::intern::assert::loc{__FILE__, __LINE__})
 
+/**
+ * Assert a value to be not greater than another value.
+ * This is equivalent to using ASSERT_NOT with GT.
+ *
+ * @param ... is the value in question, followed by the value to compare against.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_NOT_GT(2, 2);
+ * @endcode
+ */
 #define ASSERT_NOT_GT(...)                                                    \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_greater>( \
       __VA_ARGS__, true, tpp::intern::assert::loc{__FILE__, __LINE__})
 
+/**
+ * Assert a value to be less than another value.
+ * This is equivalent to using ASSERT with LT.
+ *
+ * @param ... is the value in question, followed by the value to compare against.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_LT(1, 2);
+ * @endcode
+ */
 #define ASSERT_LT(...)                                                     \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_less>( \
       __VA_ARGS__, false, tpp::intern::assert::loc{__FILE__, __LINE__})
 
+/**
+ * Assert a value to be not less than another value.
+ * This is equivalent to using ASSERT_NOT with LT.
+ *
+ * @param ... is the value in question, followed by the value to compare against.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_NOT_LT(1, 1);
+ * @endcode
+ */
 #define ASSERT_NOT_LT(...)                                                 \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_less>( \
       __VA_ARGS__, true, tpp::intern::assert::loc{__FILE__, __LINE__})

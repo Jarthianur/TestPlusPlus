@@ -26,23 +26,9 @@ namespace tpp
 {
 namespace intern
 {
-/**
- * Provide a singleton pattern implementation that mitigates static initialization order fiasko.
- * The instance exists in global scope.
- */
 template<typename T>
 struct singleton final
 {
-    /**
-     * Get the underlying instance helt by this singleton.
-     * The underlying instance is constructed once, on first call.
-     * Further calls to this singleton return the same instance.
-     *
-     * @tparam Args
-     * An unspecified generic list of arguments, which is forwarded to the constructor
-     * at first call.
-     * @return the underlying instance.
-     */
     template<typename... Args>
     static auto
     instance(Args&&... args_) noexcept -> T const& {
@@ -53,56 +39,13 @@ struct singleton final
 }  // namespace intern
 }  // namespace tpp
 
-/**
- * Concatenate three symbols.
- *
- * @param A is the left symbol.
- * @param B is the middle symbol.
- * @param C is the right symbol.
- */
 #define TPP_INTERN_CONCAT3(A, B, C) A##B##C
-
-/**
- * Produce an identifier for a testcase name.
- *
- * @param ID is the unique identifier part.
- */
 #define TPP_INTERN_API_TEST_NAME(ID) TPP_INTERN_CONCAT3(tpp_intern_test_, ID, _)
-
-/**
- * Produce an identifier for a testcase instance.
- *
- * @param ID is the unique identifier part.
- */
 #define TPP_INTERN_API_TEST_INST(ID) TPP_INTERN_CONCAT3(tpp_intern_test_, ID, _inst_)
-
-/**
- * Produce an identifier for a testcase function.
- *
- * @param ID is the unique identifier part.
- */
 #define TPP_INTERN_API_TEST_FN(ID) TPP_INTERN_CONCAT3(tpp_intern_test_fn_, ID, _)
-
-/**
- * Produce an identifier for a testsuite namespace.
- *
- * @param ID is the unique identifier part.
- */
 #define TPP_INTERN_API_SUITE_NS(ID) TPP_INTERN_CONCAT3(tpp_intern_ns_, ID, _)
-
-/**
- * Produce an identifier for a testsuite name.
- *
- * @param ID is the unique identifier part.
- */
 #define TPP_INTERN_API_SUITE_NAME(ID) TPP_INTERN_CONCAT3(tpp_intern_suite_, ID, _)
 
-/**
- * Generate a unique testsuite definition.
- *
- * @param DESCR is a cstring with the description of the testsuite.
- * @param BASE is the testsuite base type to use.
- */
 #define TPP_INTERN_API_SUITE_WRAPPER(DESCR, BASE)                                                      \
     namespace TPP_INTERN_API_SUITE_NS(__LINE__) {                                                      \
         class test_module                                                                              \
@@ -134,11 +77,6 @@ struct singleton final
     class TPP_INTERN_API_SUITE_NS(__LINE__)::TPP_INTERN_API_SUITE_NAME(__LINE__)                       \
         : public TPP_INTERN_API_SUITE_NS(__LINE__)::test_module
 
-/**
- * Generate a unique testcase definition as part of a testsuite.
- *
- * @param DESCR is a cstring with the description of the testcase.
- */
 #define TPP_INTERN_API_TEST_WRAPPER(DESCR)                                                          \
     class TPP_INTERN_API_TEST_NAME(__LINE__)                                                        \
     {                                                                                               \
@@ -149,11 +87,6 @@ struct singleton final
     } TPP_INTERN_API_TEST_INST(__LINE__){this};                                                     \
     void TPP_INTERN_API_TEST_FN(__LINE__)()
 
-/**
- * Generate a non-unique function definition as part of a testsuite.
- *
- * @param FN is the identifier to use as function name part.
- */
 #define TPP_INTERN_API_FN_WRAPPER(FN)                                           \
     class tpp_intern_##FN##_                                                    \
     {                                                                           \
@@ -165,7 +98,9 @@ struct singleton final
     void tpp_intern_##FN##_fn_()
 
 /**
- * Create a testsuite, where all testcases are run sequentially.
+ * Create a testsuite, where all testcases run sequentially.
+ *
+ * @param DESCR is a cstring with the description, or name of the testsuite.
  *
  * EXAMPLE:
  * @code
@@ -173,13 +108,13 @@ struct singleton final
  *   // testcases
  * };
  * @endcode
- *
- * @param DESCR is a cstring with the description, or name of the testsuite.
  */
 #define SUITE(DESCR) TPP_INTERN_API_SUITE_WRAPPER(DESCR, testsuite)
 
 /**
  * Create a testsuite, where all testcases are run in parallel.
+ *
+ * @param DESCR is a cstring with the description, or name of the testsuite.
  *
  * EXAMPLE:
  * @code
@@ -187,19 +122,41 @@ struct singleton final
  *   // testcases
  * };
  * @endcode
- *
- * @param DESCR is a cstring with the description, or name of the testsuite.
  */
 #define SUITE_PAR(DESCR) TPP_INTERN_API_SUITE_WRAPPER(DESCR, testsuite_parallel)
 
-/// Synonym for SUITE.
+/**
+ * Create a testsuite, where all testcases run sequentially.
+ *
+ * @param DESCR is a cstring with the description, or name of the testsuite.
+ *
+ * EXAMPLE:
+ * @code
+ * DESCRIBE("test some stuff") {
+ *   // testcases
+ * };
+ * @endcode
+ */
 #define DESCRIBE(DESCR) SUITE(DESCR)
 
-/// Synonym for SUITE_PAR.
+/**
+ * Create a testsuite, where all testcases are run in parallel.
+ *
+ * @param DESCR is a cstring with the description, or name of the testsuite.
+ *
+ * EXAMPLE:
+ * @code
+ * DESCRIBE_PAR("test some stuff in parallel") {
+ *   // testcases
+ * };
+ * @endcode
+ */
 #define DESCRIBE_PAR(DESCR) SUITE_PAR(DESCR)
 
 /**
  * Create a testcase.
+ *
+ * @param DESCR is a cstring with the description, or name of the testcase.
  *
  * EXAMPLE:
  * @code
@@ -207,12 +164,21 @@ struct singleton final
  *   // assertions
  * }
  * @endcode
- *
- * @param DESCR is a cstring with the description, or name of the testcase.
  */
 #define TEST(DESCR) TPP_INTERN_API_TEST_WRAPPER(DESCR)
 
-/// Synonym for TEST, but DESCR is prefixed by 'It'.
+/**
+ * Create a testcase.
+ *
+ * @param DESCR is a cstring with the description, or name of the testcase.
+ *
+ * EXAMPLE:
+ * @code
+ * IT("should do something") {
+ *   // assertions
+ * }
+ * @endcode
+ */
 #define IT(DESCR) TPP_INTERN_API_TEST_WRAPPER("It " DESCR)
 
 /**

@@ -89,18 +89,70 @@ struct assert_like
 TPP_PROVIDE_ASSERTION(assert_match, MATCH)
 TPP_PROVIDE_ASSERTION(assert_like, LIKE)
 
+/**
+ * Assert a regex to match a string.
+ * This is equivalent to using ASSERT with MATCH.
+ * If a char sequence is given, a std::cmatch needs to be passed for capturing.
+ * Otherwise if a string is given, a std::smatch is needed.
+ *
+ * @param ... is the string in question, followed by the regex and optionally a std::match_result.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_MATCH("hello world", "hell.*"_re);
+ * std::cmatch m;
+ * ASSERT_MATCH("hello", "hell(.*)"_re, m);
+ * @endcode
+ */
 #define ASSERT_MATCH(...)                                                   \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_match>( \
       __VA_ARGS__, false, tpp::intern::assert::loc{__FILE__, __LINE__})
 
+/**
+ * Assert a regex to not match a string.
+ * This is equivalent to using ASSERT_NOT with MATCH.
+ *
+ * @param ... is the string in question, followed by the regex.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_NOT_MATCH("hello world", "Hell.*"_re);
+ * @endcode
+ */
 #define ASSERT_NOT_MATCH(...)                                               \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_match>( \
       __VA_ARGS__, true, tpp::intern::assert::loc{__FILE__, __LINE__})
 
+/**
+ * Assert a regex to match a string partially.
+ * This is equivalent to using ASSERT with LIKE.
+ * If a char sequence is given, a std::cmatch needs to be passed for capturing.
+ * Otherwise if a string is given, a std::smatch is needed.
+ *
+ * @param ... is the string in question, followed by the regex and optionally a std::match_result.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_LIKE("hello world", "hell"_re);
+ * std::cmatch m;
+ * ASSERT_LIKE("hello", "he(.*)"_re, m);
+ * @endcode
+ */
 #define ASSERT_LIKE(...)                                                   \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_like>( \
       __VA_ARGS__, false, tpp::intern::assert::loc{__FILE__, __LINE__})
 
+/**
+ * Assert a regex to not match a string partially.
+ * This is equivalent to using ASSERT_NOT with LIKE.
+ *
+ * @param ... is the string in question, followed by the regex.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_NOT_LIKE("hello world", "He.*"_re);
+ * @endcode
+ */
 #define ASSERT_NOT_LIKE(...)                                               \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_like>( \
       __VA_ARGS__, true, tpp::intern::assert::loc{__FILE__, __LINE__})

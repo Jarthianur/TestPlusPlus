@@ -24,9 +24,6 @@ namespace intern
 {
 namespace assert
 {
-/**
- * A line of code, specified by its line number and filename.
- */
 struct loc final
 {
     char const* file;  ///< The filename, where this location belongs to.

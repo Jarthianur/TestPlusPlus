@@ -48,25 +48,12 @@ public:
     auto
     operator=(streambuf_proxy&&) noexcept -> streambuf_proxy& = delete;
 
-    /**
-     * Replace the underlying buffer of the stream.
-     * As long as this object lives, everything sent to be stream is captured.
-     *
-     * @param stream_ is the stream to capture from.
-     */
     explicit streambuf_proxy(std::ostream& stream_) : m_orig_buf(stream_.rdbuf(this)), m_orig_stream(stream_) {}
 
-    /**
-     * Restore the original buffer of the stream.
-     * After that, the stream is in its original state.
-     */
     ~streambuf_proxy() noexcept override {
         m_orig_stream.rdbuf(m_orig_buf);
     }
 
-    /**
-     * Get the current buffer content and clear it.
-     */
     virtual auto
     str() -> std::string = 0;
 
@@ -91,13 +78,10 @@ protected:
         }
     };
 
-    std::streambuf* m_orig_buf;     ///< Target streams original buffer.
-    std::ostream&   m_orig_stream;  ///< Target stream
+    std::streambuf* m_orig_buf;
+    std::ostream&   m_orig_stream;
 };
 
-/**
- * Streambuffer proxy to capture everything sent to a stream.
- */
 class streambuf_proxy_single : public streambuf_proxy
 {
 public:
@@ -120,25 +104,14 @@ private:
         return m_buffer.sputn(s_, n_);
     }
 
-    std::stringbuf m_buffer;  ///< Buffer to store captured output.
+    std::stringbuf m_buffer;
 };
 
-/**
- * Streambuffer proxy to capture everything sent to a stream in a multithreaded context with
- * OpenMP. Every thread has its own underlying buffer, thus output is distinct to each thread.
- */
 class streambuf_proxy_omp : public streambuf_proxy
 {
-/// Get the buffer for the current thread.
 #define TPP_INTERN_CURRENT_THREAD_BUFFER() (m_thd_buffers[static_cast<std::size_t>(omp_get_thread_num())])
 
 public:
-    /**
-     * Replace the underlying buffer of the stream.
-     * As long as this object lives, everything sent to be stream is captured.
-     *
-     * @param stream_ is the stream to capture from.
-     */
     explicit streambuf_proxy_omp(std::ostream& stream_)
         : streambuf_proxy(stream_), m_thd_buffers(static_cast<std::size_t>(omp_get_max_threads())) {}
 
@@ -160,7 +133,7 @@ private:
         return TPP_INTERN_CURRENT_THREAD_BUFFER().sputn(s_, n_);
     }
 
-    std::vector<std::stringbuf> m_thd_buffers;  ///< Buffer to store captured output.
+    std::vector<std::stringbuf> m_thd_buffers;
 
 #undef TPP_INTERN_CURRENT_THREAD_BUFFER
 };

@@ -61,10 +61,36 @@ struct assert_in
 
 TPP_PROVIDE_ASSERTION(assert_in, IN)
 
+/**
+ * Assert a range to contain a value.
+ * This is equivalent to using ASSERT with IN.
+ * A range is either a container like vector, or a string.
+ *
+ * @param ... is the value in question, followed by the range.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_IN(1, (std::vector{1, 2, 3}));
+ * ASSERT_IN("hello", "hello world"s);
+ * @endcode
+ */
 #define ASSERT_IN(...)                                                                      \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_in>(__VA_ARGS__, false, \
                                                                         tpp::intern::assert::loc{__FILE__, __LINE__})
 
+/**
+ * Assert a range not to contain a value.
+ * This is equivalent to using ASSERT_NOT with IN.
+ * A range is either a container like vector, or a string.
+ *
+ * @param ... is the value in question, followed by the range.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_NOT_IN(5, (std::vector{1, 2, 3}));
+ * ASSERT_NOT_IN("xyz", "hello world"s);
+ * @endcode
+ */
 #define ASSERT_NOT_IN(...)                                                                 \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_in>(__VA_ARGS__, true, \
                                                                         tpp::intern::assert::loc{__FILE__, __LINE__})

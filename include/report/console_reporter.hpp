@@ -28,27 +28,14 @@ namespace intern
 {
 namespace report
 {
-/**
- * Reporter implementation with informative console output.
- */
 class console_reporter : public reporter
 {
 public:
-    /**
-     * Create a console reporter.
-     *
-     * @param stream_ is the stream where to print the report. (default: stdout)
-     */
     static auto
     create(std::ostream& stream_ = std::cout) -> reporter_ptr {
         return std::make_shared<console_reporter>(enable{}, stream_);
     }
 
-    /**
-     * Create a console reporter.
-     *
-     * @param fname_ is the filename where to print the report.
-     */
     static auto
     create(std::string const& fname_) -> reporter_ptr {
         return std::make_shared<console_reporter>(enable{}, fname_);

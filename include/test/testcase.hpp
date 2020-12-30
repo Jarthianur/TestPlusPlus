@@ -34,18 +34,12 @@ namespace test
 {
 using test_function = std::function<void()>;
 
-/**
- * Record a test name and related testsuite.
- */
 struct test_context final
 {
-    char const* const tc_name;  ///< testcase name
-    char const* const ts_name;  ///< testsuite name
+    char const* const tc_name;
+    char const* const ts_name;
 };
 
-/**
- * A wrapper, that encapsulates a single testcase, as it is used in testsuites.
- */
 class testcase
 {
 public:
@@ -54,10 +48,6 @@ public:
     auto
     operator=(testcase const&) -> testcase& = delete;
 
-    /**
-     * @param ctx_  is the contextual description. 0 => name, 1 => testsuites name.
-     * @param fn_   is the function performing the actual test.
-     */
     testcase(test_context&& ctx_, test_function&& fn_)
         : m_name(ctx_.tc_name), m_suite_name(ctx_.ts_name), m_test_fn(std::move(fn_)) {}
 
@@ -80,20 +70,14 @@ public:
         return *this;
     }
 
-    /**
-     * The resulting state of a testcase.
-     */
     enum results
     {
-        IS_UNDONE,   ///< not yet performed
-        HAS_PASSED,  ///< test passed successfully
-        HAS_FAILED,  ///< at least one assertion failed
-        HAD_ERROR    ///< an unexpected exception was thrown
+        IS_UNDONE,
+        HAS_PASSED,
+        HAS_FAILED,
+        HAD_ERROR
     };
 
-    /**
-     * Perform the test. Returns immediately if the test was alreday performed.
-     */
     void
     operator()() {
         if (m_result != IS_UNDONE) {
@@ -113,122 +97,77 @@ public:
         m_elapsed_t = dur.get();
     }
 
-    /**
-     * Get the result state.
-     */
     inline auto
     result() const -> results {
         return m_result;
     }
 
-    /**
-     * Get the duration of the test run in milliseconds.
-     */
     inline auto
     elapsed_time() const -> double {
         return m_elapsed_t;
     }
 
-    /**
-     * Get the error, or failure reason.
-     * If the test passed, it is empty.
-     */
     inline auto
     reason() const -> std::string const& {
         return m_err_msg;
     }
 
-    /**
-     * Get the name/description of this testcase.
-     */
     inline auto
     name() const -> char const* {
         return m_name;
     }
 
-    /**
-     * Get the context (testsuite), where this testcase lives.
-     */
     inline auto
     suite_name() const -> char const* {
         return m_suite_name;
     }
 
-    /**
-     * Set the captured stdout content for this testcase.
-     *
-     * @param str_ is the output.
-     */
     inline void
     cout(std::string const& str_) {
         m_cout = str_;
     }
 
-    /**
-     * Set the captured stderr content for this testcase.
-     *
-     * @param str_ is the output.
-     */
     inline void
     cerr(std::string const& str_) {
         m_cerr = str_;
     }
 
-    /**
-     * Get the captured output from stdout.
-     */
     inline auto
     cout() const -> std::string const& {
         return m_cout;
     }
 
-    /**
-     * Get the captured output from stderr.
-     */
     inline auto
     cerr() const -> std::string const& {
         return m_cerr;
     }
 
 private:
-    /**
-     * Mark this testcase as successfully passed.
-     */
     inline void
     pass() {
         m_result = HAS_PASSED;
     }
 
-    /**
-     * Mark this testcase as failed.
-     *
-     * @param msg_ is the failure reason.
-     */
     inline void
     fail(char const* msg_) {
         m_result  = HAS_FAILED;
         m_err_msg = msg_;
     }
 
-    /**
-     * Mark this testcase as erroneous.
-     *
-     * @param msg_ is the error reason.
-     */
     inline void
     error(char const* msg_ = "unknown error") {
         m_result  = HAD_ERROR;
         m_err_msg = msg_;
     }
 
-    char const*   m_name;               ///< Name or description of this testcase.
-    char const*   m_suite_name;         ///< Context description (testsuite) where this testcase lives.
-    results       m_result{IS_UNDONE};  ///< Result produced by the test function.
-    double        m_elapsed_t{.0};      ///< Time in milliseconds, that the test function consumed.
-    std::string   m_err_msg;            ///< Message describing the reason for failure, or error.
-    std::string   m_cout;               ///< Captured output to stdout.
-    std::string   m_cerr;               ///< Captured output to stderr.
-    test_function m_test_fn;            ///< Test function that performs the actual test.
+    char const*   m_name;
+    char const*   m_suite_name;
+    results       m_result{IS_UNDONE};
+    double        m_elapsed_t{.0};
+    std::string   m_err_msg;
+    std::string   m_cout;
+    std::string   m_cerr;
+    test_function m_test_fn;
 };
 }  // namespace test
 }  // namespace intern

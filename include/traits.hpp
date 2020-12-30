@@ -23,74 +23,18 @@
 #include <iterator>
 #include <type_traits>
 
-/**
- * Make this template function available if the condition resolves to be true.
- *
- * EXAMPLE:
- * @code
- * template<typename T, TPP_PRIVATE_ENABLE_IF(TPP_PRIVATE_IS_FLOAT(T))>
- * @endcode
- *
- * @param C is the condition.
- */
 #define TPP_INTERN_ENABLE_IF(C) typename std::enable_if<C>::type* = nullptr
-
-/**
- * Generically check for a trait to be fulfilled.
- *
- * @param T is the trait.
- * @param ... is a variadic list of parameters, passed to the trait.
- */
 #define TPP_INTERN_IS(T, ...) (T<__VA_ARGS__>::value)
-
-/**
- * Check for a type to be of a specific type.
- *
- * @param T is the type to check.
- * @param R is the type that T should be.
- */
 #define TPP_INTERN_IS_TYPE(T, R) (TPP_INTERN_IS(std::is_same, T, R))
-
-/**
- * Check for a type to be a floating point number.
- *
- * @param T is the type to check.
- */
 #define TPP_INTERN_IS_FLOAT(T) (TPP_INTERN_IS(std::is_floating_point, T))
-
-/**
- * Check for a type to be void.
- *
- * @param T is the type to check.
- */
 #define TPP_INTERN_IS_VOID(T) (TPP_INTERN_IS(std::is_void, T))
-
-/**
- * Check for a type to have streaming capabilities for a given stream.
- *
- * @param T is the type to check.
- * @param S is the stream.
- */
 #define TPP_INTERN_HAS_STREAM_CAPABILITY(T, S) (TPP_INTERN_IS(tpp::intern::stream_capability, S, T))
-
-/**
- * Check for a type to have iterator capabilities.
- *
- * @param T is the type to check.
- */
 #define TPP_INTERN_HAS_ITERATOR_CAPABILITY(T) (TPP_INTERN_IS(tpp::intern::iterator_capability, T))
 
 namespace tpp
 {
 namespace intern
 {
-/**
- * Type trait to check for streaming operator capability in template meta programming.
- * S must implement operator<< for T.
- *
- * @tparam S is the stream type.
- * @tparam T is the type that needs to be streamable into S.
- */
 template<typename S, typename T>
 class stream_capability
 {
@@ -103,17 +47,9 @@ class stream_capability
     test(...) -> std::false_type;
 
 public:
-    /// Resolves to true, if T is streamable to S.
     static const bool value = decltype(test<S, T>(0))::value;
 };
 
-/**
- * Type trait to check for iterator capabilities in template meta programming.
- * T must implement begin and end, while the resulting iterator must implement operator++ and
- * operator*.
- *
- * @tparam T is the type that needs to be iterable.
- */
 template<typename T>
 class iterator_capability
 {
@@ -128,7 +64,6 @@ class iterator_capability
     test(...) -> std::false_type;
 
 public:
-    /// Resolves to true, if T is iterable.
     static const bool value = decltype(test<T>(0))::value;
 };
 }  // namespace intern

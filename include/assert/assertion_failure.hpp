@@ -29,29 +29,19 @@ namespace intern
 {
 namespace assert
 {
-/**
- * Used to be thrown when an assertion fails.
- */
 class assertion_failure : public std::exception
 {
 public:
-    /**
-     * @param msg_ is the failure message
-     * @param loc_ is the line of code where the assertion took place
-     */
     assertion_failure(std::string const& msg_, loc const& loc_)
         : m_msg(msg_ + " at " + loc_.file + ":" + std::to_string(loc_.line)) {}
 
-    /**
-     * Get the failure message.
-     */
     inline auto
     what() const noexcept -> char const* override {
         return m_msg.c_str();
     }
 
 private:
-    std::string const m_msg;  ///< Message describing the failure cause.
+    std::string const m_msg;
 };
 }  // namespace assert
 }  // namespace intern

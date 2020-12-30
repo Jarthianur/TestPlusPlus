@@ -33,6 +33,11 @@
  * default. This can be used only once per linked binary.
  *
  * @param E is the epsilon value.
+ *
+ * EXAMPLE:
+ * @code
+ * TPP_EPSILON(0.001)
+ * @endcode
  */
 #define TPP_EPSILON(E) double tpp::epsilon = E;
 
@@ -93,17 +98,32 @@ TPP_PROVIDE_ASSERTION(assert_equals, EQ)
 
 /**
  * Assert two values to be equal.
- * This is equivalent to using ASSERT with EQUALS comparator.
+ * This is equivalent to using ASSERT with EQ.
+ *
+ * @param ... is the value in question, followed by the expected value and optionally an epsilon.
  *
  * EXAMPLE:
  * @code
  * ASSERT_EQ(1, 1);
+ * ASSERT_EQ(1.12, 1.11, 0.01);
  * @endcode
  */
 #define ASSERT_EQ(...)                                                       \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_equals>( \
       __VA_ARGS__, false, tpp::intern::assert::loc{__FILE__, __LINE__})
 
+/**
+ * Assert two values to be not equal.
+ * This is equivalent to using ASSERT_NOT with EQ.
+ *
+ * @param ... is the value in question, followed by the expected value and optionally an epsilon.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_NOT_EQ(1, 1);
+ * ASSERT_NOT_EQ(1.12, 1.11, 0.01);
+ * @endcode
+ */
 #define ASSERT_NOT_EQ(...)                                                   \
     tpp::intern::assert::make_assertion<tpp::intern::assert::assert_equals>( \
       __VA_ARGS__, true, tpp::intern::assert::loc{__FILE__, __LINE__})

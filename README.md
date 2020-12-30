@@ -39,13 +39,9 @@ Please have a look at the full [feature set](#feature-set).
     - [Behavior Driven Test](#behavior-driven-test)
 - [API](#api)
   - [Tests](#tests)
-  - [Reporters](#reporters)
   - [Comparators](#comparators)
   - [Assertions](#assertions)
 - [Parallelization Of Tests](#parallelization-of-tests)
-- [How To Extend](#how-to-extend)
-  - [Custom Reporter](#custom-reporter)
-  - [Custom Comparator](#custom-comparator)
 - [Contributing](#contributing)
 <!-- /TOC -->
 
@@ -290,27 +286,6 @@ Also consider, spawning threads has some overhead.
 Hence there is no point in running just a few fast tests concurrently.
 Usually the threadpool is kept alive in the background.
 So if you use parallel testsuites once, don't be afraid to use them wherever you can, even for short tests as there is not much more overhead.
-
-## How To Extend
-
-### Custom Reporter
-
-To add a new reporter, implement the [reporter](include/report/reporter.hpp) interface.
-
-### Custom Comparator
-
-To add a new comparator you basically just need to invoke two macros.
-For example:
-
-```c
-COMPARATOR(pred, "predecessor of", v_ + 1 == e_)
-PROVIDE_COMPARATOR(pred, PRE)
-```
-
-This will create a generic comparator for you. The syntax is as follows:
-`COMPARATOR(NAME, CONSTRAINT, PREDICATE)`, where _NAME_ is the comparator name.
-_CONSTRAINT_ is a cstring representing what it does and is used for reporting.
-_PREDICATE_ is the actual comparison.
 
 ## Contributing
 

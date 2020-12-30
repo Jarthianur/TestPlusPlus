@@ -31,10 +31,7 @@
 #include "runner.hpp"
 
 /**
- * Define a default main function, which performs all tests, and produces the report with specified
- * reporter.
- *
- * @param R is the reporters factory method invokation.
+ * Define a default main function, which performs all tests and allows modification via command line arguments.
  */
 #define TPP_DEFAULT_MAIN                                  \
     auto main(int argc_, char const** argv_)->int {       \

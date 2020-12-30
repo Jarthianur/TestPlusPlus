@@ -25,27 +25,16 @@ namespace tpp
 {
 namespace intern
 {
-/**
- * A wrapper for regular expressions, that contains the compiled regex as well as the expression
- * pattern.
- */
 struct regex final
 {
-    /**
-     * @param p_ is the regular expression pattern.
-     * @param flags_ is a bit pattern of regex options.
-     */
     regex(char const* p_, std::regex_constants::syntax_option_type flags_) : pattern(p_), re(p_, flags_) {}
 
-    /**
-     * Convert this wrapper to std::regex.
-     */
     operator std::regex() const {
         return re;
     }
 
-    char const* const pattern;  ///< Regular expression pattern.
-    std::regex const  re;       ///< Compiled regex.
+    char const* const pattern;
+    std::regex const  re;
 };
 }  // namespace intern
 
@@ -55,13 +44,13 @@ using regex = intern::regex;
  * Literal operator to create a regex from cstring.
  * The produced regex uses ECMAScript syntax, and does not allow capturing.
  *
+ * @param lit_ is the regular expression.
+ * @return a regex built from the given pattern.
+ *
  * EXAMPLE:
  * @code
  * ".*"_re
  * @endcode
- *
- * @param lit_ is the regular expression.
- * @return a regex built from the given pattern.
  */
 inline auto operator"" _re(char const* lit_, std::size_t) -> regex {
     return regex(lit_, std::regex::ECMAScript);
@@ -71,13 +60,13 @@ inline auto operator"" _re(char const* lit_, std::size_t) -> regex {
  * Literal operator to create a regex from cstring.
  * The produced regex uses ECMAScript syntax, does not allow capturing, and is case insensitive.
  *
+ * @param lit_ is the regular expression.
+ * @return a regex built from the given pattern.
+ *
  * EXAMPLE:
  * @code
  * ".*"_re_i
  * @endcode
- *
- * @param lit_ is the regular expression.
- * @return a regex built from the given pattern.
  */
 inline auto operator"" _re_i(char const* lit_, std::size_t) -> regex {
     return regex(lit_, std::regex::ECMAScript | std::regex::icase);

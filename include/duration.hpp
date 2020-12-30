@@ -24,25 +24,18 @@ namespace tpp
 {
 namespace intern
 {
-/**
- * Used to measure durations in milliseconds.
- * The starting timepoint is fixed upon construction.
- */
 class duration final
 {
 public:
     duration() : m_start(std::chrono::steady_clock::now()) {}
 
-    /**
-     * Get the duration since starting point in milliseconds.
-     */
     auto
     get() -> double {
         return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - m_start).count();
     }
 
 private:
-    std::chrono::steady_clock::time_point const m_start;  ///< Starting timepoint.
+    std::chrono::steady_clock::time_point const m_start;
 };
 }  // namespace intern
 }  // namespace tpp

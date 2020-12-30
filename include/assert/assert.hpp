@@ -32,6 +32,8 @@
 
 namespace tpp
 {
+namespace intern
+{
 template<typename T>
 class throwable
 {
@@ -47,8 +49,6 @@ private:
     T m_t;
 };
 
-namespace intern
-{
 namespace assert
 {
 template<typename A, typename... Args>
@@ -68,17 +68,6 @@ fail_assertion(std::tuple<std::string&&, char const*, std::string&&>&& asrt_, lo
                             loc_};
 }
 
-/**
- * Apply a throw-assertion on a function invokation.
- *
- * @tparam T is the throwable type to expect.
- * @param fn_ is the wrapper function to assert for.
- * @param tname_ is the throwable types name.
- * @param loc_ is the line of code where the assertion took place.
- * @return the instance of T that was caught.
- * @throw tpp::intern::assertion_failure if a different throwable type, or nothing is thrown by
- * fn_.
- */
 template<typename T, typename Fn>
 static auto
 assert_throws(Fn&& fn_, char const* tname_, loc&& loc_) -> throwable<T> {
@@ -95,14 +84,6 @@ assert_throws(Fn&& fn_, char const* tname_, loc&& loc_) -> throwable<T> {
     throw assertion_failure(std::string("No exception thrown, expected ") + tname_, loc_);
 }
 
-/**
- * Apply a nothrow-assertion on a function invokation.
- *
- * @param fn_ is the wrapper function to assert for.
- * @param loc_ is the line of code where the assertion took place.
- * @return the return value of fn_.
- * @throw tpp::intern::assertion_failure if a any throwable type is thrown by fn_.
- */
 template<typename Fn, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_VOID(decltype(std::declval<Fn>()())))>
 static auto
 assert_nothrow(Fn&& fn_, loc&& loc_) -> decltype(fn_()) {
@@ -116,13 +97,6 @@ assert_nothrow(Fn&& fn_, loc&& loc_) -> decltype(fn_()) {
     }
 }
 
-/**
- * Apply a nothrow-assertion on a function invokation.
- *
- * @param fn_ is the wrapper function to assert for.
- * @param loc_ is the line of code where the assertion took place.
- * @throw tpp::intern::assertion_failure if a any throwable type is thrown by fn_.
- */
 template<typename Fn, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_VOID(decltype(std::declval<Fn>()())))>
 static void
 assert_nothrow(Fn&& fn_, loc&& loc_) {
@@ -136,15 +110,6 @@ assert_nothrow(Fn&& fn_, loc&& loc_) {
     }
 }
 
-/**
- * Apply a runtime-assertion on a function invokation.
- *
- * @param fn_ is the wrapper function to assert for.
- * @param max_ms_ is the maximum amount of time in milliseconds.
- * @param loc_ is the line of code where the assertion took place.
- * @return the return value of fn_.
- * @throw tpp::intern::assertion_failure if fn_ does not complete within max_ms_.
- */
 template<typename Fn, TPP_INTERN_ENABLE_IF(!TPP_INTERN_IS_VOID(decltype(std::declval<Fn>()())))>
 static auto
 assert_runtime(Fn&& fn_, double max_ms_, loc&& loc_) -> decltype(fn_()) {
@@ -161,14 +126,6 @@ assert_runtime(Fn&& fn_, double max_ms_, loc&& loc_) -> decltype(fn_()) {
     }
 }
 
-/**
- * Apply a runtime-assertion on a function invokation.
- *
- * @param fn_ is the wrapper function to assert for.
- * @param max_ms_ is the maximum amount of time in milliseconds.
- * @param loc_ is the line of code where the assertion took place.
- * @throw tpp::intern::assertion_failure if fn_ does not complete within max_ms_.
- */
 template<typename Fn, TPP_INTERN_ENABLE_IF(TPP_INTERN_IS_VOID(decltype(std::declval<Fn>()())))>
 static void
 assert_runtime(Fn&& fn_, double max_ms_, loc&& loc_) {
@@ -187,6 +144,18 @@ assert_runtime(Fn&& fn_, double max_ms_, loc&& loc_) {
 }  // namespace intern
 }  // namespace tpp
 
+/**
+ * Invoke this macro to define an assertion.
+ *
+ * @param NAME is the unique name of the assertion.
+ * @param CMPSTR is a word describing the asserted constraint.
+ * @param PRED is the predicate to assert.
+ *
+ * EXAMPLE:
+ * @code
+ * TPP_DEFINE_ASSERTION(assert_less, "less than", v_ < e_)
+ * @endcode
+ */
 #define TPP_DEFINE_ASSERTION(NAME, CMPSTR, PRED)                                                                      \
     namespace tpp                                                                                                     \
     {                                                                                                                 \
@@ -213,6 +182,17 @@ assert_runtime(Fn&& fn_, double max_ms_, loc&& loc_) {
     }                                                                                                                 \
     }
 
+/**
+ * Invoke this macro to provide a name for an assertion, which can be used in ASSERT calls.
+ *
+ * @param A is the assertion to provide a name for.
+ * @param S is the name.
+ *
+ * EXAMPLE:
+ * @code
+ * TPP_PROVIDE_ASSERTION(assert_less, LT)
+ * @endcode
+ */
 #define TPP_PROVIDE_ASSERTION(A, S)   \
     namespace tpp                     \
     {                                 \
@@ -223,118 +203,134 @@ assert_runtime(Fn&& fn_, double max_ms_, loc&& loc_) {
     }
 
 /**
- * Generic assertion to compare two values.
+ * Generic macro to compare two values based on the given assertion.
+ *
+ * @param V is the value in question.
+ * @param A is the assertion to use.
+ * @param ... is the expected value and other optional args, like epsilon.
  *
  * EXAMPLE:
  * @code
- * ASSERT(1, EQ(), 1);
+ * ASSERT(1, EQ, 1);
+ * ASSERT(1., EQ, 1.2, 0.01);
  * @endcode
  */
 #define ASSERT(V, A, ...)                                                      \
     tpp::intern::assert::make_assertion<tpp::assert::A>(V, __VA_ARGS__, false, \
                                                         tpp::intern::assert::loc{__FILE__, __LINE__})
 
-#define ASSERT_NOT(V, A, ...)                                                 \
-    tpp::intern::assert::make_assertion<tpp::assert::A>(V, __VA_ARGS__, true, \
+/**
+ * Generic macro to compare two values based on the given assertion with negated result.
+ *
+ * @param V is the value in question.
+ * @param A is the assertion to use.
+ * @param ... is the expected value and other optional args, like epsilon.
+ *
+ * EXAMPLE:
+ * @code
+ * ASSERT_NOT(1, EQ, 2);
+ * ASSERT_NOT(1., EQ, 2.2, 0.01);
+ * @endcode
+ */
+#define ASSERT_NOT(V, A, ...)                                                   \
+    tpp::intern::assert::make_assertion<tpp::assert::A>((V), __VA_ARGS__, true, \
                                                         tpp::intern::assert::loc{__FILE__, __LINE__})
 
 /**
  * Assert a value to be true.
  *
+ * @param V is the value in question.
+ *
  * EXAMPLE:
  * @code
  * ASSERT_TRUE(true);
  * @endcode
- *
- * @param VAL is the actual value.
  */
-#define ASSERT_TRUE(VAL) ASSERT_EQ(VAL, true)
+#define ASSERT_TRUE(V) ASSERT_EQ((V), true)
 
 /**
  * Assert a value to be false.
+ *
+ * @param V is the value in question.
  *
  * EXAMPLE:
  * @code
  * ASSERT_FALSE(false);
  * @endcode
- *
- * @param VAL is the actual value.
  */
-#define ASSERT_FALSE(VAL) ASSERT_EQ(VAL, false)
+#define ASSERT_FALSE(V) ASSERT_EQ((V), false)
 
 /**
  * Assert a pointer to be nullptr.
+ *
+ * @param P is the pointer in question.
  *
  * EXAMPLE:
  * @code
  * ASSERT_NULL(&var);
  * @endcode
- *
- * @param PTR is the actual pointer.
  */
-#define ASSERT_NULL(PTR)                                                                      \
-    static_assert(TPP_INTERN_IS(std::is_pointer, std::remove_reference<decltype(PTR)>::type), \
-                  "ASSERT_NULL may only be used with pointer types!");                        \
-    ASSERT_EQ(static_cast<void const*>(PTR), nullptr)
+#define ASSERT_NULL(P)                                                                      \
+    static_assert(TPP_INTERN_IS(std::is_pointer, std::remove_reference<decltype(P)>::type), \
+                  "ASSERT_NULL may only be used with pointer types!");                      \
+    ASSERT_EQ(static_cast<void const*>(P), nullptr)
 
 /**
  * Assert a pointer to be not nullptr.
+ *
+ * @param P is the pointer in question.
  *
  * EXAMPLE:
  * @code
  * ASSERT_NOT_NULL(&var);
  * @endcode
- *
- * @param PTR is the actual pointer.
  */
-#define ASSERT_NOT_NULL(PTR)                                                                  \
-    static_assert(TPP_INTERN_IS(std::is_pointer, std::remove_reference<decltype(PTR)>::type), \
-                  "ASSERT_NOT_NULL may only be used with pointer types!");                    \
-    ASSERT_NOT_EQ(static_cast<void const*>(PTR), nullptr)
+#define ASSERT_NOT_NULL(P)                                                                  \
+    static_assert(TPP_INTERN_IS(std::is_pointer, std::remove_reference<decltype(P)>::type), \
+                  "ASSERT_NOT_NULL may only be used with pointer types!");                  \
+    ASSERT_NOT_EQ(static_cast<void const*>(P), nullptr)
 
 /**
  * Assert an expression to throw a specific throwable type.
+ *
+ * @param F is the expression.
+ * @param T is the expected throwable type.
+ * @return the instance of T that was caught.
  *
  * EXAMPLE:
  * @code
  * ASSERT_THROWS(func(), std::exception);
  * @endcode
- *
- * @param FN is the expression / invokation.
- * @param TRW is the expected throwable type.
- * @return the instance of TRW that was caught.
  */
-#define ASSERT_THROWS(FN, TRW) \
-    tpp::intern::assert::assert_throws<TRW>([&] { FN; }, #TRW, tpp::intern::assert::loc{__FILE__, __LINE__}).cause()
+#define ASSERT_THROWS(F, T) \
+    tpp::intern::assert::assert_throws<T>([&] { F; }, #T, tpp::intern::assert::loc{__FILE__, __LINE__}).cause()
 
 /**
  * Assert an expression to not throw anything.
+ *
+ * @param F is the expression.
+ * @return the return value of F, if there is any.
  *
  * EXAMPLE:
  * @code
  * ASSERT_NOTHROW(func());
  * @endcode
- *
- * @param FN is the expression / invokation.
- * @return the return value of FN, if there is any.
  */
-#define ASSERT_NOTHROW(FN) \
-    tpp::intern::assert::assert_nothrow([&] { FN; }, tpp::intern::assert::loc{__FILE__, __LINE__})
+#define ASSERT_NOTHROW(F) tpp::intern::assert::assert_nothrow([&] { F; }, tpp::intern::assert::loc{__FILE__, __LINE__})
 
 /**
  * Assert an expression to run in certain amount of time.
- * This may be usefull, when testing fixed timing constraints.
+ *
+ * @param F is the expression.
+ * @param M is the maximum amount of time in milliseconds.
+ * @return the return value of F, if there is any.
  *
  * EXAMPLE:
  * @code
  * ASSERT_RUNTIME(func());
  * @endcode
- *
- * @param FN is the expression / invokation.
- * @param MAX is the maximum amount of time in milliseconds.
- * @return the return value of FN, if there is any.
  */
-#define ASSERT_RUNTIME(FN, MAX) \
-    tpp::intern::assert::assert_runtime([&] { FN; }, MAX, tpp::intern::assert::loc{__FILE__, __LINE__})
+#define ASSERT_RUNTIME(F, M) \
+    tpp::intern::assert::assert_runtime([&] { F; }, M, tpp::intern::assert::loc{__FILE__, __LINE__})
 
 #endif  // TPP_ASSERT_ASSERT_HPP

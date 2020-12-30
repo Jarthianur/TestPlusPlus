@@ -30,27 +30,14 @@ namespace intern
 {
 namespace report
 {
-/**
- * Reporter implementation with JUnit like XML format.
- */
 class xml_reporter : public reporter
 {
 public:
-    /**
-     * Create a xml reporter.
-     *
-     * @param stream_ is the stream where to print the report. (default: stdout)
-     */
     static auto
     create(std::ostream& stream_ = std::cout) -> reporter_ptr {
         return std::make_shared<xml_reporter>(enable{}, stream_);
     }
 
-    /**
-     * Create a xml reporter.
-     *
-     * @param fname_ is the filename where to print the report.
-     */
     static auto
     create(std::string const& fname_) -> reporter_ptr {
         return std::make_shared<xml_reporter>(enable{}, fname_);

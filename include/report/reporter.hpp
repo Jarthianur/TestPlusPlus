@@ -37,8 +37,8 @@ namespace report
 {
 namespace fmt
 {
-static constexpr auto SPACE = ' ';   ///< Single space
-static constexpr auto LF    = '\n';  ///< Single linefeed
+static constexpr auto SPACE = ' ';
+static constexpr auto LF    = '\n';
 namespace ansi
 {
 static constexpr auto RED        = "\x1b[0;91m";
@@ -54,9 +54,7 @@ static constexpr auto RST        = "\x1b[0m";
 
 class reporter;
 using reporter_ptr = std::shared_ptr<reporter>;
-/**
- * Abstract base class for specific reporter implementations.
- */
+
 class reporter : public std::enable_shared_from_this<reporter>
 {
 public:
@@ -68,21 +66,12 @@ public:
     auto
     operator=(reporter&&) noexcept -> reporter& = delete;
 
-    /**
-     * Generate the report part for a single testsuite.
-     *
-     * @param ts_ is the testsuite to report.
-     */
     void
     report(test::testsuite_ptr const& ts_) {
         report_testsuite(ts_);
         m_out_stream.flush();
     }
 
-    /**
-     * Generate the report prologue.
-     * This method may be overridden in derived classes, but must be called first in there.
-     */
     virtual void
     begin_report() {
         m_abs_errs  = 0;
@@ -91,28 +80,14 @@ public:
         m_abs_time  = .0;
     };
 
-    /**
-     * Generate the report epilogue.
-     * This method must be implemented in derived classes.
-     */
     virtual void
     end_report() = 0;
 
-    /**
-     * Get the number of failures and errors.
-     *
-     * @return the sum of failures and errors.
-     */
     inline auto
     faults() const -> std::size_t {
         return m_abs_errs + m_abs_fails;
     }
 
-    /**
-     * Enable ansi colors in report.
-     *
-     * @return this reporter again.
-     */
     auto
     with_color() -> reporter_ptr {
         m_colors.RED     = fmt::ansi::RED;
@@ -126,11 +101,6 @@ public:
         return shared_from_this();
     }
 
-    /**
-     * Enable reporting of captured output.
-     *
-     * @return this reporter again.
-     */
     auto
     with_captured_output() -> reporter_ptr {
         m_capture = true;
@@ -164,31 +134,18 @@ protected:
         }
     };
 
-    /**
-     * @param stream_ is the output stream for reports.
-     */
     explicit reporter(std::ostream& stream_) : m_out_stream(stream_) {
         if (!m_out_stream) {
             throw std::runtime_error("could not open stream for report");
         }
     }
 
-    /**
-     * @param fname_ is the output filename for reports.
-     * @throw std::runtime_error if the file can not be opened for writing.
-     */
     explicit reporter(std::string const& fname_) : m_out_file(fname_), m_out_stream(m_out_file) {
         if (!m_out_stream) {
             throw std::runtime_error("could not open file for report");
         }
     }
 
-    /**
-     * Generate a part of the report for a single testsuite.
-     * This method is used for every testsuite. It may be overridden in derived classes.
-     *
-     * @param ts_ is the testsuite to generate the report for.
-     */
     virtual void
     report_testsuite(test::testsuite_ptr const& ts_) {
         m_abs_errs += ts_->statistics().errors();
@@ -199,21 +156,9 @@ protected:
                       [this](test::testcase const& tc_) { report_testcase(tc_); });
     }
 
-    /**
-     * Generate a part of the report for a single testcase.
-     * This method is used for every testcase. It must be implemented in derived classes.
-     *
-     * @param tc_ is the testcase to generate the report for.
-     */
     virtual void
     report_testcase(test::testcase const& tc_) = 0;
 
-    /**
-     * Print anything to the specified output stream, or file.
-     *
-     * @tparam T is the type of t_.
-     * @param t_ is the thing to print.
-     */
     template<typename T>
     auto
     operator<<(T&& t_) const -> std::ostream& {
@@ -283,16 +228,16 @@ protected:
     }
 
 private:
-    std::ofstream m_out_file;    ///< Filestream that is used, if a file is specified as output target.
-    std::ostream& m_out_stream;  ///< Outstream that handles printing the report.
+    std::ofstream m_out_file;
+    std::ostream& m_out_stream;
     std::uint32_t m_indent_lvl{0};
-    color_palette m_colors{};         ///< Flags whether print colored results.
-    bool          m_capture{false};   ///< Flags whether to report captured output from testcases.
-    bool          m_stripped{false};  ///< Flags whether to strip unnecessary whitespaces in report.
-    std::size_t   m_abs_tests{0};     ///< Total number of testcases over all testsuites.
-    std::size_t   m_abs_fails{0};     ///< Total number of failed testcases over all testsuites.
-    std::size_t   m_abs_errs{0};      ///< Total number of erroneous testcases over all testsuites.
-    double        m_abs_time{0};      ///< Total amount of time spent on all testsuites.
+    color_palette m_colors{};
+    bool          m_capture{false};
+    bool          m_stripped{false};
+    std::size_t   m_abs_tests{0};
+    std::size_t   m_abs_fails{0};
+    std::size_t   m_abs_errs{0};
+    double        m_abs_time{0};
 };
 }  // namespace report
 }  // namespace intern

@@ -31,9 +31,6 @@ namespace tpp
 {
 namespace intern
 {
-/**
- * Used to manage and run testsuites.
- */
 class runner
 {
     enum class retval : int
@@ -43,23 +40,11 @@ class runner
     };
 
 public:
-    /**
-     * Add a testsuite to this runner.
-     *
-     * @param ts_ is the testsuite to add
-     */
     void
     add_testsuite(test::testsuite_ptr const& ts_) {
         m_testsuites.push_back(ts_);
     }
 
-    /**
-     * Run all contained testsuites, what inherently performs all tests, and generates the report.
-     * Tests are run only once, but reported every time this method is called.
-     *
-     * @param rep_ is the reporter to use for the report.
-     * @return the sum of non successful tests.
-     */
     auto
     run(int argc_, char const** argv_) noexcept -> int {
         cmdline_parser cmd;
@@ -99,9 +84,6 @@ public:
         }
     }
 
-    /**
-     * Get a runner instance, as singleton.
-     */
     static auto
     instance() -> runner& {
         static runner r;
@@ -120,7 +102,7 @@ private:
         return to_int(retval::EXCEPT);
     }
 
-    std::vector<test::testsuite_ptr> m_testsuites;  ///< Testsuites contained in this runner.
+    std::vector<test::testsuite_ptr> m_testsuites;
 };
 }  // namespace intern
 

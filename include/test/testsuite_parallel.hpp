@@ -30,27 +30,14 @@ namespace intern
 {
 namespace test
 {
-/**
- * Group testcases together in a testsuite. Testcases share this testsuite as their context.
- * Testcases are run in parallel.
- */
 class testsuite_parallel : public testsuite
 {
 public:
-    /**
-     * Create a new testsuite.
-     *
-     * @param name_ is the name, or description of the testsuite.
-     */
     static auto
     create(char const* name_) -> testsuite_ptr {
         return std::make_shared<testsuite_parallel>(enable{}, name_);
     }
 
-    /**
-     * Run all testcases in this suite.
-     * @throw std::overflow_error if there are too many testcases for openmp to handle.
-     */
     void
     run() override {
         if (m_state != IS_DONE) {
@@ -95,11 +82,6 @@ public:
         }
     }
 
-    /**
-     * Constructor for std::make_shared.
-     *
-     * @param name_ is the name, or description of the testsuite.
-     */
     testsuite_parallel(enable e_, char const* name_) : testsuite(e_, name_) {}
 };
 }  // namespace test
