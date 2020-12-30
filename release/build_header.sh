@@ -1,52 +1,53 @@
 #!/bin/bash
 set -eo pipefail
 
-FILES="../include/cpp_meta.hpp
-../include/loc.hpp
+FILES="../include/version.hpp
+../include/cpp_meta.hpp
 ../include/traits.hpp
 ../include/duration.hpp
 ../include/regex.hpp
 ../include/stringify.hpp
-../include/assertion_failure.hpp
-../include/testsuite/testcase.hpp
-../include/testsuite/streambuf_proxy_omp.hpp
-../include/testsuite/streambuf_proxy.hpp
-../include/testsuite/statistic.hpp
-../include/testsuite/testsuite.hpp
-../include/testsuite/testsuite_parallel.hpp
-../include/reporter/reporter.hpp
-../include/reporter/xml_reporter.hpp
-../include/reporter/console_reporter.hpp
-../include/reporter/markdown_reporter.hpp
+../include/assert/loc.hpp
+../include/assert/assertion_failure.hpp
+../include/assert/assert.hpp
+../include/assert/ordering.hpp
+../include/assert/equality.hpp
+../include/assert/range.hpp
+../include/assert/regex.hpp
+../include/test/testcase.hpp
+../include/test/streambuf_proxy.hpp
+../include/test/statistic.hpp
+../include/test/testsuite.hpp
+../include/test/testsuite_parallel.hpp
+../include/report/reporter.hpp
+../include/report/xml_reporter.hpp
+../include/report/console_reporter.hpp
+../include/report/markdown_reporter.hpp
+../include/report/json_reporter.hpp
+../include/report/reporter_factory.hpp
+../include/config.hpp
+../include/cmdline_parser.hpp
 ../include/runner.hpp
-../include/comparator/comparator.hpp
-../include/comparator/ordering.hpp
-../include/comparator/equality.hpp
-../include/comparator/range.hpp
-../include/comparator/regex.hpp
-../include/assert.hpp
 ../include/api.hpp
-../include/sctf.hpp"
+../include/tpp.hpp"
 
-TARGET="sctf.hpp"
+TARGET="tpp.hpp"
 
 COPYRIGHT="/*
-    Copyright (C) 2017 Jarthianur
+    Copyright (C) 2017  Jarthianur
 
-    This file is part of simple-cpp-test-framework.
-
-    simple-cpp-test-framework is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    simple-cpp-test-framework is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with simple-cpp-test-framework.  If not, see <https://www.gnu.org/licenses/>.
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */"
 
 echo "" > $TARGET.tmp
@@ -59,15 +60,15 @@ perl -0pi -e 's/#include [<"].*[">]//g' $TARGET.tmp
 perl -0pi -e 's%//[/<]*? .*|/\*[\w\W\n]*?\*/%%g' $TARGET.tmp
 
 echo "$COPYRIGHT" > $TARGET
-echo "#ifndef SCTF_RELEASE_SCTF_HPP" >> $TARGET
-echo "#define SCTF_RELEASE_SCTF_HPP" >> $TARGET
+echo "#ifndef TPP_RELEASE_TPP_HPP" >> $TARGET
+echo "#define TPP_RELEASE_TPP_HPP" >> $TARGET
 cat .includes >> $TARGET
 cat $TARGET.tmp >> $TARGET
 echo "" >> $TARGET
 echo "#endif" >> $TARGET
 
 perl -0pi -e 's/#include ".*"//g' $TARGET
-clang-format -style=file -i $TARGET
+clang-format-10 -style=file -i $TARGET
 
 rm $TARGET.tmp
 rm .includes

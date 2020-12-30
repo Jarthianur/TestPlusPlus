@@ -1,33 +1,31 @@
 matrix:
   - name: C++11
-    env: 
-      cpp_std: c++11
-    tags: 
-    - c++11
+    env:
+      cpp_std: "11"
+    tags:
+      - c++11
   - name: C++14
-    env: 
-      cpp_std: c++14
-    tags: 
-    - c++14
+    env:
+      cpp_std: "14"
+    tags:
+      - c++14
   - name: C++17
-    env: 
-      cpp_std: c++17
-    tags: 
-    - c++17
+    env:
+      cpp_std: "17"
+    tags:
+      - c++17
 
 model:
   variables:
     build_dir: build_{{ env.cpp_std }}
     linux:
-    - target: test_seq
-      cxx_args: "-Wall -Wextra -Wpedantic -Werror -Wnon-virtual-dtor -Wno-unused-function -Wno-unknown-pragmas -g -O0 -fprofile-arcs -ftest-coverage -coverage"
-    - target: test_par
-      cxx_args: "-fopenmp -Wall -Wextra -Wpedantic -Werror -Wnon-virtual-dtor -Wno-unused-function -Wno-unknown-pragmas -g -O0 -fprofile-arcs -ftest-coverage -coverage"
+      - target: test_seq
+      - target: test_par
     osx:
-    - target: test_seq
-      cxx_args: "-Wno-unknown-warning-option"
-    - target: test_par
-      cxx_args: "-Xpreprocessor -fopenmp -lomp -Wno-unknown-warning-option"
+      - target: test_seq
+        cxx_args: "-Wno-unknown-warning-option"
+      - target: test_par
+        cxx_args: "-Xpreprocessor -fopenmp -lomp -Wno-unknown-warning-option"
   templates:
     linux:
       build_script: |
@@ -35,91 +33,95 @@ model:
         ./build_header.sh
         popd
         mkdir -p $BUILD_DIR
-        cp -r test $BUILD_DIR/{{ item.target }}
-        pushd $BUILD_DIR/{{ item.target }}
-        $CXX -o {{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../../release $(echo -en *.cpp)
+        pushd $BUILD_DIR
+        cmake -DCMAKE_CXX_STANDARD={{ env.cpp_std }} ..
+        make -j2 {{ item.target }} rel_{{ item.target }}
         popd
       test_script: |
-        pushd $BUILD_DIR/{{ item.target }}
+        pushd $BUILD_DIR
+        $LCOV -d . -z
         $LCOV -c -i -d . -o base.info
-        ./{{ item.target }}
+        ./{{ item.target }} -co
+        ./{{ item.target }} -oi '*' --xml test.xml
+        ./{{ item.target }} -ose 'xxx' --json test.json
         $LCOV -c -d . -o test.info
         $LCOV -a base.info -a test.info -o {{ item.target }}.info
+        ./rel_{{ item.target }} -cos > /dev/null
         cat test.xml
-        cat test.md
+        cat test.json
         popd
     osx:
       build_script: |
         pushd test
-        clang++ -o {{ item.target }} {{ item.cxx_args }} -std={{ env.cpp_std }} -I../include $(echo -en *.cpp)
+        clang++ -o {{ item.target }} {{ item.cxx_args }} -std=c++{{ env.cpp_std }} -I../include $(echo -en *.cpp)
         popd
       test_script: |
         echo "./test/{{ item.target }}"
-        ./test/{{ item.target }}
-        cat test.xml
-        cat test.md
+        ./test/{{ item.target }} -co
+        ./test/{{ item.target }} -co --xml
+        ./test/{{ item.target }} -cos --json
 
 pipeline:
-- stage(analysis):
-  - tasks(ordered):
-    - shell:
-        script: |
-          for f in $(find include/ -type f); do
-            diff -u <(cat $f) <($CFMT -style=file $f) || true
-          done &> /tmp/format.diff
-          if [ "$(wc -l /tmp/format.diff | cut -d' ' -f1)" -gt 0 ]; then
-            cat /tmp/format.diff
-            exit 0
-          fi
-        tags:
-        - linux
+  - stage(analysis):
+      - tasks(ordered):
+          - shell:
+              script: |
+                for f in $(find include/ -type f); do
+                  diff -u <(cat $f) <($CFMT -style=file $f) || true
+                done &> /tmp/format.diff
+                if [ "$(wc -l /tmp/format.diff | cut -d' ' -f1)" -gt 0 ]; then
+                  cat /tmp/format.diff
+                  exit 1
+                fi
+              tags:
+                - linux
 
-- stage(build):
-  - tasks(ordered):
-    - shell:
-        script: |
-          BUILD_DIR={{ model.variables.build_dir|render(env=env) }}
-          {{ model.templates.linux.build_script|render(env=env, item=item) }}
-        with: "{{ model.variables.linux }}"
-        tags:
-        - linux
+  - stage(build):
+      - tasks(ordered):
+          - shell:
+              script: |
+                BUILD_DIR={{ model.variables.build_dir|render(env=env) }}
+                {{ model.templates.linux.build_script|render(env=env, item=item) }}
+              with: "{{ model.variables.linux }}"
+              tags:
+                - linux
 
-    - shell:
-        script: |
-          {{ model.templates.osx.build_script|render(env=env, item=item) }}
-        with: "{{ model.variables.osx }}"
-        tags:
-        - osx
+          - shell:
+              script: |
+                {{ model.templates.osx.build_script|render(env=env, item=item) }}
+              with: "{{ model.variables.osx }}"
+              tags:
+                - osx
 
-- stage(test):
-  - tasks(ordered):
-    - shell:
-        script: |
-          BUILD_DIR={{ model.variables.build_dir|render(env=env) }}
-          {{ model.templates.linux.test_script|render(env=env, item=item) }}
-        with: "{{ model.variables.linux }}"
-        tags:
-        - linux
+  - stage(test):
+      - tasks(ordered):
+          - shell:
+              script: |
+                BUILD_DIR={{ model.variables.build_dir|render(env=env) }}
+                {{ model.templates.linux.test_script|render(env=env, item=item) }}
+              with: "{{ model.variables.linux }}"
+              tags:
+                - linux
 
-    - shell:
-        script: |
-          {{ model.templates.osx.test_script|render(env=env, item=item) }}
-        with: "{{ model.variables.osx }}"
-        tags:
-        - osx
+          - shell:
+              script: |
+                {{ model.templates.osx.test_script|render(env=env, item=item) }}
+              with: "{{ model.variables.osx }}"
+              tags:
+                - osx
 
-- stage(report):
-  - tasks(ordered):
-    - shell:
-        script: |
-          mkdir -p reports/{{ env.cpp_std }}
-          pushd {{ model.variables.build_dir|render(env=env) }}
-          echo -en "" > .targets
-          {% for entry in model.variables.linux %}
-            echo -en ' -a {{ entry.target }}/{{ entry.target }}.info' >> .targets
-          {% endfor %}
-          $LCOV $(cat .targets) -o all.info
-          $LCOV -e all.info "$(dirname $PWD)/include/*" -o ../reports/{{ env.cpp_std }}/lcov.info
-          popd
-        tags:
-        - linux
+  - stage(report):
+      - tasks(ordered):
+          - shell:
+              script: |
+                mkdir -p reports/{{ env.cpp_std }}
+                pushd {{ model.variables.build_dir|render(env=env) }}
+                echo -en "" > .targets
+                {% for entry in model.variables.linux %}
+                  echo -en ' -a {{ entry.target }}.info' >> .targets
+                {% endfor %}
+                $LCOV $(cat .targets) -o all.info
+                $LCOV -e all.info "$(dirname $PWD)/include/*" -o ../reports/{{ env.cpp_std }}/lcov.info
+                popd
+              tags:
+                - linux

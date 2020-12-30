@@ -15,29 +15,26 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef TPP_DURATION_HPP
-#define TPP_DURATION_HPP
+#ifndef TEST_BASIC_TESTS_H_
+#define TEST_BASIC_TESTS_H_
 
-#include <chrono>
+#include "tpp.hpp"
 
-namespace tpp
-{
-namespace intern
-{
-class duration final
+void
+basic_tests();
+
+class Failure : public std::exception
 {
 public:
-    duration() : m_start(std::chrono::steady_clock::now()) {}
+    explicit Failure(char const* msg_) : std::exception(), m_msg(msg_) {}
 
     auto
-    get() -> double {
-        return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - m_start).count();
+    what() const noexcept -> char const* override {
+        return m_msg;
     }
 
 private:
-    std::chrono::steady_clock::time_point const m_start;
+    char const* m_msg;
 };
-}  // namespace intern
-}  // namespace tpp
 
-#endif  // TPP_DURATION_HPP
+#endif  // TEST_BASIC_TESTS_H_

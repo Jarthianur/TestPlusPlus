@@ -15,29 +15,15 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef TPP_DURATION_HPP
-#define TPP_DURATION_HPP
+/// @file
 
-#include <chrono>
+#ifndef TPP_VERSION_HPP
+#define TPP_VERSION_HPP
 
-namespace tpp
-{
-namespace intern
-{
-class duration final
-{
-public:
-    duration() : m_start(std::chrono::steady_clock::now()) {}
+#define TPP_VERSION_MAJOR "3"
+#define TPP_VERSION_MINOR "0"
+#define TPP_VERSION_REVISION "rc0"
+/// SCTF release version this source belongs to.
+#define TPP_VERSION TPP_VERSION_MAJOR "." TPP_VERSION_MINOR "-" TPP_VERSION_REVISION
 
-    auto
-    get() -> double {
-        return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - m_start).count();
-    }
-
-private:
-    std::chrono::steady_clock::time_point const m_start;
-};
-}  // namespace intern
-}  // namespace tpp
-
-#endif  // TPP_DURATION_HPP
+#endif  // TPP_VERSION_HPP

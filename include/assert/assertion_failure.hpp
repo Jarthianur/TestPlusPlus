@@ -15,29 +15,36 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef TPP_DURATION_HPP
-#define TPP_DURATION_HPP
+#ifndef TPP_ASSERT_ASSERTION_FAILURE_HPP
+#define TPP_ASSERT_ASSERTION_FAILURE_HPP
 
-#include <chrono>
+#include <exception>
+#include <string>
+
+#include "assert/loc.hpp"
 
 namespace tpp
 {
 namespace intern
 {
-class duration final
+namespace assert
+{
+class assertion_failure : public std::exception
 {
 public:
-    duration() : m_start(std::chrono::steady_clock::now()) {}
+    assertion_failure(std::string const& msg_, loc const& loc_)
+        : m_msg(msg_ + " at " + loc_.file + ":" + std::to_string(loc_.line)) {}
 
-    auto
-    get() -> double {
-        return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - m_start).count();
+    inline auto
+    what() const noexcept -> char const* override {
+        return m_msg.c_str();
     }
 
 private:
-    std::chrono::steady_clock::time_point const m_start;
+    std::string const m_msg;
 };
+}  // namespace assert
 }  // namespace intern
 }  // namespace tpp
 
-#endif  // TPP_DURATION_HPP
+#endif  // TPP_ASSERT_ASSERTION_FAILURE_HPP

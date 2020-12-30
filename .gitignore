@@ -7,6 +7,7 @@
 !.clang-format
 !.gitattributes
 !.gitignore
+!.gitkeep
 !LICENSE
 !README.md
 !build.bat
@@ -15,3 +16,5 @@
 !.bettercodehub.yml
 !*.sh
 !requirements.txt
+!CMakeLists.txt
+!CHANGELOG.md

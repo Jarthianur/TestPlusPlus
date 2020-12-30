@@ -15,29 +15,22 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef TPP_DURATION_HPP
-#define TPP_DURATION_HPP
-
-#include <chrono>
+#ifndef TPP_ASSERT_LOC_HPP
+#define TPP_ASSERT_LOC_HPP
 
 namespace tpp
 {
 namespace intern
 {
-class duration final
+namespace assert
 {
-public:
-    duration() : m_start(std::chrono::steady_clock::now()) {}
-
-    auto
-    get() -> double {
-        return std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - m_start).count();
-    }
-
-private:
-    std::chrono::steady_clock::time_point const m_start;
+struct loc final
+{
+    char const* file;  ///< The filename, where this location belongs to.
+    int const   line;  ///< The line number in the file.
 };
+}  // namespace assert
 }  // namespace intern
 }  // namespace tpp
 
-#endif  // TPP_DURATION_HPP
+#endif  // TPP_ASSERT_LOC_HPP
