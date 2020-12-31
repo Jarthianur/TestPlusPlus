@@ -62,6 +62,7 @@ struct config
     report::reporter_config report_cfg;
     std::vector<std::regex> f_patterns;
     filter_mode             f_mode{filter_mode::NONE};
+    int                     thd_count = 1;
 };
 }  // namespace intern
 

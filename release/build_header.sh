@@ -3,6 +3,7 @@ set -eo pipefail
 
 FILES="../include/version.hpp
 ../include/cpp_meta.hpp
+../include/omp.hpp
 ../include/traits.hpp
 ../include/duration.hpp
 ../include/regex.hpp

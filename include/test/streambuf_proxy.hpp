@@ -25,12 +25,7 @@
 #include <streambuf>
 #include <vector>
 
-#ifdef _OPENMP
-#    include <omp.h>
-#else
-#    define omp_get_max_threads() 1
-#    define omp_get_thread_num() 0
-#endif
+#include "omp.hpp"
 
 namespace tpp
 {
@@ -140,10 +135,5 @@ private:
 }  // namespace test
 }  // namespace intern
 }  // namespace tpp
-
-#ifndef _OPENMP
-#    undef omp_get_max_threads
-#    undef omp_get_thread_num
-#endif
 
 #endif  // TPP_TEST_STREAMBUF_PROXY_HPP
