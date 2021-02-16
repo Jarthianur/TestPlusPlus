@@ -11,6 +11,7 @@
 **This is an easy to use, header-only testing framework for C++11/14/17 featuring a simple, yet powerfull API and the capability to parallelize tests using _OpenMP_.**
 
 To use it, just include the all in one [header](https://github.com/Jarthianur/TestPlusPlus/releases/latest) into your builds.
+If you want to include it via CMake, have a look at [Usage](#usage).
 
 _So why actually writing a new testing framework?_
 
@@ -78,6 +79,13 @@ As a short summary of all features, have a look at this list.
 ## Usage
 
 Just inlude the release _tpp.hpp_ header file into your build.
+Alternatively, for CMake integration add the following parts to your CMakeLists.txt:
+
+```
+add_subdirectory(path/to/TestPlusPlus EXCLUDE_FROM_ALL)
+target_link_libraries(... tpp)
+```
+
 Tests can then be written in source files and simply linked into your test binaries.
 In _one_ of your test source files call the `TPP_DEFAULT_MAIN` macro.
 All tests automatically register themselves, and the rest is done by Test++.

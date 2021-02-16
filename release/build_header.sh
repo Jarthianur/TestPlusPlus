@@ -68,7 +68,12 @@ echo "" >> $TARGET
 echo "#endif" >> $TARGET
 
 perl -0pi -e 's/#include ".*"//g' $TARGET
-clang-format-10 -style=file -i $TARGET
+if ! command -v clang-format-10 &> /dev/null
+then
+    clang-format -style=file -i $TARGET
+else
+    clang-format-10 -style=file -i $TARGET
+fi
 
 rm $TARGET.tmp
 rm .includes
