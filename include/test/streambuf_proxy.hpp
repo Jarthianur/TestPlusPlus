@@ -20,6 +20,7 @@
 #ifndef TPP_TEST_STREAMBUF_PROXY_HPP
 #define TPP_TEST_STREAMBUF_PROXY_HPP
 
+#include <mutex>
 #include <ostream>
 #include <sstream>
 #include <streambuf>
@@ -51,6 +52,7 @@ public:
     explicit streambuf_proxy(std::ostream& stream_) : m_orig_buf(stream_.rdbuf(this)), m_orig_stream(stream_) {}
 
     ~streambuf_proxy() noexcept override {
+        m_orig_stream.flush();
         m_orig_stream.rdbuf(m_orig_buf);
     }
 
@@ -90,21 +92,25 @@ public:
     auto
     str() -> std::string override {
         clearer<std::stringbuf> _(&m_buffer);
+        m_orig_stream.flush();
         return m_buffer.str();
     }
 
 private:
     auto
     overflow(int_type c_) -> int_type override {
+        std::lock_guard<std::mutex> lk(m_mutex);
         return m_buffer.sputc(std::stringbuf::traits_type::to_char_type(c_));
     }
 
     auto
     xsputn(char const* s_, std::streamsize n_) -> std::streamsize override {
+        std::lock_guard<std::mutex> lk(m_mutex);
         return m_buffer.sputn(s_, n_);
     }
 
     std::stringbuf m_buffer;
+    std::mutex mutable m_mutex;
 };
 
 class streambuf_proxy_omp : public streambuf_proxy

@@ -234,15 +234,15 @@ DESCRIBE("testMyClass") {
 
 ### Tests
 
-| Macro                   | Arguments             | Description                                                                             |
-| ----------------------- | --------------------- | --------------------------------------------------------------------------------------- |
-| SUITE, DESCRIBE         | description (cstring) | Create a testsuite.                                                                     |
-| SUITE_PAR, DESCRIBE_PAR | description (cstring) | Create a testsuite, where all tests will get executed concurrently in multiple threads. |
-| TEST, IT                | description (cstring) | Create a testcase in a testsuite.                                                       |
-| SETUP                   |                       | Define a function, which will be executed once before all testcases.                    |
-| TEARDOWN                |                       | Define a function, which will be executed once after all testcases.                     |
-| BEFORE_EACH             |                       | Define a function, which will be executed before each testcase.                         |
-| AFTER_EACH              |                       | Define a function, which will be executed after each testcase.                          |
+| Macro                   | Arguments             | Description                                                                                 |
+| ----------------------- | --------------------- | ------------------------------------------------------------------------------------------- |
+| SUITE, DESCRIBE         | description (cstring) | Create a testsuite.                                                                         |
+| SUITE_PAR, DESCRIBE_PAR | description (cstring) | Create a testsuite, where all tests will get executed concurrently in multiple omp threads. |
+| TEST, IT                | description (cstring) | Create a testcase in a testsuite.                                                           |
+| SETUP                   |                       | Define a function, which will be executed once before all testcases.                        |
+| TEARDOWN                |                       | Define a function, which will be executed once after all testcases.                         |
+| BEFORE_EACH             |                       | Define a function, which will be executed before each testcase.                             |
+| AFTER_EACH              |                       | Define a function, which will be executed after each testcase.                              |
 
 ### Comparators
 
@@ -285,6 +285,7 @@ DESCRIBE("testMyClass") {
 
 This testing framework serves the capability of parallelizing tests using OpenMP. Actually it is not really parallel, but concurrent.
 Nevertheless, it may reduce test durations massively.
+Parallel test suites **must not** be used for components that itself utilize any kind of thtreading other than OpenMP, as it would produce _UB_.
 Keep in mind that tests running concurrently must be completely independent from each other.
 The same rules for usual multithreading apply here, to not produce dataraces or deadlocks.
 As long as testcases do not share any data, it is completely threadsafe.
