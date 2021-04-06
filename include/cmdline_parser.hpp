@@ -142,7 +142,7 @@ private:
                      "  -c    : Use ANSI colors in report, if supported by reporter.\n"
                      "  -s    : Strip unnecessary whitespaces from report.\n"
                      "  -o    : Report captured output from tests, if supported by reporter.\n"
-                     "  -t <n>: Set the thread count for parallel testsuites. Defaults to hardware thread count.\n\n"
+                     "  -t <n>: Set the thread count for parallel testsuites explicitly.\n\n"
                      "  Multiple filters are possible, but includes and excludes are mutually exclusive.\n"
                      "  Patterns may contain * as wildcard.\n\n"
                      "  -e <pattern> : Exclude testsuites with names matching pattern.\n"
