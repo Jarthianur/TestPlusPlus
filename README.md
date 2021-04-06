@@ -11,6 +11,7 @@
 **This is an easy to use, header-only testing framework for C++11/14/17 featuring a simple, yet powerfull API and the capability to parallelize tests using _OpenMP_.**
 
 To use it, just include the all in one [header](https://github.com/Jarthianur/TestPlusPlus/releases/latest) into your builds.
+If you want to include it via CMake, have a look at [Usage](#usage).
 
 _So why actually writing a new testing framework?_
 
@@ -78,6 +79,13 @@ As a short summary of all features, have a look at this list.
 ## Usage
 
 Just inlude the release _tpp.hpp_ header file into your build.
+Alternatively, for CMake integration add the following parts to your CMakeLists.txt:
+
+```
+add_subdirectory(path/to/TestPlusPlus EXCLUDE_FROM_ALL)
+target_link_libraries(... tpp)
+```
+
 Tests can then be written in source files and simply linked into your test binaries.
 In _one_ of your test source files call the `TPP_DEFAULT_MAIN` macro.
 All tests automatically register themselves, and the rest is done by Test++.
@@ -227,15 +235,15 @@ DESCRIBE("testMyClass") {
 
 ### Tests
 
-| Macro                   | Arguments             | Description                                                                             |
-| ----------------------- | --------------------- | --------------------------------------------------------------------------------------- |
-| SUITE, DESCRIBE         | description (cstring) | Create a testsuite.                                                                     |
-| SUITE_PAR, DESCRIBE_PAR | description (cstring) | Create a testsuite, where all tests will get executed concurrently in multiple threads. |
-| TEST, IT                | description (cstring) | Create a testcase in a testsuite.                                                       |
-| SETUP                   |                       | Define a function, which will be executed once before all testcases.                    |
-| TEARDOWN                |                       | Define a function, which will be executed once after all testcases.                     |
-| BEFORE_EACH             |                       | Define a function, which will be executed before each testcase.                         |
-| AFTER_EACH              |                       | Define a function, which will be executed after each testcase.                          |
+| Macro                   | Arguments             | Description                                                                                 |
+| ----------------------- | --------------------- | ------------------------------------------------------------------------------------------- |
+| SUITE, DESCRIBE         | description (cstring) | Create a testsuite.                                                                         |
+| SUITE_PAR, DESCRIBE_PAR | description (cstring) | Create a testsuite, where all tests will get executed concurrently in multiple omp threads. |
+| TEST, IT                | description (cstring) | Create a testcase in a testsuite.                                                           |
+| SETUP                   |                       | Define a function, which will be executed once before all testcases.                        |
+| TEARDOWN                |                       | Define a function, which will be executed once after all testcases.                         |
+| BEFORE_EACH             |                       | Define a function, which will be executed before each testcase.                             |
+| AFTER_EACH              |                       | Define a function, which will be executed after each testcase.                              |
 
 ### Comparators
 
@@ -278,6 +286,7 @@ DESCRIBE("testMyClass") {
 
 This testing framework serves the capability of parallelizing tests using OpenMP. Actually it is not really parallel, but concurrent.
 Nevertheless, it may reduce test durations massively.
+Parallel test suites **must not** be used for components that itself utilize any kind of thtreading other than OpenMP, as it would produce _UB_.
 Keep in mind that tests running concurrently must be completely independent from each other.
 The same rules for usual multithreading apply here, to not produce dataraces or deadlocks.
 As long as testcases do not share any data, it is completely threadsafe.
