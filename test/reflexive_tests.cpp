@@ -1222,6 +1222,7 @@ SUITE_PAR("test_cmdline_parser") {
         ASSERT_FALSE(c.report_cfg.strip);
         ASSERT_NULL(c.report_cfg.ostream);
         ASSERT_TRUE(c.report_cfg.outfile.empty());
+        ASSERT_EQ(c.thd_count, omp_get_max_threads());
     };
     TEST("report formats") {
         cmdline_parser             uut;
@@ -1401,6 +1402,18 @@ SUITE_PAR("test_cmdline_parser") {
     TEST("invalid pattern") {
         cmdline_parser             uut;
         std::array<char const*, 3> argv{"test", "-i", "[;+"};
+        ASSERT_THROWS(uut.parse(argv.size(), argv.data()), std::runtime_error);
+    };
+    TEST("test valid thread count") {
+        cmdline_parser             uut;
+        std::array<char const*, 3> argv{"test", "-t", "2"};
+        uut.parse(argv.size(), argv.data());
+        auto c = uut.config();
+        ASSERT_EQ(c.thd_count, 2);
+    };
+    TEST("test invalid thread count") {
+        cmdline_parser             uut;
+        std::array<char const*, 3> argv{"test", "-t", "-1"};
         ASSERT_THROWS(uut.parse(argv.size(), argv.data()), std::runtime_error);
     };
 };
