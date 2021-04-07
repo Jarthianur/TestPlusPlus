@@ -108,6 +108,7 @@ OPTIONS:
   -c    : Use ANSI colors in report, if supported by reporter.
   -s    : Strip unnecessary whitespaces from report.
   -o    : Report captured output from tests, if supported by reporter.
+  -t <n>: Set the thread count for parallel testsuites explicitly.
 
   Multiple filters are possible, but includes and excludes are mutually exclusive.
   Patterns may contain * as wildcard.

@@ -114,6 +114,7 @@ private:
                     set_filter_mode(config::filter_mode::INCLUDE);
                     m_cfg.f_patterns.push_back(to_regex(getval_fn_(arg_)));
                 });
+                make_option('t')(c_, [&] { m_cfg.thd_count = to_int(getval_fn_(arg_)); });
             });
         } catch (matched) {
             return;
@@ -140,7 +141,8 @@ private:
                      "  --json: Report in json format.\n"
                      "  -c    : Use ANSI colors in report, if supported by reporter.\n"
                      "  -s    : Strip unnecessary whitespaces from report.\n"
-                     "  -o    : Report captured output from tests, if supported by reporter.\n\n"
+                     "  -o    : Report captured output from tests, if supported by reporter.\n"
+                     "  -t <n>: Set the thread count for parallel testsuites explicitly.\n\n"
                      "  Multiple filters are possible, but includes and excludes are mutually exclusive.\n"
                      "  Patterns may contain * as wildcard.\n\n"
                      "  -e <pattern> : Exclude testsuites with names matching pattern.\n"
@@ -182,6 +184,15 @@ private:
         } catch (std::regex_error const&) {
             throw std::runtime_error(str_ + " is not a valid pattern!");
         }
+    }
+
+    static auto
+    to_int(std::string const& str_) -> int {
+        int v{1};
+        if (!(std::istringstream(str_) >> v) || v < 1) {
+            throw std::runtime_error(str_ + " is not a valid number!");
+        }
+        return v;
     }
 
     struct config m_cfg;

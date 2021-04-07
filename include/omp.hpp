@@ -17,13 +17,15 @@
 
 /// @file
 
-#ifndef TPP_VERSION_HPP
-#define TPP_VERSION_HPP
+#ifndef TPP_OMP_HPP
+#define TPP_OMP_HPP
 
-#define TPP_VERSION_MAJOR "3"
-#define TPP_VERSION_MINOR "1"
-#define TPP_VERSION_REVISION "rc1"
-/// SCTF release version this source belongs to.
-#define TPP_VERSION TPP_VERSION_MAJOR "." TPP_VERSION_MINOR "-" TPP_VERSION_REVISION
+#ifdef _OPENMP
+#    include <omp.h>
+#else
+#    define omp_get_max_threads() 1
+#    define omp_get_thread_num() 0
+#    define omp_set_num_threads(N)
+#endif
 
-#endif  // TPP_VERSION_HPP
+#endif  // TPP_OMP_HPP

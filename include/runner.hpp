@@ -26,6 +26,7 @@
 #include "test/testsuite_parallel.hpp"
 
 #include "cmdline_parser.hpp"
+#include "omp.hpp"
 
 namespace tpp
 {
@@ -63,6 +64,7 @@ public:
 
     auto
     run(config const& cfg_) noexcept -> int {
+        omp_set_num_threads(cfg_.thd_count);
         bool const fm_inc{cfg_.f_mode != config::filter_mode::EXCLUDE};
         try {
             auto rep{cfg_.reporter()};
