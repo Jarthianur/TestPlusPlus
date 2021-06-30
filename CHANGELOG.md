@@ -7,6 +7,10 @@ Extended the versioning scheme by revisions.
 
 ### 3.0
 
+#### 3.1-1
+
+- handle all errors in runner, even user introduced ones
+
 #### 3.1-0
 
 - added command line argument to set thread count for omp

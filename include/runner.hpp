@@ -81,8 +81,10 @@ public:
             });
             rep->end_report();
             return static_cast<int>(std::min(rep->faults(), static_cast<std::size_t>(std::numeric_limits<int>::max())));
-        } catch (std::runtime_error const& e) {
+        } catch (std::exception const& e) {
             return err_exit(e.what());
+        } catch (...) {
+            return err_exit("an unknown error occurred");
         }
     }
 
