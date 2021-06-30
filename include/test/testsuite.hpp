@@ -148,7 +148,7 @@ protected:
     struct optional_functor final
     {
         void
-        operator()() const noexcept {
+        operator()() const {
             if (fn) {
                 fn();
             }

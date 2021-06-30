@@ -51,7 +51,7 @@ public:
         cmdline_parser cmd;
         try {
             if (argc_ < 0) {
-                throw std::runtime_error("argument count cannot be less than zero!");
+                throw std::runtime_error("argument count cannot be less than zero");
             }
             cmd.parse(static_cast<std::size_t>(argc_), argv_);
         } catch (cmdline_parser::help_called) {
@@ -84,7 +84,7 @@ public:
         } catch (std::exception const& e) {
             return err_exit(e.what());
         } catch (...) {
-            return err_exit("an unknown error occurred");
+            return err_exit("unknown error");
         }
     }
 
