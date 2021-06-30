@@ -75,7 +75,14 @@ public:
                   std::any_of(cfg_.f_patterns.cbegin(), cfg_.f_patterns.cend(),
                               [&](std::regex const& re_) -> bool { return std::regex_match(ts_->name(), re_); })};
                 if (fm_inc == match) {
-                    ts_->run();
+                    try {
+                        ts_->run();
+                    } catch (std::exception const& e) {
+                        throw std::runtime_error(std::string(">") + ts_->name() + "< [" + name_for_type(e) + "] " +
+                                                 e.what());
+                    } catch (...) {
+                        throw std::runtime_error(std::string(">") + ts_->name() + "< unknown error");
+                    }
                     rep->report(ts_);
                 }
             });
@@ -83,8 +90,6 @@ public:
             return static_cast<int>(std::min(rep->faults(), static_cast<std::size_t>(std::numeric_limits<int>::max())));
         } catch (std::exception const& e) {
             return err_exit(e.what());
-        } catch (...) {
-            return err_exit("unknown error");
         }
     }
 
